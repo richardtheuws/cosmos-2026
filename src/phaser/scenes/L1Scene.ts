@@ -20,6 +20,7 @@ import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import { L1_GRID, TILE_SIZE, decodeLevel, HINT_LINES } from '../../data/levelL1';
 import { sfx } from '../../audio/sfxBus';
+import { HudOverlay } from '../hud/HudOverlay';
 
 const COLOR = {
   ground: 0x7B9E89,
@@ -43,7 +44,8 @@ export class L1Scene extends Phaser.Scene {
   private inputCtl!: InputController;
   private uniforms!: GlobalUniforms;
   private audioBridge: AudioFFTBridge | null = null;
-  private hudText!: Phaser.GameObjects.Text;
+  /** Sprint 11B — DOM-based HUD pills (game-info + controls hint). */
+  private hud!: HudOverlay;
   private hintText!: Phaser.GameObjects.Text;
   private stars: Star[] = [];
   private globes: HintGlobe[] = [];
@@ -121,15 +123,27 @@ export class L1Scene extends Phaser.Scene {
     this.load.image('bomb', assetPath('assets/bombs/bomb-cleaned.png'));
     this.load.image('bomb-pickup', assetPath('assets/bombs/bomb-pickup-cleaned.png'));
 
-    // Painted tiles — replace procedural Graphics in S5 wiring.
-    this.load.image('tile-ground-painted', assetPath('assets/tiles/tile-ground-cleaned.png'));
-    this.load.image('tile-dirt-painted', assetPath('assets/tiles/tile-dirt.png'));
-    this.load.image('tile-wall-painted', assetPath('assets/tiles/tile-wall-v2.png'));
-    // Sprint 7D — dedicated cracked-wall texture for breakable walls.
-    this.load.image('tile-wall-cracked-painted', assetPath('assets/tiles/tile-wall-cracked-painted.png'));
-    this.load.image('tile-mushroom-painted', assetPath('assets/tiles/tile-mushroom-v2.png'));
-    this.load.image('tile-spike-painted', assetPath('assets/tiles/tile-spike-cleaned.png'));
-    this.load.image('tile-trampoline-painted', assetPath('assets/tiles/tile-trampoline.png'));
+    // Painted tiles — Sprint 11C v3 painted-watercolor set replacing the
+    //   1992-feel cleaned tiles. Hayao×Moebius style coherent with Cosmo
+    //   canonical (v3) + enemies (v4). Locked palette respected, pop-accents
+    //   max 5 percent. See assets-generated.json Sprint 11C entry for prompts.
+    this.load.image('tile-ground-painted', assetPath('assets/tiles/tile-ground-painted-v3.png'));
+    this.load.image('tile-dirt-painted', assetPath('assets/tiles/tile-dirt-painted-v3.png'));
+    this.load.image('tile-wall-painted', assetPath('assets/tiles/tile-wall-painted-v3.png'));
+    this.load.image('tile-wall-cracked-painted', assetPath('assets/tiles/tile-wall-cracked-painted-v3.png'));
+    this.load.image('tile-mushroom-painted', assetPath('assets/tiles/tile-mushroom-painted-v3.png'));
+    this.load.image('tile-spike-painted', assetPath('assets/tiles/tile-spike-painted-v3.png'));
+    this.load.image('tile-trampoline-painted', assetPath('assets/tiles/tile-trampoline-painted-v3.png'));
+    // Sprint 11C — new assets, not yet placed in level-grid but preloaded for
+    //   future L2-L8 design. Ladder: vertical 256×1024 organic vine rope.
+    //   Grass-strip: horizontal 1024×128 painted bottom-strip.
+    this.load.image('tile-ladder-painted', assetPath('assets/tiles/tile-ladder-painted-v3.png'));
+    this.load.image('bg-grass-strip', assetPath('assets/backgrounds/bg-grass-strip-v3.png'));
+    // Sprint 11C — spike-strip alternative (1024×128). Engine currently renders
+    //   spikes per-tile (32×32 each); strip would require refactor of spawn
+    //   path to detect contiguous '^' runs and instantiate strip-sprite.
+    //   TODO Sprint 11D: wire strip via decodeLevel run-length detection.
+    this.load.image('tile-spike-strip', assetPath('assets/tiles/tile-spike-strip-v3.png'));
 
     // Painted pickups
     this.load.image('pickup-star-painted', assetPath('assets/pickups/pickup-star-cleaned.png'));
@@ -561,13 +575,14 @@ export class L1Scene extends Phaser.Scene {
   }
 
   private buildHUD(): void {
-    this.hudText = this.add.text(12, 12, '', {
-      fontFamily: 'JetBrains Mono, monospace',
-      fontSize: '13px',
-      color: '#3D2E4A',
-      backgroundColor: 'rgba(245, 237, 216, 0.88)',
-      padding: { x: 10, y: 6 },
-    }).setScrollFactor(0).setDepth(1000);
+    // Sprint 11B — game-info pill + controls-hint live in DOM (HudOverlay).
+    // Phaser only owns the lower hint-text used by HintGlobes (still readable
+    // over watercolor backgrounds — keeps narrative copy in-world).
+    this.hud = new HudOverlay();
+    this.hud.attach();
+    // Tear down the DOM overlay when this scene shuts down (e.g. restart).
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.hud.detach());
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.hud.detach());
 
     this.hintText = this.add.text(this.scale.width / 2, this.scale.height - 70, '', {
       fontFamily: 'Cormorant Garamond, Georgia, serif',
@@ -583,16 +598,15 @@ export class L1Scene extends Phaser.Scene {
 
   private updateHUD(): void {
     const c = this.cosmo;
-    const hp = Math.max(0, Math.min(c.maxHp, c.hp));
-    const heartsFull = '♥'.repeat(hp);
-    const heartsEmpty = '♡'.repeat(c.maxHp - hp);
-    this.hudText.setText([
-      `Cosmos · L1 — First Steps · v0.3.0`,
-      `${heartsFull}${heartsEmpty}    bombs ${c.bombs}`,
-      `★ ${this.starsCollected}    state ${c.state}`,
-      ``,
-      `← →  move    Space  jump    X  bomb    ↑↓ pan`,
-    ].join('\n'));
+    this.hud.update({
+      hp: Math.max(0, Math.min(c.maxHp, c.hp)),
+      maxHp: c.maxHp,
+      bombs: c.bombs,
+      stars: this.starsCollected,
+      state: c.state,
+      levelLabel: 'Cosmos · L1 First Steps',
+      version: 'v0.8.0',
+    });
   }
 
   private triggerHint(idx: number): void {

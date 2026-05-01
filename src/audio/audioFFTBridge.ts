@@ -131,6 +131,8 @@ const BAND_EDGES: readonly number[] = [2, 4, 8, 16, 32, 64, 96, 128];
 interface MusicSource {
   /** Output node that should be wired into the analyser. */
   output: AudioNode;
+  /** Underlying HTMLAudioElement (only set for streamed tracks). Used by ensureRunning() to retry play after gesture. */
+  audioEl?: HTMLAudioElement;
   /** Stop and free the source. */
   dispose(): void;
 }
@@ -209,6 +211,17 @@ export class AudioFFTBridge {
     if (!this.initialised) this.init();
     if (this.ctx && this.ctx.state === 'suspended') {
       void this.ctx.resume();
+    }
+    // Sprint 11D fix — autoplay-policy rejects the initial `<audio>.play()` call
+    // before user-gesture, leaving the music track paused even after the
+    // AudioContext resumes. Retry play() on every gesture; idempotent if
+    // already playing (the play promise just resolves immediately).
+    const audioEl = this.source?.audioEl;
+    if (audioEl && audioEl.paused) {
+      void audioEl.play().catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn(`[audioFFTBridge] music play() retry rejected: ${err.name} ${err.message}`);
+      });
     }
   }
 
@@ -456,17 +469,20 @@ function createStreamedTrack(ctx: AudioContext, src: string): MusicSource {
   audioEl.addEventListener('error', () => {
     // eslint-disable-next-line no-console
     console.warn(
-      `[audioFFTBridge] failed to load music track: ${src} — set MUSIC_TRACK='' to fall back to placeholder synth.`,
+      `[audioFFTBridge] failed to load music track: ${src} (audio.error.code=${audioEl.error?.code} msg=${audioEl.error?.message}) — set MUSIC_TRACK='' to fall back to placeholder synth.`,
     );
   });
-  // Best-effort autoplay — will succeed once ctx.resume() runs from user-gesture.
+  // Best-effort autoplay — autoplay-policy will reject before user-gesture.
+  // `ensureRunning()` retries play() on every gesture (Sprint 11D fix), so we
+  // can safely swallow this rejection silently.
   void audioEl.play().catch(() => {
-    /* gesture pending; will retry naturally on next ensureRunning()  */
+    /* gesture pending; ensureRunning() retries play() after ctx.resume() */
   });
 
   const node = ctx.createMediaElementSource(audioEl);
   return {
     output: node,
+    audioEl,
     dispose(): void {
       audioEl.pause();
       audioEl.src = '';

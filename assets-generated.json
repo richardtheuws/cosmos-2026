@@ -585,6 +585,127 @@
       "tsc": "npx tsc --noEmit exit 0"
     },
     {
+      "sprint": "Sprint 11C \u2014 Tile-set + spikes + ladders + grass redesign (painted-watercolor v3)",
+      "generated": "2026-05-01",
+      "purpose": "Replace 1992-feel tiles (yellow/orange stripes, purple ladder, magenta spike-rows) with painted-watercolor Hayao\u00d7Moebius set coherent with Cosmo canonical (v3) and enemies (v4). Locked palette respect, pop-accents max 5 percent.",
+      "feedback_trigger": "Richard 2026-05-01: 'gele/oranje strepen, paarse ladder, roze-paarse spike-rijen \u2014 eerder 1992 dan 2026, een miljoen keer beter en mooier'",
+      "tile_trap_recipe_applied": "DROP 'psychedelic illustration' + 'cosmic-adventure mood' STEM keywords (scene-magnets that bias Flux toward landscapes for square tiles \u2014 proven 4/5 fail in Sprint 4.5 Fase B). Use rider-FRONT pattern with 'macro close-up flat texture filling entire square edge to edge' + anti-landscape negatives. Followed by Hayao\u00d7Moebius style + locked palette tail. NO BiRefNet (would strip texture).",
+      "model_default": "fal-ai/flux-pro/v1.1 (6 square tiles), fal-ai/flux/dev (3 strip / experimental)",
+      "post_processing": "none \u2014 BiRefNet bypassed for tiles per memory",
+      "totals": {
+        "first_pass_jobs": 10,
+        "retry_jobs": 5,
+        "ship_quality": 9,
+        "estimated_cost_usd": 0.55
+      },
+      "scripts": [
+        "scripts/sprint11c/generate.py \u2014 first-pass batch generator",
+        "scripts/sprint11c/retry.py \u2014 4-tile retry pass for border-composition fails",
+        "scripts/sprint11c/retry_trampoline.py \u2014 trampoline final fix via Flux Dev"
+      ],
+      "manifest": "scripts/sprint11c/_manifest.json + _retry-manifest.json",
+      "assets": [
+        {
+          "file": "public/assets/tiles/tile-ground-painted-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x1024",
+          "version": "v3b (retried for seamless coverage)",
+          "subject": "uniform moss-sage carpet covering ENTIRE frame edge to edge, scattered dewdrops, micro cosmic sparkles. NO empty center, NO border-only foliage \u2014 anti-border rider added on retry",
+          "status": "ship",
+          "notes": "First pass came back with leaf-frame-around-empty-center composition. Retry with 'SEAMLESS UNIFORM TEXTURE filling 100 percent... NO border-only NO subject-at-edges' fixed it"
+        },
+        {
+          "file": "public/assets/tiles/tile-dirt-painted-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x1024",
+          "version": "v3b (retried for seamless coverage)",
+          "subject": "uniform pink earth with ink-aubergine cracks ACROSS WHOLE SURFACE, granular grainy dirt texture covering 100 percent",
+          "status": "ship",
+          "notes": "Same border-composition fix as ground"
+        },
+        {
+          "file": "public/assets/tiles/tile-wall-painted-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x1024",
+          "version": "v3 (first try, ship)",
+          "subject": "ink-aubergine stone-block courses with subtle saffron-glow underlight catching edges, mineral wet-stone watercolor",
+          "status": "ship"
+        },
+        {
+          "file": "public/assets/tiles/tile-wall-cracked-painted-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x1024",
+          "version": "v3 (first try, ship)",
+          "subject": "damaged stone block with TWO LARGE BRANCHING CRACKS forking diagonally + saffron-glow tip-spark at one crack-end where bomb impacted",
+          "status": "ship"
+        },
+        {
+          "file": "public/assets/tiles/tile-mushroom-painted-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x1024",
+          "version": "v3 (first try, ship)",
+          "subject": "extreme macro of mushroom-cap surface texture only (cap-skin), saffron-glow + faded-rose phosphorescent dots, glossy wet-look watercolor. NOT full mushroom shape \u2014 fix from earlier bug per memory",
+          "status": "ship"
+        },
+        {
+          "file": "public/assets/tiles/tile-spike-strip-v3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x128 (8:1 strip)",
+          "version": "v3 (first try, ship)",
+          "subject": "8 organic pointy spikes on a horizontal ground-line, faded-rose to pop-magenta gradient with saffron-glow tips, watercolor halos",
+          "status": "ship",
+          "wiring_status": "STRIP NOT WIRED \u2014 current L1Scene renders spikes per-tile (32x32 each) via single-tile spawn system. Spike-strip would require refactor of spawn path to detect contiguous '^' runs and instantiate one strip-sprite. Documented as TODO. Per-tile fallback (tile-spike-painted-v3.png) ships as primary."
+        },
+        {
+          "file": "public/assets/tiles/tile-spike-painted-v3.png",
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024",
+          "version": "v3b (retried, ship)",
+          "subject": "cluster of THREE short pointy spikes standing on ground-line at bottom of tile with saffron-glow tip-glows, ink-aubergine outlines",
+          "status": "ship",
+          "notes": "First pass rendered ONE giant cathedral-spike (1024 tall). Retry with 'cluster of 3-4 SHORT spikes at bottom half' fixed it. Used as primary in current spawn path."
+        },
+        {
+          "file": "public/assets/tiles/tile-trampoline-painted-v3.png",
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024",
+          "version": "v3c (third try, ship)",
+          "subject": "soft pink-peach mushroom-cap dome with saffron-glow gill-rim and cosmic spark dots floating above, hand-painted illustration from 3/4 angle",
+          "status": "ship",
+          "notes": "First pass: pool inflatable ring on watercolor BG \u2014 reject. Second pass: kaleidoscope sun-burst from below \u2014 reject. Third pass switched to Flux Dev with explicit 'illustration of plump mushroom-cap dome from 3/4 angle' \u2014 nailed it"
+        },
+        {
+          "file": "public/assets/tiles/tile-ladder-painted-v3.png",
+          "model": "fal-ai/flux/dev",
+          "size": "256x1024 (1:4 vertical strip, NEW asset)",
+          "version": "v3 (first try, ship)",
+          "subject": "vertical organic plaited vine rope with knots as hand-grips, faded-rose + moss-sage twist, leaves + dewdrops, ink-aubergine outline",
+          "status": "ship",
+          "wiring_status": "NEW asset \u2014 preload key 'tile-ladder-painted' added to L1Scene.preload. Level grid does NOT yet have a 'L' (ladder) tile-char so no in-game placement; available for future L2-L8 levels"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-grass-strip-v3.png",
+          "model": "fal-ai/flux/dev",
+          "size": "1024x128 (8:1 strip, NEW asset)",
+          "version": "v3 (first try, ship-with-caveat)",
+          "subject": "horizontal painted strip of moss-sage grass with tiny mushrooms + cosmic flowers (faded-rose + saffron-glow)",
+          "status": "ship-with-caveat",
+          "notes": "Has a faint reflection band at the bottom (model interpreted ground-line as water-edge). Acceptable for v0.7.x; future polish could remove via PIL crop or retry. Mushroom caps render slightly bright-red rather than faded-rose \u2014 still within palette tolerance",
+          "wiring_status": "NEW asset \u2014 preload key 'bg-grass-strip' added to L1Scene.preload. Available for future use as an in-game decoration band; not yet placed"
+        }
+      ],
+      "model_performance": {
+        "flux-pro-v1.1_for_square_tiles": "Strong photoreal-bias on 'macro close-up' wording \u2014 model rendered border-around-empty-center for 2 of 6 first attempts. Fix: lead with 'SEAMLESS UNIFORM TEXTURE filling 100 percent... NO border-only NO subject-at-edges'.",
+        "flux-pro-v1.1_for_strip_tiles": "Excellent for spike-strip 1024x128 \u2014 8:1 aspect cleanly forces strip composition. First-try ship.",
+        "flux-dev_for_vertical_strips": "256x1024 ladder \u2014 first-try ship. Flux Dev seems more pliable than Flux Pro for stylized illustrations vs photorealistic textures."
+      },
+      "open_issues": [
+        "tile-spike-strip-v3.png exists but engine doesn't use it yet \u2014 TODO refactor spawn path to detect contiguous '^' runs and instantiate strip-sprite",
+        "bg-grass-strip-v3.png has a reflection band at bottom (water-edge interpretation) \u2014 cosmetic, ship",
+        "Ladder asset has no level-grid char yet \u2014 add 'L' to legend in future level design"
+      ]
+    },
+    {
       "sprint": "Sprint 7A \u2014 Multi-frame Cosmo via Flux Control LoRA Canny",
       "generated": "2026-05-01",
       "strategy": "Programmatic stick-figure skeletons (PIL) \u2192 Flux Control LoRA Canny \u2192 BiRefNet",
@@ -672,6 +793,63 @@
         "Inter-frame style/eye drift: walk-1 has 1 ink-eye, walk-2 has 2 black-disc-eyes, hurt has 1 ink-eye + blush spots. Not catastrophic but visible if you compare side-by-side. A future pass could fix walk-2 with a different seed",
         "Cling-right uses setFlipX for left-wall cling \u2014 works but the suction-cups will appear on the right side of the body when flipped (since body is asymmetric). Acceptable since both arms reach toward the wall in the source pose",
         "Hurt-frame is reused for death state with no rotation \u2014 if death looks weird in playtesting, add a Z-rotation tween in Cosmo.takeDamage()"
+      ]
+    },
+    {
+      "sprint": "Sprint 11A \u2014 Cosmo multi-frame HIGH-FIDELITY body-mass re-render",
+      "generated": "2026-05-01",
+      "strategy": "img2img + ControlNet (NOT skeleton-only) \u2014 use canonical-v2-cleaned as image_url to preserve Hayao body mass while skeleton drives pose anchor",
+      "model": "fal-ai/flux-control-lora-canny",
+      "post_processing": "PIL alpha-erase tail (Sprint 6A pattern) + fal-ai/birefnet/v2 (transparent PNG)",
+      "image_size": "square_hd 1024x1024",
+      "seed_locked": 7777,
+      "user_complaint": "online versie heeft een soort stick puppet \u2014 Cosmo en enemies mogen gerust wat massaler en voller aanvoelen (Richard, 2026-05-01)",
+      "params_chosen": {
+        "walk-1": {"strength": 0.45, "control_lora_strength": 1.20},
+        "walk-2": {"strength": 0.45, "control_lora_strength": 1.20},
+        "jump-up": {"strength": 0.65, "control_lora_strength": 1.25},
+        "jump-fall": {"strength": 0.65, "control_lora_strength": 1.25},
+        "cling-right": {"strength": 0.65, "control_lora_strength": 1.25},
+        "hurt": {"strength": 0.55, "control_lora_strength": 1.22}
+      },
+      "frames_overwritten": [
+        "public/assets/sprites/v3/cosmo-walk-1.png",
+        "public/assets/sprites/v3/cosmo-walk-2.png",
+        "public/assets/sprites/v3/cosmo-jump-up.png",
+        "public/assets/sprites/v3/cosmo-jump-fall.png",
+        "public/assets/sprites/v3/cosmo-cling-right.png",
+        "public/assets/sprites/v3/cosmo-hurt.png"
+      ],
+      "case_study_dir": "public/assets/case-study/cosmo-rerender-v11a/",
+      "acceptance_criteria_per_frame": {
+        "walk-1": {"body_mass": "PASS \u2014 full Hayao watercolor", "hayao_texture": "PASS", "rose_spots": "PASS \u2014 visible on body+head", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS (alpha-erased post-BiRefNet)", "chameleon_eyes": "PASS", "pose_120px_distinct": "PARTIAL \u2014 arms-down stance, but legs only marginally shifted from canonical idle"},
+        "walk-2": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PASS", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "PARTIAL \u2014 mirror-arm intent visible, leg-stride near-canonical"},
+        "jump-up": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL \u2014 fewer spots", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 ghosted skeleton arms visible in halo, but rendered character keeps neutral idle pose"},
+        "jump-fall": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 same as jump-up"},
+        "cling-right": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 not sideways, character still upright"},
+        "hurt": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PASS", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 no head-tilt or knockback splay"}
+      },
+      "key_learnings_sprint_11a": [
+        "BODY-MASS RESTORATION SUCCEEDED: img2img with canonical-v2-cleaned at strength 0.45-0.65 + control_lora_strength 1.20-1.25 PRESERVES Hayao watercolor body, chameleon eyes, faded-rose spots, pearl-drop head, suction-cup discs across all 6 frames. Stick-puppet complaint is FIXED.",
+        "POSE-SHIFT FAILED across all tested params: img2img + ControlNet + canonical-init has a hard architectural ceiling \u2014 the canonical pose-bias dominates regardless of img2img strength (tested 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.80) or control_lora_strength (tested 0.85-1.30). The skeleton appears as faint background ghost (visible in raw renders) but never replaces the canonical's neutral standing pose. CFG conditioning + canonical noise-init reverts deterministically to canonical pose.",
+        "ARCHITECTURAL FINDING: pose-variation REQUIRES skeleton-only mode (NO image_url) \u2014 confirms Sprint 7A finding. Sprint 11A's combined pipeline gives body+watercolor but loses pose; Sprint 7A's skeleton-only gave pose but lost body. The two are at odds in flux-control-lora-canny architecture. Future pose-variation work needs: (a) skeleton-only with thicker/fuller skeleton silhouettes that suggest body-volume so canny preserves mass, (b) sketch-to-img with hand-painted character-thumbnails per pose, or (c) train a Cosmo-specific LoRA so the model has the character internalized and skeleton drives pose without image_url.",
+        "Tail-recurrence: img2img with canonical re-introduces the tail (canonical's tail was alpha-erased in v0.5.1, but Flux 'fixes' the missing geometry). Solution: alpha-erase tail post-BiRefNet using PIL polygon mask + Gaussian feather (Sprint 6A pattern, 0% failure rate, $0 cost). All 6 final frames have tail erased deterministically.",
+        "Skeleton-design tip: BIG round JET-BLACK filled discs at hand-tips force suction-cup rendering even at low control-strength (Sprint 7A finding holds). New v11a skeletons drew hands with disc_radius=70px which produced large, jet-black suction-cup discs in all renders. Confirmed reusable pattern.",
+        "BiRefNet on dark-bg renders: works fine, isolates Cosmo cleanly even from solid black background. No need to enforce white-bg in prompt for transparency-extraction quality."
+      ],
+      "cost_breakdown": {
+        "phase1_strength_sweep_walk1_old_skel": "~$0.27 (3 attempts at 0.40/0.50/0.60 with old skeleton \u2014 all near-identical, low pose-shift)",
+        "phase1b_control_strength_sweep": "~$0.27 (3 attempts at cls 0.95/1.05/1.15 \u2014 same neutral pose)",
+        "phase2_decisive_walk1_new_skel": "~$0.27 (3 attempts with v11a skeleton \u2014 confirmed pose-bias ceiling)",
+        "phase3_batch_6_main_renders": "~$0.54 (final per-pose-tuned 6 frames)",
+        "phase4_extreme_pose_retry": "~$0.27 (jump-up/jump-fall/cling-right at strength 0.80 \u2014 NO improvement over phase3)",
+        "phase5_birefnet_6": "~$0.30 (6\u00d7 BiRefNet calls)",
+        "total": "~$1.92 (within $5-8 budget; ample headroom remained but architectural ceiling reached \u2014 further iteration would not help)"
+      },
+      "open_issues": [
+        "Pose-distinction at 120px display: walk-1/walk-2 have minor arm-angle variation but legs and torso are near-identical to idle; jump-up/jump-fall/cling-right/hurt do NOT visually read as their named poses. Game mechanics may need to compensate via tween/rotation/scale on top of texture swap. RECOMMENDED: Cosmo.ts updateAnim() should add rotation tween for jump-fall/hurt (Z-axis spin), scale-pulse for jump-up (squash+stretch), setRotation+setFlipX for cling-right.",
+        "Tail-stub remnants: BiRefNet sometimes preserves a thin vertical pixel-row at the feet from where the tail was alpha-erased. Cosmetic, invisible at 120px, no fix needed.",
+        "Sprint 11A confirms Sprint 5B+7A architectural finding: Flux text-conditional + canonical img2img cannot escape canonical-pose-bias. For TRUE pose variation, either (a) train a Cosmo LoRA from the existing renders + use skeleton-only inference, (b) hand-painted sketch-to-img per pose, or (c) use a 3D rigged Cosmo via Meshy and render poses from 3D. All three are larger scope than this sprint."
       ]
     }
   ]

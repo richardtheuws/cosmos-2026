@@ -1,0 +1,66 @@
+{
+  "sprint": "Sprint 11C \u2014 RETRY pass",
+  "timestamp": "2026-05-01T15:24:55Z",
+  "flux_jobs": [
+    {
+      "label": "tile-trampoline-painted-v3b",
+      "endpoint": "fal-ai/flux-pro/v1.1",
+      "prompt": "SEAMLESS UNIFORM TEXTURE filling 100 percent of the square frame edge to edge with the SAME density and detail in the CENTER as at the EDGES, tileable repeating texture, NO empty center NO border-only composition NO subject-at-edges NO frame-around-empty-middle NO vignette, the texture extends uniformly across the entire square, viewed from directly above flat, NO landscape NO scene NO sky NO horizon NO perspective NO depth NO border NO frame, just a 2D platformer game tile texture asset sharp focus crisp ink lines NOT blurry. a flat soft pink-peach mushroom cap surface viewed from directly above filling the entire square frame edge to edge, the cap-skin is stretched tight like a drum or trampoline, faded-rose pink-peach mushroom-cream cap surface with subtle radial striations from center to edge suggesting taut spring-tension, mushroom-cream paler center, saffron-glow orange warm rim catching the edge of the cap, soft watercolor sheen, NO ring NO pool NO inflatable, JUST a flat mushroom-cap surface filling the frame, NOT a circle on background, the mushroom cap IS the entire frame. hand-painted watercolor with ink underdrawing, paper-grain texture, Studio Ghibli x Moebius x Tenniel illustration style, soft wet-edge watercolor bleeds, ragged ink-line outlines, NOT digital NOT 3D NOT photoreal NOT pixel-art NOT cartoon NOT roblox, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime accents maximum 5 percent",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-trampoline-painted-v3.png",
+      "request_id": "019de424-7456-7803-a584-9780aa004f71",
+      "response_url": "https://queue.fal.run/fal-ai/flux-pro/requests/019de424-7456-7803-a584-9780aa004f71",
+      "status": "raw-downloaded",
+      "raw_url": "https://v3b.fal.media/files/b/0a987a2d/wjxUAqyN9V_3vDsmEgLmO_18271fb8cd8541a08b24ad8da19c35f1.jpg",
+      "raw_size": 194919
+    },
+    {
+      "label": "tile-spike-painted-v3b",
+      "endpoint": "fal-ai/flux/dev",
+      "prompt": "SEAMLESS UNIFORM TEXTURE filling 100 percent of the square frame edge to edge with the SAME density and detail in the CENTER as at the EDGES, tileable repeating texture, NO empty center NO border-only composition NO subject-at-edges NO frame-around-empty-middle NO vignette, the texture extends uniformly across the entire square, viewed from directly above flat, NO landscape NO scene NO sky NO horizon NO perspective NO depth NO border NO frame, just a 2D platformer game tile texture asset sharp focus crisp ink lines NOT blurry. a cluster of THREE TO FOUR SHORT POINTY HAZARDOUS SPIKES standing upward on a horizontal ground-line at the bottom of the frame, each spike is a short curved organic thorn shape painted in faded-rose pink gradient transitioning to pop-magenta at the tips with saffron-glow orange highlights at the very point, soft watercolor halos around each spike, ink-aubergine ragged outlines, the spikes stand together at the bottom half of the tile sharing a common ground-line, the upper half of the tile is mostly empty space above the spikes, NOT one tall tower NOT a cathedral, just a small CLUSTER of short thorns at the bottom of a tile. hand-painted watercolor with ink underdrawing, paper-grain texture, Studio Ghibli x Moebius x Tenniel illustration style, soft wet-edge watercolor bleeds, ragged ink-line outlines, NOT digital NOT 3D NOT photoreal NOT pixel-art NOT cartoon NOT roblox, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime accents maximum 5 percent",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-spike-painted-v3.png",
+      "request_id": "019de424-7661-7b92-9081-d69d4922fa21",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de424-7661-7b92-9081-d69d4922fa21",
+      "status": "raw-downloaded",
+      "raw_url": "https://v3b.fal.media/files/b/0a987a2c/4_67bfWmn08fPTdd0aIl0.jpg",
+      "raw_size": 140600
+    },
+    {
+      "label": "tile-dirt-painted-v3b",
+      "endpoint": "fal-ai/flux-pro/v1.1",
+      "prompt": "SEAMLESS UNIFORM TEXTURE filling 100 percent of the square frame edge to edge with the SAME density and detail in the CENTER as at the EDGES, tileable repeating texture, NO empty center NO border-only composition NO subject-at-edges NO frame-around-empty-middle NO vignette, the texture extends uniformly across the entire square, viewed from directly above flat, NO landscape NO scene NO sky NO horizon NO perspective NO depth NO border NO frame, just a 2D platformer game tile texture asset sharp focus crisp ink lines NOT blurry. a uniform layer of soft pink earth and damp dusty soil covering the ENTIRE square frame from corner to corner with the same density throughout, warm faded-rose pink dirt tone, ink-aubergine deep dark mineral hairline cracks veining ACROSS THE WHOLE SURFACE not just at edges, granular grainy dirt texture with tiny pebbles scattered evenly across the entire frame, organic irregular but covering 100 percent of the surface, NO empty center, NO border-only veins, hand-painted Hayao Miyazaki watercolor earth. hand-painted watercolor with ink underdrawing, paper-grain texture, Studio Ghibli x Moebius x Tenniel illustration style, soft wet-edge watercolor bleeds, ragged ink-line outlines, NOT digital NOT 3D NOT photoreal NOT pixel-art NOT cartoon NOT roblox, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime accents maximum 5 percent",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-dirt-painted-v3.png",
+      "request_id": "019de424-7248-7940-a13f-49b893255e76",
+      "response_url": "https://queue.fal.run/fal-ai/flux-pro/requests/019de424-7248-7940-a13f-49b893255e76",
+      "status": "raw-downloaded",
+      "raw_url": "https://v3b.fal.media/files/b/0a987a2c/Ep5Sjo5KmLKBd45Zu8fbj_86321155b2db4115810110aa24a6eb1e.jpg",
+      "raw_size": 242345
+    },
+    {
+      "label": "tile-ground-painted-v3b",
+      "endpoint": "fal-ai/flux-pro/v1.1",
+      "prompt": "SEAMLESS UNIFORM TEXTURE filling 100 percent of the square frame edge to edge with the SAME density and detail in the CENTER as at the EDGES, tileable repeating texture, NO empty center NO border-only composition NO subject-at-edges NO frame-around-empty-middle NO vignette, the texture extends uniformly across the entire square, viewed from directly above flat, NO landscape NO scene NO sky NO horizon NO perspective NO depth NO border NO frame, just a 2D platformer game tile texture asset sharp focus crisp ink lines NOT blurry. a uniform carpet of saturated moss-sage green forest moss covering the ENTIRE square frame from corner to corner with the same density throughout, tiny dewdrops sparkling scattered evenly, micro cosmic sparkles, soft sky-wash-blue tints in dewdrops, NO leaves at edges, NO border of foliage, NO empty middle, just SEAMLESS continuous moss texture covering 100 percent of the surface uniformly, organic irregular variation but no empty regions. hand-painted watercolor with ink underdrawing, paper-grain texture, Studio Ghibli x Moebius x Tenniel illustration style, soft wet-edge watercolor bleeds, ragged ink-line outlines, NOT digital NOT 3D NOT photoreal NOT pixel-art NOT cartoon NOT roblox, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime accents maximum 5 percent",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-ground-painted-v3.png",
+      "request_id": "019de424-703a-7b41-ad48-ba8bc2c49244",
+      "response_url": "https://queue.fal.run/fal-ai/flux-pro/requests/019de424-703a-7b41-ad48-ba8bc2c49244",
+      "status": "raw-downloaded",
+      "raw_url": "https://v3b.fal.media/files/b/0a987a2c/xodwmb-c_IQPgTHBSkT1i_6bd57d2f0d554c139c09f24be9f8b5d8.jpg",
+      "raw_size": 596979
+    }
+  ]
+}

@@ -230,12 +230,15 @@ export class Cosmo {
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     let key: string;
 
+    // Sprint 11A — body-mass restored in re-rendered poses but pose-distinction
+    // is architectural ceiling of img2img+ControlNet. We compensate in-engine
+    // via tweens/scale/rotation so each state still reads visually distinct.
+    // Reset transforms first so a state-exit returns Cosmo to neutral.
+    this.applyAnimTransform(dt);
+
     switch (this.state) {
       case 'cling':
         key = 'cosmo-cling-right';
-        // Cling-side determines facing — render hands toward the wall.
-        // clingSide = -1 → left wall → flipX so suction-cups face left.
-        // clingSide = +1 → right wall → no flip.
         this.sprite.setFlipX(this.clingSide < 0);
         this.sprite.setTexture(key);
         return;
@@ -254,10 +257,6 @@ export class Cosmo {
         break;
 
       case 'run': {
-        // Alternate walk-1 / walk-2 based on phase accumulator.
-        // TODO(Sprint 8E+): walk-1/walk-2 eye-drift — chameleon eyes shift
-        // ~3px between frames (Flux seed-variance). Fix via per-frame
-        // seed-lock pass through fal.ai (~$0.18/run). Deferred from 8D.
         this.walkPhase += dt;
         if (this.walkPhase >= Cosmo.WALK_FRAME_DT) {
           this.walkPhase -= Cosmo.WALK_FRAME_DT;
@@ -269,8 +268,6 @@ export class Cosmo {
 
       case 'idle':
       default:
-        // Idle: use walk-1 (most "neutral" stride). Reset walk-cycle so the next
-        // run-transition starts on frame 1 — prevents flicker on quick taps.
         this.walkPhase = 0;
         this.walkFrameToggle = 0;
         key = 'cosmo-walk-1';
@@ -280,4 +277,72 @@ export class Cosmo {
     this.sprite.setFlipX(this.facing < 0);
     this.sprite.setTexture(key);
   }
+
+  /**
+   * Sprint 11A — in-engine pose-distinction compensation. The re-rendered
+   * sprites all share canonical neutral standing pose, so we tween scale +
+   * rotation per state to make each frame read distinctly at 120px.
+   *
+   *  - jump (up):   slight squash + tilt (anticipation, knees-tucked feel)
+   *  - jump (fall): tilt forward, no squash (T-pose-falling feel)
+   *  - run:         subtle Y-bob synced to walk-cycle (gait pulse)
+   *  - cling:       handled in switch (setFlipX) — no extra transform
+   *  - damage:      brief shake (handled by takeDamage tween)
+   *  - death:       Z-rotation tween (already in takeDamage)
+   *  - idle:        gentle breathing-pulse (subtle Y-scale ~2%)
+   */
+  private applyAnimTransform(dt: number): void {
+    const body = this.sprite.body as Phaser.Physics.Arcade.Body;
+    this.animPhase += dt;
+
+    switch (this.state) {
+      case 'jump': {
+        if (body.velocity.y < 0) {
+          // jump-up: slight squash (taller-narrower) + small tilt opposite facing
+          this.sprite.setScale(0.94, 1.08);
+          this.sprite.setAngle(this.facing * -6);
+        } else {
+          // jump-fall: forward-leaning tilt, no squash
+          this.sprite.setScale(1.0, 1.0);
+          this.sprite.setAngle(this.facing * 8);
+        }
+        break;
+      }
+
+      case 'run': {
+        // Subtle Y-bob synced to walk-cycle for gait illusion.
+        const bob = Math.sin((this.animPhase / Cosmo.WALK_FRAME_DT) * Math.PI) * 0.03;
+        this.sprite.setScale(1.0, 1.0 + bob);
+        this.sprite.setAngle(0);
+        break;
+      }
+
+      case 'cling':
+        // Cling stays neutral — facing-flip handles visual rotation.
+        this.sprite.setScale(1.0, 1.0);
+        this.sprite.setAngle(0);
+        break;
+
+      case 'damage':
+        // damagePhase shake handled by takeDamage tween; just reset scale.
+        this.sprite.setScale(1.0, 1.0);
+        break;
+
+      case 'death':
+        // Z-rotation tween is set in takeDamage; preserve it (no override).
+        this.sprite.setScale(1.0, 1.0);
+        return;
+
+      case 'idle':
+      default: {
+        // Gentle breathing-pulse so idle Cosmo isn't dead-still.
+        const breathe = Math.sin(this.animPhase * 1.6) * 0.02;
+        this.sprite.setScale(1.0 + breathe * 0.5, 1.0 + breathe);
+        this.sprite.setAngle(0);
+        break;
+      }
+    }
+  }
+
+  private animPhase = 0;
 }

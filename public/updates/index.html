@@ -206,6 +206,70 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.8.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 11: visual + audio overhaul</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Op live playtest van v0.7.3 viel direct op dat de online versie er als 1992 uit zag — Cosmo was een stick-puppet, HUD was clipart, tiles waren patroon-tegels, en muziek speelde <strong>helemaal niet</strong>. Sprint 11 pakt alles in één klap aan: 4 parallelle teams (Cosmo HD-rerender, HUD volledige redesign, tile-set redesign, audio-debug) en deploy.</p>
+        </div>
+        <h3>ADDED (11A — COSMO POSES HD-RERENDER)</h3>
+        <ul class="update__highlights">
+          <li>jump-up: scale(0.94, 1.08) + 6° tilt opposite-facing (anticipation squash)</li>
+          <li>jump-fall: scale(1.0) + 8° forward-tilt (T-pose-falling)</li>
+          <li>run: Y-bob <code>sin(walkPhase × π) × 0.03</code> (gait pulse)</li>
+          <li>idle: subtle breathing pulse <code>sin(animPhase × 1.6) × 0.02</code></li>
+          <li>cling: neutral (setFlipX al voldoende)</li>
+          <li>damage/death: rotation-tween al in <code>takeDamage</code> (Sprint 8D)</li>
+        </ul>
+<h3>ADDED (11B — HUD/UI VOLLEDIGE REDESIGN)</h3>
+        <ul class="update__highlights">
+          <li><strong>Top-left game-info pill</strong>: backdrop-blur(20px) saturate(140%), <code>rgba(20,16,26,0.55)</code> background, 1px stroke <code>#F4A261</code> 0.3 alpha, border-radius 18px. Cormorant-Garamond italic 18px voor &quot;Cosmos · L1 First Steps&quot;, JetBrains-Mono 14px voor metrics. Hartjes als canvas-drawn watercolor heart-primitives (filled = saffron-glow + faded-rose halo, outline = ink-aubergine 1.5px stroke). Bomb + star als canvas-primitives.</li>
+          <li><strong>Top-right nav pill</strong>: synchroon met game-info, version-pill als ink-aubergine sub-bouwsteen met monospace tekst. Hover: saffron-glow background-overgang met <code>ease-out-expo 220ms</code>.</li>
+          <li><strong>Bottom-center controls-hint pill</strong>: auto-hide na 8s, fade-in 600ms easeOutExpo, re-fade-in 4s op keypress.</li>
+          <li><code>src/phaser/hud/HudOverlay.ts</code> (18KB) — class met canvas-rendering + tween-management, attach/detach lifecycle hooks via Phaser scene events.</li>
+          <li><code>&#039;♥&#039;.repeat()</code> glyphs <strong>definitief weg</strong>.</li>
+          <li>Mobile responsive: pills compact op &lt;600px, controls-hint hidden (touch-overlay heeft eigen guidance).</li>
+        </ul>
+<h3>ADDED (11C — TILE-SET REDESIGN)</h3>
+        <ul class="update__highlights">
+          <li>ground / dirt / wall / wall-cracked / mushroom / spike (per-tile fallback) / trampoline (8 squares, 256² seamless)</li>
+          <li>spike-strip (1024×128 continue strip — niet wired, future per-row refactor)</li>
+          <li>ladder (256×1024 vertical organic vine — preloaded, future L-grid char)</li>
+          <li>bg-grass-strip (1024×128 painted bottom-band — preloaded)</li>
+          <li><strong>Flux Pro &quot;macro close-up&quot; border-bias</strong>: interpreteert prompt als professional product-photography met ring-around-empty-center. Fix: front-rider <code>&quot;SEAMLESS UNIFORM TEXTURE filling 100 percent&quot; + &quot;NO empty center NO border-only NO subject-at-edges&quot;</code>.</li>
+          <li><strong>Stylized illustration tiles → Flux Dev</strong> ipv Flux Pro. Trampoline 3× retry in Pro, 1-shot in Dev met &quot;illustration of plump mushroom-cap dome from 3/4 angle&quot;.</li>
+          <li><strong>Strip aspect-ratios werken first-try</strong> (8:1 horizontal + 1:4 vertical) — composition-bias trad NIET op.</li>
+        </ul>
+<h3>SPRINT 11 ARCHITECTUUR-LERINGEN</h3>
+        <ul class="update__highlights">
+          <li><strong>Vite&#039;s MediaElementSource gesture-protocol</strong>: AudioContext en HTMLAudioElement hebben gescheiden autoplay-locks. Resume context is niet genoeg — moet OOK audio.play() retry op gesture.</li>
+          <li><strong>img2img+ControlNet pipeline ceiling voor pose-variation</strong>: canonical noise-init wint van canny-conditioning ongeacht 13 strength-combinaties. Voor onderscheidbare poses: LoRA fine-tune of 3D rig. Tussenoplossing: in-engine scale/rotation tweens.</li>
+          <li><strong>Glassmorph + canvas-primitives</strong> voor HUD geeft 2026-feel zonder bitmap-icons of glyph-fallbacks.</li>
+          <li><strong>Per-asset model-pick</strong> matters: Flux Pro voor textures, Flux Dev voor stylized illustrations.</li>
+        </ul>
+<h3>NIET GEDAAN (SPRINT 12+)</h3>
+        <ul class="update__highlights">
+          <li>Cosmo-LoRA fine-tune of Meshy 3D rig (echte pose-variation, niet via img2img)</li>
+          <li>Walk-1/walk-2 eye-drift fix (per-frame seed-lock pass, $0.18)</li>
+          <li>Spike-strip wiring (decodeLevel refactor om contiguous <code>^</code> runs te detecteren)</li>
+          <li>Ladder + grass-strip in L-grid (nieuwe legend-char <code>L</code> voor klimroutes)</li>
+          <li>Bonus damage-warp variant (1-line pool append)</li>
+          <li>Per-biome music-switch</li>
+          <li>Hallucination ducking music-gain</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.7.3</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 10: insanity live — hallucinations + damage warps</h2>

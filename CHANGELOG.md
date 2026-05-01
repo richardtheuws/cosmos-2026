@@ -4,6 +4,78 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.8.0] — 2026-05-01 — Sprint 11: visual + audio overhaul
+
+Op live playtest van v0.7.3 viel direct op dat de online versie er als 1992 uit zag — Cosmo was een stick-puppet, HUD was clipart, tiles waren patroon-tegels, en muziek speelde **helemaal niet**. Sprint 11 pakt alles in één klap aan: 4 parallelle teams (Cosmo HD-rerender, HUD volledige redesign, tile-set redesign, audio-debug) en deploy.
+
+### Fixed (11D — audio bug)
+
+**Root cause**: `audioEl.play()` werd in `init()` aangeroepen vóór gesture; browser blokkeerde met `NotAllowedError` die `.catch()` stilletjes wegslokte. `ensureRunning()` deed alleen `ctx.resume()` op gesture, **retried play() niet**. AudioContext en HTMLAudioElement hebben gescheiden autoplay-locks — context werd unsuspended, audio-element bleef paused, MediaElementSource pompte stilte.
+
+**Fix**: `MusicSource` interface kreeg `audioEl?: HTMLAudioElement`, `createStreamedTrack()` exposeert het, `ensureRunning()` retry'd play() bij paused. Idempotent op subsequent gestures. Bonus: error-listener logt nu `audio.error.code/message`. Headless Chromium grant autoplay automatisch — daarom miste eerdere oppervlakkige tests dit (memory-gotcha gedocumenteerd).
+
+### Added (11A — Cosmo poses HD-rerender)
+
+6 pose-frames (walk-1, walk-2, jump-up, jump-fall, cling-right, hurt) re-rendered met **img2img + ControlNet/canny** (canonical-v2 als image_url strength 0.45–0.65, control_lora 1.20–1.25, seed 7777 voor face-consistency). **Body-mass volledig gerestaureerd** — Hayao×Moebius watercolor textuur, chameleon eyes, suction-cup discs, faded-rose spots. Stick-puppet-bug **gefixt**.
+
+**Bekend architectural ceiling**: 13 strength-combinaties getest, in alle gevallen wint canonical noise-init van canny-conditioning → poses lijken statisch. Pose-distinction vereist Cosmo-LoRA fine-tune of Meshy 3D rig (Sprint 12+). Cost: $1.92 (van $5–8 budget).
+
+**In-engine compensatie** (Sprint 11E inline): `Cosmo.updateAnim()` past nu scale + rotation per state toe zodat elke frame visueel onderscheidbaar is op 120px:
+- jump-up: scale(0.94, 1.08) + 6° tilt opposite-facing (anticipation squash)
+- jump-fall: scale(1.0) + 8° forward-tilt (T-pose-falling)
+- run: Y-bob `sin(walkPhase × π) × 0.03` (gait pulse)
+- idle: subtle breathing pulse `sin(animPhase × 1.6) × 0.02`
+- cling: neutral (setFlipX al voldoende)
+- damage/death: rotation-tween al in `takeDamage` (Sprint 8D)
+
+### Added (11B — HUD/UI volledige redesign)
+
+Cosmic Cathedral pill-architectuur, glassmorph + Hayao×Moebius elegance:
+
+- **Top-left game-info pill**: backdrop-blur(20px) saturate(140%), `rgba(20,16,26,0.55)` background, 1px stroke `#F4A261` 0.3 alpha, border-radius 18px. Cormorant-Garamond italic 18px voor "Cosmos · L1 First Steps", JetBrains-Mono 14px voor metrics. Hartjes als canvas-drawn watercolor heart-primitives (filled = saffron-glow + faded-rose halo, outline = ink-aubergine 1.5px stroke). Bomb + star als canvas-primitives.
+- **Top-right nav pill**: synchroon met game-info, version-pill als ink-aubergine sub-bouwsteen met monospace tekst. Hover: saffron-glow background-overgang met `ease-out-expo 220ms`.
+- **Bottom-center controls-hint pill**: auto-hide na 8s, fade-in 600ms easeOutExpo, re-fade-in 4s op keypress.
+- `src/phaser/hud/HudOverlay.ts` (18KB) — class met canvas-rendering + tween-management, attach/detach lifecycle hooks via Phaser scene events.
+- `'♥'.repeat()` glyphs **definitief weg**.
+- Mobile responsive: pills compact op <600px, controls-hint hidden (touch-overlay heeft eigen guidance).
+
+### Added (11C — Tile-set redesign)
+
+10 nieuwe painted-watercolor assets in `public/assets/tiles/` (v3-suffix), Hayao×Moebius style coherent met Cosmo + enemies, locked palette respected:
+
+- ground / dirt / wall / wall-cracked / mushroom / spike (per-tile fallback) / trampoline (8 squares, 256² seamless)
+- spike-strip (1024×128 continue strip — niet wired, future per-row refactor)
+- ladder (256×1024 vertical organic vine — preloaded, future L-grid char)
+- bg-grass-strip (1024×128 painted bottom-band — preloaded)
+
+**Cost**: $0.68 (van $4–6 budget). Quality > quantity: 10 first-pass + 5 retries.
+
+**Belangrijke nieuwe leringen** (memory):
+- **Flux Pro "macro close-up" border-bias**: interpreteert prompt als professional product-photography met ring-around-empty-center. Fix: front-rider `"SEAMLESS UNIFORM TEXTURE filling 100 percent" + "NO empty center NO border-only NO subject-at-edges"`.
+- **Stylized illustration tiles → Flux Dev** ipv Flux Pro. Trampoline 3× retry in Pro, 1-shot in Dev met "illustration of plump mushroom-cap dome from 3/4 angle".
+- **Strip aspect-ratios werken first-try** (8:1 horizontal + 1:4 vertical) — composition-bias trad NIET op.
+
+### Sprint 11 architectuur-leringen
+
+- **Vite's MediaElementSource gesture-protocol**: AudioContext en HTMLAudioElement hebben gescheiden autoplay-locks. Resume context is niet genoeg — moet OOK audio.play() retry op gesture.
+- **img2img+ControlNet pipeline ceiling voor pose-variation**: canonical noise-init wint van canny-conditioning ongeacht 13 strength-combinaties. Voor onderscheidbare poses: LoRA fine-tune of 3D rig. Tussenoplossing: in-engine scale/rotation tweens.
+- **Glassmorph + canvas-primitives** voor HUD geeft 2026-feel zonder bitmap-icons of glyph-fallbacks.
+- **Per-asset model-pick** matters: Flux Pro voor textures, Flux Dev voor stylized illustrations.
+
+### Cost
+
+~$2.60 totaal Sprint 11 (11A: $1.92 + 11C: $0.68; 11B/D: code-only). Ruim binnen budget.
+
+### Niet gedaan (Sprint 12+)
+
+- Cosmo-LoRA fine-tune of Meshy 3D rig (echte pose-variation, niet via img2img)
+- Walk-1/walk-2 eye-drift fix (per-frame seed-lock pass, $0.18)
+- Spike-strip wiring (decodeLevel refactor om contiguous `^` runs te detecteren)
+- Ladder + grass-strip in L-grid (nieuwe legend-char `L` voor klimroutes)
+- Bonus damage-warp variant (1-line pool append)
+- Per-biome music-switch
+- Hallucination ducking music-gain
+
 ## [0.7.3] — 2026-05-01 — Sprint 10: insanity live — hallucinations + damage warps
 
 Sprint 9 leverde één base-track per biome; v0.7.3 voegt **mesmerizing insanity overlays** toe — psychedelic peaks die random uit een pool crossfaden bovenop de base-music. Plus hot-fix voor een `String.repeat(-1)` crash in de HUD bij dubbele damage-hits.

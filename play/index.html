@@ -30,49 +30,186 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   z-index: 1;
 }
 #game-canvas canvas { display: block; }
+/* ============================================================
+   SPRINT 11B — Cosmic Cathedral HUD pills
+   - Top-left:   game-info pill (label · hearts · bomb · star · state)
+   - Top-right:  nav pill (Home / Verhaal / Updates / Steun) + version
+   - Bottom:     controls-hint pill, auto-hide na 8s
+   Glassmorph: rgba(20,16,26,0.55) + backdrop-blur(20px)
+              + 1px stroke faded-rose 0.3 alpha + radius 18px.
+   ============================================================ */
 .hud {
   position: fixed; top: 0; left: 0; right: 0;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.6rem 1rem;
-  padding-top: max(0.6rem, env(safe-area-inset-top, 0px));
-  padding-left: max(1rem, env(safe-area-inset-left, 0px));
-  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 14px 18px;
+  padding-top: max(14px, env(safe-area-inset-top, 0px));
+  padding-left: max(18px, env(safe-area-inset-left, 0px));
+  padding-right: max(18px, env(safe-area-inset-right, 0px));
   z-index: 10;
   font-family: var(--font-body);
-  font-size: 1rem; /* desktop default; pill children override */
   pointer-events: none;
+  gap: 0.6rem;
+  flex-wrap: nowrap;
+}
+.hud-left, .hud-right {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  pointer-events: auto;
   flex-wrap: wrap;
-  gap: 0.4rem;
 }
-.hud-left, .hud-right { display: flex; gap: 0.6rem; align-items: center; pointer-events: auto; flex-wrap: wrap; }
-.hud a {
-  color: var(--mushroom-cream);
-  background: rgba(20, 16, 26, 0.78);
-  padding: 6px 14px; border-radius: 999px;
-  text-decoration: none;
-  font-size: 16px; /* desktop pill */
-  letter-spacing: 0.05em;
-  border: 1px solid rgba(244, 162, 97, 0.3);
-}
-.hud a:hover { background: var(--saffron-glow); color: var(--ink-aubergine); border-color: var(--saffron-glow); text-decoration: none; }
-.hud-version {
-  color: rgba(245, 237, 216, 0.6);
-  font-family: var(--font-mono); font-size: 14px;
-  letter-spacing: 0.1em;
+.hud-right { justify-content: flex-end; }
+
+/* Shared pill chrome — used for all three HUD elements. */
+.hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   background: rgba(20, 16, 26, 0.55);
-  padding: 4px 10px; border-radius: 4px;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(244, 162, 97, 0.3);
+  border-radius: 18px;
+  padding: 10px 14px;
+  color: var(--mushroom-cream);
+  box-shadow: 0 6px 18px rgba(20, 16, 26, 0.18);
+  pointer-events: auto;
 }
-/* Tablet: 14px pills */
+
+/* ===== Top-left: game-info pill ===== */
+.hud-pill--gameinfo .hud-pill__label {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--saffron-glow);
+  letter-spacing: 0.01em;
+  margin-right: 0.25rem;
+}
+.hud-pill--gameinfo .hud-pill__hearts {
+  display: inline-block;
+  vertical-align: middle;
+}
+.hud-pill--gameinfo .hud-pill__icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+.hud-pill--gameinfo .hud-pill__count {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--mushroom-cream);
+  min-width: 1.4ch;
+  text-align: right;
+}
+.hud-pill--gameinfo .hud-pill__state {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(245, 237, 216, 0.6);
+  margin-left: 0.5rem;
+  letter-spacing: 0.06em;
+}
+
+/* ===== Top-right: nav pill ===== */
+.hud-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(20, 16, 26, 0.55);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(244, 162, 97, 0.3);
+  border-radius: 18px;
+  padding: 6px 8px;
+  pointer-events: auto;
+}
+.hud-nav a {
+  color: var(--mushroom-cream);
+  font-size: 14px;
+  font-family: var(--font-body);
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background-color 220ms var(--ease-out-expo),
+              color 220ms var(--ease-out-expo);
+}
+.hud-nav a:hover {
+  background: var(--saffron-glow);
+  color: var(--ink-aubergine);
+  text-decoration: none;
+}
+.hud-version {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 162, 97, 0.18);
+  white-space: nowrap;
+}
+
+/* ===== Bottom-center: controls hint pill ===== */
+.hud-pill--controls {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  z-index: 11;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out-expo),
+              transform 600ms var(--ease-out-expo);
+  padding: 8px 16px;
+}
+.hud-pill--controls.hud-pill--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.hud-pill--controls .hud-key {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+.hud-pill--controls .hud-key + .hud-key { margin-left: 0.2rem; }
+.hud-pill--controls .hud-key__sym {
+  font-family: var(--font-mono);
+  color: var(--saffron-glow);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.hud-pill--controls .hud-key__lbl {
+  font-family: var(--font-body);
+  color: rgba(245, 237, 216, 0.78);
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* Tablet (<1024px): pills slightly tighter */
 @media (max-width: 1023px) {
-  .hud a { font-size: 14px; padding: 5px 12px; }
-  .hud-version { font-size: 12px; padding: 3px 8px; }
+  .hud-pill { padding: 9px 12px; gap: 0.45rem; }
+  .hud-pill--gameinfo .hud-pill__label { font-size: 16px; }
+  .hud-pill--gameinfo .hud-pill__count { font-size: 13px; }
+  .hud-nav a { font-size: 13px; padding: 5px 10px; }
+  .hud-version { font-size: 11px; padding: 4px 8px; }
 }
-/* Mobile: 12px pills, tighter spacing, single-row safe-area top */
+
+/* Mobile (<600px): compactere pills, hide controls hint (touch overlay heeft eigen guidance) */
 @media (max-width: 600px) {
-  .hud { padding: 0.4rem 0.6rem; padding-top: max(0.4rem, env(safe-area-inset-top, 0px)); }
-  .hud-left, .hud-right { gap: 0.35rem; }
-  .hud a { font-size: 12px; padding: 4px 10px; }
-  .hud-version { font-size: 11px; padding: 2px 6px; letter-spacing: 0.06em; }
+  .hud { padding: 10px 10px; padding-top: max(10px, env(safe-area-inset-top, 0px)); }
+  .hud-pill { padding: 8px 10px; gap: 0.35rem; border-radius: 14px; }
+  .hud-pill--gameinfo .hud-pill__label { font-size: 14px; }
+  .hud-pill--gameinfo .hud-pill__count { font-size: 12px; }
+  .hud-pill--gameinfo .hud-pill__state { display: none; }
+  .hud-nav { padding: 4px 6px; border-radius: 14px; }
+  .hud-nav a { font-size: 12px; padding: 4px 8px; border-radius: 10px; }
+  .hud-version { font-size: 10px; padding: 3px 6px; letter-spacing: 0.06em; }
+  .hud-pill--controls { display: none !important; }
 }
 /* Mobile-only disclaimer pill, dismissible. */
 .mobile-disclaimer {
@@ -129,13 +266,16 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
 
   <div class="hud">
     <div class="hud-left">
-      <a href="/">← Home</a>
-      <a href="/lore/">Het Verhaal</a>
-      <a href="/updates/">Updates</a>
+      <!-- Sprint 11B — game-info pill is injected by HudOverlay.attach() -->
     </div>
     <div class="hud-right">
-      <span class="hud-version">v0.7.3 · Insanity live — hallucinations + damage warp</span>
-      <a href="/support/">Steun</a>
+      <nav class="hud-nav" aria-label="Navigatie">
+        <a href="/">&larr; Home</a>
+        <a href="/lore/">Het Verhaal</a>
+        <a href="/updates/">Updates</a>
+        <a href="/support/">Steun</a>
+      </nav>
+      <span class="hud-version">v0.8.0 · Visual overhaul + music live</span>
     </div>
   </div>
 
