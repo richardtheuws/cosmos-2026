@@ -1,75 +1,96 @@
 /**
- * Three.js parallax background. Three textured planes at different depths and
- * parallax multipliers, all driven from the same globalUniforms.cameraX so the
- * 3D layer scrolls in lockstep with the Phaser game-camera.
+ * Three.js parallax background. Per level we load ONE biome — three layers
+ * (far/mid/near) of the SAME scene at different parallax multipliers. No more
+ * cross-biome stacking.
  *
- * S2 deliverable is the spike: prove sync, prove it doesn't fight Phaser. Real
- * Meshy props + post-FX stack come in S3 and S6.
+ * If a layer fails to load (e.g. asset not yet generated), the scene quietly
+ * skips that layer rather than aborting — the show still goes on with whatever
+ * has rendered.
  */
 import * as THREE from 'three';
 import type { GlobalUniforms } from '../core/globalUniforms';
+import type { Biome, BiomeLayer } from '../data/biomes';
 
-const PARALLAX = {
-  far: 0.18,
-  mid: 0.42,
-  near: 0.78,
-} as const;
-
-interface Layer {
+interface RuntimeLayer {
   mesh: THREE.Mesh;
   parallax: number;
-  baseY: number;
 }
 
 export class ParallaxScene {
   scene: THREE.Scene;
   camera: THREE.OrthographicCamera;
   renderer: THREE.WebGLRenderer;
-  private layers: Layer[] = [];
+  private layers: RuntimeLayer[] = [];
+  private ambientPlane: THREE.Mesh;
 
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      alpha: true,
+      alpha: false,
       antialias: true,
       powerPreference: 'high-performance',
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0xf5edd8, 0);
+    this.renderer.setClearColor(0xf5edd8, 1);
 
     const aspect = window.innerWidth / window.innerHeight;
     const halfH = 1;
     this.camera = new THREE.OrthographicCamera(-aspect * halfH, aspect * halfH, halfH, -halfH, 0.01, 100);
     this.camera.position.z = 5;
 
+    // Ambient plane is now redundant with opaque clear-color, but kept as belt-and-braces
+    // for biome ambient tinting that matches but isn't identical to clear (e.g. cave biome).
+    const ambientGeo = new THREE.PlaneGeometry(40, 40);
+    const ambientMat = new THREE.MeshBasicMaterial({ color: 0xf5edd8, depthWrite: false });
+    this.ambientPlane = new THREE.Mesh(ambientGeo, ambientMat);
+    this.ambientPlane.position.z = -20;
+    this.scene.add(this.ambientPlane);
+
     this.bindResize();
   }
 
-  /** Add a textured plane at a depth z; loader resolves async, layer joins on success. */
-  async addLayer(textureUrl: string, parallax: number, depth: number, scaleY = 1): Promise<void> {
-    const tex = await new THREE.TextureLoader().loadAsync(textureUrl);
+  /** Replace all layers with the chosen biome's far/mid/near images. */
+  async loadBiome(biome: Biome): Promise<void> {
+    this.clearLayers();
+    (this.ambientPlane.material as THREE.MeshBasicMaterial).color.setHex(biome.ambient);
+    this.renderer.setClearColor(biome.ambient, 1);
+    const order: BiomeLayer[] = [biome.far, biome.mid, biome.near];
+    for (const layer of order) {
+      try {
+        await this.addLayer(layer);
+      } catch {
+        // Asset not generated yet — skip silently, the rest of the biome still composes.
+      }
+    }
+  }
+
+  private async addLayer(layer: BiomeLayer): Promise<void> {
+    const tex = await new THREE.TextureLoader().loadAsync(layer.url);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     const aspect = tex.image.width / tex.image.height;
-    const geo = new THREE.PlaneGeometry(scaleY * aspect * 2, scaleY * 2);
-    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+    const geo = new THREE.PlaneGeometry(layer.scaleY * aspect * 2, layer.scaleY * 2);
+    const mat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
+      depthWrite: false,
+    });
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.z = depth;
-    mesh.position.y = (1 - scaleY) * 0.2;
+    mesh.position.z = layer.depth;
     this.scene.add(mesh);
-    this.layers.push({ mesh, parallax, baseY: mesh.position.y });
+    this.layers.push({ mesh, parallax: layer.parallax });
   }
 
-  /** Boilerplate setup: load three layers (sky, mid, near) for the cathedral biome. */
-  async loadDefaultBiome(): Promise<void> {
-    await Promise.all([
-      this.addLayer('/showcase-assets/bg-cloud-cathedral-sky.png', PARALLAX.far, -10, 1.5),
-      this.addLayer('/showcase-assets/bg-slow-bloom-jungle.png', PARALLAX.mid, -5, 1.2),
-      this.addLayer('/showcase-assets/bg-inkpool-cave.png', PARALLAX.near, -2, 1.0),
-    ]).catch(() => {
-      /* swallow per-layer 404s — backgrounds may not be loaded yet */
-    });
+  private clearLayers(): void {
+    for (const layer of this.layers) {
+      layer.mesh.geometry.dispose();
+      const m = layer.mesh.material;
+      if (Array.isArray(m)) m.forEach((mat) => mat.dispose());
+      else m.dispose();
+      this.scene.remove(layer.mesh);
+    }
+    this.layers = [];
   }
 
   /** Per-frame tick. Reads global cameraX (Phaser-pixel space) and shifts layers. */

@@ -141,6 +141,42 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.3.1</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 3.1: per-biome parallax + visuele polish</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li>**Parallax-stack toonde 3 verschillende biomes door elkaar** (cathedral / jungle / cave). Refactor: per level wordt nu **één biome** geladen — drie layers (far / mid / near) van DEZELFDE scene. PRD §5.3 conform</li>
+          <li>Mushroom-tile zag eruit als dobbelstenen (3 kleine roze stippen). Vervangen door painterly cream-band met faded-rose underglow en flush-zijden voor naadloze tile-merge</li>
+          <li>Ground-tile box-grid weggehaald; vervangen door grass-band variatie + sub-ground hint</li>
+          <li>Wall-tile vertical wood-grain band ipv volledige rand-outline</li>
+          <li>Black backdrop wanneer mid/near layers transparant zijn — ambient clear-color is nu opaque biome-tint</li>
+        </ul>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li>`src/data/biomes.ts` — 3 biome configs (Slow Bloom / Inkpool Hollow / Cloud Cathedral) met per-layer parallax-multipliers en LEVEL_TO_BIOME mapping</li>
+          <li>3 nieuwe Slow Bloom backgrounds via Flux Pro: `bg-far.png` (sky + mountains), `bg-mid-cleaned.png` (cream mushroom canopy met BiRefNet alpha), `bg-near-cleaned.png` (faded-rose foreground frame met BiRefNet alpha)</li>
+          <li>3 nieuwe Inkpool Hollow backgrounds (bonus generation) — staan klaar voor S5 wanneer L4-L6 levels landen</li>
+          <li>L1Scene gebruikt nu de echte FalSprite Cosmo-frames (walk-1/walk-2/walk-3 + jump-up + jump-fall + cling) met per-state texture-swap</li>
+        </ul>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>ParallaxScene API: `loadBiome(biome)` ipv hardcoded `loadDefaultBiome()`. Biome wordt geconfigureerd in main.ts en kan straks dynamisch wisselen tussen levels.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.3.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 3: L1 + asset pipeline + audio</h2>

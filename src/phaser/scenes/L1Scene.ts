@@ -51,6 +51,18 @@ export class L1Scene extends Phaser.Scene {
     this.uniforms = data.uniforms;
   }
 
+  preload(): void {
+    // Real Cosmo frames generated via fal.ai (see Sprint 2 generation report).
+    // Each PNG is a 1024-wide painted single pose. We display them at 64x64 and
+    // align the body to a 28x36 inset (texture-space).
+    this.load.image('cosmo-walk-1', '/assets/sprites/cosmo-walk-1-cleaned.png');
+    this.load.image('cosmo-walk-2', '/assets/sprites/cosmo-walk-2-cleaned.png');
+    this.load.image('cosmo-walk-3', '/assets/sprites/cosmo-walk-3-cleaned.png');
+    this.load.image('cosmo-jump-up', '/assets/sprites/cosmo-jump-up-cleaned.png');
+    this.load.image('cosmo-jump-fall', '/assets/sprites/cosmo-jump-fall-cleaned.png');
+    this.load.image('cosmo-cling', '/assets/sprites/cosmo-cling-cleaned.png');
+  }
+
   create(): void {
     this.makeTextures();
     this.worldW = L1_GRID[0].length * TILE_SIZE;
@@ -63,7 +75,11 @@ export class L1Scene extends Phaser.Scene {
 
     this.populateLevel();
 
-    this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-stand');
+    this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-walk-2');
+    this.cosmo.sprite.setDisplaySize(64, 64);
+    // Body for 1024x1024 texture: roughly center, slightly below visual center.
+    const body = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
+    body.setSize(160, 380, false).setOffset(420, 380);
     this.physics.add.collider(this.cosmo.sprite, this.platforms);
     this.physics.add.overlap(this.cosmo.sprite, this.starsGroup, (_player, starSprite) => {
       const star = (starSprite as Phaser.Physics.Arcade.Sprite).getData('star') as Star | undefined;
@@ -87,6 +103,7 @@ export class L1Scene extends Phaser.Scene {
   override update(time: number, deltaMs: number): void {
     const dt = Math.min(0.05, deltaMs / 1000);
     this.cosmo.update(this.inputCtl, dt, this.uniforms);
+    this.swapCosmoTexture(time);
 
     // Hint Globes — proximity-trigger
     for (const globe of this.globes) {
@@ -182,31 +199,52 @@ export class L1Scene extends Phaser.Scene {
       g.generateTexture(key, TILE_SIZE, TILE_SIZE);
       g.destroy();
     };
-    // Ground — moss-sage with a darker top-edge highlight.
+    // Ground — moss-sage with a brighter grass-band on top, no per-tile box-grid.
     def('tex-ground', (g) => {
       g.fillStyle(COLOR.ground).fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-      g.fillStyle(0x9DBBA9).fillRect(0, 0, TILE_SIZE, 4);
-      g.lineStyle(1, COLOR.wall, 0.35).strokeRect(0.5, 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
+      g.fillStyle(0x9DBBA9).fillRect(0, 0, TILE_SIZE, 5);
+      g.fillStyle(0xB5D0BD, 0.7).fillRect(0, 0, TILE_SIZE, 2);
+      // Tiny variation on grass-edge so tiled rows don't look like a flat ribbon.
+      const seed = ((TILE_SIZE * 13) % 11) / 11;
+      for (let i = 0; i < 3; i += 1) {
+        g.fillStyle(0xB5D0BD, 0.6).fillRect(i * 11 + Math.floor(seed * 4), 4, 2, 2);
+      }
+      // Soft sub-ground hint near bottom
+      g.fillStyle(0x4F6E5C, 0.35).fillRect(0, TILE_SIZE - 3, TILE_SIZE, 3);
     });
     def('tex-dirt', (g) => {
       g.fillStyle(COLOR.dirt).fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-      // Speckles
-      g.fillStyle(0x3A5145, 0.5);
-      for (let i = 0; i < 6; i += 1) g.fillCircle(Math.random() * TILE_SIZE, Math.random() * TILE_SIZE, 1);
-      g.lineStyle(1, COLOR.wall, 0.3).strokeRect(0.5, 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
+      // Subtle horizontal striations — looks like packed earth, not grid cells.
+      g.fillStyle(0x3A5145, 0.35).fillRect(0, 6, TILE_SIZE, 1);
+      g.fillStyle(0x3A5145, 0.3).fillRect(0, 14, TILE_SIZE, 1);
+      g.fillStyle(0x3A5145, 0.4).fillRect(0, 22, TILE_SIZE, 1);
+      // Sparse pebbles
+      g.fillStyle(0x2A3A30, 0.6).fillCircle(8, 11, 1.5).fillCircle(22, 19, 1).fillCircle(14, 26, 1);
     });
     def('tex-wall', (g) => {
       g.fillStyle(COLOR.wall).fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-      g.fillStyle(0x55425F, 0.4).fillRect(0, 0, 4, TILE_SIZE);
-      g.fillStyle(0x55425F, 0.4).fillRect(TILE_SIZE - 4, 0, 4, TILE_SIZE);
-      g.lineStyle(1, 0x261A30, 0.7).strokeRect(0.5, 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
+      // Vertical highlight band at left edge — gives stacked tiles a wood-grain feel.
+      g.fillStyle(0x55425F, 0.5).fillRect(2, 0, 2, TILE_SIZE);
+      g.fillStyle(0x55425F, 0.3).fillRect(TILE_SIZE - 4, 0, 2, TILE_SIZE);
+      // Subtle horizontal accent every ~16px to break monotony when stacked vertically.
+      g.fillStyle(0x261A30, 0.45).fillRect(0, 0, TILE_SIZE, 1);
     });
+    // Mushroom platform — soft organic top-edge band + faded-rose underglow + ink ragged
+    // outline, no dice-pip dots. Designed to read as a single organic strip when tiled
+    // horizontally; sides are flush so multi-tile platforms blend into one cap.
     def('tex-mushroom', (g) => {
-      g.fillStyle(COLOR.mushroom).fillRoundedRect(0, 0, TILE_SIZE, TILE_SIZE, 8);
-      g.fillStyle(0xB85C7E, 0.45).fillCircle(8, 10, 3);
-      g.fillStyle(0xB85C7E, 0.45).fillCircle(22, 18, 4);
-      g.fillStyle(0xB85C7E, 0.45).fillCircle(15, 24, 2);
-      g.lineStyle(1.5, COLOR.wall, 0.6).strokeRoundedRect(0.5, 0.5, TILE_SIZE - 1, TILE_SIZE - 1, 8);
+      // Top band: brighter mushroom-cream, slight saffron warmth
+      g.fillStyle(0xF0DCBE).fillRect(0, 0, TILE_SIZE, 8);
+      // Body: mushroom-cream
+      g.fillStyle(COLOR.mushroom).fillRect(0, 8, TILE_SIZE, TILE_SIZE - 8);
+      // Underglow: faded-rose hint at bottom
+      g.fillStyle(0xB85C7E, 0.18).fillRect(0, TILE_SIZE - 6, TILE_SIZE, 6);
+      // Top-edge highlight (1px)
+      g.fillStyle(0xFAEBD0).fillRect(0, 0, TILE_SIZE, 2);
+      // Ragged ink outline only top + bottom (sides are flush so tiles merge)
+      g.lineStyle(1.2, COLOR.wall, 0.55);
+      g.beginPath().moveTo(0, 0.6).lineTo(TILE_SIZE, 0.6).strokePath();
+      g.beginPath().moveTo(0, TILE_SIZE - 0.6).lineTo(TILE_SIZE, TILE_SIZE - 0.6).strokePath();
     });
     def('tex-platform', (g) => {
       g.fillStyle(COLOR.platform).fillRect(0, 0, TILE_SIZE, TILE_SIZE);
@@ -250,12 +288,11 @@ export class L1Scene extends Phaser.Scene {
     });
   }
 
-  /** Phaser sprite-anims sit waiting for the FalSprite-derived atlas in S4. For
-   *  now they're no-ops so the controller's `playStateAnim()` doesn't error. */
+  /** Phaser texture-swap-driven "anim" — switches the sprite texture each frame
+   *  by listening to Cosmo's state-machine. Real anim-frames will arrive when
+   *  S4 packs the FalSprite output into a sprite-atlas. */
   private makeAnimations(): void {
-    // Intentionally empty in S3 — the procedural cosmo-stand texture has 1 frame
-    // and `Cosmo.playStateAnim()` already gracefully no-ops when the anim doesn't
-    // exist (see Cosmo.ts).
+    // No-op — texture swap is handled in update() per state.
   }
 
   private buildHUD(): void {
@@ -290,6 +327,33 @@ export class L1Scene extends Phaser.Scene {
       ``,
       `← →  move    Space  jump    ↑↓ pan`,
     ].join('\n'));
+  }
+
+  /** Swap the sprite texture each frame based on Cosmo's state. Walk-cycle
+   *  alternates between walk-1/2/3 every 110ms; other states are static frames. */
+  private swapCosmoTexture(time: number): void {
+    const sprite = this.cosmo.sprite;
+    let key: string;
+    switch (this.cosmo.state) {
+      case 'run': {
+        const phase = Math.floor(time / 110) % 4;
+        const order = ['cosmo-walk-2', 'cosmo-walk-1', 'cosmo-walk-2', 'cosmo-walk-3'];
+        key = order[phase];
+        break;
+      }
+      case 'jump':
+        key = 'cosmo-jump-up';
+        break;
+      case 'fall':
+        key = 'cosmo-jump-fall';
+        break;
+      case 'cling':
+        key = 'cosmo-cling';
+        break;
+      default:
+        key = 'cosmo-walk-2';
+    }
+    if (sprite.texture.key !== key) sprite.setTexture(key);
   }
 
   private triggerHint(idx: number): void {

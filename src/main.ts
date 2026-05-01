@@ -11,6 +11,7 @@ import { CanvasManager } from './core/canvasManager';
 import { InputController } from './core/inputController';
 import { ParallaxScene } from './three/parallaxScene';
 import { L1Scene } from './phaser/scenes/L1Scene';
+import { BIOMES } from './data/biomes';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -25,7 +26,7 @@ async function boot(): Promise<void> {
   input.attach();
 
   const parallax = new ParallaxScene(sceneCanvas);
-  await parallax.loadDefaultBiome();
+  await parallax.loadBiome(BIOMES['slow-bloom']);
 
   const phaserGame = new Phaser.Game({
     type: Phaser.AUTO,
