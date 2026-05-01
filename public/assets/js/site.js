@@ -11,16 +11,28 @@
         }
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -60px 0px' },
+    { threshold: 0.05 },
   );
 
   const reveal = (selector) => {
     document.querySelectorAll(selector).forEach((el) => observer.observe(el));
   };
 
+  /** First-paint pass — anything already in viewport reveals immediately, no scroll needed. */
+  const revealAboveFold = () => {
+    const vh = window.innerHeight;
+    document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < vh && rect.bottom > 0) {
+        el.classList.add('is-visible');
+      }
+    });
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     reveal('[data-reveal]');
     reveal('[data-reveal-stagger]');
+    requestAnimationFrame(revealAboveFold);
 
     const yearEl = document.querySelector('[data-current-year]');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
