@@ -3,9 +3,10 @@
  * explosion overlaps its bounds, after which it tweens out (scale 0 + alpha 0)
  * and removes its body so Cosmo can pass.
  *
- * Sprite: TODO (Asset Generator) — currently uses the existing
- * `tile-wall-painted` texture with a saffron-glow ink-crack overlay drawn via
- * Graphics. Replace with `tile-wall-cracked-painted` once generated.
+ * Sprite (Sprint 7D): uses dedicated `tile-wall-cracked-painted` Flux Dev
+ * texture — branching ink-aubergine cracks with saffron-glow tip-spark baked
+ * into the image. The legacy procedural Graphics overlay was removed since
+ * the asset itself communicates the breakable nature.
  *
  * Legend char: `B` (see src/data/levelL1.ts).
  */
@@ -13,7 +14,6 @@ import Phaser from 'phaser';
 
 export class BreakableWall {
   sprite: Phaser.GameObjects.Image;
-  private cracks: Phaser.GameObjects.Graphics;
   private destroyed = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number, key: string) {
@@ -25,20 +25,6 @@ export class BreakableWall {
     body.setSize(w, h, false).setOffset(0, 0);
     body.position.set(x, y);
     body.updateCenter();
-
-    // Ink-crack overlay — cosmetic hint that this wall is breakable. Cheap
-    // procedural lines drawn over the painted tile, no emoji or icons.
-    this.cracks = scene.add.graphics();
-    this.cracks.lineStyle(1.5, 0x3d2e4a, 0.85);
-    const cx = x + w / 2;
-    const cy = y + h / 2;
-    this.cracks
-      .beginPath().moveTo(cx - w * 0.3, cy - h * 0.3).lineTo(cx + w * 0.05, cy - h * 0.05).lineTo(cx + w * 0.3, cy + h * 0.25).strokePath()
-      .beginPath().moveTo(cx + w * 0.05, cy - h * 0.05).lineTo(cx - w * 0.2, cy + h * 0.3).strokePath()
-      .beginPath().moveTo(cx + w * 0.05, cy - h * 0.05).lineTo(cx + w * 0.25, cy - h * 0.35).strokePath();
-    // Saffron-glow halo dots at crack-tips for trippy coherence
-    this.cracks.fillStyle(0xF4A261, 0.55);
-    this.cracks.fillCircle(cx + w * 0.05, cy - h * 0.05, 1.6);
   }
 
   /** Returns true when actually destroyed (idempotent). */
@@ -49,14 +35,13 @@ export class BreakableWall {
     const body = this.sprite.body as Phaser.Physics.Arcade.StaticBody | null;
     if (body) body.enable = false;
     scene.tweens.add({
-      targets: [this.sprite, this.cracks],
+      targets: this.sprite,
       alpha: 0,
       scale: 0,
       duration: 280,
       ease: 'Cubic.easeIn',
       onComplete: () => {
         this.sprite.destroy();
-        this.cracks.destroy();
       },
     });
     return true;

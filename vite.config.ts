@@ -33,6 +33,16 @@ export default defineConfig(({ command }) => ({
         press: resolve(__dirname, 'public/press/index.html'),
         thanks: resolve(__dirname, 'public/thanks/index.html'),
       },
+      output: {
+        // Sprint 7C — vendor splitting: parallel-load the heavy libs so the
+        // main entry chunk only contains our own code. Three+postprocessing
+        // share a chunk because postprocessing imports three internally.
+        manualChunks: {
+          'three-vendor': ['three', 'postprocessing'],
+          'phaser-vendor': ['phaser'],
+          'audio-vendor': ['howler', 'tone'],
+        },
+      },
     },
   },
 

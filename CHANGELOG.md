@@ -4,6 +4,82 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.7.0] — 2026-05-01 — Sprint 7: parallel-team — anim, mobile, sprites, bundle
+
+Vier agents tegelijk: multi-frame Cosmo anim (7A), mobile/touch-controls (7B), bundle-size optimalisatie (7C), enemy + bomb sprite-generation pass (7D). Resultaat: Cosmo loopt en springt nu echt anders, mobile is speelbaar, main bundle is van 2.2MB naar 48KB en alle 12 enemies + bomb-stack hebben definitieve assets.
+
+### Added (7A — Multi-frame Cosmo anim)
+
+- **6 pose-frames** in `public/assets/sprites/v3/`: cosmo-walk-1, cosmo-walk-2, cosmo-jump-up, cosmo-jump-fall, cosmo-cling-right, cosmo-hurt — alle BiRefNet'd transparant
+- **Pipeline-doorbraak**: `fal-ai/flux-control-lora-canny` met **programmatische stick-figure skeletons** (PIL-rendered, geen handgetekende sketches nodig). Recipe: skeleton-only + control_lora_strength 1.2 + style-first prompt
+- **Sprint 5B/6A failure-modes definitief opgelost**: image-to-image als pose-anchor (nee), text-only suction-cups (nee), inpaint-refinement (nee). ControlNet/canny met skeletons geeft hard pose-constraint.
+- Cosmo state-machine: `playStateAnim()` vervangen door `updateAnim(dt)` texture-swap. Walk-cycle alterneert walk-1/walk-2 elke 133ms via `walkPhase` accumulator. Cling: `setFlipX(clingSide < 0)` voor left-wall mirror. Damage + death gebruiken cosmo-hurt.
+
+[grid: /assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.png /assets/sprites/v3/cosmo-walk-1.png /assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.png /assets/sprites/v3/cosmo-jump-fall.png "Skeleton walk-1 control-input · Walk-1 result · Skeleton jump-fall · Jump-fall result"]
+
+[grid: /assets/sprites/v3/cosmo-walk-1.png /assets/sprites/v3/cosmo-walk-2.png /assets/sprites/v3/cosmo-jump-up.png /assets/sprites/v3/cosmo-jump-fall.png /assets/sprites/v3/cosmo-cling-right.png /assets/sprites/v3/cosmo-hurt.png "walk-1 · walk-2 · jump-up · jump-fall · cling-right · hurt"]
+
+**Pose-fidelity**: 5/6 frames excellent (8-10/10), walk-1/walk-2 ship-quality op 120px in-game (style-thinness barely visible). Cost ~$0.88. Open issue: walk-1/walk-2 eye-drift (1 vs 2 oogvariant) — per-frame seed-lock fix is $0.09 elk indien storend in playtest.
+
+### Added (7B — Mobile + touch-controls)
+
+- **`src/ui/touchOverlay.ts`** (nieuw): 4 canvas-drawn knoppen (LEFT/RIGHT 80px d-pad bottom-left + BOMB 80px / JUMP 100px bottom-right). Canvas-glyphs (chevron-arrows + ink-aubergine bomb-disk + saffron pressed-state). **Geen emoji's, geen unicode-icons** — pure canvas-primitives volgens project-regel.
+- **`src/core/deviceDetect.ts`** (nieuw): `isTouchDevice = (touch-capable) && (innerWidth < 1024)`. iPad Air landscape blijft desktop UX, iPad Mini portrait krijgt overlay, hybride laptops ≥1280 ook geen overlay.
+- **`InputController.setVirtualInput()`**: rising-edge merge van virt + kb signals voor jump/bombJustPressed. Cosmo state-machine en fysica niet aangeraakt — alleen input-mapping.
+- **Responsive HUD**: pills 16/14/12px (desktop / <1024 / <600), safe-area paddings rond HUD én overlay-root, viewport-fit=cover voor iPhone notch.
+- **Cosmo display-size**: 120px desktop, 80px mobile via Phaser scale. Body geometry pixel-identiek (180×380 op 1024px source) → collision invariant.
+- **"Best on desktop" disclaimer-pill** met 6s auto-dismiss + close-button.
+- **Playwright-tests** op iPhone 14 Pro / iPad Mini / desktop allen groen.
+
+### Added (7D — Sprite-generation pass)
+
+12 nieuwe assets, $0.84 totaal, geen `spriteTodo: true` flags meer.
+
+[grid: /assets/sprites/v4/enemy-parachute.png /assets/sprites/v4/enemy-pinkworm.png /assets/sprites/v4/enemy-ghost.png /assets/sprites/v4/enemy-spittingwall.png /assets/sprites/v4/enemy-dragonfly.png /assets/sprites/v4/enemy-flyingwisp.png "parachute · pinkworm · ghost · spittingwall · dragonfly · flyingwisp"]
+
+[grid: /assets/sprites/v4/enemy-suctioncrawler.png /assets/sprites/v4/enemy-tuliplauncher.png /assets/sprites/v4/enemy-spark.png /assets/bombs/bomb.png /assets/bombs/bomb-pickup.png /assets/tiles/tile-wall-cracked-painted.png "suctioncrawler · tuliplauncher · spark · bomb · bomb-pickup · cracked-wall"]
+
+- **9 enemy-sprites** in `public/assets/sprites/v4/` (8× one-shot, spark v2)
+- **3 bomb-assets** in `public/assets/bombs/` + `public/assets/tiles/tile-wall-cracked-painted.png` (cracked-wall v3 — eerst 2× tile-trap)
+- **2 SFX** via ElevenLabs: `bomb-throw.mp3` (9KB) + `bomb-boom.mp3` (15KB), wired in `sfxBus.ts` SFX_MANIFEST
+- **EnemyTypes.ts**: 9 enemies → spriteTodo:false, dedicated keys, tint:0
+- **Bomb.ts**: texture-key `'bomb'` met `'bomb-procedural'` als fallback
+- **BreakableWall.ts**: Graphics ink-crack overlay verwijderd — cracks zitten nu baked in de texture
+
+### Changed (7C — Bundle-size manualChunks)
+
+- `vite.config.ts` — `build.rollupOptions.output.manualChunks` toegevoegd: `three-vendor` (three + postprocessing), `phaser-vendor` (phaser), `audio-vendor` (howler + tone)
+
+| Chunk | Before | After |
+|---|---:|---:|
+| main-*.js | 2,228 kB (gz 510) | **48 kB (gz 15)** — −98% |
+| three-vendor | — | 536 kB (gz 129) |
+| phaser-vendor | — | 1,609 kB (gz 358) |
+| audio-vendor | — | 36 kB (gz 10) |
+
+Total gzip ~gelijk; winst zit in parallel-loading. Geen logic-changes, geen dynamic imports nodig.
+
+### Sprint 7 architectuur-leringen
+
+- **Programmatische stick-figure skeletons + Flux Control LoRA Canny** geeft hard pose-constraint. Skeleton-only (geen image_url als style-ref) op control_lora_strength 1.2 + style-first prompt is de werkende recipe. Geen handsketch nodig.
+- **Suction-cup-pads werkten one-shot op 4-legged crawler** waar 12/12 op biped Cosmo faalden. Patroon: matching style-association + non-biped anatomy omzeilt training-bias. Toekomstige Cosmo-DNA NPCs kunnen hierop bouwen.
+- **BiRefNet polling**: `response_url` is HTTP 400 tijdens IN_QUEUE — poll `status_url` tot COMPLETED, dan response_url fetchen. Algemene fal.ai gotcha — gefixed in Sprint 7D `generate.py`.
+- **Tile-trap fix-recipe**: drop "psychedelic illustration" + "cosmic-adventure mood" termen (scene-magnets) en gebruik stripped close-up macro prompt + stacked anti-landscape negatives.
+- **Spark-hazard fix**: lead met "ONE tiny X hazard, NOT a creature NOT a body NOT fur" upfront — voorkomt body-growth rond abstract concept.
+- **Touch-overlay threshold (1024px) bewust over UA-sniffing gekozen** — touch+viewport heuristic is duurzamer en respecteert hybride devices.
+
+### Cost
+
+~$1.72 fal.ai + ElevenLabs (7A: $0.88 inpaint-pipeline + 7D: $0.84 sprite-gen). Sprint 7B/7C = $0 (alle code).
+
+### Niet gedaan (Sprint 8)
+
+- Walk-1/walk-2 eye-drift fix (per-frame seed-lock — $0.09 per frame indien storend in playtest)
+- Suno-tracks genereren (handmatig via suno.com — niet binnen agent scope)
+- L2/L3/L4 levels (alleen L1 First Steps speelbaar tot nu)
+- Save-state / progressie tracking
+- Settings-knop `?touch=1` override voor iPads ≥1024px die toch touch willen
+
 ## [0.6.0] — 2026-05-01 — Sprint 6: parallel-team — gameplay verticaal compleet
 
 Vier agents tegelijk: Cosmo canonical inpaint-fix (6A), enemies + damage-systeem (6B), bombs + VFX + breekbare walls (6C), audio-FFT bridge (6D). Resultaat: L1 is van een speel-loop met items + parallax naar een **echte gameplay-sandbox** met vijanden, kills, bombs, walls, en muziek-reactieve post-FX.

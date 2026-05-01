@@ -1,0 +1,76 @@
+[
+  {
+    "pose": "walk-1",
+    "error": "control-canny-walk-1 timed out"
+  },
+  {
+    "pose": "walk-1",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-1.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-1.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "walk-1",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-1-v2.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-1.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "walk-1",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-1-v3.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-1.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "walk-1",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-1-v3.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-1.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "walk-2",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-2.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-2.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "jump-up",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-jump-up.png",
+    "final_path": "public/assets/sprites/v3/cosmo-jump-up.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "jump-fall",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-jump-fall.png",
+    "final_path": "public/assets/sprites/v3/cosmo-jump-fall.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "cling-right",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-cling-right.png",
+    "final_path": "public/assets/sprites/v3/cosmo-cling-right.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "hurt",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-hurt.png",
+    "final_path": "public/assets/sprites/v3/cosmo-hurt.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  },
+  {
+    "pose": "walk-2",
+    "raw_path": "public/assets/case-study/cosmo-multi-frame/raw-walk-2.png",
+    "final_path": "public/assets/sprites/v3/cosmo-walk-2.png",
+    "control_lora_strength": 0.85,
+    "cost_estimate_usd": 0.085
+  }
+]

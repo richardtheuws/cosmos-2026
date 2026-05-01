@@ -83,24 +83,46 @@ export class L1Scene extends Phaser.Scene {
     //   suction-cup pads at hand-tips; tail removed via deterministic alpha-erase
     //   post-BiRefNet. See public/assets/case-study/cosmo-inpaint-process/
     //   _manifest.json for full pipeline.
+    // Sprint 7A — multi-frame poses via Flux Control LoRA Canny + skeleton-control.
+    // Each pose is a distinct 1024² texture; Cosmo.updateAnim() texture-swaps
+    // per state. See public/assets/case-study/cosmo-multi-frame/ for skeletons +
+    // raw Flux outputs. Walk-cycle alternates walk-1/walk-2 every ~133ms.
     const v3 = '/assets/sprites/v3';
     const v2 = '/assets/sprites/v2';
-    const canonical = `${v3}/cosmo-canonical-v2-cleaned.png`;
-    this.load.image('cosmo-walk-1', canonical);
-    this.load.image('cosmo-walk-2', canonical);
-    this.load.image('cosmo-walk-3', canonical);
-    this.load.image('cosmo-jump-up', canonical);
-    this.load.image('cosmo-jump-fall', canonical);
-    this.load.image('cosmo-cling', canonical);
+    this.load.image('cosmo-walk-1', `${v3}/cosmo-walk-1.png`);
+    this.load.image('cosmo-walk-2', `${v3}/cosmo-walk-2.png`);
+    this.load.image('cosmo-jump-up', `${v3}/cosmo-jump-up.png`);
+    this.load.image('cosmo-jump-fall', `${v3}/cosmo-jump-fall.png`);
+    this.load.image('cosmo-cling-right', `${v3}/cosmo-cling-right.png`);
+    this.load.image('cosmo-hurt', `${v3}/cosmo-hurt.png`);
 
     this.load.image('enemy-brumberry', `${v2}/enemy-brumberry-cleaned.png`);
     this.load.image('enemy-hopper', `${v2}/enemy-hopper-cabbage-cleaned.png`);
     this.load.image('enemy-eye-plant', `${v2}/enemy-eye-plant-cleaned.png`);
 
+    // Sprint 7D — dedicated sprites for the remaining 9 enemy classes.
+    // Flux Dev + BiRefNet, locked palette, Hayao×Moebius style coherent with Cosmo.
+    const v4 = '/assets/sprites/v4';
+    this.load.image('enemy-parachute', `${v4}/enemy-parachute-cleaned.png`);
+    this.load.image('enemy-pinkworm', `${v4}/enemy-pinkworm-cleaned.png`);
+    this.load.image('enemy-ghost', `${v4}/enemy-ghost-cleaned.png`);
+    this.load.image('enemy-spittingwall', `${v4}/enemy-spittingwall-cleaned.png`);
+    this.load.image('enemy-dragonfly', `${v4}/enemy-dragonfly-cleaned.png`);
+    this.load.image('enemy-flyingwisp', `${v4}/enemy-flyingwisp-cleaned.png`);
+    this.load.image('enemy-suctioncrawler', `${v4}/enemy-suctioncrawler-cleaned.png`);
+    this.load.image('enemy-tuliplauncher', `${v4}/enemy-tuliplauncher-cleaned.png`);
+    this.load.image('enemy-spark', `${v4}/enemy-spark-cleaned.png`);
+
+    // Sprint 7D — bomb assets (replaces procedural canvas textures).
+    this.load.image('bomb', '/assets/bombs/bomb-cleaned.png');
+    this.load.image('bomb-pickup', '/assets/bombs/bomb-pickup-cleaned.png');
+
     // Painted tiles — replace procedural Graphics in S5 wiring.
     this.load.image('tile-ground-painted', '/assets/tiles/tile-ground-cleaned.png');
     this.load.image('tile-dirt-painted', '/assets/tiles/tile-dirt.png');
     this.load.image('tile-wall-painted', '/assets/tiles/tile-wall-v2.png');
+    // Sprint 7D — dedicated cracked-wall texture for breakable walls.
+    this.load.image('tile-wall-cracked-painted', '/assets/tiles/tile-wall-cracked-painted.png');
     this.load.image('tile-mushroom-painted', '/assets/tiles/tile-mushroom-v2.png');
     this.load.image('tile-spike-painted', '/assets/tiles/tile-spike-cleaned.png');
     this.load.image('tile-trampoline-painted', '/assets/tiles/tile-trampoline.png');
@@ -126,15 +148,18 @@ export class L1Scene extends Phaser.Scene {
     this.enemiesGroup = this.physics.add.group();
     this.enemyProjectilesGroup = this.physics.add.group();
 
-    Bomb.ensureProceduralTexture(this);
-    this.ensureBombPickupTexture();
+    // Sprint 7D — real `bomb` and `bomb-pickup` textures preloaded above;
+    // procedural canvas-Graphics fallbacks are no longer needed for these.
 
     this.populateLevel();
 
-    this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-walk-2');
-    // Cosmo MOET prominenter zijn — TE GEK eis. Display 120x120. Body still slim (28x36
-    // worth in display-pixels) — texture-space body proportional to display.
-    this.cosmo.sprite.setDisplaySize(120, 120);
+    this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-walk-1');
+    // Cosmo MOET prominenter zijn — TE GEK eis. Display 120x120 desktop, 80x80 mobile.
+    // Sprint 7B: shrink on small viewports so HUD + touch overlay stay legible.
+    // Body proportions (texture-space 180x380 with 420/360 offset) stay fixed —
+    // only the display-scale changes; physics geometry is invariant.
+    const cosmoDisplay = this.scale.width < 1024 ? 80 : 120;
+    this.cosmo.sprite.setDisplaySize(cosmoDisplay, cosmoDisplay);
     const body = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(180, 380, false).setOffset(420, 360);
     this.physics.add.collider(this.cosmo.sprite, this.platforms);
@@ -233,7 +258,9 @@ export class L1Scene extends Phaser.Scene {
   override update(time: number, deltaMs: number): void {
     const dt = Math.min(0.05, deltaMs / 1000);
     this.cosmo.update(this.inputCtl, dt, this.uniforms);
-    this.swapCosmoTexture(time);
+    // Sprint 7A — texture-swap is now handled inside Cosmo.updateAnim() because
+    // each pose is a distinct texture (not a spritesheet). The old
+    // `swapCosmoTexture` referenced stale keys (cosmo-walk-3, cosmo-cling).
 
     // Hint Globes — proximity-trigger
     for (const globe of this.globes) {
@@ -330,17 +357,18 @@ export class L1Scene extends Phaser.Scene {
           this.trampolines.push(new Trampoline(this, s.x, s.y));
           break;
         case 'breakableWall': {
-          // TODO(asset): replace `tile-wall-painted` with a dedicated
-          // `tile-wall-cracked-painted` once Asset Generator ships it. The
-          // ink-crack overlay drawn by BreakableWall makes the variant readable.
-          const wall = new BreakableWall(this, s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-wall-painted');
+          // Sprint 7D — uses dedicated `tile-wall-cracked-painted` Flux Dev
+          // texture. BreakableWall still draws a thin Graphics overlay for
+          // saffron-glow tip-spark consistency with the bomb-impact moment.
+          const wall = new BreakableWall(this, s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-wall-cracked-painted');
           this.breakables.push(wall);
           this.platforms.add(wall.sprite);
           break;
         }
         case 'bombPickup': {
-          const pickup = this.physics.add.sprite(s.x, s.y, 'bomb-pickup-procedural');
-          pickup.setDisplaySize(28, 28);
+          // Sprint 7D — real bomb-pickup texture replaces procedural canvas.
+          const pickup = this.physics.add.sprite(s.x, s.y, 'bomb-pickup');
+          pickup.setDisplaySize(32, 32);
           const body = pickup.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false).setImmovable(true);
           this.bombPickupsGroup.add(pickup);
@@ -401,21 +429,8 @@ export class L1Scene extends Phaser.Scene {
     this.bombTargets.push(target);
   }
 
-  private ensureBombPickupTexture(): void {
-    if (this.textures.exists('bomb-pickup-procedural')) return;
-    const g = this.add.graphics();
-    const size = 32;
-    // Saffron-glow halo + ink-aubergine bomb body, looks distinct from a star.
-    g.fillStyle(0xF4A261, 0.4).fillCircle(size / 2, size / 2, 14);
-    g.fillStyle(0x3d2e4a, 1).fillCircle(size / 2, size / 2 + 1, 9);
-    g.fillStyle(0x55425f, 1).fillCircle(size / 2 - 2, size / 2 - 1, 3);
-    // Fuse + spark
-    g.lineStyle(2, 0x7B5A3B, 1).beginPath().moveTo(size / 2, size / 2 - 7).lineTo(size / 2 + 3, size / 2 - 12).strokePath();
-    g.fillStyle(0xFF2D95, 1).fillCircle(size / 2 + 3, size / 2 - 12, 2);
-    g.fillStyle(0xFFF6D6, 1).fillCircle(size / 2 + 3, size / 2 - 12, 0.9);
-    g.generateTexture('bomb-pickup-procedural', size, size);
-    g.destroy();
-  }
+  // Sprint 7D — `ensureBombPickupTexture` removed; replaced by real
+  // `bomb-pickup` Flux Dev asset loaded in preload().
 
   private addStaticTile(
     x: number,
@@ -571,33 +586,6 @@ export class L1Scene extends Phaser.Scene {
       ``,
       `← →  move    Space  jump    X  bomb    ↑↓ pan`,
     ].join('\n'));
-  }
-
-  /** Swap the sprite texture each frame based on Cosmo's state. Walk-cycle
-   *  alternates between walk-1/2/3 every 110ms; other states are static frames. */
-  private swapCosmoTexture(time: number): void {
-    const sprite = this.cosmo.sprite;
-    let key: string;
-    switch (this.cosmo.state) {
-      case 'run': {
-        const phase = Math.floor(time / 110) % 4;
-        const order = ['cosmo-walk-2', 'cosmo-walk-1', 'cosmo-walk-2', 'cosmo-walk-3'];
-        key = order[phase];
-        break;
-      }
-      case 'jump':
-        key = 'cosmo-jump-up';
-        break;
-      case 'fall':
-        key = 'cosmo-jump-fall';
-        break;
-      case 'cling':
-        key = 'cosmo-cling';
-        break;
-      default:
-        key = 'cosmo-walk-2';
-    }
-    if (sprite.texture.key !== key) sprite.setTexture(key);
   }
 
   private triggerHint(idx: number): void {

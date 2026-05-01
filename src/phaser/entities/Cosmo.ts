@@ -54,6 +54,11 @@ export class Cosmo {
   private clingJumpBuffer = 0;
   /** Coyote-jump after walking off a ledge — 100ms. Forgiveness is gameplay quality. */
   private coyoteTime = 0;
+  /** Walk-cycle phase accumulator — alternates walk-1/walk-2 every WALK_FRAME_DT seconds. */
+  private walkPhase = 0;
+  private walkFrameToggle: 0 | 1 = 0;
+  /** ~133ms per frame at 60fps = 8 frames per swap, classic 1992-platformer cadence. */
+  private static readonly WALK_FRAME_DT = 0.133;
 
   constructor(scene: Phaser.Scene, x: number, y: number, textureKey = 'cosmo-stand') {
     this.sprite = scene.physics.add.sprite(x, y, textureKey);
@@ -139,8 +144,7 @@ export class Cosmo {
       this.state = 'fall';
     }
 
-    this.sprite.setFlipX(this.facing < 0);
-    this.playStateAnim();
+    this.updateAnim(dt);
 
     uniforms.cosmoX = this.sprite.x;
     uniforms.cosmoY = this.sprite.y;
@@ -201,13 +205,64 @@ export class Cosmo {
     });
   }
 
-  private playStateAnim(): void {
-    const key = `cosmo-${this.state}`;
-    const anim = this.sprite.anims;
-    if (!anim || !anim.exists(key)) {
-      this.sprite.setFrame(0);
-      return;
+  /**
+   * Sprint 7A — texture-swap-based animation. Each Cosmo state maps to a distinct
+   * pose-texture generated via Flux Control LoRA Canny + skeleton-control. We do
+   * NOT use Phaser's anim-system here because each pose is its OWN 1024² texture
+   * (not a spritesheet). Walk-cycle alternates walk-1 / walk-2 every ~133ms.
+   *
+   * facing < 0 mirrors via setFlipX. cling-right is generated facing-right with
+   * suction-cups extending right; for left-wall cling we flip horizontally.
+   */
+  private updateAnim(dt: number): void {
+    const body = this.sprite.body as Phaser.Physics.Arcade.Body;
+    let key: string;
+
+    switch (this.state) {
+      case 'cling':
+        key = 'cosmo-cling-right';
+        // Cling-side determines facing — render hands toward the wall.
+        // clingSide = -1 → left wall → flipX so suction-cups face left.
+        // clingSide = +1 → right wall → no flip.
+        this.sprite.setFlipX(this.clingSide < 0);
+        this.sprite.setTexture(key);
+        return;
+
+      case 'jump':
+        key = body.velocity.y < 0 ? 'cosmo-jump-up' : 'cosmo-jump-fall';
+        break;
+
+      case 'fall':
+        key = 'cosmo-jump-fall';
+        break;
+
+      case 'damage':
+      case 'death':
+        key = 'cosmo-hurt';
+        break;
+
+      case 'run': {
+        // Alternate walk-1 / walk-2 based on phase accumulator.
+        this.walkPhase += dt;
+        if (this.walkPhase >= Cosmo.WALK_FRAME_DT) {
+          this.walkPhase -= Cosmo.WALK_FRAME_DT;
+          this.walkFrameToggle = this.walkFrameToggle === 0 ? 1 : 0;
+        }
+        key = this.walkFrameToggle === 0 ? 'cosmo-walk-1' : 'cosmo-walk-2';
+        break;
+      }
+
+      case 'idle':
+      default:
+        // Idle: use walk-1 (most "neutral" stride). Reset walk-cycle so the next
+        // run-transition starts on frame 1 — prevents flicker on quick taps.
+        this.walkPhase = 0;
+        this.walkFrameToggle = 0;
+        key = 'cosmo-walk-1';
+        break;
     }
-    if (anim.currentAnim?.key !== key) anim.play(key, true);
+
+    this.sprite.setFlipX(this.facing < 0);
+    this.sprite.setTexture(key);
   }
 }

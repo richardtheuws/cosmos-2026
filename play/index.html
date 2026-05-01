@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Speel · Cosmos Cosmic Adventure 2026</title>
 <meta name="description" content="Speel Cosmos Cosmic Adventure 2026 in je browser — 2.5D psychedelische platformer met suction-cup wallcling.">
 <meta name="theme-color" content="#3D2E4A">
@@ -34,27 +34,78 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   position: fixed; top: 0; left: 0; right: 0;
   display: flex; justify-content: space-between; align-items: center;
   padding: 0.6rem 1rem;
+  padding-top: max(0.6rem, env(safe-area-inset-top, 0px));
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
   z-index: 10;
-  font-family: var(--font-body); font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-size: 1rem; /* desktop default; pill children override */
   pointer-events: none;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
-.hud-left, .hud-right { display: flex; gap: 0.6rem; align-items: center; pointer-events: auto; }
+.hud-left, .hud-right { display: flex; gap: 0.6rem; align-items: center; pointer-events: auto; flex-wrap: wrap; }
 .hud a {
   color: var(--mushroom-cream);
   background: rgba(20, 16, 26, 0.78);
   padding: 6px 14px; border-radius: 999px;
   text-decoration: none;
-  font-size: 0.78rem; letter-spacing: 0.05em;
+  font-size: 16px; /* desktop pill */
+  letter-spacing: 0.05em;
   border: 1px solid rgba(244, 162, 97, 0.3);
 }
 .hud a:hover { background: var(--saffron-glow); color: var(--ink-aubergine); border-color: var(--saffron-glow); text-decoration: none; }
 .hud-version {
   color: rgba(245, 237, 216, 0.6);
-  font-family: var(--font-mono); font-size: 0.72rem;
+  font-family: var(--font-mono); font-size: 14px;
   letter-spacing: 0.1em;
   background: rgba(20, 16, 26, 0.55);
   padding: 4px 10px; border-radius: 4px;
 }
+/* Tablet: 14px pills */
+@media (max-width: 1023px) {
+  .hud a { font-size: 14px; padding: 5px 12px; }
+  .hud-version { font-size: 12px; padding: 3px 8px; }
+}
+/* Mobile: 12px pills, tighter spacing, single-row safe-area top */
+@media (max-width: 600px) {
+  .hud { padding: 0.4rem 0.6rem; padding-top: max(0.4rem, env(safe-area-inset-top, 0px)); }
+  .hud-left, .hud-right { gap: 0.35rem; }
+  .hud a { font-size: 12px; padding: 4px 10px; }
+  .hud-version { font-size: 11px; padding: 2px 6px; letter-spacing: 0.06em; }
+}
+/* Mobile-only disclaimer pill, dismissible. */
+.mobile-disclaimer {
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 124px); /* sits above the touch overlay */
+  z-index: 20;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(20, 16, 26, 0.82);
+  color: var(--mushroom-cream);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(244, 162, 97, 0.3);
+  pointer-events: auto;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  line-height: 1.3;
+}
+.mobile-disclaimer button {
+  background: transparent;
+  color: var(--saffron-glow);
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0 0 0 0.4rem;
+  font-weight: 600;
+}
+.mobile-disclaimer.is-visible { display: inline-flex; }
 .boot-overlay {
   position: fixed; inset: 0;
   display: flex; flex-direction: column;
@@ -83,7 +134,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
       <a href="/updates/">Updates</a>
     </div>
     <div class="hud-right">
-      <span class="hud-version">v0.6.0 · Enemies + Bombs + Audio-FFT</span>
+      <span class="hud-version">v0.7.0 · Anim + Mobile + Sprites</span>
       <a href="/support/">Steun</a>
     </div>
   </div>
@@ -91,6 +142,11 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   <div class="boot-overlay" id="boot">
     <div class="title">Bloomroot Veld ontwaakt…</div>
     <div class="sub">L1 First Steps · ← → bewegen · Space springen · ↑↓ pan · houd richting tegen muur voor cling</div>
+  </div>
+
+  <div class="mobile-disclaimer" id="mobile-disclaimer" role="status">
+    <span>Best on desktop · touch-controls actief</span>
+    <button type="button" id="mobile-disclaimer-close" aria-label="Sluiten">×</button>
   </div>
 </div>
 

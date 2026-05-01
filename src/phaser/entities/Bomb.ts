@@ -10,8 +10,10 @@
  *     trippy-spike (kaleidoTrigger + damagePulse boost) and a canvas-drawn
  *     expanding flash-circle (no emoji/sprite-fallback).
  *
- * Sprite: TODO (Asset Generator) — currently uses a procedural canvas
- * "bomb-procedural" texture (ink-aubergine sphere with saffron fuse-spark).
+ * Sprite (Sprint 7D): real `bomb` Flux Dev texture loaded in L1Scene preload.
+ * The legacy `ensureProceduralTexture` static is kept as a defensive fallback
+ * (e.g. for unit tests / scenes that don't preload the real asset) but the
+ * canonical key is now `'bomb'`.
  */
 import Phaser from 'phaser';
 import type { GlobalUniforms } from '../../core/globalUniforms';
@@ -48,7 +50,10 @@ export class Bomb {
   ) {
     this.uniforms = uniforms;
     this.onExplode = onExplode;
-    this.sprite = scene.physics.add.sprite(x, y, 'bomb-procedural');
+    // Sprint 7D — uses real `bomb` Flux Dev texture; `bomb-procedural` was the
+    // pre-asset placeholder.
+    const key = scene.textures.exists('bomb') ? 'bomb' : 'bomb-procedural';
+    this.sprite = scene.physics.add.sprite(x, y, key);
     this.sprite.setDisplaySize(BOMB.DISPLAY, BOMB.DISPLAY);
     this.sprite.setData('bomb', this);
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;

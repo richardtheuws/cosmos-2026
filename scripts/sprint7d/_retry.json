@@ -1,0 +1,20 @@
+[
+  {
+    "label": "enemy-spark-v2",
+    "raw_url": "https://v3b.fal.media/files/b/0a9870f1/FApseftAEG_uS8X_qNs4C.jpg",
+    "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spark.png",
+    "raw_size": 595245,
+    "cleaned_url": "https://v3b.fal.media/files/b/0a9870f2/p_0faOXABg8PexCswDKiO_1jFgiiWd.png",
+    "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spark-cleaned.png",
+    "cleaned_size": 179147,
+    "status": "cleaned"
+  },
+  {
+    "label": "tile-wall-cracked-painted-v2",
+    "raw_url": "https://v3b.fal.media/files/b/0a9870f2/iv4EUoM83eJ3UJYFEjgYV.jpg",
+    "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-wall-cracked-painted.png",
+    "raw_size": 421530,
+    "status": "cleaned",
+    "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-wall-cracked-painted.png"
+  }
+]

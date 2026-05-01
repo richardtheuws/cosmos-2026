@@ -3,10 +3,12 @@
  * is import-cheap. Behavior knobs are unioned into a single EnemyBehavior type;
  * `Enemy.ts` switches on `behavior.kind`.
  *
- * Sprite-mapping note: only 3 enemy sprites exist today (Brumberry, Hopper-
- * Cabbage, Eye-Plant — all `sprites/v2/`). Until Sprint 6E generates the
- * remaining 9, classes without a unique asset reuse a thematically-closest
- * sibling. `spriteTodo: true` flags them for future regeneration.
+ * Sprite-mapping (Sprint 7D — 2026-05-01): all 12 classes have dedicated
+ * sprites. Brumberry / Hopper / Eye-Plant remain on `sprites/v2/`; the other
+ * 9 ship from `sprites/v4/` (Sprint 7D Asset Generator pass — Flux Dev +
+ * BiRefNet, locked palette, Hayao×Moebius style coherent with Cosmo
+ * canonical). `spriteTodo` is now false on all classes; `tint` is 0 because
+ * each sprite is colored at generation time, no runtime recoloring needed.
  *
  * Sprint 6C bomb-contract: enemies that participate in bomb damage must expose
  * a runtime `BombTarget` shape (see below). The Bomb explosion radius-checks
@@ -89,6 +91,16 @@ export interface EnemyDef {
 const SPRITE_BRUM = 'enemy-brumberry';
 const SPRITE_HOPPER = 'enemy-hopper';
 const SPRITE_EYE = 'enemy-eye-plant';
+// Sprint 7D — dedicated sprites for the remaining 9 enemy classes.
+const SPRITE_PARACHUTE = 'enemy-parachute';
+const SPRITE_PINKWORM = 'enemy-pinkworm';
+const SPRITE_GHOST = 'enemy-ghost';
+const SPRITE_SPITTINGWALL = 'enemy-spittingwall';
+const SPRITE_DRAGONFLY = 'enemy-dragonfly';
+const SPRITE_FLYINGWISP = 'enemy-flyingwisp';
+const SPRITE_SUCTIONCRAWLER = 'enemy-suctioncrawler';
+const SPRITE_TULIPLAUNCHER = 'enemy-tuliplauncher';
+const SPRITE_SPARK = 'enemy-spark';
 
 export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
   brumberry: {
@@ -122,12 +134,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 2,
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate enemy-parachute-drifter sprite — reusing brumberry tinted mushroom-cream as placeholder.
-    spriteKey: SPRITE_BRUM,
-    displaySize: 48,
-    bodySize: { w: 38, h: 36 },
-    spriteTodo: true,
-    tint: 0xE8D5B7,
+    spriteKey: SPRITE_PARACHUTE,
+    displaySize: 56,
+    bodySize: { w: 38, h: 44 },
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'drifter', floatSpeed: 32, postStompFallMul: 4.5 },
     scoreOnKill: 400,
   },
@@ -149,12 +160,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 1,
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate enemy-pink-worm sprite — reusing brumberry tinted faded-rose.
-    spriteKey: SPRITE_BRUM,
-    displaySize: 40,
+    spriteKey: SPRITE_PINKWORM,
+    displaySize: 44,
     bodySize: { w: 32, h: 28 },
-    spriteTodo: true,
-    tint: 0xB85C7E,
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'burrow', surfaceRadiusPx: 120, surfaceTimeS: 1.6, burrowTimeS: 2.4 },
     scoreOnKill: 350,
   },
@@ -163,12 +173,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 'invincible',
     damageOnTouch: true,
     vulnerableToBomb: false,
-    // TODO(sprint-6E): generate translucent ghost sprite — reusing eye-plant tinted ink-aubergine + alpha as placeholder.
-    spriteKey: SPRITE_EYE,
-    displaySize: 56,
+    spriteKey: SPRITE_GHOST,
+    displaySize: 60,
     bodySize: { w: 38, h: 44 },
-    spriteTodo: true,
-    tint: 0x3D2E4A,
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'proximityGhost', activateRadiusPx: 180, chaseSpeed: 90 },
     scoreOnKill: 0,
   },
@@ -177,12 +186,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 'bombOnly',
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // Reuses eye-plant — same morphology family.
-    spriteKey: SPRITE_EYE,
-    displaySize: 48,
-    bodySize: { w: 36, h: 40 },
-    spriteTodo: true,
-    tint: 0x2D4A3E,
+    spriteKey: SPRITE_SPITTINGWALL,
+    displaySize: 56,
+    bodySize: { w: 40, h: 44 },
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'wallTurret', fireIntervalMs: 1600, projectileSpeed: 200, projectileLifeS: 2.8, aimAtCosmo: false },
     scoreOnKill: 500,
   },
@@ -191,12 +199,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 1,
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate dragonfly sprite — reusing brumberry tinted sky-wash.
-    spriteKey: SPRITE_BRUM,
-    displaySize: 44,
-    bodySize: { w: 36, h: 24 },
-    spriteTodo: true,
-    tint: 0x4A6FA5,
+    spriteKey: SPRITE_DRAGONFLY,
+    displaySize: 52,
+    bodySize: { w: 40, h: 24 },
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'sinusoid', amplitudePx: 36, frequencyHz: 0.9, horizontalSpeed: 90, diveOnAlignedRadiusPx: 96 },
     scoreOnKill: 400,
   },
@@ -205,12 +212,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 1,
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate translucent wisp — reusing eye-plant tinted faded-rose.
-    spriteKey: SPRITE_EYE,
-    displaySize: 38,
+    spriteKey: SPRITE_FLYINGWISP,
+    displaySize: 42,
     bodySize: { w: 28, h: 28 },
-    spriteTodo: true,
-    tint: 0xB85C7E,
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'homing', lerp: 0.045, maxSpeed: 70, activateRadiusPx: 240 },
     scoreOnKill: 300,
   },
@@ -219,12 +225,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 2,
     damageOnTouch: true,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate insectoid crawler — reusing brumberry tinted forest-deep.
-    spriteKey: SPRITE_BRUM,
-    displaySize: 48,
-    bodySize: { w: 36, h: 30 },
-    spriteTodo: true,
-    tint: 0x2D4A3E,
+    spriteKey: SPRITE_SUCTIONCRAWLER,
+    displaySize: 56,
+    bodySize: { w: 40, h: 30 },
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'wallCrawler', speed: 55 },
     scoreOnKill: 500,
   },
@@ -233,12 +238,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 1,
     damageOnTouch: false,
     vulnerableToBomb: true,
-    // TODO(sprint-6E): generate tulip-launcher — reusing eye-plant tinted saffron.
-    spriteKey: SPRITE_EYE,
-    displaySize: 48,
+    spriteKey: SPRITE_TULIPLAUNCHER,
+    displaySize: 56,
     bodySize: { w: 36, h: 36 },
-    spriteTodo: true,
-    tint: 0xF4A261,
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'tulipLauncher', launchVelocity: -720, cooldownS: 0.6, hostileOnTouch: false },
     scoreOnKill: 250,
   },
@@ -247,12 +251,11 @@ export const ENEMY_DEFS: Record<EnemyKind, EnemyDef> = {
     stompsToKill: 'invincible',
     damageOnTouch: true,
     vulnerableToBomb: false,
-    // TODO(sprint-6E): generate phosphorescent arc-jolt — reusing eye-plant tinted saffron.
-    spriteKey: SPRITE_EYE,
-    displaySize: 36,
+    spriteKey: SPRITE_SPARK,
+    displaySize: 40,
     bodySize: { w: 28, h: 28 },
-    spriteTodo: true,
-    tint: 0xF4A261,
+    spriteTodo: false,
+    tint: 0,
     behavior: { kind: 'rail', speed: 90, railLengthPx: 192 },
     scoreOnKill: 0,
   },

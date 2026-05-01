@@ -19,6 +19,9 @@ const SFX_MANIFEST: Record<string, { src: string; volume?: number }> = {
   bonus: { src: `${SFX_BASE}/pickup-bonus.mp3`, volume: 0.6 },
   globe: { src: `${SFX_BASE}/globe-trigger.mp3`, volume: 0.5 },
   warp: { src: `${SFX_BASE}/bonus-warp.mp3`, volume: 0.7 },
+  // Sprint 7D — bomb SFX (ElevenLabs sound-generation, dry one-shots).
+  'bomb-throw': { src: `${SFX_BASE}/bomb-throw.mp3`, volume: 0.55 },
+  'bomb-boom': { src: `${SFX_BASE}/bomb-boom.mp3`, volume: 0.85 },
 };
 
 const VOICE_BASE = '/assets/audio/voices';

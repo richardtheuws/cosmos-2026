@@ -206,6 +206,114 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.7.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 7: parallel-team — anim, mobile, sprites, bundle</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Vier agents tegelijk: multi-frame Cosmo anim (7A), mobile/touch-controls (7B), bundle-size optimalisatie (7C), enemy + bomb sprite-generation pass (7D). Resultaat: Cosmo loopt en springt nu echt anders, mobile is speelbaar, main bundle is van 2.2MB naar 48KB en alle 12 enemies + bomb-stack hebben definitieve assets.</p>
+        </div>
+        <h3>ADDED (7A — MULTI-FRAME COSMO ANIM)</h3>
+        <ul class="update__highlights">
+          <li><strong>6 pose-frames</strong> in <code>public/assets/sprites/v3/</code>: cosmo-walk-1, cosmo-walk-2, cosmo-jump-up, cosmo-jump-fall, cosmo-cling-right, cosmo-hurt — alle BiRefNet&#039;d transparant</li>
+          <li><strong>Pipeline-doorbraak</strong>: <code>fal-ai/flux-control-lora-canny</code> met <strong>programmatische stick-figure skeletons</strong> (PIL-rendered, geen handgetekende sketches nodig). Recipe: skeleton-only + control_lora_strength 1.2 + style-first prompt</li>
+          <li><strong>Sprint 5B/6A failure-modes definitief opgelost</strong>: image-to-image als pose-anchor (nee), text-only suction-cups (nee), inpaint-refinement (nee). ControlNet/canny met skeletons geeft hard pose-constraint.</li>
+          <li>Cosmo state-machine: <code>playStateAnim()</code> vervangen door <code>updateAnim(dt)</code> texture-swap. Walk-cycle alterneert walk-1/walk-2 elke 133ms via <code>walkPhase</code> accumulator. Cling: <code>setFlipX(clingSide &lt; 0)</code> voor left-wall mirror. Damage + death gebruiken cosmo-hurt.</li>
+        </ul>
+        <figure class="update__figure update__figure--grid update__figure--cols-4">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-walk-1.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-jump-fall.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>Skeleton walk-1 control-input · Walk-1 result · Skeleton jump-fall · Jump-fall result</figcaption>
+          </figure>
+        <figure class="update__figure update__figure--grid update__figure--cols-6">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-walk-1.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-walk-2.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-jump-up.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-jump-fall.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-cling-right.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-hurt.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>walk-1 · walk-2 · jump-up · jump-fall · cling-right · hurt</figcaption>
+          </figure>
+<h3>ADDED (7B — MOBILE + TOUCH-CONTROLS)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/ui/touchOverlay.ts</code></strong> (nieuw): 4 canvas-drawn knoppen (LEFT/RIGHT 80px d-pad bottom-left + BOMB 80px / JUMP 100px bottom-right). Canvas-glyphs (chevron-arrows + ink-aubergine bomb-disk + saffron pressed-state). <strong>Geen emoji&#039;s, geen unicode-icons</strong> — pure canvas-primitives volgens project-regel.</li>
+          <li><strong><code>src/core/deviceDetect.ts</code></strong> (nieuw): <code>isTouchDevice = (touch-capable) &amp;&amp; (innerWidth &lt; 1024)</code>. iPad Air landscape blijft desktop UX, iPad Mini portrait krijgt overlay, hybride laptops ≥1280 ook geen overlay.</li>
+          <li><strong><code>InputController.setVirtualInput()</code></strong>: rising-edge merge van virt + kb signals voor jump/bombJustPressed. Cosmo state-machine en fysica niet aangeraakt — alleen input-mapping.</li>
+          <li><strong>Responsive HUD</strong>: pills 16/14/12px (desktop / &lt;1024 / &lt;600), safe-area paddings rond HUD én overlay-root, viewport-fit=cover voor iPhone notch.</li>
+          <li><strong>Cosmo display-size</strong>: 120px desktop, 80px mobile via Phaser scale. Body geometry pixel-identiek (180×380 op 1024px source) → collision invariant.</li>
+          <li><strong>&quot;Best on desktop&quot; disclaimer-pill</strong> met 6s auto-dismiss + close-button.</li>
+          <li><strong>Playwright-tests</strong> op iPhone 14 Pro / iPad Mini / desktop allen groen.</li>
+        </ul>
+<h3>ADDED (7D — SPRITE-GENERATION PASS)</h3>
+        <figure class="update__figure update__figure--grid update__figure--cols-6">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-parachute.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-pinkworm.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-ghost.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-spittingwall.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-dragonfly.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-flyingwisp.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>parachute · pinkworm · ghost · spittingwall · dragonfly · flyingwisp</figcaption>
+          </figure>
+        <figure class="update__figure update__figure--grid update__figure--cols-6">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-suctioncrawler.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-tuliplauncher.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/sprites/v4/enemy-spark.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/bombs/bomb.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/bombs/bomb-pickup.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/tiles/tile-wall-cracked-painted.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>suctioncrawler · tuliplauncher · spark · bomb · bomb-pickup · cracked-wall</figcaption>
+          </figure>
+        <ul class="update__highlights">
+          <li><strong>9 enemy-sprites</strong> in <code>public/assets/sprites/v4/</code> (8× one-shot, spark v2)</li>
+          <li><strong>3 bomb-assets</strong> in <code>public/assets/bombs/</code> + <code>public/assets/tiles/tile-wall-cracked-painted.png</code> (cracked-wall v3 — eerst 2× tile-trap)</li>
+          <li><strong>2 SFX</strong> via ElevenLabs: <code>bomb-throw.mp3</code> (9KB) + <code>bomb-boom.mp3</code> (15KB), wired in <code>sfxBus.ts</code> SFX_MANIFEST</li>
+          <li><strong>EnemyTypes.ts</strong>: 9 enemies → spriteTodo:false, dedicated keys, tint:0</li>
+          <li><strong>Bomb.ts</strong>: texture-key <code>&#039;bomb&#039;</code> met <code>&#039;bomb-procedural&#039;</code> als fallback</li>
+          <li><strong>BreakableWall.ts</strong>: Graphics ink-crack overlay verwijderd — cracks zitten nu baked in de texture</li>
+        </ul>
+<h3>CHANGED (7C — BUNDLE-SIZE MANUALCHUNKS)</h3>
+        <ul class="update__highlights">
+          <li><code>vite.config.ts</code> — <code>build.rollupOptions.output.manualChunks</code> toegevoegd: <code>three-vendor</code> (three + postprocessing), <code>phaser-vendor</code> (phaser), <code>audio-vendor</code> (howler + tone)</li>
+        </ul>
+<h3>SPRINT 7 ARCHITECTUUR-LERINGEN</h3>
+        <ul class="update__highlights">
+          <li><strong>Programmatische stick-figure skeletons + Flux Control LoRA Canny</strong> geeft hard pose-constraint. Skeleton-only (geen image_url als style-ref) op control_lora_strength 1.2 + style-first prompt is de werkende recipe. Geen handsketch nodig.</li>
+          <li><strong>Suction-cup-pads werkten one-shot op 4-legged crawler</strong> waar 12/12 op biped Cosmo faalden. Patroon: matching style-association + non-biped anatomy omzeilt training-bias. Toekomstige Cosmo-DNA NPCs kunnen hierop bouwen.</li>
+          <li><strong>BiRefNet polling</strong>: <code>response_url</code> is HTTP 400 tijdens IN_QUEUE — poll <code>status_url</code> tot COMPLETED, dan response_url fetchen. Algemene fal.ai gotcha — gefixed in Sprint 7D <code>generate.py</code>.</li>
+          <li><strong>Tile-trap fix-recipe</strong>: drop &quot;psychedelic illustration&quot; + &quot;cosmic-adventure mood&quot; termen (scene-magnets) en gebruik stripped close-up macro prompt + stacked anti-landscape negatives.</li>
+          <li><strong>Spark-hazard fix</strong>: lead met &quot;ONE tiny X hazard, NOT a creature NOT a body NOT fur&quot; upfront — voorkomt body-growth rond abstract concept.</li>
+          <li><strong>Touch-overlay threshold (1024px) bewust over UA-sniffing gekozen</strong> — touch+viewport heuristic is duurzamer en respecteert hybride devices.</li>
+        </ul>
+<h3>NIET GEDAAN (SPRINT 8)</h3>
+        <ul class="update__highlights">
+          <li>Walk-1/walk-2 eye-drift fix (per-frame seed-lock — $0.09 per frame indien storend in playtest)</li>
+          <li>Suno-tracks genereren (handmatig via suno.com — niet binnen agent scope)</li>
+          <li>L2/L3/L4 levels (alleen L1 First Steps speelbaar tot nu)</li>
+          <li>Save-state / progressie tracking</li>
+          <li>Settings-knop <code>?touch=1</code> override voor iPads ≥1024px die toch touch willen</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.6.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 6: parallel-team — gameplay verticaal compleet</h2>

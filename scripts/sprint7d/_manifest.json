@@ -1,0 +1,261 @@
+{
+  "sprint": "Sprint 7D \u2014 Enemy + bomb sprites",
+  "timestamp": "2026-05-01T08:48:43Z",
+  "flux_jobs": [
+    {
+      "label": "enemy-flyingwisp",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a small floating wisp creature, moss-sage green orb-core body with saffron-glow halo around it, faint sky-wash translucent edge fade, single narrow ink-line eye, NOT human NOT child, ethereal floating posture, NO arms NO legs, just a floating glowing orb-spirit. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-99cb-7260-bcb1-dd54f83628ff",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-99cb-7260-bcb1-dd54f83628ff",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-flyingwisp.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/rLdfiL76PsWvtONmfhkyS.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-flyingwisp.png",
+      "raw_size": 433169,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/jW1y5OGLe1FvOgkmHwD5R_0wBK1TtK.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-flyingwisp-cleaned.png",
+      "cleaned_size": 1296727
+    },
+    {
+      "label": "enemy-pinkworm",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a segmented pink burrowing worm-creature emerging from soil, faded-rose and ink-aubergine ringed segments, three or four chubby segments visible curving up, small narrow ink-line eyes on front segment, ragged ink underline, NO legs, organic worm-anatomy, dirt-mound base. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-919f-7412-8e86-df8d4bb35831",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-919f-7412-8e86-df8d4bb35831",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-pinkworm.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/Rnyy5Y9ADG9EMgtjYnUFy.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-pinkworm.png",
+      "raw_size": 353897,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/dM7zapmQLerBfv28CtUBX_MAv3pR3E.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-pinkworm-cleaned.png",
+      "cleaned_size": 755637
+    },
+    {
+      "label": "enemy-parachute",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a small floating parachute-jelly creature, sky-wash-blue translucent parachute cap on top, body is a small mushroom-cream blob hanging underneath connected by faded-rose thin string-tendrils, single big narrow ink-line eye on body, NOT human NOT child, hovering posture, whimsical Ghibli alien-spore. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-8f93-7991-87e0-da9e8f7784a8",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-8f93-7991-87e0-da9e8f7784a8",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-parachute.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/E72LYxcIdPcD0RQ-QoPmz.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-parachute.png",
+      "raw_size": 356271,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/LWbm7hksu7B0L4sTHAKMp_7ij7Bg4K.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-parachute-cleaned.png",
+      "cleaned_size": 1125570
+    },
+    {
+      "label": "enemy-dragonfly",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a cosmic dragonfly insect-creature flying, mushroom-cream segmented body, two pairs of translucent pop-cyan iridescent wings spread wide, long thin tail-abdomen trailing behind, narrow ink-line compound eyes, organic insect anatomy, in mid-flight pose. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-97c4-7f91-9c8e-e11327445f53",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-97c4-7f91-9c8e-e11327445f53",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-dragonfly.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/UWkvi1nO-OPjmFzGYi-3K.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-dragonfly.png",
+      "raw_size": 339884,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/oguXLx6T712vncRM0t1W1_3p9LwP3F.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-dragonfly-cleaned.png",
+      "cleaned_size": 999713
+    },
+    {
+      "label": "enemy-suctioncrawler",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a small wall-crawling creature with FOUR LONG limbs ending in FLAT BLACK CIRCULAR DISC SUCTION-CUP PADS like toilet plunger tips matching reference Cosmo hand-style, body is moss-sage green elongated, narrow ink-line eyes, ink-aubergine ragged outline, BIG ROUND DISC pads NOT fingers NOT claws, organic alien anatomy, side-profile crawling pose. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-9bed-75a3-a5cc-8f3d2af764c7",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-9bed-75a3-a5cc-8f3d2af764c7",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-suctioncrawler.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/I75D2PS8jdhco5CVmqkQn.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-suctioncrawler.png",
+      "raw_size": 336299,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/vUNjHmNkIvpH9GGvt8shL_qTQMfMaF.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-suctioncrawler-cleaned.png",
+      "cleaned_size": 764417
+    },
+    {
+      "label": "enemy-ghost",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a translucent ethereal cosmic-spirit ghost, sky-wash-blue translucent wispy body with fading lower edge dissolving into mist, big chameleon lizard eye in center of body matching reference Cosmo style, ink-aubergine ragged outline, faint saffron-glow inner halo, NOT cute NOT cartoon ghost NOT sheet, watercolor bleed at body edges. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-93cc-77b2-bcc9-2e8f11ca60de",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-93cc-77b2-bcc9-2e8f11ca60de",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-ghost.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/scXKOi2VT5wQuUiOhSMqQ.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-ghost.png",
+      "raw_size": 434811,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/TfG_RgaK-UJUMFhdkyi-A_03o4LgSh.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-ghost-cleaned.png",
+      "cleaned_size": 1161259
+    },
+    {
+      "label": "enemy-spittingwall",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a wall-mounted face-creature monster carved into stone, ink-aubergine craggy wall texture forming a snarling face, single large saffron-glow orange eye in center glowing, mouth open hostile, organic petrified anatomy, woodcut linework, NO body just face protrusion from wall. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-95c1-7071-9413-76f7118ea955",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-95c1-7071-9413-76f7118ea955",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spittingwall.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/diznFdddLfawBgZ4eWAZt.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spittingwall.png",
+      "raw_size": 478860,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/VpeSpiTdyk4SvjHaRPC1G_Uo2H0PVW.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spittingwall-cleaned.png",
+      "cleaned_size": 1053555
+    },
+    {
+      "label": "enemy-spark",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a small electrical spark-ball creature, pop-magenta hot core, pop-lime electric outer halo crackling around it, ink-aubergine arc lines radiating, vibrating energy ball, NOT a character NOT eyes, just a phosphorescent jolt-ball with crackling lightning aura, small floating hazard. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-a086-75e2-9160-05c67152ae11",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-a086-75e2-9160-05c67152ae11",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spark.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/7atTHLDQeCexowzoQGWyB.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spark.png",
+      "raw_size": 557728,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870ea/txyeB1Sw4MfPm5KT9yX6b_eZCvtvgL.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-spark-cleaned.png",
+      "cleaned_size": 1776670
+    },
+    {
+      "label": "tile-wall-cracked-painted",
+      "kind": "tile",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. close-up macro view of ONE 2D platformer game wall tile, square seamless block filling entire frame edge to edge, NO landscape NO scenery NO sky NO mountains NO horizon, NOT a painting NOT a scene, just a single wall-block texture asset for sidescroller game, organic painted edges, sharp focus crisp ink lines NOT blurry, isolated game asset on flat neutral grey card background. a square breakable stone wall block with THREE LARGE BRANCHING CRACKS splitting through it, ink-aubergine deep dark crack lines forking across the surface, mushroom-cream and faded-rose painted stone-tile base matching reference tile-wall-painted style, saffron-glow tip-spark at one crack-end where bomb impacted, ragged ink-line crack edges, damaged wall block, NOT scenery just a single texture tile. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-a6c2-7f40-acb9-64be68a770c9",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-a6c2-7f40-acb9-64be68a770c9",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-wall-cracked-painted.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e3/cBH3Dy6H4SCky5N-7IHoL.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-wall-cracked-painted.png",
+      "raw_size": 678619,
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/tiles/tile-wall-cracked-painted.png"
+    },
+    {
+      "label": "enemy-tuliplauncher",
+      "kind": "sprite",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. side-view facing right on neutral grey paper card background, character fills 70% of frame, full ink-line woodcut definition, wet-edge watercolor bleeds inside silhouette, NOT centered overlay, NOT blurry NOT soft focus, sharp focus high detail crisp ink lines, isolated single creature only, NO scenery NO landscape NO sky NO horizon NO ground. a friendly tulip-cup launcher plant-creature, faded-rose pink petals curling outward forming a cup at top, mushroom-cream interior of cup visible, saffron-glow center bulb radiating warm light, green stem base, organic ink-linework petals, NOT hostile-looking, NOT human NOT face, just a glowing flower-cup plant. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-9dfc-7d92-8bfd-941df22a4d6a",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-9dfc-7d92-8bfd-941df22a4d6a",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-tuliplauncher.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e2/oc28h1oi6XxacMmrZZK7m.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-tuliplauncher.png",
+      "raw_size": 351694,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870eb/82a295xBL_Go_kn-JtD1F_ysLTo89l.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/v4/enemy-tuliplauncher-cleaned.png",
+      "cleaned_size": 813426
+    },
+    {
+      "label": "bomb",
+      "kind": "pickup",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. close-up centered view of ONE single floating game-pickup object only, NO landscape NO scenery NO background scene, isolated object on flat neutral grey card background, faint micro-halo, fluo-pop magenta and lime ring around object only (max 5 percent of pixels), painted illustration not icon, sharp focus crisp ink lines NOT blurry. a round cartoon bomb-ball, ink-aubergine dark purple sphere body with subtle faded-rose underglow tint, short fuse-string on top with a tiny saffron-glow orange spark at the tip, woodcut ink linework, NOT realistic NOT military, classic round game-bomb shape, isolated single object. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-a2a7-7120-a6ca-d0e9eca161b6",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-a2a7-7120-a6ca-d0e9eca161b6",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e3/yG-01jeOmbb0T3u4u7c_P.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb.png",
+      "raw_size": 528429,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870eb/tj8OPRyNhTPC2JvDBHYLF_vsQpEyv1.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb-cleaned.png",
+      "cleaned_size": 569307
+    },
+    {
+      "label": "bomb-pickup",
+      "kind": "pickup",
+      "prompt": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY. close-up centered view of ONE single floating game-pickup object only, NO landscape NO scenery NO background scene, isolated object on flat neutral grey card background, faint micro-halo, fluo-pop magenta and lime ring around object only (max 5 percent of pixels), painted illustration not icon, sharp focus crisp ink lines NOT blurry. a collectible round cartoon bomb-ball game pickup, ink-aubergine sphere body, brighter saffron-glow halo aura around the whole bomb, pop-magenta spark dots radiating outward, fuse on top with bright spark, floating pickup item, slightly more glow than the regular bomb to signal pickup-ness. palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep, pop-magenta and pop-lime and pop-cyan accents maximum 5 percent of frame",
+      "size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "request_id": "019de2b9-a488-71a1-be06-4371408319b3",
+      "response_url": "https://queue.fal.run/fal-ai/flux/requests/019de2b9-a488-71a1-be06-4371408319b3",
+      "target": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb-pickup.png",
+      "status": "cleaned",
+      "raw_url": "https://v3b.fal.media/files/b/0a9870e3/-YDrpXJCDs86064YsWE8p.jpg",
+      "raw_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb-pickup.png",
+      "raw_size": 539760,
+      "error": "HTTP Error 400: Bad Request",
+      "cleaned_url": "https://v3b.fal.media/files/b/0a9870eb/OjMJ3Iwm5sYGvyh0emrlp_ekncGCi4.png",
+      "cleaned_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/bombs/bomb-pickup-cleaned.png",
+      "cleaned_size": 813365
+    }
+  ],
+  "sfx": [
+    {
+      "label": "bomb-throw",
+      "prompt": "short whoosh sound followed by a soft plastic thud, 0.4 seconds, cartoon game sound effect, dry no music",
+      "duration": 0.5,
+      "status": "ok",
+      "size": 8821,
+      "path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/audio/sfx/bomb-throw.mp3"
+    },
+    {
+      "label": "bomb-boom",
+      "prompt": "cartoon bomb explosion with deep sub-bass impact and glass-shatter tail with reverse reverb tail, 0.8 seconds, game sound effect",
+      "duration": 0.9,
+      "status": "ok",
+      "size": 15090,
+      "path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/audio/sfx/bomb-boom.mp3"
+    }
+  ]
+}

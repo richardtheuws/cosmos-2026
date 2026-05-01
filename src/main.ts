@@ -14,6 +14,8 @@ import { L1Scene } from './phaser/scenes/L1Scene';
 import { BIOMES } from './data/biomes';
 import { TrippyEventDirector } from './three/postFX/trippyEventDirector';
 import { AudioFFTBridge } from './audio/audioFFTBridge';
+import { TouchOverlay } from './ui/touchOverlay';
+import { isTouchDevice } from './core/deviceDetect';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -80,11 +82,27 @@ async function boot(): Promise<void> {
   manager.register((u) => parallax.update(u));
   manager.start();
 
+  // Sprint 7B — touch overlay + mobile disclaimer. Only attaches on touch devices
+  // with viewport <1024px. Desktop sees nothing.
+  const touchOverlay = new TouchOverlay(input);
+  const overlayActive = touchOverlay.attachIfTouchDevice();
+  if (overlayActive) {
+    const disclaimer = document.getElementById('mobile-disclaimer');
+    const closeBtn = document.getElementById('mobile-disclaimer-close');
+    disclaimer?.classList.add('is-visible');
+    closeBtn?.addEventListener('click', () => disclaimer?.classList.remove('is-visible'));
+    // Auto-dismiss after 6s so it doesn't block the world long-term.
+    setTimeout(() => disclaimer?.classList.remove('is-visible'), 6000);
+  }
+
   // Expose for console-debug. Strip in production via tree-shake on `import.meta.env.DEV`.
   if (import.meta.env.DEV) {
-    (window as unknown as { cosmos: object }).cosmos = { uniforms, parallax, phaserGame, input, eventDirector, audioBridge };
+    (window as unknown as { cosmos: object }).cosmos = {
+      uniforms, parallax, phaserGame, input, eventDirector, audioBridge,
+      touchOverlay, isTouchDevice: isTouchDevice(),
+    };
     // eslint-disable-next-line no-console
-    console.log('[cosmos] dual-canvas ready. window.cosmos = { uniforms, parallax, phaserGame, input, eventDirector, audioBridge }');
+    console.log('[cosmos] dual-canvas ready. touch-overlay:', overlayActive);
   }
 }
 

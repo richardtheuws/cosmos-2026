@@ -1,13 +1,24 @@
 {
-  "palette_locked": ["#E8D5B7 mushroom-cream", "#7B9E89 moss-sage", "#4A6FA5 sky-wash-blue", "#B85C7E faded-rose", "#3D2E4A ink-aubergine", "#F4A261 saffron-glow", "#2D4A3E forest-deep"],
+  "palette_locked": [
+    "#E8D5B7 mushroom-cream",
+    "#7B9E89 moss-sage",
+    "#4A6FA5 sky-wash-blue",
+    "#B85C7E faded-rose",
+    "#3D2E4A ink-aubergine",
+    "#F4A261 saffron-glow",
+    "#2D4A3E forest-deep"
+  ],
   "sprints": [
     {
-      "sprint": "Sprint 2 — Phaser 4 controller animation frames",
+      "sprint": "Sprint 2 \u2014 Phaser 4 controller animation frames",
       "generated": "2026-04-30",
       "strategy": "Option B (individual frames, falsprite endpoint not available on fal.ai)",
       "model_default": "fal-ai/flux/dev",
       "post_processing": "fal-ai/birefnet (remove-bg)",
-      "image_size": {"width": 1024, "height": 1024},
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
       "stem_prompt": "uncute angular hand-painted watercolor 2.5D platformer hero, [POSE], Cosmo a small moss-sage green alien boy, two long suction-cup hands and feet, narrow dark eyes with subtle saffron glow catchlight, faded-rose cheek tint very subtle, single small antenna on head, ink-line underdrawing visible through transparent watercolor washes, ink aubergine ragged outline, neutral mushroom-cream paper card background, Studio Ghibli x Moebius Arzach x Tenniel illustration grit, Tenniel woodcut linework, slightly weathered uncute proportions, NOT kawaii NOT chibi NOT blush sparkle NOT airbrush NOT cute mascot, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep",
       "assets": [
         {
@@ -38,7 +49,7 @@
           "pose_prompt": "profile side-view facing right walking mid-stride right leg forward left leg back left arm forward right arm back forward lean",
           "version": "v2",
           "kawaii_bias": "low",
-          "notes": "BEST stylistic frame — Tenniel ragged ink line achieved, narrow eye visible, longer limbs"
+          "notes": "BEST stylistic frame \u2014 Tenniel ragged ink line achieved, narrow eye visible, longer limbs"
         },
         {
           "file": "public/assets/sprites/cosmo-jump-up-cleaned.png",
@@ -68,7 +79,7 @@
           "pose_prompt": "front-view facing camera suction-cup hands pressed against invisible wall in front palms forward body pressed flat legs together feet on wall focused expression",
           "version": "v1",
           "kawaii_bias": "medium-high",
-          "notes": "sucker-finger-tips visible but standing free i.p.v. pressed against wall — text-only prompt insufficient for this pose; consider image-to-image variant for v2"
+          "notes": "sucker-finger-tips visible but standing free i.p.v. pressed against wall \u2014 text-only prompt insufficient for this pose; consider image-to-image variant for v2"
         }
       ],
       "regeneration_recommendations": [
@@ -81,12 +92,15 @@
       "ready_for_phaser": true
     },
     {
-      "sprint": "Sprint 3.1 — Single-biome parallax backgrounds (Slow Bloom L1 + Inkpool Hollow bonus)",
+      "sprint": "Sprint 3.1 \u2014 Single-biome parallax backgrounds (Slow Bloom L1 + Inkpool Hollow bonus)",
       "generated": "2026-04-30",
       "purpose": "Replace 3-biome z-stack chaos with 3 depth-layers of one biome per level",
       "model_default": "fal-ai/flux-pro/v1.1",
-      "post_processing_attempted": "fal-ai/birefnet (remove-bg) — found unsuitable for landscape watercolor, see report",
-      "image_size": {"width": 1024, "height": 576},
+      "post_processing_attempted": "fal-ai/birefnet (remove-bg) \u2014 found unsuitable for landscape watercolor, see report",
+      "image_size": {
+        "width": 1024,
+        "height": 576
+      },
       "biomes": {
         "slow-bloom": {
           "level": "L1 (Bloomroot Veld jungle, mushroom forest)",
@@ -148,7 +162,7 @@
               "parallax": 0.18,
               "status": "use",
               "prompt": "cool palette ONLY, NO warm tones NO orange, distant alien cavern interior background hand-painted watercolor, vast ink-aubergine cave ceiling vault dissolving into deep darkness, faint sky-wash-blue bioluminescent glow seeping from far recesses, forest-deep stalactite silhouettes hanging from upper edge, mushroom-cream phosphorescent specks like distant stars, atmospheric haze, watercolor wet-edge bleeds, paper grain texture, ink-line underdrawing, Studio Ghibli x Moebius x Tenniel illustration, NOT detailed foreground, soft focus, NO characters NO trees NO emoji NO photoreal, palette ink-aubergine forest-deep sky-wash-blue mushroom-cream only",
-              "notes": "Cool-only enforcement worked — no warm/orange drift."
+              "notes": "Cool-only enforcement worked \u2014 no warm/orange drift."
             },
             {
               "file": "public/assets/backgrounds/inkpool-hollow/bg-mid.png",
@@ -182,7 +196,11 @@
         }
       },
       "engine_recommendations": {
-        "load_layers": ["bg-far.png", "bg-mid.png", "bg-near.png"],
+        "load_layers": [
+          "bg-far.png",
+          "bg-mid.png",
+          "bg-near.png"
+        ],
         "skip_cleaned_variants": true,
         "blend_modes": {
           "bg-far": "normal (opaque)",
@@ -193,15 +211,20 @@
       }
     },
     {
-      "sprint": "Sprint 4.5 Fase B — coherentie-pass (alle in-game assets gere-genereerd)",
+      "sprint": "Sprint 4.5 Fase B \u2014 coherentie-pass (alle in-game assets gere-genereerd)",
       "generated": "2026-04-30",
-      "purpose": "Locked style-stem (v4 hybrid) consistent toepassen op alle in-game assets — Cosmo, enemies, tiles, pickups, backgrounds — voor visuele coherentie met _LOCKED-REFERENCE.png",
+      "purpose": "Locked style-stem (v4 hybrid) consistent toepassen op alle in-game assets \u2014 Cosmo, enemies, tiles, pickups, backgrounds \u2014 voor visuele coherentie met _LOCKED-REFERENCE.png",
       "reference": "research/visual-references/_LOCKED-REFERENCE.png",
       "style_stem_doc": "research/visual-references/_STYLE-STEM.md",
       "report": "research/visual-references/_FASE-B-REPORT.md",
       "batch_script": "scripts/fase-b-batch.sh",
-      "stem_canonical": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR — cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY",
-      "totals": {"generations": 22, "birefnet_calls": 18, "v2_retries": 1, "estimated_cost_usd": 0.77},
+      "stem_canonical": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR \u2014 cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY",
+      "totals": {
+        "generations": 22,
+        "birefnet_calls": 18,
+        "v2_retries": 1,
+        "estimated_cost_usd": 0.77
+      },
       "categories": {
         "sprite_cosmo": {
           "model": "fal-ai/flux/dev",
@@ -223,7 +246,7 @@
             "public/assets/sprites/v2/cosmo-cling.png",
             "public/assets/sprites/v2/cosmo-cling-cleaned.png"
           ],
-          "caveat": "body-form drift (sucker-hands → claw-fingers, antenna → spikes/quills); style-coherentie 5/5 met reference, body-form lower priority polish"
+          "caveat": "body-form drift (sucker-hands \u2192 claw-fingers, antenna \u2192 spikes/quills); style-coherentie 5/5 met reference, body-form lower priority polish"
         },
         "sprite_enemy": {
           "model": "fal-ai/flux/dev",
@@ -247,11 +270,34 @@
           "post": "fal-ai/birefnet (faalt op landscape-strips)",
           "prompt_pattern": "TILE_FORMAT_PREFIX (rider-FRONT) + per-tile + [STEM]",
           "files": [
-            {"file": "public/assets/tiles/tile-ground.png", "cleaned": "public/assets/tiles/tile-ground-cleaned.png", "status": "ship"},
-            {"file": "public/assets/tiles/tile-dirt.png", "cleaned": null, "status": "ship-raw-only", "note": "v2 retry 1024x512 succeeded; BiRefNet overstrips landscape-strips, gebruik raw met multiply-blend"},
-            {"file": "public/assets/tiles/tile-wall.png", "cleaned": "public/assets/tiles/tile-wall-cleaned.png", "status": "v2-retry-aanbevolen", "note": "v1 = full landscape; cleaned = vertical stone column herbruikbaar als wall pillar"},
-            {"file": "public/assets/tiles/tile-mushroom.png", "cleaned": "public/assets/tiles/tile-mushroom-cleaned.png", "status": "v2-retry-vereist", "note": "BiRefNet kept whole landscape, niet bruikbaar"},
-            {"file": "public/assets/tiles/tile-spike.png", "cleaned": "public/assets/tiles/tile-spike-cleaned.png", "status": "ship"}
+            {
+              "file": "public/assets/tiles/tile-ground.png",
+              "cleaned": "public/assets/tiles/tile-ground-cleaned.png",
+              "status": "ship"
+            },
+            {
+              "file": "public/assets/tiles/tile-dirt.png",
+              "cleaned": null,
+              "status": "ship-raw-only",
+              "note": "v2 retry 1024x512 succeeded; BiRefNet overstrips landscape-strips, gebruik raw met multiply-blend"
+            },
+            {
+              "file": "public/assets/tiles/tile-wall.png",
+              "cleaned": "public/assets/tiles/tile-wall-cleaned.png",
+              "status": "v2-retry-aanbevolen",
+              "note": "v1 = full landscape; cleaned = vertical stone column herbruikbaar als wall pillar"
+            },
+            {
+              "file": "public/assets/tiles/tile-mushroom.png",
+              "cleaned": "public/assets/tiles/tile-mushroom-cleaned.png",
+              "status": "v2-retry-vereist",
+              "note": "BiRefNet kept whole landscape, niet bruikbaar"
+            },
+            {
+              "file": "public/assets/tiles/tile-spike.png",
+              "cleaned": "public/assets/tiles/tile-spike-cleaned.png",
+              "status": "ship"
+            }
           ],
           "lesson": "STEM-keywords 'psychedelic illustration' + 'cosmic-adventure mood' biased Flux Dev naar landscapes voor 4/5 tiles. Werkende fix = aspect 2:1 + texture-strip-rider FRONT + STEM-keywords gestripped voor tiles"
         },
@@ -276,7 +322,7 @@
         "background_parallax": {
           "model": "fal-ai/flux-pro/v1.1",
           "size": "1024x576",
-          "post": "none — multiply blend in engine",
+          "post": "none \u2014 multiply blend in engine",
           "prompt_pattern": "[STEM] + per-layer-rider",
           "status": "ship",
           "files": [
@@ -313,7 +359,7 @@
       }
     },
     {
-      "sprint": "Sprint 6A — Cosmo canonical inpaint fix",
+      "sprint": "Sprint 6A \u2014 Cosmo canonical inpaint fix",
       "generated": "2026-05-01",
       "strategy": "Flux Fill (fal-ai/flux-lora-fill) inpainting + BiRefNet + PIL alpha-erase",
       "goal": "Add black suction-cup pad hand-tips and remove lizard-tail on locked Cosmo canonical",
@@ -331,14 +377,14 @@
       ],
       "case_study_dir": "public/assets/case-study/cosmo-inpaint-process/",
       "case_study_steps": [
-        "01-source.png — flatten on neutral paper bg",
-        "02-mask-tail.png + 03-result-tail.png — v1 tail-inpaint FAILED (sample-bias regen)",
-        "04-mask-hands.png + 05-result-hands-v2.png — v1+v2 hand-inpaint FAILED (face-level placement)",
-        "08-mask-extended-arms.png — v3 extended-arm mask (rectangles in empty bg space + disc-emphasis ellipses)",
-        "09-result-extended-arms.png — v3 PRODUCTION result (extended arms with black objects)",
-        "10-birefnet-cleaned-v3.png — BiRefNet remove-bg",
-        "11-final-v3.png — PRODUCTION final (tail alpha-erased)",
-        "13-result-fused.png — v4 disc-fuse refinement REGRESSION (added mini-head)"
+        "01-source.png \u2014 flatten on neutral paper bg",
+        "02-mask-tail.png + 03-result-tail.png \u2014 v1 tail-inpaint FAILED (sample-bias regen)",
+        "04-mask-hands.png + 05-result-hands-v2.png \u2014 v1+v2 hand-inpaint FAILED (face-level placement)",
+        "08-mask-extended-arms.png \u2014 v3 extended-arm mask (rectangles in empty bg space + disc-emphasis ellipses)",
+        "09-result-extended-arms.png \u2014 v3 PRODUCTION result (extended arms with black objects)",
+        "10-birefnet-cleaned-v3.png \u2014 BiRefNet remove-bg",
+        "11-final-v3.png \u2014 PRODUCTION final (tail alpha-erased)",
+        "13-result-fused.png \u2014 v4 disc-fuse refinement REGRESSION (added mini-head)"
       ],
       "endpoint": "fal-ai/flux-lora-fill (queue.fal.run)",
       "params": {
@@ -348,12 +394,12 @@
       },
       "production_prompt": "small green pear-shaped alien creature with two long thin arms extending outward sideways from the torso, each arm ending in a LARGE FLAT ROUND BLACK DISC suction-cup pad like a glossy black rubber toilet plunger head, the suction-cup pads are pure obsidian-black smooth circles bigger than the head of a thumb, soft Studio Ghibli watercolor with ink-aubergine outline and paper-grain texture, faded-rose freckle spots on green skin, off-white painterly paper background, NOT fingers NOT human-hand NOT lizard-claw NOT pointed-claw NOT mitten NOT ear NOT cheek NOT face NOT headphones NOT folded-arms NOT tucked-arms",
       "scripts": [
-        "scripts/sprint6a/cosmo_inpaint.py (v1 — both passes failed)",
+        "scripts/sprint6a/cosmo_inpaint.py (v1 \u2014 both passes failed)",
         "scripts/sprint6a/cosmo_inpaint_v2.py (hands-only retry, failed)",
-        "scripts/sprint6a/cosmo_inpaint_v3.py (PRODUCTION — extended arms)",
+        "scripts/sprint6a/cosmo_inpaint_v3.py (PRODUCTION \u2014 extended arms)",
         "scripts/sprint6a/cosmo_inpaint_v4.py (refinement regression, abandoned)"
       ],
-      "wiring_change": "src/phaser/scenes/L1Scene.ts:86 — canonical const updated from cosmo-canonical-cleaned.png to cosmo-canonical-v2-cleaned.png",
+      "wiring_change": "src/phaser/scenes/L1Scene.ts:86 \u2014 canonical const updated from cosmo-canonical-cleaned.png to cosmo-canonical-v2-cleaned.png",
       "cost_breakdown": {
         "v1_two_pass_inpaint": "$0.10 (2x Flux Fill + 1x BiRefNet)",
         "v2_hands_only_retry": "$0.05",
@@ -365,11 +411,267 @@
         "Flux Fill ADDS-geometry-in-bg-space well, FAILS to override anatomy-bias inside body silhouette",
         "Tail-removal: SKIP inpaint, use deterministic PIL alpha-erase post-BiRefNet (zero cost, 100% reliable)",
         "Disc-fuse refinement passes risk regression (Flux interprets small masked area as separate creature)",
-        "Multi-frame anim still NOT solved — needs ControlNet or sketch-to-img (per Sprint 5B learnings)"
+        "Multi-frame anim still NOT solved \u2014 needs ControlNet or sketch-to-img (per Sprint 5B learnings)"
       ],
       "open_issues": [
-        "Disc not fully fused to wrist — claw-fingers visible around black ball. Acceptable as suction-cup hint.",
+        "Disc not fully fused to wrist \u2014 claw-fingers visible around black ball. Acceptable as suction-cup hint.",
         "Tiny tail-stub remnant under feet (cosmetic only at 120px in-game display)"
+      ]
+    },
+    {
+      "sprint": "Sprint 7D \u2014 Enemy + bomb sprite-generation pass",
+      "generated": "2026-05-01",
+      "purpose": "Replace 9 placeholder enemy sprites + bomb procedural canvas + breakable-wall overlay with dedicated assets, all coherent with Cosmo canonical (Hayao\u00d7Moebius)",
+      "model_default": "fal-ai/flux/dev",
+      "post_processing": "fal-ai/birefnet (characters + pickups; tile skipped)",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "stem_prompt": "Moebius Arzach woodcut x Tenniel Alice x Hayao Miyazaki, HEAVY INK LINEWORK + SATURATED LUSH WATERCOLOR, paper-grain, NOT kawaii NOT chibi NOT pixar NOT cute",
+      "palette_tail": "mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep + max 5% pop-magenta/lime/cyan",
+      "attempts": {
+        "flux_dev_initial": 12,
+        "birefnet": 11,
+        "flux_dev_retries": 2,
+        "flux_dev_v3_retry": 1
+      },
+      "cost_estimate_usd": {
+        "flux_dev": 0.375,
+        "birefnet": 0.055,
+        "elevenlabs_sfx": 0.4,
+        "total": 0.83
+      },
+      "wiring": {
+        "EnemyTypes.ts": "all 9 enemy classes spriteTodo:false, dedicated sprite keys, tint:0",
+        "L1Scene.ts": "preload enemy-* + bomb + bomb-pickup + tile-wall-cracked-painted; replaced bomb-procedural and bomb-pickup-procedural usages",
+        "Bomb.ts": "uses real \"bomb\" texture key with fallback to bomb-procedural for safety",
+        "BreakableWall.ts": "removed Graphics ink-crack overlay; new texture has cracks baked in",
+        "sfxBus.ts": "added bomb-throw + bomb-boom to SFX_MANIFEST with explicit volumes"
+      },
+      "gotchas": [
+        "BiRefNet 400 polling error: response_url returns 400 while job is still IN_QUEUE; fix is to poll status_url instead and only fetch response_url after status==COMPLETED",
+        "tile-trap (memory-confirmed): square+STEM keywords give full landscapes for tile prompts; tile-wall-cracked v1 and v2 both rendered full scenes. v3 worked by DROPPING the STEM entirely and using a stripped close-up macro prompt with stacked anti-landscape negatives",
+        "enemy-spark v1 rendered as a furry creature in a forest because the prompt described it as a \"creature with NOT eyes NOT face\" \u2014 model still grew a body. v2 fixed by leading with \"ONE tiny electric energy spark-ball game hazard, NOT a creature NOT a body NOT fur\"",
+        "enemy-suctioncrawler SUCCESS: image-only Flux Dev rendered actual disc-shaped suction-cup pads on all four limbs in one shot. Cosmo-DNA bridge in description (\"matching reference Cosmo hand-style\") + \"BIG ROUND DISC pads NOT fingers NOT claws\" worked despite memory note that suction-cups are deterministically un-renderable. The difference: this is a 4-legged creature on the ground (sample bias for arthropod legs ending in foot-pads), not a biped where the model fights to render fingers"
+      ],
+      "assets": [
+        {
+          "file": "public/assets/sprites/v4/enemy-parachute-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "parachute-jelly with sky-wash cap, faded-rose tendrils, mushroom-cream blob body",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-pinkworm-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "segmented faded-rose burrowing worm, ink-aubergine ringed segments",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-ghost-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "translucent sky-wash spirit with chameleon eye matching Cosmo (Hayao\u00d7Moebius)",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-spittingwall-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "wall-mounted face-creature, ink-aubergine craggy stone, saffron-glow eye",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-dragonfly-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "cosmic dragonfly, mushroom-cream body, pop-cyan iridescent wings, long tail",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-flyingwisp-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "moss-sage orb-core with saffron-glow halo, single ink-line eye",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-suctioncrawler-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "four-legged moss-sage crawler with FLAT BLACK DISC SUCTION-CUP PADS (Cosmo-DNA bridge)",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-tuliplauncher-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "tulip-cup with faded-rose petals, mushroom-cream interior, saffron-glow center",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/sprites/v4/enemy-spark-cleaned.png",
+          "kind": "sprite",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "pop-magenta hot core with pop-lime electric crackle (v2 \u2014 v1 rendered as a furry creature in a forest)",
+          "version": "v2",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/bombs/bomb-cleaned.png",
+          "kind": "pickup",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "round ink-aubergine sphere with saffron-glow fuse-spark, woodcut linework",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/bombs/bomb-pickup-cleaned.png",
+          "kind": "pickup",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "prompt_subject": "collectible bomb with stronger saffron halo + pop-magenta sparks",
+          "version": "v1",
+          "notes": ""
+        },
+        {
+          "file": "public/assets/tiles/tile-wall-cracked-painted.png",
+          "kind": "tile",
+          "model": "fal-ai/flux/dev",
+          "post": "none (tile, BiRefNet would strip texture)",
+          "prompt_subject": "square stone block with three branching ink-aubergine cracks + saffron-glow tip-spark (v3 \u2014 v1+v2 hit the documented tile-trap by rendering full landscapes; v3 dropped STEM keywords entirely)",
+          "version": "v3",
+          "notes": ""
+        }
+      ],
+      "sfx": [
+        {
+          "file": "public/assets/audio/sfx/bomb-throw.mp3",
+          "model": "elevenlabs/sound-generation",
+          "duration_s": 0.5,
+          "prompt": "short whoosh sound followed by a soft plastic thud, 0.4 seconds, cartoon game sound effect, dry no music",
+          "size_kb": 9
+        },
+        {
+          "file": "public/assets/audio/sfx/bomb-boom.mp3",
+          "model": "elevenlabs/sound-generation",
+          "duration_s": 0.9,
+          "prompt": "cartoon bomb explosion with deep sub-bass impact and glass-shatter tail with reverse reverb tail, 0.8 seconds, game sound effect",
+          "size_kb": 15
+        }
+      ],
+      "console_test": "Phaser loaded, no 404s, all 14 asset URLs return HTTP 200 from Vite dev server",
+      "tsc": "npx tsc --noEmit exit 0"
+    },
+    {
+      "sprint": "Sprint 7A \u2014 Multi-frame Cosmo via Flux Control LoRA Canny",
+      "generated": "2026-05-01",
+      "strategy": "Programmatic stick-figure skeletons (PIL) \u2192 Flux Control LoRA Canny \u2192 BiRefNet",
+      "goal": "6 distinct pose-textures wired to Cosmo state-machine (idle/run/jump/fall/cling/damage)",
+      "pipeline": [
+        "1. Generate 6 stick-figure skeletons in Python/PIL with thick black lines + BIG black discs at hand-tips (signature suction-cup constraint)",
+        "2. Upload all 6 skeletons + canonical to fal.ai storage",
+        "3. For each pose: fal-ai/flux-control-lora-canny with skeleton as control_lora_image_url, NO image_url (canonical drags pose back to neutral \u2014 Sprint 5B learning), control_lora_strength=1.2, style-first prompt",
+        "4. BiRefNet (fal-ai/birefnet/v2) for transparent PNG",
+        "5. Wire textures in L1Scene.preload + Cosmo.updateAnim() texture-swap state machine"
+      ],
+      "endpoints": [
+        "fal-ai/flux-control-lora-canny (control_lora_strength=1.2, num_inference_steps=35, guidance_scale=4.5, image_size=square_hd)",
+        "fal-ai/birefnet/v2 (model='General Use (Heavy)')"
+      ],
+      "production_assets": [
+        {
+          "file": "public/assets/sprites/v3/cosmo-walk-1.png",
+          "pose": "left leg forward, right leg back",
+          "fidelity": "6/10 character (some style-flatness), 7/10 pose"
+        },
+        {
+          "file": "public/assets/sprites/v3/cosmo-walk-2.png",
+          "pose": "right leg forward, left leg back (mirror walk-1)",
+          "fidelity": "6/10 character (kawaii eyes drift), 8/10 pose"
+        },
+        {
+          "file": "public/assets/sprites/v3/cosmo-jump-up.png",
+          "pose": "knees-tucked apex-of-jump, arms reaching up with discs above head",
+          "fidelity": "9/10 character, 9/10 pose"
+        },
+        {
+          "file": "public/assets/sprites/v3/cosmo-jump-fall.png",
+          "pose": "T-pose falling, arms outstretched horizontally with discs at tips",
+          "fidelity": "9/10 character, 10/10 pose"
+        },
+        {
+          "file": "public/assets/sprites/v3/cosmo-cling-right.png",
+          "pose": "side-view, both suction-cups extending right toward virtual wall",
+          "fidelity": "9/10 character, 9/10 pose. setFlipX in updateAnim for left-wall mirror"
+        },
+        {
+          "file": "public/assets/sprites/v3/cosmo-hurt.png",
+          "pose": "knockback, arms thrown out + slightly back, legs splayed, faded-rose blush spots bonus",
+          "fidelity": "9/10 character, 9/10 pose"
+        }
+      ],
+      "case_study_dir": "public/assets/case-study/cosmo-multi-frame/",
+      "case_study_artifacts": [
+        "skeletons/skeleton-{walk-1,walk-2,jump-up,jump-fall,cling-right,hurt}.png \u2014 input control images",
+        "raw-walk-1.png (v1, with canonical image_url \u2014 FAILED, pose lost, kawaii eyes, tail back)",
+        "raw-walk-1-v2.png (skeleton-only, strength 1.2 \u2014 pose held but anemic line-art style)",
+        "raw-walk-1-v3.png / raw-walk-1-FINAL.png (skeleton-only, strength 1.2, style-first prompt \u2014 PRODUCTION)",
+        "raw-{walk-2,jump-up,jump-fall,cling-right,hurt}.png \u2014 final raw outputs"
+      ],
+      "scripts": [
+        "scripts/sprint7a/pose_skeletons.py \u2014 PIL stick-figure renderer",
+        "scripts/sprint7a/cosmo_controlnet.py \u2014 fal.ai pipeline (modes: test, test2, batch, all, redo-walk2)"
+      ],
+      "wiring_changes": [
+        "src/phaser/scenes/L1Scene.ts:79-99 \u2014 preload 6 distinct pose textures",
+        "src/phaser/scenes/L1Scene.ts:156 \u2014 Cosmo init texture changed to 'cosmo-walk-1'",
+        "src/phaser/scenes/L1Scene.ts \u2014 removed redundant swapCosmoTexture() (Cosmo.updateAnim handles it)",
+        "src/phaser/entities/Cosmo.ts \u2014 replaced playStateAnim with updateAnim() texture-swap state machine",
+        "src/phaser/entities/Cosmo.ts \u2014 added walkPhase + walkFrameToggle for ~133ms walk-cycle alternation"
+      ],
+      "key_learnings": [
+        "Flux Control LoRA Canny WITHOUT image_url + skeleton-only is THE working pose-control pipeline. Passing canonical as image_url drags the result back to canonical neutral-stand pose \u2014 confirms Sprint 5B finding that image-to-image is a noise-init not skeletal-anchor",
+        "control_lora_strength sweet spot is 1.2 \u2014 at 0.85 the skeleton barely matters, at 1.0 the prompt-style wins and pose collapses to A-pose, at 1.2 pose holds and prompt still gets enough weight for character DNA",
+        "Programmatic stick-figures with BIG black discs at hand-tips force the Flux model to render JET-BLACK suction-cup-pads \u2014 it's not a sample-bias problem, it's a CONTROL problem solved by canny edge",
+        "Style-first prompt ordering (Studio Ghibli watercolor cues FIRST, character DNA SECOND) preserves more painterly look at high control_lora_strength",
+        "Inter-frame eye-style consistency is fragile (some frames get 1 ink-eye, others get 2 black-disc-eyes) \u2014 at 120px in-game this is acceptable, but a per-frame seed-lock could improve",
+        "Queue wait times for control-lora-canny can hit 100-150s during peak \u2014 bump submit_and_poll deadline to 600s"
+      ],
+      "cost_breakdown": {
+        "test_v1_with_canonical_image_url": "$0.09 (FAILED \u2014 canonical bias dragged pose back)",
+        "test_v2_skeleton_only_strength_1.2": "$0.09 (pose OK, style anemic)",
+        "test_v3_skeleton_only_strength_1.0": "$0.09 (style OK, pose collapsed to A-pose)",
+        "test_v3_strength_1.2_style_first_prompt": "$0.09 (PRODUCTION walk-1)",
+        "batch_5_frames": "$0.43 (walk-2/jump-up/jump-fall/cling-right/hurt)",
+        "redo_walk2_eye_drift": "$0.09",
+        "total": "~$0.88 (within $1.00-1.50 budget)"
+      },
+      "open_issues": [
+        "Inter-frame style/eye drift: walk-1 has 1 ink-eye, walk-2 has 2 black-disc-eyes, hurt has 1 ink-eye + blush spots. Not catastrophic but visible if you compare side-by-side. A future pass could fix walk-2 with a different seed",
+        "Cling-right uses setFlipX for left-wall cling \u2014 works but the suction-cups will appear on the right side of the body when flipped (since body is asymmetric). Acceptable since both arms reach toward the wall in the source pose",
+        "Hurt-frame is reused for death state with no rotation \u2014 if death looks weird in playtesting, add a Z-rotation tween in Cosmo.takeDamage()"
       ]
     }
   ]
