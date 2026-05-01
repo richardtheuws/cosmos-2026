@@ -1,0 +1,243 @@
+/* ============================================================
+   COSMOS COSMIC ADVENTURE 2026 — Design Tokens
+   Locked palette + typography + motion across all pages.
+   ============================================================ */
+:root {
+  /* Locked color palette */
+  --mushroom-cream: #E8D5B7;
+  --moss-sage: #7B9E89;
+  --sky-wash: #4A6FA5;
+  --faded-rose: #B85C7E;
+  --ink-aubergine: #3D2E4A;
+  --saffron-glow: #F4A261;
+  --forest-deep: #2D4A3E;
+
+  /* Hallucinatie pop-accents (max 5%) */
+  --pop-magenta: #FF2D95;
+  --pop-lime: #7AFF3D;
+  --pop-cyan: #00E5FF;
+
+  /* Surfaces */
+  --paper-bg: #F5EDD8;
+  --paper-shade: #E5D7B5;
+  --paper-deep: #D9C8A0;
+  --bg-card: rgba(245, 237, 216, 0.92);
+  --bg-card-hover: rgba(255, 247, 226, 0.96);
+
+  /* Borders */
+  --border: rgba(61, 46, 74, 0.14);
+  --border-strong: rgba(61, 46, 74, 0.32);
+  --border-saffron: rgba(244, 162, 97, 0.5);
+
+  /* Text */
+  --text: #3D2E4A;
+  --text-secondary: #5C4D6C;
+  --text-muted: #8E7F9E;
+  --text-on-dark: #F5EDD8;
+
+  /* Typography */
+  --font-heading: 'Cormorant Garamond', 'Georgia', 'Iowan Old Style', serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-xxl: 5rem;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 16px;
+
+  /* Motion */
+  --duration-fast: 0.15s;
+  --duration-med: 0.35s;
+  --duration-slow: 0.6s;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* Effects */
+  --grain-opacity: 0.12;
+  --shadow-soft: 0 6px 18px rgba(61, 46, 74, 0.12);
+  --shadow-lift: 0 14px 40px rgba(61, 46, 74, 0.22);
+  --shadow-deep: 0 22px 56px rgba(61, 46, 74, 0.32);
+}
+
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper-bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+a { color: var(--ink-aubergine); text-decoration: underline; text-decoration-color: var(--saffron-glow); text-decoration-thickness: 2px; text-underline-offset: 3px; transition: color var(--duration-fast); }
+a:hover { color: var(--faded-rose); text-decoration-color: var(--faded-rose); }
+img { max-width: 100%; height: auto; display: block; }
+
+/* Paper grain — applied via body::before in each page */
+.paper-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 25% 15%, rgba(61, 46, 74, 0.04) 1px, transparent 1.5px),
+    radial-gradient(circle at 75% 60%, rgba(61, 46, 74, 0.05) 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 85%, rgba(184, 92, 126, 0.03) 1px, transparent 1.5px);
+  background-size: 3px 3px, 5px 5px, 7px 7px;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+}
+
+/* Vignette */
+.paper-grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(61, 46, 74, 0.18) 100%);
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ============================================================
+   STICKY NAV
+   ============================================================ */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.4rem;
+  background: rgba(245, 237, 216, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.sticky-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-heading);
+  font-size: 1.18rem;
+  color: var(--ink-aubergine);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-style: italic;
+}
+.sticky-nav__brand:hover { text-decoration: none; color: var(--faded-rose); }
+.sticky-nav__brand img { width: 28px; height: 28px; object-fit: contain; }
+.sticky-nav__links { display: flex; align-items: center; gap: 0.4rem; }
+.sticky-nav__links a {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all var(--duration-fast);
+  font-weight: 500;
+}
+.sticky-nav__links a:hover {
+  color: var(--ink-aubergine);
+  background: rgba(244, 162, 97, 0.16);
+}
+.sticky-nav__links a.active {
+  color: var(--ink-aubergine);
+  background: rgba(244, 162, 97, 0.22);
+}
+.sticky-nav__cta {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+}
+.sticky-nav__cta:hover {
+  background: var(--faded-rose) !important;
+  color: white !important;
+}
+
+@media (max-width: 720px) {
+  .sticky-nav { padding: 0.5rem 0.8rem; }
+  .sticky-nav__brand { font-size: 1rem; }
+  .sticky-nav__links { gap: 0.1rem; }
+  .sticky-nav__links a { padding: 0.4rem 0.55rem; font-size: 0.8rem; }
+  .sticky-nav__brand span:not(:first-child) { display: none; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  padding: 3.5rem 1.5rem 2.5rem;
+  text-align: center;
+}
+.site-footer h4 { color: var(--saffron-glow); font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 1rem; font-weight: 700; }
+.site-footer__links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.site-footer__links a { color: var(--mushroom-cream); text-decoration: none; opacity: 0.78; font-size: 0.9rem; }
+.site-footer__links a:hover { opacity: 1; color: var(--saffron-glow); }
+.site-footer p { font-size: 0.85rem; opacity: 0.65; max-width: 560px; margin: 0 auto 0.6rem; }
+.site-footer code { background: rgba(245, 237, 216, 0.08); padding: 2px 8px; border-radius: 3px; font-size: 0.78rem; color: var(--saffron-glow); }
+.site-footer__copyright { margin-top: 1.5rem; font-size: 0.72rem; opacity: 0.42; }
+
+/* ============================================================
+   REVEAL ANIMATIONS
+   ============================================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--duration-slow) var(--ease-out-expo), transform var(--duration-slow) var(--ease-out-expo);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s var(--ease-out-quart), transform 0.55s var(--ease-out-quart);
+}
+[data-reveal-stagger].is-visible > * { opacity: 1; transform: translateY(0); }
+[data-reveal-stagger].is-visible > *:nth-child(2) { transition-delay: 0.06s; }
+[data-reveal-stagger].is-visible > *:nth-child(3) { transition-delay: 0.12s; }
+[data-reveal-stagger].is-visible > *:nth-child(4) { transition-delay: 0.18s; }
+[data-reveal-stagger].is-visible > *:nth-child(5) { transition-delay: 0.24s; }
+[data-reveal-stagger].is-visible > *:nth-child(6) { transition-delay: 0.30s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal], [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.container { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+.container-narrow { max-width: 800px; margin: 0 auto; padding: 0 32px; }
+section { padding: 5.5rem 0 4.5rem; position: relative; }
+.section-label { font-size: 0.78rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--forest-deep); margin-bottom: 0.5rem; display: block; }
+h1 { font-family: var(--font-heading); font-weight: 700; line-height: 1.05; letter-spacing: -0.015em; }
+h2 { font-family: var(--font-heading); font-weight: 700; line-height: 1.1; letter-spacing: -0.012em; color: var(--ink-aubergine); margin-bottom: 1rem; font-size: clamp(2rem, 4.5vw, 3.5rem); }
+h2 em { color: var(--faded-rose); font-style: italic; }
+h3 { font-family: var(--font-heading); font-weight: 600; color: var(--forest-deep); margin: 1.5rem 0 0.6rem; font-size: 1.4rem; }
+p.lead { font-size: 1.18rem; max-width: 720px; color: var(--text); margin-bottom: 2rem; }

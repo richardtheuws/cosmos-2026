@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speel · Cosmos Cosmic Adventure 2026</title>
+<meta name="description" content="Speel Cosmos Cosmic Adventure 2026 in je browser — 2.5D psychedelische platformer met suction-cup wallcling.">
+<meta name="theme-color" content="#3D2E4A">
+<meta property="og:title" content="Speel · Cosmos Cosmic Adventure 2026">
+<meta property="og:description" content="2.5D browser-platformer met aquarel-werelden en hallucinerende post-FX.">
+<meta property="og:image" content="/showcase-assets/bg-cloud-cathedral-sky.png">
+<meta property="og:url" content="https://theuws.com/games/cosmos-2026/play/">
+<link rel="canonical" href="https://theuws.com/games/cosmos-2026/play/">
+<link rel="icon" href="/showcase-assets/cosmo-hero-cleaned.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<style>
+body { background: var(--ink-aubergine); color: var(--mushroom-cream); }
+.play-shell {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 1.5rem 40px;
+  text-align: center;
+}
+.play-stage {
+  position: relative;
+  width: min(1280px, 100%);
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(ellipse at 50% 40%, var(--forest-deep), #14101A);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-saffron);
+  display: flex; align-items: center; justify-content: center;
+  margin: 1.6rem 0;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(244, 162, 97, 0.18);
+}
+.play-stage::before, .play-stage::after {
+  content: ''; position: absolute; pointer-events: none;
+  background-size: cover; background-position: center;
+}
+.play-stage::before { inset: 0; background-image: url('/showcase-assets/bg-cloud-cathedral-sky.png'); opacity: 0.18; filter: blur(4px); }
+.play-stage::after { inset: 0; background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(20, 16, 26, 0.85) 80%); }
+
+.cosmo-loader {
+  position: relative; z-index: 2;
+  width: 200px; height: 200px;
+  background: url('/showcase-assets/cosmo-hero-cleaned.png') center/contain no-repeat;
+  filter: drop-shadow(0 18px 32px rgba(0,0,0,0.55));
+  animation: float 3.6s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+
+.coming {
+  position: relative; z-index: 2;
+  margin-top: 2rem;
+  font-family: var(--font-heading); font-style: italic;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  color: var(--saffron-glow);
+}
+.coming-sub {
+  font-family: var(--font-body); font-size: 1rem; color: rgba(245, 237, 216, 0.78);
+  letter-spacing: 0.06em; margin-top: 0.4rem;
+}
+
+.progress {
+  width: 100%; max-width: 720px;
+  background: rgba(245, 237, 216, 0.08);
+  border-radius: 999px; height: 10px; overflow: hidden;
+  margin: 2rem 0 0.6rem;
+}
+.progress__bar {
+  height: 100%; background: linear-gradient(90deg, var(--saffron-glow), var(--faded-rose), var(--pop-magenta));
+  width: 12.5%;
+  transition: width var(--duration-slow) var(--ease-out-expo);
+}
+.progress-label { font-family: var(--font-mono); font-size: 0.8rem; color: rgba(245, 237, 216, 0.7); letter-spacing: 0.1em; }
+
+.notice {
+  margin-top: 2.4rem; max-width: 620px;
+  background: rgba(245, 237, 216, 0.06);
+  border: 1px solid var(--border-saffron);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+}
+.notice strong { color: var(--saffron-glow); display: block; margin-bottom: 0.5rem; letter-spacing: 0.06em; }
+
+.cta-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 2.2rem; }
+.btn { padding: 12px 26px; border-radius: 999px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all var(--duration-fast); }
+.btn-primary { background: var(--saffron-glow); color: var(--ink-aubergine); }
+.btn-primary:hover { background: var(--mushroom-cream); }
+.btn-ghost { color: var(--mushroom-cream); border: 2px solid rgba(245, 237, 216, 0.4); }
+.btn-ghost:hover { background: var(--mushroom-cream); color: var(--ink-aubergine); border-color: var(--mushroom-cream); }
+.btn-pop { background: var(--pop-magenta); color: white; }
+.btn-pop:hover { background: var(--faded-rose); }
+
+/* Sticky nav adjustments for dark page */
+.sticky-nav { background: rgba(20, 16, 26, 0.92); border-bottom-color: rgba(244, 162, 97, 0.18); }
+.sticky-nav__brand { color: var(--mushroom-cream); }
+.sticky-nav__brand:hover { color: var(--saffron-glow); }
+.sticky-nav__links a { color: rgba(245, 237, 216, 0.72); }
+.sticky-nav__links a:hover { color: var(--saffron-glow); background: rgba(244, 162, 97, 0.1); }
+.sticky-nav__cta { background: var(--saffron-glow) !important; color: var(--ink-aubergine) !important; }
+.sticky-nav__cta:hover { background: var(--mushroom-cream) !important; color: var(--ink-aubergine) !important; }
+</style>
+</head>
+<body>
+
+<nav class="sticky-nav">
+  <a href="/" class="sticky-nav__brand"><img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo"><span>Cosmos 2026</span></a>
+  <div class="sticky-nav__links">
+    <a href="/play/" class="active">Speel</a>
+    <a href="/lore/">Het Verhaal</a>
+    <a href="/updates/">Updates</a>
+    <a href="/prd/">PRD</a>
+    <a href="/support/" class="sticky-nav__cta">Steun</a>
+  </div>
+</nav>
+
+<main class="play-shell">
+  <div class="play-stage">
+    <div class="cosmo-loader" aria-hidden="true"></div>
+  </div>
+
+  <div class="coming">De zuignappen drogen nog.</div>
+  <div class="coming-sub">Sprint 1 — Scaffolding · v0.1.0</div>
+
+  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="13">
+    <div class="progress__bar"></div>
+  </div>
+  <div class="progress-label">Sprint 1 / 8 · ~13% naar v1.0</div>
+
+  <div class="notice">
+    <strong>Wat je hier straks vindt</strong>
+    Een Three.js (3D parallax + post-FX) + Phaser 4 (2D gameplay) dual-canvas. Suction-cup wallcling, kaleidoscope op power-ups, ElevenLabs Hint Globes. Volg de voortgang per sprint op de <a href="/updates/" style="color:var(--saffron-glow);">updates pagina</a>.
+  </div>
+
+  <div class="cta-row">
+    <a href="/updates/" class="btn btn-primary">Volg de Updates</a>
+    <a href="/lore/" class="btn btn-ghost">Lees Het Verhaal</a>
+    <a href="/support/" class="btn btn-pop">Steun de Productie</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <h4>Cosmos Cosmic Adventure 2026</h4>
+  <div class="site-footer__links">
+    <a href="/">Home</a>
+    <a href="/lore/">Het Verhaal</a>
+    <a href="/updates/">Updates</a>
+    <a href="/prd/">PRD</a>
+    <a href="/support/">Steun</a>
+  </div>
+  <p>De game zelf komt online vanaf Sprint 8 (v1.0). Voor nu: aquarel-droom in voorbereiding.</p>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · v<span id="version">0.1.0</span></p>
+</footer>
+
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "cosmos-cosmic-adventure-2026",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cosmos Cosmic Adventure 2026 — 2.5D psychedelische browser-platformer remake van Cosmo's Cosmic Adventure (Apogee, 1992)",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "npm run updates:build && tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "updates:build": "node scripts/changelog-to-html.mjs",
+    "test": "echo \"Tests komen in S2\" && exit 0",
+    "predeploy": "npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "howler": "^2.2.4",
+    "phaser": "^4.0.0",
+    "three": "^0.180.0",
+    "tone": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.12",
+    "@types/three": "^0.180.0",
+    "terser": "^5.46.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}

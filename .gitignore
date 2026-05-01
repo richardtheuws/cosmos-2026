@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Cache
+.cache/
+.parcel-cache/
+.vite/
+
+# Generated 3D / heavy assets (generated locally, regenerated via scripts)
+public/assets/meshy/
+public/assets/audio/music/
+public/assets/audio/voices/
+
+# Showcase assets that are tracked stay
+# (public/showcase-assets/ is committed)

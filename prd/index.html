@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmos Cosmic Adventure 2026 — PRD Showcase</title>
+<meta name="description" content="Een 2.5D psychedelische browser-platformer remake — Ghibli-aquarel droom met hallucinaire breekpieken. Vision document & visual direction.">
+<style>
+:root {
+  --mushroom-cream: #E8D5B7;
+  --moss-sage: #7B9E89;
+  --sky-wash: #4A6FA5;
+  --faded-rose: #B85C7E;
+  --ink-aubergine: #3D2E4A;
+  --saffron-glow: #F4A261;
+  --forest-deep: #2D4A3E;
+  --paper-bg: #F5EDD8;
+  --paper-shade: #E5D7B5;
+  --pop-magenta: #FF2D95;
+  --pop-lime: #7AFF3D;
+  --grain-opacity: 0.12;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+@font-face {
+  font-family: 'CosmosTitle';
+  src: local('Georgia'), local('Times New Roman');
+}
+
+html, body {
+  background: var(--paper-bg);
+  color: var(--ink-aubergine);
+  font-family: 'Georgia', 'Iowan Old Style', serif;
+  line-height: 1.6;
+  font-size: 17px;
+  overflow-x: hidden;
+}
+
+/* Paper grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 25% 15%, rgba(61, 46, 74, 0.04) 1px, transparent 1.5px),
+    radial-gradient(circle at 75% 60%, rgba(61, 46, 74, 0.05) 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 85%, rgba(184, 92, 126, 0.03) 1px, transparent 1.5px);
+  background-size: 3px 3px, 5px 5px, 7px 7px;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+}
+
+/* Subtle vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(61, 46, 74, 0.18) 100%);
+  pointer-events: none;
+  z-index: 999;
+}
+
+.container { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0 60px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, var(--paper-bg) 92%),
+              url('/showcase-assets/bg-cloud-cathedral-sky.png') center/cover no-repeat;
+  opacity: 0.65;
+  filter: saturate(0.92);
+  z-index: 0;
+}
+
+.hero-bg.fallback {
+  background: radial-gradient(ellipse at 30% 40%, var(--sky-wash) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 70%, var(--faded-rose) 0%, transparent 55%),
+              linear-gradient(180deg, var(--mushroom-cream) 0%, var(--paper-bg) 100%);
+  opacity: 0.45;
+}
+
+.hero-content { position: relative; z-index: 2; }
+
+.eyebrow {
+  font-size: 14px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--forest-deep);
+  margin-bottom: 28px;
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid var(--ink-aubergine);
+  background: rgba(232, 213, 183, 0.65);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+}
+
+h1.title {
+  font-size: clamp(48px, 8vw, 112px);
+  font-weight: 900;
+  line-height: 0.95;
+  margin-bottom: 24px;
+  color: var(--ink-aubergine);
+  letter-spacing: -0.02em;
+  text-shadow:
+    3px 3px 0 var(--faded-rose),
+    6px 6px 18px rgba(244, 162, 97, 0.28);
+  font-style: italic;
+}
+
+h1.title em {
+  font-style: normal;
+  display: block;
+  font-size: 0.42em;
+  color: var(--forest-deep);
+  letter-spacing: 0.18em;
+  font-weight: 400;
+  margin-top: 8px;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+
+.tagline {
+  font-size: clamp(18px, 2vw, 24px);
+  max-width: 780px;
+  color: var(--ink-aubergine);
+  margin-bottom: 36px;
+  font-style: italic;
+  line-height: 1.5;
+  border-left: 4px solid var(--saffron-glow);
+  padding-left: 20px;
+}
+
+.hero-cosmo {
+  position: absolute;
+  right: -40px;
+  bottom: 40px;
+  width: clamp(220px, 28vw, 380px);
+  z-index: 3;
+  filter: drop-shadow(8px 12px 16px rgba(61, 46, 74, 0.35));
+  animation: cosmo-bob 4.2s ease-in-out infinite;
+}
+
+@keyframes cosmo-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-12px) rotate(1.5deg); }
+}
+
+.meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 36px;
+}
+
+.pill {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.pill.accent { background: var(--saffron-glow); color: var(--ink-aubergine); }
+.pill.pop {
+  background: var(--pop-magenta);
+  color: white;
+  font-weight: 600;
+  animation: pop-pulse 2.2s infinite;
+}
+
+@keyframes pop-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0.7); }
+  50% { box-shadow: 0 0 0 12px rgba(255, 45, 149, 0); }
+}
+
+/* SECTIONS */
+section {
+  padding: 96px 0 80px;
+  position: relative;
+}
+
+.section-label {
+  font-size: 13px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--forest-deep);
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: clamp(32px, 4.5vw, 56px);
+  margin-bottom: 24px;
+  color: var(--ink-aubergine);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+h2 .accent { color: var(--faded-rose); font-style: italic; }
+
+h3 {
+  font-size: 22px;
+  margin: 24px 0 12px;
+  color: var(--forest-deep);
+  font-weight: 700;
+}
+
+p { margin-bottom: 14px; }
+
+p.lead {
+  font-size: 19px;
+  max-width: 780px;
+  color: var(--ink-aubergine);
+  margin-bottom: 32px;
+}
+
+/* PALETTE */
+.palette {
+  background: var(--paper-shade);
+  position: relative;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.swatch {
+  aspect-ratio: 1.2 / 1;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  border: 1px solid rgba(61, 46, 74, 0.18);
+  box-shadow: 0 4px 14px rgba(61, 46, 74, 0.12);
+  transition: transform 0.3s;
+}
+.swatch:hover { transform: translateY(-4px); }
+
+.swatch span {
+  background: rgba(61, 46, 74, 0.85);
+  color: white;
+  padding: 4px 8px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  border-radius: 3px;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  align-self: flex-start;
+}
+
+.swatch label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-aubergine);
+  background: rgba(245, 237, 216, 0.92);
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+
+.swatch.dark label { color: var(--mushroom-cream); background: rgba(61, 46, 74, 0.7); }
+
+/* CHARACTER SHOWCASE */
+.character {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.character img.portrait {
+  width: 100%;
+  max-width: 480px;
+  filter: drop-shadow(0 18px 28px rgba(61, 46, 74, 0.35));
+  margin: 0 auto;
+  display: block;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+
+.character-bio h2 { margin-bottom: 16px; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.stat {
+  background: var(--mushroom-cream);
+  border-left: 3px solid var(--saffron-glow);
+  padding: 14px 16px;
+  border-radius: 0 4px 4px 0;
+}
+
+.stat strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--forest-deep);
+  margin-bottom: 4px;
+}
+
+.stat span { font-size: 17px; color: var(--ink-aubergine); }
+
+/* WORLD GALLERY */
+.worlds {
+  background: var(--paper-shade);
+  position: relative;
+}
+
+.world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.world-card {
+  background: var(--paper-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(61, 46, 74, 0.18);
+  border: 1px solid rgba(61, 46, 74, 0.12);
+  transition: transform 0.4s, box-shadow 0.4s;
+  position: relative;
+}
+
+.world-card:hover {
+  transform: translateY(-8px) rotate(-0.5deg);
+  box-shadow: 0 20px 44px rgba(61, 46, 74, 0.28);
+}
+
+.world-img {
+  aspect-ratio: 16 / 10;
+  background: var(--moss-sage);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.world-img.fallback-jungle { background: linear-gradient(135deg, var(--moss-sage), var(--forest-deep)); }
+.world-img.fallback-cave { background: linear-gradient(135deg, var(--ink-aubergine), var(--saffron-glow)); }
+.world-img.fallback-sky { background: linear-gradient(135deg, var(--sky-wash), var(--mushroom-cream)); }
+
+.world-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(61, 46, 74, 0.45));
+}
+
+.world-info { padding: 24px; }
+
+.world-info h3 { margin: 0 0 8px; font-size: 24px; color: var(--ink-aubergine); }
+
+.world-tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--saffron-glow);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+/* ENEMY ROSTER */
+.enemy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.enemy-card {
+  background: var(--mushroom-cream);
+  padding: 20px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid rgba(61, 46, 74, 0.15);
+  transition: transform 0.3s;
+  position: relative;
+}
+
+.enemy-card:hover { transform: translateY(-4px) scale(1.02); }
+
+.enemy-card.boss {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  grid-column: span 2;
+  border: 2px solid var(--faded-rose);
+}
+
+.enemy-card.boss h4, .enemy-card.boss p { color: var(--mushroom-cream); }
+
+.enemy-card img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  margin: 0 auto 14px;
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(61, 46, 74, 0.3));
+}
+
+.enemy-placeholder {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--moss-sage), var(--forest-deep));
+  position: relative;
+}
+
+.enemy-card h4 {
+  font-size: 18px;
+  color: var(--ink-aubergine);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.enemy-card p {
+  font-size: 13px;
+  color: var(--forest-deep);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.enemy-stomps {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--saffron-glow);
+  color: var(--ink-aubergine);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.06em;
+}
+
+.enemy-card.boss .enemy-stomps { background: var(--pop-magenta); color: white; }
+
+/* MECHANICS DECK */
+.mechanics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.mech-card {
+  background: var(--paper-bg);
+  padding: 28px;
+  border-radius: 6px;
+  border-top: 4px solid var(--saffron-glow);
+  box-shadow: 0 6px 18px rgba(61, 46, 74, 0.12);
+}
+
+.mech-card h4 {
+  font-size: 20px;
+  color: var(--ink-aubergine);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.mech-card .mech-icon {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--faded-rose);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.mech-card.signature { border-top-color: var(--pop-magenta); background: linear-gradient(180deg, var(--mushroom-cream), var(--paper-bg)); }
+.mech-card.signature h4::after { content: ' ★'; color: var(--pop-magenta); }
+
+/* HALLUCINATION TRIGGERS */
+.hallu {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+}
+
+.hallu h2 { color: var(--mushroom-cream); }
+.hallu h2 .accent { color: var(--pop-lime); }
+.hallu .section-label { color: var(--saffron-glow); }
+.hallu p.lead { color: var(--mushroom-cream); }
+
+.hallu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 22px;
+  margin-top: 40px;
+}
+
+.hallu-card {
+  background: rgba(245, 237, 216, 0.06);
+  border: 1px solid rgba(244, 162, 97, 0.4);
+  padding: 24px;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hallu-card::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pop-magenta), var(--saffron-glow), var(--pop-lime));
+}
+
+.hallu-card .trigger {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--saffron-glow);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.hallu-card h4 { font-size: 18px; color: var(--mushroom-cream); margin-bottom: 8px; }
+
+.hallu-card p { color: rgba(232, 213, 183, 0.85); font-size: 14px; line-height: 1.55; margin: 0; }
+
+.hallu-card .duration {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--pop-magenta);
+  color: white;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* TECH STACK */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.tech-card {
+  background: var(--mushroom-cream);
+  padding: 18px 20px;
+  border-radius: 6px;
+  border-left: 3px solid var(--moss-sage);
+  display: flex;
+  flex-direction: column;
+}
+
+.tech-card .role {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--forest-deep);
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.tech-card strong {
+  font-size: 16px;
+  color: var(--ink-aubergine);
+  font-family: 'SF Mono', 'Menlo', monospace;
+}
+
+.tech-card.primary { border-left-color: var(--pop-magenta); background: var(--paper-bg); }
+
+/* SPRINT TIMELINE */
+.timeline {
+  margin-top: 48px;
+  position: relative;
+  padding-left: 28px;
+  border-left: 3px solid var(--ink-aubergine);
+}
+
+.sprint {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 18px 24px;
+  background: var(--paper-bg);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(61, 46, 74, 0.1);
+}
+
+.sprint::before {
+  content: '';
+  position: absolute;
+  left: -38px;
+  top: 24px;
+  width: 18px;
+  height: 18px;
+  background: var(--saffron-glow);
+  border: 3px solid var(--ink-aubergine);
+  border-radius: 50%;
+}
+
+.sprint.launch::before { background: var(--pop-magenta); }
+.sprint.launch { border-left: 4px solid var(--pop-magenta); }
+
+.sprint-no {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--faded-rose);
+  font-weight: 700;
+}
+
+.sprint h4 { font-size: 19px; color: var(--ink-aubergine); margin: 4px 0 6px; }
+
+.sprint p { margin: 0; font-size: 14px; color: var(--forest-deep); }
+
+.sprint-version {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 12px;
+}
+
+/* FOOTER */
+footer {
+  background: var(--ink-aubergine);
+  color: var(--mushroom-cream);
+  padding: 60px 0 40px;
+  text-align: center;
+}
+
+footer h3 { color: var(--saffron-glow); font-size: 16px; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 14px; }
+
+footer p { font-size: 14px; opacity: 0.75; max-width: 600px; margin: 0 auto 12px; }
+
+footer code {
+  background: rgba(232, 213, 183, 0.1);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--saffron-glow);
+}
+
+/* RESPONSIVE */
+@media (max-width: 880px) {
+  .character { grid-template-columns: 1fr; gap: 32px; }
+  .hero-cosmo { right: -10%; bottom: 5%; width: 240px; opacity: 0.85; }
+  .enemy-card.boss { grid-column: span 1; }
+  .stat-grid { grid-template-columns: 1fr; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg fallback" id="hero-bg"></div>
+  <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo, the watercolor alien hero" class="hero-cosmo" id="hero-cosmo" onerror="this.src='/showcase-assets/cosmo-hero.png';this.onerror=()=>this.style.display='none'">
+  <div class="container hero-content">
+    <span class="eyebrow">PRD v1.0 · Cosmos Cosmic Adventure 2026</span>
+    <h1 class="title">
+      Cosmos
+      <em>Cosmic Adventure 2026</em>
+    </h1>
+    <p class="tagline">Cosmo's Cosmic Adventure herboren als Tenniel-droom — aquarel-Ghibli-werelden die op power-ups, damage en bonus-momenten in fractal-tunnels en datamosh-scheuren openbarsten.</p>
+    <div class="meta-pills">
+      <span class="pill">2.5D Hybrid Platformer</span>
+      <span class="pill">Browser-First</span>
+      <span class="pill">10 Levels — MVP</span>
+      <span class="pill accent">Three.js + Phaser 4</span>
+      <span class="pill pop">Direction Locked</span>
+    </div>
+  </div>
+</section>
+
+<!-- VISION -->
+<section>
+  <div class="container">
+    <span class="section-label">01 · Vision</span>
+    <h2>Een <span class="accent">platformer</span> die ademt en breekt.</h2>
+    <p class="lead">Het 2D-gameplayplane blijft strak en eerlijk — Cosmo's identiteit is tactiele zuignap-platforming. De 3D-parallax + post-FX laag breekt en bloeit eromheen. We bouwen geen constante DMT-aanval. We bouwen een aquarel-Ghibli-droom die <em>kantelt</em> op power-ups, boss-intro's, damage-momenten en bonus-warps.</p>
+    <p class="lead">De spanning zit in de breuk tussen rust en hallucinatie. De wereld is zacht-aquarel tot hij dat niet meer wil. Dit is Alice in Wonderland in vorm, niet in narratief — Cosmo-DNA met een Tenniel-pen en een Moebius-bril.</p>
+  </div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette">
+  <div class="container">
+    <span class="section-label">02 · Palette</span>
+    <h2>Zeven kleuren, één <span class="accent">droom</span>.</h2>
+    <p class="lead">Locked palette voor heel de game. 90% van de pixel-budget. Fluo-pop accenten (magenta + lime) zijn voorbehouden aan collectibles, HUD en hallucinatie-pieken — max 5%.</p>
+    <div class="palette-grid">
+      <div class="swatch" style="background: #E8D5B7"><label>Mushroom Cream</label><span>#E8D5B7</span></div>
+      <div class="swatch dark" style="background: #7B9E89"><label>Moss Sage</label><span>#7B9E89</span></div>
+      <div class="swatch dark" style="background: #4A6FA5"><label>Sky Wash Blue</label><span>#4A6FA5</span></div>
+      <div class="swatch dark" style="background: #B85C7E"><label>Faded Rose</label><span>#B85C7E</span></div>
+      <div class="swatch dark" style="background: #3D2E4A"><label>Ink Aubergine</label><span>#3D2E4A</span></div>
+      <div class="swatch" style="background: #F4A261"><label>Saffron Glow</label><span>#F4A261</span></div>
+      <div class="swatch dark" style="background: #2D4A3E"><label>Forest Deep</label><span>#2D4A3E</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTER -->
+<section>
+  <div class="container">
+    <span class="section-label">03 · Character</span>
+    <h2>Maak kennis met <span class="accent">Cosmo</span>.</h2>
+    <div class="character">
+      <div>
+        <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo character — watercolor Ghibli-Moebius alien" class="portrait" id="cosmo-portrait" onerror="this.src='/showcase-assets/cosmo-hero.png'">
+      </div>
+      <div class="character-bio">
+        <h3 style="font-size:13px;letter-spacing:0.3em;text-transform:uppercase;color:var(--faded-rose);">Hero · Episode 1</h3>
+        <h2 style="font-size:42px;margin-bottom:18px;">Klein. Groen. <span class="accent">Plakkerig.</span></h2>
+        <p>Cosmo's familie reist naar <em>The Funplex</em> voor zijn verjaardag. Een komeet raakt het schip. Noodlanding op planeet <strong>Zonk</strong>. Hij wandelt af om te verkennen — bij terugkeer zijn zijn ouders weg.</p>
+        <p>Hij denkt dat ze gevangen zitten in een blob-creature. (Dat zijn ze niet — maar dat weet hij nog niet.)</p>
+        <div class="stat-grid">
+          <div class="stat"><strong>Signature Move</strong><span>Suction-Cup Wallcling</span></div>
+          <div class="stat"><strong>Base HP</strong><span>3 (max 5)</span></div>
+          <div class="stat"><strong>Bombs</strong><span>9 max carry</span></div>
+          <div class="stat"><strong>Vibe</strong><span>Bart Simpson × Pikmin</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORLDS -->
+<section class="worlds">
+  <div class="container">
+    <span class="section-label">04 · Worlds</span>
+    <h2>Drie biomes. Eén <span class="accent">droom-architectuur</span>.</h2>
+    <p class="lead">Episode 1 speelt zich af op planeet Zonk — drie sub-biomes, 10 levels die Cosmo van bovengronds via cave naar sky brengen voor de blob-cliffhanger.</p>
+    <div class="world-grid">
+      <article class="world-card">
+        <div class="world-img fallback-jungle" style="background-image:url('/showcase-assets/bg-slow-bloom-jungle.png');"></div>
+        <div class="world-info">
+          <span class="world-tag">L1 · L2 · L3 — Surface</span>
+          <h3>Slow Bloom</h3>
+          <p>Mystieke alien-paddenstoelbos. Translucente moss-sage-canopy, mushroom-cream stronken met faded-rose lichen, sky-wash-blue mist. Eerste cling, eerste sterren-boven-scherm-pan.</p>
+        </div>
+      </article>
+      <article class="world-card">
+        <div class="world-img fallback-cave" style="background-image:url('/showcase-assets/bg-inkpool-cave.png');"></div>
+        <div class="world-info">
+          <span class="world-tag">L4 · L5 · L6 — Hollow</span>
+          <h3>Inkpool Hollow</h3>
+          <p>Reflectieve ink-aubergine plassen, saffron bioluminescente moss, ghost-mechanic in L4. Kaleidoscope-piek bij teleport-tubes (L5). Verborgen cheeseburger in L6 monument-wall.</p>
+        </div>
+      </article>
+      <article class="world-card">
+        <div class="world-img fallback-sky" style="background-image:url('/showcase-assets/bg-cloud-cathedral-sky.png');"></div>
+        <div class="world-info">
+          <span class="world-tag">L7 · L8 · L9 · L10 — Cathedral</span>
+          <h3>Cloud Cathedral</h3>
+          <p>Verweerde alien-tempel in pastel-cloud-lagen. Industrial-organic hybrid (L7), beat-jumps via spring-trampolines (L8), 25-star bonus-warp (L9), boss-arena (L10).</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ENEMIES -->
+<section>
+  <div class="container">
+    <span class="section-label">05 · Bestiary</span>
+    <h2>12 types · 1 <span class="accent">blob</span>.</h2>
+    <p class="lead">Vier extra enemy-types boven het minimum — liever overdaad dan "we hadden er nog 1 nodig". Elk type heeft een unieke gedragspatroon dat in 1-2 levels wordt geïntroduceerd voordat ze elkaar kruisen.</p>
+    <div class="enemy-grid">
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><img src="/showcase-assets/enemy-brumberry-cleaned.png" alt="Brumberry" onerror="this.src='/showcase-assets/enemy-brumberry.png'"><h4>Brumberry</h4><p>Patrolling berry. Faded-rose tendrils, sleepy eye, saffron tear.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><img src="/showcase-assets/enemy-hopper-cabbage-cleaned.png" alt="Hopper Cabbage" onerror="this.src='/showcase-assets/enemy-hopper-cabbage.png'"><h4>Hopper Cabbage</h4><p>Moss-sage cabbage, hops at intervals.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">2×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--mushroom-cream),var(--faded-rose))"></div><h4>Parachute Drifter</h4><p>Floats down. After 1 stomp, drops fast.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">B</span><img src="/showcase-assets/enemy-eye-plant-cleaned.png" alt="Eye Plant" onerror="this.src='/showcase-assets/enemy-eye-plant.png'"><h4>Eye Plant</h4><p>Bombs only. Static, shoots projectile. Drops 1 bomb on kill.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--faded-rose),var(--saffron-glow))"></div><h4>Pink Worm</h4><p>Burrows, surfaces near Cosmo.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">∞</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,#9C8FAD,var(--ink-aubergine))"></div><h4>Ghost</h4><p>Invincible. Moves only when Cosmo faces away. L4 only.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">B</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--forest-deep),var(--moss-sage))"></div><h4>Spitting Wall Plant</h4><p>Static turret. 3-shot acid pattern.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--sky-wash),var(--saffron-glow))"></div><h4>Dragonfly <small style="color:var(--pop-magenta);">+</small></h4><p>Sinusoidal flight. Dive-attack. Iridescent saffron wings.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--faded-rose),#D4A5C4)"></div><h4>Flying Wisp <small style="color:var(--pop-magenta);">+</small></h4><p>Slow homing orb. Translucent ink-trail.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">2×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--forest-deep),var(--mushroom-cream))"></div><h4>Suction Crawler <small style="color:var(--pop-magenta);">+</small></h4><p>Mirror van Cosmo. Klimt walls én ceilings.</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">1×</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--saffron-glow),var(--faded-rose))"></div><h4>Tulip Launcher <small style="color:var(--pop-magenta);">+</small></h4><p>Static. Lanceert Cosmo omhoog (vriendelijk → vijandig in hostile-mode).</p></div>
+      <div class="enemy-card"><span class="enemy-stomps">!</span><div class="enemy-placeholder" style="background:linear-gradient(135deg,var(--saffron-glow),#FFE08A)"></div><h4>Spark Hazard</h4><p>Volgt rail. Industrial L7 only.</p></div>
+      <div class="enemy-card boss"><span class="enemy-stomps">5×</span><div class="enemy-placeholder" style="background:radial-gradient(circle,var(--ink-aubergine),#1F1530)"></div><h4>The Blob — Boss</h4><p>3-fase: drops · slams · spawns. Eindigt L10. Cliffhanger-cutscene volgt.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MECHANICS -->
+<section style="background: var(--paper-shade);">
+  <div class="container">
+    <span class="section-label">06 · Mechanics</span>
+    <h2>De <span class="accent">tactiele</span> kern.</h2>
+    <p class="lead">Wat Cosmo Cosmo maakt blijft Cosmo. Three.js mag niet draaien rondom het 2D collision-plane — strakke 8×8-grid feel onder de Meshy-3D parallax. Model: New Super Mario Bros U.</p>
+    <div class="mechanics-grid">
+      <div class="mech-card signature">
+        <span class="mech-icon">Signature</span>
+        <h4>Suction-Cup Wallcling</h4>
+        <p>Tegen verticale wall drukken → cling. Spring + cling + spring = wallclimb. Niet op ceilings. Tactile "plop" SFX bij elke cling met kleine wet-edge ink-bleed-puls op cling-punt.</p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-icon">Mobility</span>
+        <h4>Run + Jump</h4>
+        <p>Single jump. Constante run-speed (geen Sonic-acceleration). Strakke arcade-feel. Camera-pan via ↑/↓ pijltjes onthult sterren boven/onder schermrand.</p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-icon">Combat</span>
+        <h4>Stomp + Bombs</h4>
+        <p>Spring op enemies om te killen. Bombs (max 9) plaatsen voor walls + Eye Plants + chains. 2s vertraagde explosie. Kan Cosmo zelf raken.</p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-icon">Survival</span>
+        <h4>3 HP, geen checkpoints</h4>
+        <p>Dood = level-restart, alle stars dat run kwijt. 1 verborgen cheeseburger in L6 → +1 max-HP. Save-anywhere via 3 localStorage-slots.</p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-icon">Reward</span>
+        <h4>Star Hunt → Bonus</h4>
+        <p>25 stars = bonus-room unlock (L9 trigger). No-enemy floating island, 90s timer, kaleidoscope ambient. Pure score-paradijs.</p>
+      </div>
+      <div class="mech-card">
+        <span class="mech-icon">Discovery</span>
+        <h4>Hint Globes</h4>
+        <p>Zwevende sprekende bollen met ElevenLabs-stem. Eén consistent voice-cast over hele episode. Vernietigen = 12.800 punten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HALLUCINATION TRIGGERS -->
+<section class="hallu">
+  <div class="container">
+    <span class="section-label">07 · Breekpieken</span>
+    <h2>Wanneer de droom <span class="accent">scheurt</span>.</h2>
+    <p class="lead">Vijf scherp gedefinieerde momenten waarop de aquarel-rust openbreekt. Geen continue overstimulatie — de impact zit in de breuk.</p>
+    <div class="hallu-grid">
+      <div class="hallu-card">
+        <span class="trigger">Trigger</span>
+        <h4>Power-Up Pickup</h4>
+        <p>6-fold kaleidoscope edge-tunnel rond viewport. Midden van scherm blijft normaal speelbaar. Audio-FFT-uniforms drijven shader-amplitude.</p>
+        <span class="duration">5 seconden</span>
+      </div>
+      <div class="hallu-card">
+        <span class="trigger">Trigger</span>
+        <h4>Bonus-Room Warp</h4>
+        <p>Kaleidoscope-tunnel als ambient state — lichter dan de power-up-piek, continu gedurende de hele bonus-room.</p>
+        <span class="duration">~90 seconden</span>
+      </div>
+      <div class="hallu-card">
+        <span class="trigger">Trigger</span>
+        <h4>Collectibles On-Screen</h4>
+        <p>Fluo-pop accent — magenta + lime halo bloom op stars en gems. Maximaal 5% van pixel-budget. HUD krijgt zelfde treatment.</p>
+        <span class="duration">Continu</span>
+      </div>
+      <div class="hallu-card">
+        <span class="trigger">Trigger</span>
+        <h4>Damage Taken</h4>
+        <p>Datamosh-tear: horizontale stroken verschuiven. Plus 1.2s i-frame met flicker. RGB-channel-split op edges. "Het universum scheurt even kapot."</p>
+        <span class="duration">200 ms</span>
+      </div>
+      <div class="hallu-card">
+        <span class="trigger">Trigger</span>
+        <h4>Boss-Intro</h4>
+        <p>Kaleidoscope + 8-bar contrastieve hyperpop-stinger in dezelfde toonsoort als de OST. Sophie meets Toby Fox texture, hoofdcompositie blijft folktronica.</p>
+        <span class="duration">8 bars</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIO -->
+<section>
+  <div class="container">
+    <span class="section-label">08 · Audio</span>
+    <h2>Folktronica <span class="accent">eigen-DNA</span>.</h2>
+    <p class="lead">Geen ZZ Top, geen covers. Eigen titelthema dat de zany-funk-spirit van Bobby Prince kanaliseert via Hisaishi × Boards of Canada-textuur. 12 Suno-tracks in D-minor zodat boss-stingers en damage-stingers naadloos invallen.</p>
+    <p class="lead"><strong>Pipeline:</strong> Suno (OST) → Howler.js (static playback) → Tone.js GrainPlayer (procedural morphs op DMT-peaks) → 512-FFT analyzer → globalUniforms → TSL fluid-sim shader. Music-reactive zonder dat je het in je gezicht krijgt — tot je het wel doet.</p>
+    <p class="lead"><strong>Voices:</strong> ElevenLabs warm-vrouwelijk mid-range, één voice-cast voor alle Hint Globes — de consistente "narrator van Zonk".</p>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section style="background: var(--paper-shade);">
+  <div class="container">
+    <span class="section-label">09 · Tech Stack</span>
+    <h2>Dual-canvas. <span class="accent">Twee renderers</span>, één droom.</h2>
+    <p class="lead">Three.js (WebGPU) als root voor 3D parallax + post-FX. Phaser 4 als overlay voor 2D gameplay. Gedeelde <code>globalUniforms</code> object houdt time, audioFFT, gameState, kaleidoTrigger sync. Eén <code>requestAnimationFrame</code> loop dirigeert beide.</p>
+    <div class="stack-grid">
+      <div class="tech-card primary"><span class="role">3D Renderer</span><strong>Three.js r178</strong></div>
+      <div class="tech-card primary"><span class="role">Shader DSL</span><strong>TSL</strong></div>
+      <div class="tech-card primary"><span class="role">2D Engine</span><strong>Phaser 4</strong></div>
+      <div class="tech-card"><span class="role">Post-FX</span><strong>pmndrs/postprocessing</strong></div>
+      <div class="tech-card"><span class="role">Fluid Sim</span><strong>Pavel Dobryakov</strong></div>
+      <div class="tech-card"><span class="role">Cinematics</span><strong>Theatre.js</strong></div>
+      <div class="tech-card"><span class="role">Sprites</span><strong>FalSprite</strong></div>
+      <div class="tech-card"><span class="role">Atlas Pack</span><strong>free-tex-packer</strong></div>
+      <div class="tech-card"><span class="role">3D Models</span><strong>Meshy v6</strong></div>
+      <div class="tech-card"><span class="role">Audio</span><strong>Howler + Tone.js</strong></div>
+      <div class="tech-card"><span class="role">Voices · SFX</span><strong>ElevenLabs</strong></div>
+      <div class="tech-card"><span class="role">Bundler</span><strong>Vite + TS</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPRINTS -->
+<section>
+  <div class="container">
+    <span class="section-label">10 · Roadmap</span>
+    <h2>Acht sprints naar <span class="accent">v1.0</span>.</h2>
+    <p class="lead">6-8 weken bij 2-3 sessies per week parallel met Reign of Brabant. Episode 2 + 3 worden post-launch DLC-uitbreidingen.</p>
+    <div class="timeline">
+      <div class="sprint"><span class="sprint-no">Sprint 1</span><h4>Scaffolding</h4><p>Vite + TS + dual-canvas spike + deploy-pipeline naar staging URL.</p><span class="sprint-version">v0.1.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 2</span><h4>Cosmo Controller</h4><p>Wallcling-mechanic perfectioneren — run / jump / cling / wallclimb / stomp werkend op test-tilemap.</p><span class="sprint-version">v0.2.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 3</span><h4>L1 + Asset Pipeline</h4><p>Eerste echte level, alle pipeline-scripts werkend, fal.ai sprites + Meshy parallax + Suno music.</p><span class="sprint-version">v0.3.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 4</span><h4>Enemies + Damage</h4><p>12 enemy-types geïmplementeerd. HP-systeem en datamosh-tear werkend.</p><span class="sprint-version">v0.4.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 5</span><h4>L2-L6 + Hint Globes</h4><p>Vijf levels speelbaar, ElevenLabs voices live, 25-star bonus-room werkend.</p><span class="sprint-version">v0.5.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 6</span><h4>L7-L9 + Post-FX</h4><p>Drie levels, kaleidoscope/fluid-sim/fluo-pop volledig live, music-reactive shaders.</p><span class="sprint-version">v0.6.0</span></div>
+      <div class="sprint"><span class="sprint-no">Sprint 7</span><h4>L10 + Boss + Cinematics</h4><p>Boss-fight, Theatre.js cliffhanger-cutscene werkend.</p><span class="sprint-version">v0.7.0</span></div>
+      <div class="sprint launch"><span class="sprint-no">Sprint 8 — Launch</span><h4>Polish + Deploy</h4><p>Audio-mix, perf-tuning, save-systeem, browser-test, deploy naar theuws.com/games/cosmos-2026.</p><span class="sprint-version">v1.0.0</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <h3>PRD v1.0 · Locked</h3>
+    <p>Cosmos Cosmic Adventure 2026 — een Game Master productie · Built op Three.js + Phaser 4 + fal.ai + Meshy + Suno + ElevenLabs.</p>
+    <p>Distributie: <code>theuws.com/games/cosmos-2026</code> — bij positief release-signaal: eigen subdomain <code>cosmos.theuws.com</code>.</p>
+    <p style="margin-top:30px;font-size:12px;opacity:0.5;">© 2026 Theuws Consulting · Cosmo character is een hommage aan Apogee's 1992-original.</p>
+  </div>
+</footer>
+
+<script>
+// Hide hero-bg fallback if image loaded successfully
+document.addEventListener('DOMContentLoaded', () => {
+  const img = new Image();
+  img.onload = () => {
+    const bg = document.getElementById('hero-bg');
+    if (bg) bg.classList.remove('fallback');
+  };
+  img.src = '/showcase-assets/bg-cloud-cathedral-sky.png';
+
+  // Pop-pulse on scroll-into-view for hallu-cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.opacity = '1';
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.hallu-card, .world-card, .mech-card, .sprint, .tech-card, .swatch, .enemy-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s, transform 0.6s';
+    observer.observe(el);
+  });
+});
+</script>
+
+</body>
+</html>

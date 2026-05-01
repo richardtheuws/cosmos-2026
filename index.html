@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmos Cosmic Adventure 2026 — Een aquarel-droom met zuignap-handen</title>
+<meta name="description" content="2.5D browser-platformer met hallucinerende post-FX. Ghibli-Moebius aquarel-werelden, suction-cup wallcling, eigen folktronica-soundtrack. Een Tenniel-droom met Cosmo-DNA.">
+<meta name="theme-color" content="#3D2E4A">
+<meta name="author" content="Richard Theuws — Theuws Consulting">
+
+<meta property="og:title" content="Cosmos Cosmic Adventure 2026">
+<meta property="og:description" content="2.5D psychedelische browser-platformer — Ghibli-aquarel droom met hallucinerende breekpieken.">
+<meta property="og:image" content="/showcase-assets/bg-cloud-cathedral-sky.png">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="768">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:site_name" content="Cosmos Cosmic Adventure 2026">
+<meta property="og:url" content="https://theuws.com/games/cosmos-2026/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cosmos Cosmic Adventure 2026">
+<meta name="twitter:description" content="Een aquarel-droom met zuignap-handen. Coming soon.">
+<meta name="twitter:image" content="/showcase-assets/bg-cloud-cathedral-sky.png">
+<link rel="canonical" href="https://theuws.com/games/cosmos-2026/">
+<link rel="alternate" hreflang="nl" href="https://theuws.com/games/cosmos-2026/">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/showcase-assets/cosmo-hero-cleaned.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Cosmos Cosmic Adventure 2026",
+  "alternateName": "Cosmos 2026",
+  "url": "https://theuws.com/games/cosmos-2026/",
+  "description": "2.5D browser-based psychedelische platformer-remake van Cosmo's Cosmic Adventure (Apogee, 1992).",
+  "image": "https://theuws.com/games/cosmos-2026/showcase-assets/bg-cloud-cathedral-sky.png",
+  "author": { "@type": "Person", "name": "Richard Theuws" },
+  "publisher": { "@type": "Organization", "name": "Theuws Consulting" },
+  "genre": ["Platformer", "Adventure", "Psychedelic"],
+  "applicationCategory": "Game",
+  "operatingSystem": "Web Browser",
+  "inLanguage": "nl"
+}
+</script>
+
+<style>
+.hero {
+  min-height: 92vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 0 80px;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, transparent 0%, var(--paper-bg) 92%),
+    url('/showcase-assets/bg-cloud-cathedral-sky.png') center/cover no-repeat;
+  opacity: 0.7;
+  filter: saturate(0.94);
+  z-index: 0;
+}
+.hero-content { position: relative; z-index: 2; }
+.eyebrow {
+  font-size: 0.78rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--forest-deep); margin-bottom: 1.6rem;
+  display: inline-block; padding: 6px 14px;
+  border: 1px solid var(--ink-aubergine);
+  background: rgba(232, 213, 183, 0.7);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+}
+h1.title {
+  font-family: var(--font-heading);
+  font-size: clamp(54px, 9vw, 124px);
+  font-weight: 700; line-height: 0.95;
+  margin-bottom: 1rem;
+  color: var(--ink-aubergine);
+  letter-spacing: -0.02em;
+  font-style: italic;
+  text-shadow: 3px 3px 0 var(--faded-rose), 6px 6px 18px rgba(244, 162, 97, 0.28);
+}
+h1.title em {
+  font-style: normal; display: block;
+  font-size: 0.4em; color: var(--forest-deep);
+  letter-spacing: 0.18em; font-weight: 500;
+  margin-top: 0.6rem; text-transform: uppercase;
+  text-shadow: none;
+}
+.tagline {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2.4vw, 28px);
+  max-width: 760px; color: var(--ink-aubergine);
+  margin: 1rem 0 2.4rem;
+  font-style: italic; line-height: 1.4;
+  border-left: 4px solid var(--saffron-glow); padding-left: 22px;
+}
+.cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 28px; border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 1rem; font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--duration-fast), box-shadow var(--duration-fast), background var(--duration-fast);
+  cursor: pointer; border: none;
+}
+.btn-primary { background: var(--ink-aubergine); color: var(--mushroom-cream); }
+.btn-primary:hover { background: var(--faded-rose); color: white; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(184, 92, 126, 0.4); text-decoration: none; }
+.btn-ghost { background: transparent; color: var(--ink-aubergine); border: 2px solid var(--ink-aubergine); }
+.btn-ghost:hover { background: var(--ink-aubergine); color: var(--mushroom-cream); text-decoration: none; }
+.btn-pop { background: var(--pop-magenta); color: white; }
+.btn-pop:hover { background: var(--faded-rose); color: white; }
+
+.hero-cosmo {
+  position: absolute; right: -32px; bottom: 32px;
+  width: clamp(220px, 26vw, 360px);
+  z-index: 3;
+  filter: drop-shadow(8px 12px 16px rgba(61, 46, 74, 0.35));
+  animation: cosmo-bob 4.2s ease-in-out infinite;
+}
+@keyframes cosmo-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-12px) rotate(1.5deg); }
+}
+
+.meta-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2.2rem; }
+.pill { background: rgba(61, 46, 74, 0.92); color: var(--mushroom-cream); padding: 6px 14px; border-radius: 18px; font-size: 0.78rem; letter-spacing: 0.05em; }
+.pill.accent { background: var(--saffron-glow); color: var(--ink-aubergine); }
+.pill.pop { background: var(--pop-magenta); color: white; font-weight: 600; }
+
+/* Numbers grid */
+.numbers { background: var(--paper-shade); }
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+.number-card { padding: 1.4rem 1.2rem; background: var(--paper-bg); border-radius: var(--radius); border-left: 3px solid var(--saffron-glow); box-shadow: var(--shadow-soft); }
+.number-card strong { display: block; font-family: var(--font-heading); font-size: 2.4rem; line-height: 1; color: var(--ink-aubergine); font-weight: 700; }
+.number-card span { display: block; margin-top: 0.4rem; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--forest-deep); }
+
+/* Showcase grid (3 worlds) */
+.world-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 28px; margin-top: 3rem; }
+.world-card {
+  background: var(--paper-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+  border: 1px solid var(--border);
+  transition: transform var(--duration-med) var(--ease-out-quart), box-shadow var(--duration-med);
+  text-decoration: none; color: var(--text);
+}
+.world-card:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: var(--shadow-deep); text-decoration: none; }
+.world-img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
+.world-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(61, 46, 74, 0.45)); }
+.world-info { padding: 1.4rem 1.6rem 1.6rem; }
+.world-tag { display: inline-block; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--saffron-glow); margin-bottom: 0.5rem; font-weight: 700; }
+.world-info h3 { margin: 0 0 0.4rem; font-size: 1.45rem; }
+.world-info p { font-size: 0.95rem; color: var(--text-secondary); margin: 0; }
+
+/* About strip */
+.about { background: var(--paper-bg); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.about-portrait {
+  background: linear-gradient(135deg, var(--moss-sage), var(--ink-aubergine));
+  aspect-ratio: 1; border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading); font-size: 6rem; color: var(--saffron-glow);
+  font-style: italic; font-weight: 700;
+}
+
+/* CTA banner */
+.cta-banner {
+  background: var(--ink-aubergine); color: var(--mushroom-cream);
+  text-align: center; padding: 4rem 1.5rem;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(244, 162, 97, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(255, 45, 149, 0.16) 0%, transparent 55%);
+}
+.cta-banner > * { position: relative; z-index: 1; }
+.cta-banner h2 { color: var(--mushroom-cream); margin-bottom: 1rem; }
+.cta-banner p { font-size: 1.1rem; max-width: 620px; margin: 0 auto 2rem; opacity: 0.9; }
+.cta-banner h2 em { color: var(--pop-lime); }
+
+@media (max-width: 720px) {
+  .hero-cosmo { right: -8%; bottom: 4%; width: 220px; opacity: 0.9; }
+  .about-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+</style>
+</head>
+<body class="paper-grain">
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="/" class="sticky-nav__brand">
+    <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo">
+    <span>Cosmos 2026</span>
+  </a>
+  <div class="sticky-nav__links">
+    <a href="/play/">Speel</a>
+    <a href="/lore/">Het Verhaal</a>
+    <a href="/updates/">Updates</a>
+    <a href="/prd/">PRD</a>
+    <a href="/support/" class="sticky-nav__cta">Steun</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo, the watercolor alien hero" class="hero-cosmo">
+  <div class="container hero-content" data-reveal>
+    <span class="eyebrow">Coming v1.0 · 2026 · Browser-based</span>
+    <h1 class="title">
+      Cosmos
+      <em>Cosmic Adventure 2026</em>
+    </h1>
+    <p class="tagline">Een aquarel-droom met zuignap-handen. Cosmo's Cosmic Adventure herboren als Tenniel-illustratie die in fractal-tunnels openbarst zodra je een Dewdrop oppakt.</p>
+    <div class="cta-row">
+      <a href="/play/" class="btn btn-primary" onclick="cosmos.trackEvent('home_cta_click', { target: 'play' })">▶ Speel Nu (Coming Soon)</a>
+      <a href="/lore/" class="btn btn-ghost">Lees Het Verhaal</a>
+      <a href="/support/" class="btn btn-pop" onclick="cosmos.trackEvent('home_cta_click', { target: 'support' })">Steun het Project</a>
+    </div>
+    <div class="meta-pills">
+      <span class="pill">2.5D Hybrid Platformer</span>
+      <span class="pill">10 Levels — MVP</span>
+      <span class="pill accent">Three.js + Phaser 4</span>
+      <span class="pill">fal.ai · Meshy · Suno · ElevenLabs</span>
+      <span class="pill pop">In Active Development</span>
+    </div>
+  </div>
+</section>
+
+<!-- PITCH -->
+<section>
+  <div class="container container-narrow" data-reveal>
+    <span class="section-label">01 · The Pitch</span>
+    <h2>Eén alien jongetje. Tien werelden. <em>Nul checkpoints.</em></h2>
+    <p class="lead">Cosmo zoekt zijn ouders op planeet Zonk. Zijn familie viel uit de lucht onderweg naar The Funplex. Hij heeft drie hartjes, twee zuignap-handen, en geen idee waar hij is.</p>
+    <p class="lead">Het 2D-gameplayplane blijft strak en eerlijk. De 3D-parallax + post-FX laag breekt en bloeit eromheen. We bouwen geen constante DMT-aanval — we bouwen een aquarel-Ghibli-droom die <em>kantelt</em> op power-ups, boss-intro's, damage-momenten en bonus-warps. De spanning zit in de breuk tussen rust en hallucinatie.</p>
+  </div>
+</section>
+
+<!-- WORLDS -->
+<section class="numbers">
+  <div class="container">
+    <span class="section-label" data-reveal>02 · Worlds</span>
+    <h2 data-reveal>Drie biomes. Eén <em>droom-architectuur.</em></h2>
+    <p class="lead" data-reveal>Episode 1 brengt Cosmo van bovengronds via cave naar sky voor de blob-cliffhanger.</p>
+    <div class="world-grid" data-reveal-stagger>
+      <a href="/lore/#bloomroot" class="world-card">
+        <div class="world-img" style="background-image:url('/showcase-assets/bg-slow-bloom-jungle.png');"></div>
+        <div class="world-info"><span class="world-tag">L1 · L2 · L3 — Surface</span><h3>Slow Bloom</h3><p>Mystieke alien-paddenstoelbos. Translucente moss-sage canopy, sky-wash mist, eerste cling, eerste sterren-pan.</p></div>
+      </a>
+      <a href="/lore/#inkpool" class="world-card">
+        <div class="world-img" style="background-image:url('/showcase-assets/bg-inkpool-cave.png');"></div>
+        <div class="world-info"><span class="world-tag">L4 · L5 · L6 — Hollow</span><h3>Inkpool Hollow</h3><p>Reflectieve ink-aubergine plassen, saffron bioluminescente moss, ghost-mechanic, kaleidoscope-piek bij teleport.</p></div>
+      </a>
+      <a href="/lore/#cathedral" class="world-card">
+        <div class="world-img" style="background-image:url('/showcase-assets/bg-cloud-cathedral-sky.png');"></div>
+        <div class="world-info"><span class="world-tag">L7 · L8 · L9 · L10 — Cathedral</span><h3>Cloud Cathedral</h3><p>Verweerde alien-tempel in pastel-cloud-lagen, beat-jumps via spring-trampolines, blob-arena.</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- IN CIJFERS -->
+<section>
+  <div class="container">
+    <span class="section-label" data-reveal>03 · In Cijfers</span>
+    <h2 data-reveal>Een <em>scherp afgebakende</em> ambitie.</h2>
+    <p class="lead" data-reveal>Geen scope-creep. MVP eerst. Episode 2 en 3 als post-launch DLC.</p>
+    <div class="numbers-grid" data-reveal-stagger>
+      <div class="number-card"><strong>10</strong><span>Levels (E1)</span></div>
+      <div class="number-card"><strong>12</strong><span>Enemy types</span></div>
+      <div class="number-card"><strong>1</strong><span>Boss</span></div>
+      <div class="number-card"><strong>3</strong><span>Biome werelden</span></div>
+      <div class="number-card"><strong>12</strong><span>Suno tracks</span></div>
+      <div class="number-card"><strong>8</strong><span>Sprints naar v1.0</span></div>
+      <div class="number-card"><strong>4</strong><span>AI pipelines</span></div>
+      <div class="number-card"><strong>1</strong><span>Persoon achter de knoppen</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-portrait" data-reveal>RT</div>
+      <div data-reveal>
+        <span class="section-label">04 · Over Richard</span>
+        <h2>Eén persoon. <em>Een toolkit met spier.</em></h2>
+        <p>Ik ben Richard Theuws — solo-developer uit Brabant, Game Master van een 29-game portfolio. Cosmos is mijn 30ste, parallel met <a href="https://reign-of-brabant.nl">Reign of Brabant</a>.</p>
+        <p>Mijn werkplek: Claude Code als regisseur, fal.ai voor sprites, Meshy voor 3D, Suno voor muziek, ElevenLabs voor voices. Een orkest van AI-tooling, één hand aan het stuur.</p>
+        <p>Wat ik bouw is geen vervanging van klassiek vakwerk — het is uitbreiding ervan. Cosmos is daarvan een statement.</p>
+        <div class="cta-row" style="margin-top:1.6rem;">
+          <a href="https://theuws.com/games" class="btn btn-ghost" target="_blank" rel="noopener">Mijn portfolio</a>
+          <a href="https://reign-of-brabant.nl" class="btn btn-ghost" target="_blank" rel="noopener">Reign of Brabant</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2 data-reveal>De droom <em>moet gefinancierd</em>.</h2>
+  <p data-reveal>fal.ai-credits, Meshy-API, Suno Pro, ElevenLabs Studio, hosting. Een aquarel-droom kost echt geld. Iedere bijdrage gaat 1-op-1 naar productie.</p>
+  <div class="cta-row" style="justify-content:center;" data-reveal>
+    <a href="/support/" class="btn btn-pop">Steun met €5</a>
+    <a href="/play/" class="btn btn-ghost" style="border-color:var(--mushroom-cream); color:var(--mushroom-cream);">Speel zodra het er is</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <h4>Cosmos Cosmic Adventure 2026</h4>
+  <div class="site-footer__links">
+    <a href="/play/">Speel</a>
+    <a href="/lore/">Het Verhaal</a>
+    <a href="/updates/">Updates</a>
+    <a href="/prd/">PRD</a>
+    <a href="/support/">Steun</a>
+    <a href="/press/">Press</a>
+    <a href="https://github.com/RichardTheuws/game-master" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p>Een productie van <a href="https://theuws.com" style="color:var(--saffron-glow);">Theuws Consulting</a> · Built op <code>Three.js</code> + <code>Phaser 4</code> + AI-pipeline.</p>
+  <p>Cosmo is een hommage aan Apogee's <em>Cosmo's Cosmic Adventure</em> uit 1992.</p>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · v<span id="version">0.1.0</span></p>
+</footer>
+
+<script src="/assets/js/site.js"></script>
+</body>
+</html>
