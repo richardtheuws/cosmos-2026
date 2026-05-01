@@ -67,6 +67,10 @@
  */
 
 import type { GlobalUniforms } from '../core/globalUniforms';
+// NOTE — when a Suno track lands in public/assets/audio/music/, swap
+// MUSIC_TRACK below to `assetPath('assets/audio/music/<name>.mp3')` and add
+// `import { assetPath } from '../core/assetPath';` (kept out of the import
+// list while unused so noUnusedLocals stays happy).
 
 // Howler exposes its AudioContext + master gain on the global Howler object
 // (typed in @types/howler). Howler creates the context lazily on first Howl
@@ -74,9 +78,21 @@ import type { GlobalUniforms } from '../core/globalUniforms';
 import { Howler } from 'howler';
 
 /**
- * Swap to a real Suno track filename when ready (Sprint 7).
- * Empty string → placeholder synth-loop. Typed `string` (not literal) so TS
- * keeps both branches of the source factory live.
+ * Active OST track. Empty string → placeholder synth-loop (used while Suno
+ * tracks are still being commissioned). When a track is rendered + saved to
+ * `public/assets/audio/music/<name>.mp3`, flip the constant via `assetPath()`
+ * so the URL respects Vite's `base` config (dev `/`, prod `/games/cosmos-2026/`).
+ *
+ * Sprint 8B status (2026-05-01): sunoapi.org credits depleted (2.0 / ~32
+ * needed for 4 tracks); MUSIC_TRACK kept empty until top-up. After top-up:
+ *   set -a; . ~/Documents/games/.env; set +a
+ *   python3 scripts/sprint8b/generate_mvp_tracks.py
+ * → writes `title-theme.mp3`, `slow-bloom-loop.mp3`, `inkpool-loop.mp3`,
+ * `boss-stinger.mp3` into `public/assets/audio/music/`. Then the 1-line swap:
+ *   import { assetPath } from '../core/assetPath';
+ *   const MUSIC_TRACK: string = assetPath('assets/audio/music/title-theme.mp3');
+ *
+ * Typed `string` (not literal) so TS keeps both factory branches live.
  */
 const MUSIC_TRACK: string = '';
 
@@ -280,6 +296,11 @@ function createPlaceholderSynth(ctx: AudioContext): MusicSource {
  * Keeps the bridge agnostic of file format — browser-native audio decoding
  * via `<audio>` element + MediaElementSource (works for mp3/ogg/wav, supports
  * looping via the audio element).
+ *
+ * If the `<audio>` element fires `error` (404, decode failure, …) we log a
+ * single warning so the dev knows the swap is broken — but we do NOT throw,
+ * because the analyser graph is already wired. The world will simply be
+ * silent; flipping `MUSIC_TRACK = ''` restores the placeholder synth.
  */
 function createStreamedTrack(ctx: AudioContext, src: string): MusicSource {
   const audioEl = document.createElement('audio');
@@ -287,6 +308,12 @@ function createStreamedTrack(ctx: AudioContext, src: string): MusicSource {
   audioEl.loop = true;
   audioEl.crossOrigin = 'anonymous';
   audioEl.preload = 'auto';
+  audioEl.addEventListener('error', () => {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[audioFFTBridge] failed to load music track: ${src} — set MUSIC_TRACK='' to fall back to placeholder synth.`,
+    );
+  });
   // Best-effort autoplay — will succeed once ctx.resume() runs from user-gesture.
   void audioEl.play().catch(() => {
     /* gesture pending; will retry naturally on next ensureRunning()  */

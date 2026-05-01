@@ -4,6 +4,56 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.7.1] — 2026-05-01 — Sprint 8: hot-fix — asset paths, Cosmo polish, Suno-prep
+
+Live playtest van v0.7.0 toonde alleen Phaser fallback-rectangles in plaats van sprites — alle 31 asset-loads gingen naar `theuws.com/assets/...` ipv `theuws.com/games/cosmos-2026/assets/...`. Sprint 8 patcht het, plus build-pipeline veiligheid, Cosmo state-machine polish, en Suno-API integratie (klaar voor music-swap zodra credits getopt zijn).
+
+### Fixed (8A — Asset BASE_URL paths, KRITIEK)
+
+- **`src/core/assetPath.ts`** (nieuw): single helper die `import.meta.env.BASE_URL` als prefix gebruikt voor runtime-strings. Vite herschrijft alleen HTML/import-paden, niet runtime-strings die naar Phaser's `this.load.image()` of Three's TextureLoader gaan.
+- 31 hardcoded `/assets/...` paden gerouteerd via `assetPath()` in `L1Scene.ts` (25), `sfxBus.ts` (2), `parallaxScene.ts` (1).
+- Productie-build-bundle bevat nu correct `"/games/cosmos-2026/"` prefix; preview-test 3/3 200 op alle paden.
+
+### Fixed (8C — Build pipeline force-overwrite + sentinel)
+
+- `scripts/postbuild-copy-public.mjs` herschreven van `--ignore-existing` (silent-skip) naar **byte-equal verify + force-overwrite**. Eliminates een hele klasse van silent-drift tussen `public/` en `dist/`.
+- 4 SENTINEL_FILES (cosmo-cling-right, cosmo-hurt, bomb-throw, bomb-boom) die exit-1 forceren als ze na de copy ontbreken — voorkomt herhaling van Sprint 7E mysterie.
+- Diagnose: pipeline was sinds commit `bca9cf0` al correct; Sprint 7E observatie kwam vermoedelijk van stale dist/ vóór die commit. Maar het silent-skip-risk was reëel — nu gehard.
+
+### Changed (8D — Cosmo state-machine polish)
+
+- `Cosmo.ts`: `bombCooldown` was hardcoded 0.4 — drift met `BOMB.COOLDOWN_S` (0.35). Single source of truth.
+- Death-state krijgt **Z-rotation tween** (90° easeIn 600ms, sign volgt facing). Sprint 7A open issue closed.
+- `setTimeout` voor damage→fall reset vervangen door `scene.time.delayedCall` (respecteert Phaser-pause).
+- `bombTargets[]` unbounded growth gedocumenteerd als L2-pass cleanup; `dead`-guard voorkomt crash.
+
+### Added (8B — Suno API integratie, scaffold + wiring)
+
+- **`scripts/sprint8b/suno_client.py`** (nieuw): Python client met `credits`/`generate`/`wait_for_task`/`download`/`transcode_to_mp3`. CLI subcommands. Cosmos-style suffix + negative tags hardcoded (folktronica, koto, wooden flute, D minor, no blues rock).
+- **`scripts/sprint8b/generate_mvp_tracks.py`** (nieuw): batch driver voor 4 MVP tracks (title-theme, slow-bloom-loop, inkpool-loop, boss-stinger). Pre-flight credit check, sequential 15s gap, .json sidecars.
+- **`audioFFTBridge.ts`** voorbereid op 1-line swap (`MUSIC_TRACK = assetPath(...)`); `<audio>.error` listener toegevoegd voor swap-mistake debugging.
+- **Memory** (`suno_api.md`): endpoint inventory, prompt-structuur, gotchas (callBackUrl required, 429-as-HTTP-200, 8 credits/V4_5 generate, soft rate-limit).
+- **Status**: account heeft 2.0 credits, 32 nodig. **0 tracks gerenderd**. Top-up bij sunoapi.org Basic $5 → 1000 credits → 125 generations. Daarna `python3 scripts/sprint8b/generate_mvp_tracks.py` rendert ~12 min unattended.
+
+### Architectuur-leringen Sprint 8
+
+- **Vite's BASE_URL replace werkt alleen op HTML + import-paden**, NIET op runtime-string-literals naar engine-loaders. Single helper (`assetPath()`) is de duurzame fix; alternatieven (postbuild regex, build-time-codegen) zijn brittle.
+- **Silent-skip semantics in build-pipeline = silent regression risk**. Force-overwrite + sentinel-guard maakt regressies hard-fail bij build-tijd ipv runtime in productie.
+- **sunoapi.org returns code-in-body voor errors** (HTTP 200 + `code:429` voor insufficient credits). Always inspect body, never trust HTTP status alone.
+- **`callBackUrl` is required field** in sunoapi.org generate endpoint, ook bij polling. Dummy `https://example.com/no-callback` voldoet.
+
+### Cost
+
+$0 (alleen code; Suno top-up door gebruiker, kosten daar bekend: $0.005-0.04 per track op Basic plan).
+
+### Niet gedaan (Sprint 9+)
+
+- 4 Suno tracks renderen (blocked op credit top-up — single python-script-run zodra opgelost)
+- Walk-1/walk-2 eye-drift fix (per-frame seed-lock, $0.18) — TODO-comment in Cosmo.ts
+- Bomb pickup → Cosmo invuln-frames bij death state (edge-case)
+- L2/L3/L4 levels
+- Save-state / progressie tracking
+
 ## [0.7.0] — 2026-05-01 — Sprint 7: parallel-team — anim, mobile, sprites, bundle
 
 Vier agents tegelijk: multi-frame Cosmo anim (7A), mobile/touch-controls (7B), bundle-size optimalisatie (7C), enemy + bomb sprite-generation pass (7D). Resultaat: Cosmo loopt en springt nu echt anders, mobile is speelbaar, main bundle is van 2.2MB naar 48KB en alle 12 enemies + bomb-stack hebben definitieve assets.

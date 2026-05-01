@@ -14,6 +14,7 @@ import { BreakableWall } from '../entities/BreakableWall';
 import { Enemy } from '../entities/enemies/Enemy';
 import type { EnemyProjectile } from '../entities/enemies/EnemyProjectile';
 import { ENEMY_DEFS, type BombTarget } from '../entities/enemies/EnemyTypes';
+import { assetPath } from '../../core/assetPath';
 import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import { L1_GRID, TILE_SIZE, decodeLevel, HINT_LINES } from '../../data/levelL1';
@@ -87,8 +88,8 @@ export class L1Scene extends Phaser.Scene {
     // Each pose is a distinct 1024² texture; Cosmo.updateAnim() texture-swaps
     // per state. See public/assets/case-study/cosmo-multi-frame/ for skeletons +
     // raw Flux outputs. Walk-cycle alternates walk-1/walk-2 every ~133ms.
-    const v3 = '/assets/sprites/v3';
-    const v2 = '/assets/sprites/v2';
+    const v3 = assetPath('assets/sprites/v3');
+    const v2 = assetPath('assets/sprites/v2');
     this.load.image('cosmo-walk-1', `${v3}/cosmo-walk-1.png`);
     this.load.image('cosmo-walk-2', `${v3}/cosmo-walk-2.png`);
     this.load.image('cosmo-jump-up', `${v3}/cosmo-jump-up.png`);
@@ -102,7 +103,7 @@ export class L1Scene extends Phaser.Scene {
 
     // Sprint 7D — dedicated sprites for the remaining 9 enemy classes.
     // Flux Dev + BiRefNet, locked palette, Hayao×Moebius style coherent with Cosmo.
-    const v4 = '/assets/sprites/v4';
+    const v4 = assetPath('assets/sprites/v4');
     this.load.image('enemy-parachute', `${v4}/enemy-parachute-cleaned.png`);
     this.load.image('enemy-pinkworm', `${v4}/enemy-pinkworm-cleaned.png`);
     this.load.image('enemy-ghost', `${v4}/enemy-ghost-cleaned.png`);
@@ -114,24 +115,24 @@ export class L1Scene extends Phaser.Scene {
     this.load.image('enemy-spark', `${v4}/enemy-spark-cleaned.png`);
 
     // Sprint 7D — bomb assets (replaces procedural canvas textures).
-    this.load.image('bomb', '/assets/bombs/bomb-cleaned.png');
-    this.load.image('bomb-pickup', '/assets/bombs/bomb-pickup-cleaned.png');
+    this.load.image('bomb', assetPath('assets/bombs/bomb-cleaned.png'));
+    this.load.image('bomb-pickup', assetPath('assets/bombs/bomb-pickup-cleaned.png'));
 
     // Painted tiles — replace procedural Graphics in S5 wiring.
-    this.load.image('tile-ground-painted', '/assets/tiles/tile-ground-cleaned.png');
-    this.load.image('tile-dirt-painted', '/assets/tiles/tile-dirt.png');
-    this.load.image('tile-wall-painted', '/assets/tiles/tile-wall-v2.png');
+    this.load.image('tile-ground-painted', assetPath('assets/tiles/tile-ground-cleaned.png'));
+    this.load.image('tile-dirt-painted', assetPath('assets/tiles/tile-dirt.png'));
+    this.load.image('tile-wall-painted', assetPath('assets/tiles/tile-wall-v2.png'));
     // Sprint 7D — dedicated cracked-wall texture for breakable walls.
-    this.load.image('tile-wall-cracked-painted', '/assets/tiles/tile-wall-cracked-painted.png');
-    this.load.image('tile-mushroom-painted', '/assets/tiles/tile-mushroom-v2.png');
-    this.load.image('tile-spike-painted', '/assets/tiles/tile-spike-cleaned.png');
-    this.load.image('tile-trampoline-painted', '/assets/tiles/tile-trampoline.png');
+    this.load.image('tile-wall-cracked-painted', assetPath('assets/tiles/tile-wall-cracked-painted.png'));
+    this.load.image('tile-mushroom-painted', assetPath('assets/tiles/tile-mushroom-v2.png'));
+    this.load.image('tile-spike-painted', assetPath('assets/tiles/tile-spike-cleaned.png'));
+    this.load.image('tile-trampoline-painted', assetPath('assets/tiles/tile-trampoline.png'));
 
     // Painted pickups
-    this.load.image('pickup-star-painted', '/assets/pickups/pickup-star-cleaned.png');
-    this.load.image('pickup-powerup-painted', '/assets/pickups/pickup-powerup-cleaned.png');
-    this.load.image('pickup-cheeseburger-painted', '/assets/pickups/pickup-cheeseburger-cleaned.png');
-    this.load.image('hint-globe-painted', '/assets/pickups/hint-globe-cleaned.png');
+    this.load.image('pickup-star-painted', assetPath('assets/pickups/pickup-star-cleaned.png'));
+    this.load.image('pickup-powerup-painted', assetPath('assets/pickups/pickup-powerup-cleaned.png'));
+    this.load.image('pickup-cheeseburger-painted', assetPath('assets/pickups/pickup-cheeseburger-cleaned.png'));
+    this.load.image('hint-globe-painted', assetPath('assets/pickups/hint-globe-cleaned.png'));
   }
 
   create(): void {

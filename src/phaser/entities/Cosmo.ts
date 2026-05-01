@@ -10,6 +10,7 @@ import Phaser from 'phaser';
 import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import { sfx } from '../../audio/sfxBus';
+import { BOMB } from './Bomb';
 
 export const COSMO = {
   RUN_SPEED: 200,
@@ -92,7 +93,8 @@ export class Cosmo {
       const handY = this.sprite.y - COSMO.HEIGHT * 0.1;
       this.bombHooks.throwBomb(handX, handY, this.facing);
       this.bombs -= 1;
-      this.bombCooldown = 0.4;
+      // Sprint 8D — pull cooldown from the BOMB const so Cosmo + Bomb stay in sync.
+      this.bombCooldown = BOMB.COOLDOWN_S;
       this.playThrowAnim();
       // bomb-throw SFX is fired by Bomb's constructor — no double-play here.
     }
@@ -159,13 +161,23 @@ export class Cosmo {
     if (this.hp <= 0) {
       this.state = 'death';
       this.sprite.setVelocity(0, COSMO.JUMP_VELOCITY * 0.7);
+      // Sprint 8D — death rotation tween (Sprint 7A open issue). 90° forward
+      // tilt over 600ms easeIn — reads as Cosmo collapsing while the
+      // ragdoll-arc plays out. Z-rotation is angle in Phaser (degrees).
+      this.sprite.scene.tweens.add({
+        targets: this.sprite,
+        angle: 90 * (this.facing > 0 ? 1 : -1),
+        duration: 600,
+        ease: 'Cubic.easeIn',
+      });
       return true;
     }
     this.state = 'damage';
     this.sprite.setVelocity(-this.facing * 180, COSMO.JUMP_VELOCITY * 0.55);
-    setTimeout(() => {
+    // Use scene-aware timer so the callback respects scene pause/shutdown.
+    this.sprite.scene.time.delayedCall(220, () => {
       if (this.state === 'damage') this.state = 'fall';
-    }, 220);
+    });
     return true;
   }
 
@@ -243,6 +255,9 @@ export class Cosmo {
 
       case 'run': {
         // Alternate walk-1 / walk-2 based on phase accumulator.
+        // TODO(Sprint 8E+): walk-1/walk-2 eye-drift — chameleon eyes shift
+        // ~3px between frames (Flux seed-variance). Fix via per-frame
+        // seed-lock pass through fal.ai (~$0.18/run). Deferred from 8D.
         this.walkPhase += dt;
         if (this.walkPhase >= Cosmo.WALK_FRAME_DT) {
           this.walkPhase -= Cosmo.WALK_FRAME_DT;

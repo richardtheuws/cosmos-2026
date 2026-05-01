@@ -8,6 +8,7 @@
  * has rendered.
  */
 import * as THREE from 'three';
+import { assetPath } from '../core/assetPath';
 import type { GlobalUniforms } from '../core/globalUniforms';
 import type { Biome, BiomeLayer } from '../data/biomes';
 import { createPostFX, type PostFX } from './postFX/postFX';
@@ -72,7 +73,7 @@ export class ParallaxScene {
   }
 
   private async addLayer(layer: BiomeLayer): Promise<void> {
-    const tex = await new THREE.TextureLoader().loadAsync(layer.url);
+    const tex = await new THREE.TextureLoader().loadAsync(assetPath(layer.url));
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     const aspect = tex.image.width / tex.image.height;

@@ -206,6 +206,68 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.7.1</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 8: hot-fix — asset paths, Cosmo polish, Suno-prep</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--feat">Feature</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live playtest van v0.7.0 toonde alleen Phaser fallback-rectangles in plaats van sprites — alle 31 asset-loads gingen naar <code>theuws.com/assets/...</code> ipv <code>theuws.com/games/cosmos-2026/assets/...</code>. Sprint 8 patcht het, plus build-pipeline veiligheid, Cosmo state-machine polish, en Suno-API integratie (klaar voor music-swap zodra credits getopt zijn).</p>
+        </div>
+        <h3>FIXED (8A — ASSET BASE_URL PATHS, KRITIEK)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/core/assetPath.ts</code></strong> (nieuw): single helper die <code>import.meta.env.BASE_URL</code> als prefix gebruikt voor runtime-strings. Vite herschrijft alleen HTML/import-paden, niet runtime-strings die naar Phaser&#039;s <code>this.load.image()</code> of Three&#039;s TextureLoader gaan.</li>
+          <li>31 hardcoded <code>/assets/...</code> paden gerouteerd via <code>assetPath()</code> in <code>L1Scene.ts</code> (25), <code>sfxBus.ts</code> (2), <code>parallaxScene.ts</code> (1).</li>
+          <li>Productie-build-bundle bevat nu correct <code>&quot;/games/cosmos-2026/&quot;</code> prefix; preview-test 3/3 200 op alle paden.</li>
+        </ul>
+<h3>FIXED (8C — BUILD PIPELINE FORCE-OVERWRITE + SENTINEL)</h3>
+        <ul class="update__highlights">
+          <li><code>scripts/postbuild-copy-public.mjs</code> herschreven van <code>--ignore-existing</code> (silent-skip) naar <strong>byte-equal verify + force-overwrite</strong>. Eliminates een hele klasse van silent-drift tussen <code>public/</code> en <code>dist/</code>.</li>
+          <li>4 SENTINEL_FILES (cosmo-cling-right, cosmo-hurt, bomb-throw, bomb-boom) die exit-1 forceren als ze na de copy ontbreken — voorkomt herhaling van Sprint 7E mysterie.</li>
+          <li>Diagnose: pipeline was sinds commit <code>bca9cf0</code> al correct; Sprint 7E observatie kwam vermoedelijk van stale dist/ vóór die commit. Maar het silent-skip-risk was reëel — nu gehard.</li>
+        </ul>
+<h3>CHANGED (8D — COSMO STATE-MACHINE POLISH)</h3>
+        <ul class="update__highlights">
+          <li><code>Cosmo.ts</code>: <code>bombCooldown</code> was hardcoded 0.4 — drift met <code>BOMB.COOLDOWN_S</code> (0.35). Single source of truth.</li>
+          <li>Death-state krijgt <strong>Z-rotation tween</strong> (90° easeIn 600ms, sign volgt facing). Sprint 7A open issue closed.</li>
+          <li><code>setTimeout</code> voor damage→fall reset vervangen door <code>scene.time.delayedCall</code> (respecteert Phaser-pause).</li>
+          <li><code>bombTargets[]</code> unbounded growth gedocumenteerd als L2-pass cleanup; <code>dead</code>-guard voorkomt crash.</li>
+        </ul>
+<h3>ADDED (8B — SUNO API INTEGRATIE, SCAFFOLD + WIRING)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>scripts/sprint8b/suno_client.py</code></strong> (nieuw): Python client met <code>credits</code>/<code>generate</code>/<code>wait_for_task</code>/<code>download</code>/<code>transcode_to_mp3</code>. CLI subcommands. Cosmos-style suffix + negative tags hardcoded (folktronica, koto, wooden flute, D minor, no blues rock).</li>
+          <li><strong><code>scripts/sprint8b/generate_mvp_tracks.py</code></strong> (nieuw): batch driver voor 4 MVP tracks (title-theme, slow-bloom-loop, inkpool-loop, boss-stinger). Pre-flight credit check, sequential 15s gap, .json sidecars.</li>
+          <li><strong><code>audioFFTBridge.ts</code></strong> voorbereid op 1-line swap (<code>MUSIC_TRACK = assetPath(...)</code>); <code>&lt;audio&gt;.error</code> listener toegevoegd voor swap-mistake debugging.</li>
+          <li><strong>Memory</strong> (<code>suno_api.md</code>): endpoint inventory, prompt-structuur, gotchas (callBackUrl required, 429-as-HTTP-200, 8 credits/V4_5 generate, soft rate-limit).</li>
+          <li><strong>Status</strong>: account heeft 2.0 credits, 32 nodig. <strong>0 tracks gerenderd</strong>. Top-up bij sunoapi.org Basic $5 → 1000 credits → 125 generations. Daarna <code>python3 scripts/sprint8b/generate_mvp_tracks.py</code> rendert ~12 min unattended.</li>
+        </ul>
+<h3>ARCHITECTUUR-LERINGEN SPRINT 8</h3>
+        <ul class="update__highlights">
+          <li><strong>Vite&#039;s BASE_URL replace werkt alleen op HTML + import-paden</strong>, NIET op runtime-string-literals naar engine-loaders. Single helper (<code>assetPath()</code>) is de duurzame fix; alternatieven (postbuild regex, build-time-codegen) zijn brittle.</li>
+          <li><strong>Silent-skip semantics in build-pipeline = silent regression risk</strong>. Force-overwrite + sentinel-guard maakt regressies hard-fail bij build-tijd ipv runtime in productie.</li>
+          <li><strong>sunoapi.org returns code-in-body voor errors</strong> (HTTP 200 + <code>code:429</code> voor insufficient credits). Always inspect body, never trust HTTP status alone.</li>
+          <li><strong><code>callBackUrl</code> is required field</strong> in sunoapi.org generate endpoint, ook bij polling. Dummy <code>https://example.com/no-callback</code> voldoet.</li>
+        </ul>
+<h3>NIET GEDAAN (SPRINT 9+)</h3>
+        <ul class="update__highlights">
+          <li>4 Suno tracks renderen (blocked op credit top-up — single python-script-run zodra opgelost)</li>
+          <li>Walk-1/walk-2 eye-drift fix (per-frame seed-lock, $0.18) — TODO-comment in Cosmo.ts</li>
+          <li>Bomb pickup → Cosmo invuln-frames bij death state (edge-case)</li>
+          <li>L2/L3/L4 levels</li>
+          <li>Save-state / progressie tracking</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.7.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 7: parallel-team — anim, mobile, sprites, bundle</h2>

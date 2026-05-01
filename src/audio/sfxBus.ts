@@ -7,8 +7,9 @@
  * they emit a console warn and silently no-op so the gameplay loop never breaks.
  */
 import { Howl } from 'howler';
+import { assetPath } from '../core/assetPath';
 
-const SFX_BASE = '/assets/audio/sfx';
+const SFX_BASE = assetPath('assets/audio/sfx');
 
 const SFX_MANIFEST: Record<string, { src: string; volume?: number }> = {
   cling: { src: `${SFX_BASE}/cosmo-cling.mp3`, volume: 0.6 },
@@ -24,7 +25,7 @@ const SFX_MANIFEST: Record<string, { src: string; volume?: number }> = {
   'bomb-boom': { src: `${SFX_BASE}/bomb-boom.mp3`, volume: 0.85 },
 };
 
-const VOICE_BASE = '/assets/audio/voices';
+const VOICE_BASE = assetPath('assets/audio/voices');
 
 class SfxBus {
   private cache = new Map<string, Howl>();
