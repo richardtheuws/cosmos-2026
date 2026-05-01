@@ -206,6 +206,45 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.7.2</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 9: music live — Suno × audio-FFT bridge</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Sprint 8B leverde de bridge en de scaffold; nu hangt er <strong>echte muziek</strong> aan. 4 D-minor folktronica tracks gerenderd via Suno Pro (handmatig, copy-paste prompts), loudnorm-pass naar −14 LUFS browser-standaard, swap van placeholder-synth naar streamed <code>&lt;audio&gt;</code> source. De wereld ademt nu mee met de title-theme zodra je op het canvas klikt.</p>
+        </div>
+        <h3>ADDED (SPRINT 9 — MUSIC)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>public/assets/audio/music/title-theme.mp3</code></strong> — 3:09, 92 BPM, D-minor. Slow build, wooden flute + koto + granular pads, brushed kick @ 1:00. 4-note motif D–A–F–D in koto, fluit antwoordt octaaf hoger. Suspended A-minor → D-minor loop point.</li>
+          <li><strong><code>public/assets/audio/music/slow-bloom-loop.mp3</code></strong> — 2:50, 86 BPM. Mystieke alien-mushroom forest. Geen percussie, alleen ademende flute + koto + crickets. Discovery-feeling voor L1.</li>
+          <li><strong><code>public/assets/audio/music/inkpool-loop.mp3</code></strong> — 3:18, 78 BPM. Reflective ink-aubergine cave. Ambient koto-drone, lange flute, reverse-reverb tape, 78-BPM hand-drum heartbeat.</li>
+          <li><strong><code>public/assets/audio/music/boss-stinger.mp3</code></strong> — 2:47 (langer dan PRD-doel 0:45 maar werkt als mini-loop). Ominous wooden flute drone + koto-tremolo build. Suspended D-minor finale.</li>
+          <li><strong>Loudnorm pass</strong>: ffmpeg <code>loudnorm=I=-14:TP=-1.5:LRA=11 -b:a 112k</code>. Spread −13.1 → −13.9 LUFS (binnen 0.8 LU); file-sizes ~halved (2.3–2.8 MB elk). Originelen in <code>_originals/</code> (gitignored).</li>
+          <li><strong><code>audioFFTBridge.ts</code> swap</strong>: <code>MUSIC_TRACK = assetPath(&#039;assets/audio/music/title-theme.mp3&#039;)</code>. Placeholder-synth opzij; streamed <code>&lt;audio&gt;</code> element + MediaElementAudioSourceNode neemt over. AudioContext-resume wired aan eerste click/keydown/touchstart (browser autoplay-policy).</li>
+        </ul>
+<h3>ARCHITECTUUR-NOTITIE</h3>
+        <ul class="update__highlights">
+          <li>Suno&#039;s wrapper-services (sunoapi.org) gebruiken aparte credit-systemen los van suno.com Pro. gcui-art/suno-api wrapper vereist 2Captcha bovenop SUNO_COOKIE. <strong>Conclusie</strong>: voor MVP-aantal tracks (≤10) is handmatig genereren via suno.com + copy-paste prompts goedkoper en simpeler dan elke API-route.</li>
+          <li>Memory bijgewerkt: <code>suno_api.md</code> documenteert sunoapi.org endpoints + scaffold (Sprint 8B <code>suno_client.py</code> blijft optioneel pad voor later batch-renders).</li>
+        </ul>
+<h3>OPEN VOOR SPRINT 10</h3>
+        <ul class="update__highlights">
+          <li>2 extra &quot;mesmerizing insanity&quot; companion-tracks (<code>hallucination-peak.mp3</code> voor kaleidoscope-pieken, <code>damage-warp-stinger.mp3</code> voor damage/death/portal). Prompt-bundle gedeeld; Richard rendert + plaatst in Downloads.</li>
+          <li>Per-biome track-switching (TrippyEventDirector kan tussen slow-bloom-loop en hallucination-peak crossfaden bij intense events).</li>
+          <li>L2 (<code>inkpool-hollow</code>) gebruikt <code>inkpool-loop.mp3</code> zodra er een biome-switch entity-flag is.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.7.1</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 8: hot-fix — asset paths, Cosmo polish, Suno-prep</h2>

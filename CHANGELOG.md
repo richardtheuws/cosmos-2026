@@ -4,6 +4,30 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.7.2] — 2026-05-01 — Sprint 9: music live — Suno × audio-FFT bridge
+
+Sprint 8B leverde de bridge en de scaffold; nu hangt er **echte muziek** aan. 4 D-minor folktronica tracks gerenderd via Suno Pro (handmatig, copy-paste prompts), loudnorm-pass naar −14 LUFS browser-standaard, swap van placeholder-synth naar streamed `<audio>` source. De wereld ademt nu mee met de title-theme zodra je op het canvas klikt.
+
+### Added (Sprint 9 — music)
+
+- **`public/assets/audio/music/title-theme.mp3`** — 3:09, 92 BPM, D-minor. Slow build, wooden flute + koto + granular pads, brushed kick @ 1:00. 4-note motif D–A–F–D in koto, fluit antwoordt octaaf hoger. Suspended A-minor → D-minor loop point.
+- **`public/assets/audio/music/slow-bloom-loop.mp3`** — 2:50, 86 BPM. Mystieke alien-mushroom forest. Geen percussie, alleen ademende flute + koto + crickets. Discovery-feeling voor L1.
+- **`public/assets/audio/music/inkpool-loop.mp3`** — 3:18, 78 BPM. Reflective ink-aubergine cave. Ambient koto-drone, lange flute, reverse-reverb tape, 78-BPM hand-drum heartbeat.
+- **`public/assets/audio/music/boss-stinger.mp3`** — 2:47 (langer dan PRD-doel 0:45 maar werkt als mini-loop). Ominous wooden flute drone + koto-tremolo build. Suspended D-minor finale.
+- **Loudnorm pass**: ffmpeg `loudnorm=I=-14:TP=-1.5:LRA=11 -b:a 112k`. Spread −13.1 → −13.9 LUFS (binnen 0.8 LU); file-sizes ~halved (2.3–2.8 MB elk). Originelen in `_originals/` (gitignored).
+- **`audioFFTBridge.ts` swap**: `MUSIC_TRACK = assetPath('assets/audio/music/title-theme.mp3')`. Placeholder-synth opzij; streamed `<audio>` element + MediaElementAudioSourceNode neemt over. AudioContext-resume wired aan eerste click/keydown/touchstart (browser autoplay-policy).
+
+### Architectuur-notitie
+
+- Suno's wrapper-services (sunoapi.org) gebruiken aparte credit-systemen los van suno.com Pro. gcui-art/suno-api wrapper vereist 2Captcha bovenop SUNO_COOKIE. **Conclusie**: voor MVP-aantal tracks (≤10) is handmatig genereren via suno.com + copy-paste prompts goedkoper en simpeler dan elke API-route.
+- Memory bijgewerkt: `suno_api.md` documenteert sunoapi.org endpoints + scaffold (Sprint 8B `suno_client.py` blijft optioneel pad voor later batch-renders).
+
+### Open voor Sprint 10
+
+- 2 extra "mesmerizing insanity" companion-tracks (`hallucination-peak.mp3` voor kaleidoscope-pieken, `damage-warp-stinger.mp3` voor damage/death/portal). Prompt-bundle gedeeld; Richard rendert + plaatst in Downloads.
+- Per-biome track-switching (TrippyEventDirector kan tussen slow-bloom-loop en hallucination-peak crossfaden bij intense events).
+- L2 (`inkpool-hollow`) gebruikt `inkpool-loop.mp3` zodra er een biome-switch entity-flag is.
+
 ## [0.7.1] — 2026-05-01 — Sprint 8: hot-fix — asset paths, Cosmo polish, Suno-prep
 
 Live playtest van v0.7.0 toonde alleen Phaser fallback-rectangles in plaats van sprites — alle 31 asset-loads gingen naar `theuws.com/assets/...` ipv `theuws.com/games/cosmos-2026/assets/...`. Sprint 8 patcht het, plus build-pipeline veiligheid, Cosmo state-machine polish, en Suno-API integratie (klaar voor music-swap zodra credits getopt zijn).

@@ -67,10 +67,7 @@
  */
 
 import type { GlobalUniforms } from '../core/globalUniforms';
-// NOTE — when a Suno track lands in public/assets/audio/music/, swap
-// MUSIC_TRACK below to `assetPath('assets/audio/music/<name>.mp3')` and add
-// `import { assetPath } from '../core/assetPath';` (kept out of the import
-// list while unused so noUnusedLocals stays happy).
+import { assetPath } from '../core/assetPath';
 
 // Howler exposes its AudioContext + master gain on the global Howler object
 // (typed in @types/howler). Howler creates the context lazily on first Howl
@@ -94,7 +91,7 @@ import { Howler } from 'howler';
  *
  * Typed `string` (not literal) so TS keeps both factory branches live.
  */
-const MUSIC_TRACK: string = '';
+const MUSIC_TRACK: string = assetPath('assets/audio/music/title-theme.mp3');
 
 /** Smoothing factor for the per-band lerp. Higher = snappier, lower = sleepier. */
 const BAND_LERP_ALPHA = 0.4;

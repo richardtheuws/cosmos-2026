@@ -41,8 +41,13 @@ test-results/
 
 # Generated 3D / heavy assets (generated locally, regenerated via scripts)
 public/assets/meshy/
-public/assets/audio/music/
+
+# Voice files are regenerated via ElevenLabs scripts; music is hand-rendered
+# via Suno Pro and committed (small enough to live in git, single source of truth)
 public/assets/audio/voices/
 
 # Showcase assets that are tracked stay
 # (public/showcase-assets/ is committed)
+
+# loudnorm pre-pass backups (originals before −14 LUFS normalisation)
+public/assets/audio/music/_originals/
