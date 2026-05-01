@@ -1,0 +1,43 @@
+{
+  "sprint": "6A \u2014 production",
+  "date": "2026-05-01",
+  "goal": "Cosmo canonical: extended-arm geometry via Flux Fill mask in empty bg, plus deterministic tail alpha-erase",
+  "pipeline": "Flux Fill extended-arm mask + BiRefNet + PIL alpha-erase tail",
+  "src": "public/assets/sprites/v3/cosmo-canonical-cleaned.png",
+  "process_dir": "public/assets/case-study/cosmo-inpaint-process",
+  "final_assets": [
+    "public/assets/sprites/v3/cosmo-canonical-v2-cleaned.png",
+    "public/assets/cosmo/_LOCKED-REFERENCE-v2.png"
+  ],
+  "prompt": "small green pear-shaped alien creature with two long thin arms extending outward sideways from the torso, each arm ending in a LARGE FLAT ROUND BLACK DISC suction-cup pad like a glossy black rubber toilet plunger head, the suction-cup pads are pure obsidian-black smooth circles bigger than the head of a thumb, soft Studio Ghibli watercolor with ink-aubergine outline and paper-grain texture, faded-rose freckle spots on green skin, off-white painterly paper background, NOT fingers NOT human-hand NOT lizard-claw NOT pointed-claw NOT mitten NOT ear NOT cheek NOT face NOT headphones NOT folded-arms NOT tucked-arms",
+  "mask_zones": {
+    "left_arm_rect": "(180,540)-(430,820)",
+    "right_arm_rect": "(615,540)-(860,820)",
+    "left_hand_disc": "center (290, 805) r=90",
+    "right_hand_disc": "center (750, 805) r=90"
+  },
+  "params": {
+    "num_inference_steps": 40,
+    "guidance_scale": 35.0
+  },
+  "v4_refinement": {
+    "goal": "fuse claws into disc \u2014 second-pass inpaint on v3 result",
+    "pipeline": "Flux Fill on v3 result + BiRefNet + alpha-erase tail",
+    "mask": "12-mask-fuse-claws.png \u2014 two ellipses over wrist/finger zones",
+    "prompt": "smooth thin green alien arm ending in a single flat round black disc suction-cup pad fused directly to the wrist with no separation, the black disc IS the hand, no fingers no claws no digits, just a thin arm meeting a flat circular black rubber pad like a toilet plunger head, soft Studio Ghibli watercolor with ink-aubergine outline, paper-grain texture, off-white painterly background, NOT fingers NOT claws NOT digits NOT lizard-hand NOT holding NOT grasping NOT separate-object NOT detached NOT thumb",
+    "params": {
+      "num_inference_steps": 40,
+      "guidance_scale": 38.0
+    },
+    "status": "ABANDONED \u2014 added extra mini-head/face attached to left disc, regression vs v3"
+  },
+  "production_result": "11-final-v3.png",
+  "production_pipeline": "v3 extended-arms inpaint + BiRefNet + tail alpha-erase. v4 disc-fuse REVERTED (regression added mini-head).",
+  "attempts_summary": {
+    "v1": "two-pass (tail+hands inpaint) \u2014 both failed sample-bias",
+    "v2": "hands-only retry tighter mask \u2014 failed face-level",
+    "v3": "extended-arms in empty bg space \u2014 PRODUCTION result",
+    "v4": "disc-fuse-claws refinement \u2014 regression, abandoned"
+  },
+  "cost_total_usd": 0.25
+}

@@ -2,6 +2,7 @@
  * KaleidoscopeEffect — radial mirror around viewport center. Strength 0 = pass-through;
  * higher values mirror N-fold. Used both as ambient ripple (small constant) and as
  * on-trigger peak (5s power-up burst).
+ * Audio-FFT mapping: angle nudged by avg(audioFFT[2..4]) — mids rotate the prism.
  */
 import { Effect } from 'postprocessing';
 import { Uniform } from 'three';

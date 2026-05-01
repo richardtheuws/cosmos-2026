@@ -2,6 +2,7 @@
  * FluidDisplacementEffect — gentle wet-edge curl-noise wobble on the entire
  * frame. Constant ON (low amplitude) so the watercolor feels alive even when
  * nothing else is happening. Frequency cranks up on DMT-peaks via globalUniforms.
+ * Audio-FFT mapping: amplitude lifted by avg(audioFFT[5..7]) — highs/air drive wobble.
  */
 import { Effect } from 'postprocessing';
 import { Uniform } from 'three';

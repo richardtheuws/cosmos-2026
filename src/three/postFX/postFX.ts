@@ -98,17 +98,28 @@ export function createPostFX(
     update(u): void {
       fluid.uniforms.get('time')!.value = u.time;
 
-      // Constant-trippy breathing — slow sine drives bloom + chroma in lockstep.
+      // Audio-FFT drive — split 8 bands into lows/mids/highs averages.
+      // bands 0..1 = sub/bass, 2..4 = mid (low-mid + mid + high-mid), 5..7 = air/sparkle.
+      const f = u.audioFFT;
+      const lows = (f[0] + f[1]) * 0.5;
+      const mids = (f[2] + f[3] + f[4]) / 3;
+      const highs = (f[5] + f[6] + f[7]) / 3;
+
+      // Constant-trippy breathing — slow sine drives bloom + chroma in lockstep,
+      // music lows boost bloom intensity by up to +0.6.
       const breath = 0.5 + 0.5 * Math.sin(u.time * 0.45);
-      bloom.intensity = 0.7 + breath * 0.45;
+      bloom.intensity = 0.7 + breath * 0.45 + lows * 0.6;
       chroma.offset.set(0.005 + breath * 0.004, 0.006 + breath * 0.004);
 
-      // Kaleidoscope strength: ambient ripple lifts to 0.18 (subtle continuous symmetry shimmer)
-      // plus on-trigger spike to ~1.0 for star pickup.
+      // Kaleidoscope strength: ambient ripple + on-trigger spike + mids lift.
+      // Angle gains a music-driven nudge so the prism rotates with the koto pluck.
       const ambientKaleido = 0.16 + 0.08 * Math.sin(u.time * 0.7);
-      const kStrength = ambientKaleido + u.kaleidoTrigger * 0.7;
+      const kStrength = ambientKaleido + u.kaleidoTrigger * 0.7 + mids * 0.25;
       kaleido.uniforms.get('strength')!.value = kStrength;
-      kaleido.uniforms.get('angle')!.value = u.time * 0.12;
+      kaleido.uniforms.get('angle')!.value = u.time * 0.12 + mids * 0.6;
+
+      // Fluid amplitude — base + highs lift, so air/shimmer wobbles the world.
+      fluid.uniforms.get('amplitude')!.value = 0.022 + highs * 0.025;
 
       // Datamosh — only on damage pulse.
       datamosh.uniforms.get('strength')!.value = u.damagePulse;

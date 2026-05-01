@@ -13,6 +13,7 @@ import { ParallaxScene } from './three/parallaxScene';
 import { L1Scene } from './phaser/scenes/L1Scene';
 import { BIOMES } from './data/biomes';
 import { TrippyEventDirector } from './three/postFX/trippyEventDirector';
+import { AudioFFTBridge } from './audio/audioFFTBridge';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -51,15 +52,39 @@ async function boot(): Promise<void> {
   phaserGame.scene.start('L1Scene', { input, uniforms });
 
   const eventDirector = new TrippyEventDirector();
+  const audioBridge = new AudioFFTBridge(uniforms);
+  audioBridge.init();
+
+  // Browser autoplay policy — first user gesture unlocks the AudioContext.
+  const unlockAudio = (): void => {
+    audioBridge.ensureRunning();
+  };
+  window.addEventListener('click', unlockAudio, { once: false, passive: true });
+  window.addEventListener('keydown', unlockAudio, { once: false, passive: true });
+  window.addEventListener('touchstart', unlockAudio, { once: false, passive: true });
+
+  // Debug + control hotkeys: M = toggle music mute, F = log FFT snapshot.
+  window.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.code === 'KeyM') {
+      const muted = audioBridge.toggleMute();
+      // eslint-disable-next-line no-console
+      console.log(`[cosmos] music ${muted ? 'muted' : 'unmuted'}`);
+    } else if (e.code === 'KeyF') {
+      // eslint-disable-next-line no-console
+      console.log('[cosmos] FFT snapshot', audioBridge.snapshot());
+    }
+  });
+
+  manager.register(() => audioBridge.update());
   manager.register((u) => eventDirector.update(u));
   manager.register((u) => parallax.update(u));
   manager.start();
 
   // Expose for console-debug. Strip in production via tree-shake on `import.meta.env.DEV`.
   if (import.meta.env.DEV) {
-    (window as unknown as { cosmos: object }).cosmos = { uniforms, parallax, phaserGame, input, eventDirector };
+    (window as unknown as { cosmos: object }).cosmos = { uniforms, parallax, phaserGame, input, eventDirector, audioBridge };
     // eslint-disable-next-line no-console
-    console.log('[cosmos] dual-canvas ready. window.cosmos = { uniforms, parallax, phaserGame, input, eventDirector }');
+    console.log('[cosmos] dual-canvas ready. window.cosmos = { uniforms, parallax, phaserGame, input, eventDirector, audioBridge }');
   }
 }
 

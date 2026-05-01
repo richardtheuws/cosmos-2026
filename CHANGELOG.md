@@ -4,6 +4,84 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.6.0] — 2026-05-01 — Sprint 6: parallel-team — gameplay verticaal compleet
+
+Vier agents tegelijk: Cosmo canonical inpaint-fix (6A), enemies + damage-systeem (6B), bombs + VFX + breekbare walls (6C), audio-FFT bridge (6D). Resultaat: L1 is van een speel-loop met items + parallax naar een **echte gameplay-sandbox** met vijanden, kills, bombs, walls, en muziek-reactieve post-FX.
+
+### Added (6A — Cosmo canonical v2)
+
+- **`cosmo-canonical-v2-cleaned.png`** wired in L1Scene (`src/phaser/scenes/L1Scene.ts:88`) — extended-arm geometry met zwarte disc-pads aan de tips, tail bijna volledig verwijderd
+- **Pipeline-doorbraak**: Flux Fill (`fal-ai/flux-lora-fill`) bleek wél te werken voor *ADD-geometry* in lege bg-space (anders dan image-to-image die alleen noise-init was). Combineren met **PIL alpha-erase** voor *REMOVE-geometry* (tail) — deterministisch, $0.
+- 15-image case-study series in `public/assets/case-study/cosmo-inpaint-process/` met manifest
+
+[grid: /assets/case-study/cosmo-inpaint-process/01-source.png /assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.png /assets/case-study/cosmo-inpaint-process/09-result-extended-arms.png /assets/case-study/cosmo-inpaint-process/15-final-v4.png "Bron canonical (v053) · Mask voor extended arms · Flux Fill output · Final v4 in-engine"]
+
+> Wat NIET werkte: tail-inpaint met "no tail no lizard" prompt (Flux regenereerde identieke lizard-tail — sample-bias is anti-prompt-resistent), hand-inpaint op torso-edge (renderde als over-ear headphones door face-level Y-coord), refinement-pass op v3 (Flux voegde mini-extra-head toe aan disc).
+
+> Wat WEL werkte: extended-arm-mask in PAPER bg-area (Flux Fill genereerde nieuwe arm-anatomie out of nothing) + alpha-erase post-BiRefNet voor cosmetische cleanup. Cost ~$0.25 binnen budget.
+
+**Open**: disc-fuse niet 100% (claws zichtbaar rond pads, acceptabel op 120px display), mini tail-stub remnant (cosmetisch), multi-frame anim nog steeds onopgelost (ControlNet/sketch-to-img blijft Sprint 7).
+
+### Added (6B — 12 enemies + damage-systeem)
+
+- **12 enemy-kinds** in `src/phaser/entities/enemies/` (Enemy.ts + EnemyTypes.ts + EnemyProjectile.ts): brumberry, hopper, parachute, eyePlant, pinkWorm, ghost, spittingWall, dragonfly, flyingWisp, suctionCrawler, tulipLauncher, sparkHazard
+- **11 gedragsknopen** wired: patrol (met edge-flip probe), hop (timed), drifter (post-stomp fall), wallTurret (aimed projectile), burrow (proximity-surface), proximityGhost (chase only-when-faced-away), homing (lerp), sinusoid + dive-alignment, wallCrawler (placeholder), tulipLauncher (friendly bounce), rail
+- **Stomp-detectie**: `cosmo.vy > 60` AND `cosmo.bottom <= enemyTop + 35% * height + 8px` → kill + bounce-up. Side-touch → damage met invuln-frames.
+- **Eye Plant + Spitting Wall** zijn `bombOnly` (skippen stomp-branch, alleen bom-kill). **Ghost + Spark** zijn `invincible`.
+- **Hint Globe L1-1/2/3** voices wired aan trigger-zones (col 2/50/30)
+- Legend uitgebreid met 12 lower-case enemy-chars (b/h/p/e/w/g/s/d/f/c/t/z) — geen botsing met bestaande tile-chars
+- 3 echte sprites + 9 hergebruikt-met-tint (`spriteTodo: true` flag voor toekomstige asset-gen — geen canvas-primitives, geen emoji's)
+
+### Added (6C — Bombs + explosion VFX + breekbare walls)
+
+- **Bomb entity** (`src/phaser/entities/Bomb.ts`): throw-arc ±320X / -450Y, 1.5s fuse met red/cream blink-tween in laatste 0.6s, 64px explosion-radius, 0.4s throw-cooldown
+- **Cosmo throw-action**: `bombJustPressed` AND `bombs > 0` → squash-tween + spawn (bestaande `bombs` counter wordt nu echt gebruikt)
+- **BreakableWall entity** (`src/phaser/entities/BreakableWall.ts`): legend `B`, ink-crack overlay (Graphics, 3 lijnen + saffron tip-dot), 280ms scale/alpha tween-out bij explosion-overlap
+- **Bomb-pickup** (legend `Q`): overlap-only sprite, `cosmo.pickupBomb(1)`, scale-up + fade-tween
+- **BombTarget contract** afgestemd met 6B: enemies registreren in `bombTargets[]`, `vulnerableToBomb` flag wordt gerespecteerd
+- **Explosion VFX**: kaleidoTrigger +0.9 (drives bloom +0.45 + chroma +0.004), damagePulse +0.6 (drives datamosh-tear ~0.3s), 3-laag canvas flash-circle (faded-rose halo / saffron core / cream center) r 8→74px alpha 1→0 over 400ms easeOut. NO emoji-fallback.
+
+**Sprite-status**: Bomb + pickup zijn procedural (`bomb-procedural`, `bomb-pickup-procedural`) met TODO voor Asset Generator. Cracked-wall hergebruikt `tile-wall-painted` + Graphics-overlay.
+
+### Added (6D — Audio-FFT bridge)
+
+- **`src/audio/audioFFTBridge.ts`** (nieuw): AnalyserNode op een dedicated `musicGain` sub-bus (deelt Howler.ctx, geen extra AudioContext-leak), fftSize 256, smoothing 0.8
+- **8-band log-aggregator**: edges `[2, 4, 8, 16, 32, 64, 96, 128]` — denser in lage frequenties (matcht palet kick/bass/koto-pluck). Per frame `getByteFrequencyData()` → 8-band → `mix(prev, new, 0.4)` lerp → `globalUniforms.audioFFT`
+- **Shader-mapping**:
+  - `bloom.intensity += lows*0.6` (avg band 0–1)
+  - `kaleido.strength += mids*0.25`, `kaleido.angle += mids*0.6` (avg band 2–4)
+  - `fluid.amplitude = 0.022 + highs*0.025` (avg band 5–7)
+  - 1-line mapping-comment toegevoegd in `kaleidoscope.ts` en `fluidDisplacement.ts`. Bestaande uniforms hergebruikt — geen rename, geen sloop.
+  - **Three Pass Rule** intact: FFT is geen extra convolution-pass.
+- **Placeholder-synth** voor dev: triangle 110Hz + saw 55Hz door swept lowpass (LFO 0.07Hz) + tremolo 1.1Hz. Excitet alle 8 bands voor visuele verificatie. **Suno-swap = 1 line** (`MUSIC_TRACK = '/assets/audio/music/title-theme.mp3'` → `createStreamedTrack()` neemt over via `<audio>` + MediaElementAudioSourceNode).
+- **UI**: `M` mute music (alleen sub-bus, SFX onaangetast), `F` FFT-snapshot in console. AudioContext-resume idempotent gewired aan click/keydown/touchstart.
+
+### Changed
+
+- `src/main.ts` — audioFFTBridge boot wiring + key-handlers M/F
+- `src/three/postFX/postFX.ts` — audioFFT consumeert in update() (lows→bloom, mids→kaleido, highs→fluid)
+- `src/data/levelL1.ts` — legend uitgebreid (12 enemy-chars, B breakable-wall, Q bomb-pickup) + sample placements row 18
+- `src/phaser/scenes/L1Scene.ts` — enemiesGroup + enemyProjectilesGroup + bombTargets[] + 209 regels Sprint 6B/6C wiring
+- `src/phaser/entities/Cosmo.ts` — `attachBombHooks({ throwBomb })` injection-pattern (avoid scene/entity import-cycle), squash-tween, `pickupBomb()` exposed
+
+### Cost
+
+~$0.25 fal.ai (6A inpaint pipeline). Sprint 6B/6C/6D = $0 (alle code, geen asset-gen calls).
+
+### Sprint 6 architectuur-leringen
+
+- **Flux Fill werkt voor ADD-geometry** in lege canvas-zones, **niet voor REMOVE met semantic anti-prompt** (sample-bias wint). Voor REMOVE: PIL alpha-erase deterministisch, $0.
+- **Refinement-passes zijn risk-prone** (Flux interpreteerde gemaskeerde claw-zone als "small entity attached to disc" → mini-extra-head op v4). Stop bij eerste werkbare result.
+- **Injection-pattern voor scene→entity hooks**: `cosmo.attachBombHooks({ throwBomb })` voorkomt circular import (Cosmo zou anders L1Scene moeten importeren).
+- **BombTarget interface** als runtime-contract laat 6B en 6C parallel werken zonder file-conflicts. Pattern voor toekomstige cross-system features (e.g. damage-modifiers, status-effects).
+
+### Niet gedaan (Sprint 7)
+
+- Multi-frame Cosmo anim (ControlNet of sketch-to-img — image-to-image bewezen niet)
+- Suno-tracks genereren (handmatig via suno.com — niet binnen agent scope)
+- Mobile/touch-controls
+- Bundle-size optimalisatie (`manualChunks` voor Three.js + Phaser zou de 2.2MB main chunk halveren)
+
 ## [0.5.2] — 2026-05-01 — Sprint 5: parallel-team — trampolines, polish, deploy
 
 Vier agents tegelijk: trampolines (5A), Cosmo multi-frame anim test (5B), production deploy (5C), visual polish (5D). Resultaat: cosmos-2026 is **live**.

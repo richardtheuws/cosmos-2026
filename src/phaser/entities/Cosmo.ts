@@ -26,6 +26,13 @@ export const COSMO = {
 
 type State = 'idle' | 'run' | 'jump' | 'fall' | 'cling' | 'damage' | 'death';
 
+/** Sprint 6C bomb hooks — scene supplies these so Cosmo can throw without
+ *  importing Bomb directly (avoids the entity ↔ scene coupling cycle). */
+export interface CosmoBombHooks {
+  /** Spawn a bomb thrown from Cosmo's hand-position with a given facing. */
+  throwBomb: (x: number, y: number, facing: 1 | -1) => void;
+}
+
 export class Cosmo {
   sprite: Phaser.Physics.Arcade.Sprite;
   state: State = 'idle';
@@ -35,6 +42,12 @@ export class Cosmo {
   bombs = 0;
   /** True for ~1.2s after taking damage. Cosmo is intangible. */
   iframe = 0;
+  /** Sprint 6C — short cooldown between throws so holding X doesn't dump bombs. */
+  bombCooldown = 0;
+  /** Optional scene-supplied hooks. Set via `Cosmo.attachBombHooks()`. */
+  private bombHooks: CosmoBombHooks | null = null;
+  /** Squash-tween handle for throw-anim — stop before re-running. */
+  private throwTween?: Phaser.Tweens.Tween;
   /** Direction of wall when clinging (-1 = wall on left, +1 = wall on right). */
   private clingSide: -1 | 1 = 1;
   /** Latch buffer — tap-jump-out-of-cling has 80ms to register after key release. */
@@ -66,6 +79,18 @@ export class Cosmo {
     if (this.iframe > 0) this.iframe -= dt;
     if (this.coyoteTime > 0) this.coyoteTime -= dt;
     if (this.clingJumpBuffer > 0) this.clingJumpBuffer -= dt;
+    if (this.bombCooldown > 0) this.bombCooldown -= dt;
+
+    // Bomb throw — uses an injected scene-hook so Cosmo doesn't import Bomb.
+    if (input.state.bombJustPressed && this.bombs > 0 && this.bombCooldown <= 0 && this.state !== 'damage' && this.state !== 'death' && this.bombHooks) {
+      const handX = this.sprite.x + this.facing * (COSMO.WIDTH * 0.4);
+      const handY = this.sprite.y - COSMO.HEIGHT * 0.1;
+      this.bombHooks.throwBomb(handX, handY, this.facing);
+      this.bombs -= 1;
+      this.bombCooldown = 0.4;
+      this.playThrowAnim();
+      // bomb-throw SFX is fired by Bomb's constructor — no double-play here.
+    }
 
     const inputX = (input.state.right ? 1 : 0) - (input.state.left ? 1 : 0);
     if (inputX !== 0) this.facing = inputX > 0 ? 1 : -1;
@@ -144,6 +169,36 @@ export class Cosmo {
   stompBounce(): void {
     this.sprite.setVelocityY(COSMO.STOMP_BOUNCE);
     this.state = 'jump';
+  }
+
+  /** Sprint 6C — scene wires a throw-callback so Cosmo can spawn bombs. */
+  attachBombHooks(hooks: CosmoBombHooks): void {
+    this.bombHooks = hooks;
+  }
+
+  /** Sprint 6C — pickup a bomb from a level-spawned Bomb-pickup. */
+  pickupBomb(amount = 1): void {
+    this.bombs = Math.min(this.bombs + amount, 9);
+  }
+
+  /** Quick squash-tween on bomb-throw — hands forward, body compresses. */
+  private playThrowAnim(): void {
+    const sprite = this.sprite;
+    this.throwTween?.stop();
+    const baseSx = sprite.scaleX;
+    const baseSy = sprite.scaleY;
+    sprite.setScale(baseSx, baseSy);
+    this.throwTween = sprite.scene.tweens.add({
+      targets: sprite,
+      scaleX: baseSx * 1.12,
+      scaleY: baseSy * 0.86,
+      duration: 80,
+      ease: 'Cubic.easeOut',
+      yoyo: true,
+      onComplete: () => {
+        sprite.setScale(baseSx, baseSy);
+      },
+    });
   }
 
   private playStateAnim(): void {

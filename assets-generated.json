@@ -311,6 +311,66 @@
           "4 backgrounds with stronger figure-negative"
         ]
       }
+    },
+    {
+      "sprint": "Sprint 6A — Cosmo canonical inpaint fix",
+      "generated": "2026-05-01",
+      "strategy": "Flux Fill (fal-ai/flux-lora-fill) inpainting + BiRefNet + PIL alpha-erase",
+      "goal": "Add black suction-cup pad hand-tips and remove lizard-tail on locked Cosmo canonical",
+      "production_assets": [
+        {
+          "file": "public/assets/sprites/v3/cosmo-canonical-v2-cleaned.png",
+          "size": "1024x1024 RGBA",
+          "purpose": "in-game canonical (loaded by L1Scene.preload, all 6 state keys)"
+        },
+        {
+          "file": "public/assets/cosmo/_LOCKED-REFERENCE-v2.png",
+          "size": "1024x1024 RGBA",
+          "purpose": "locked reference v2 for case-study + future generations"
+        }
+      ],
+      "case_study_dir": "public/assets/case-study/cosmo-inpaint-process/",
+      "case_study_steps": [
+        "01-source.png — flatten on neutral paper bg",
+        "02-mask-tail.png + 03-result-tail.png — v1 tail-inpaint FAILED (sample-bias regen)",
+        "04-mask-hands.png + 05-result-hands-v2.png — v1+v2 hand-inpaint FAILED (face-level placement)",
+        "08-mask-extended-arms.png — v3 extended-arm mask (rectangles in empty bg space + disc-emphasis ellipses)",
+        "09-result-extended-arms.png — v3 PRODUCTION result (extended arms with black objects)",
+        "10-birefnet-cleaned-v3.png — BiRefNet remove-bg",
+        "11-final-v3.png — PRODUCTION final (tail alpha-erased)",
+        "13-result-fused.png — v4 disc-fuse refinement REGRESSION (added mini-head)"
+      ],
+      "endpoint": "fal-ai/flux-lora-fill (queue.fal.run)",
+      "params": {
+        "num_inference_steps": 40,
+        "guidance_scale": 30.0,
+        "guidance_scale_cap": "30 (HTTP 422 op 38)"
+      },
+      "production_prompt": "small green pear-shaped alien creature with two long thin arms extending outward sideways from the torso, each arm ending in a LARGE FLAT ROUND BLACK DISC suction-cup pad like a glossy black rubber toilet plunger head, the suction-cup pads are pure obsidian-black smooth circles bigger than the head of a thumb, soft Studio Ghibli watercolor with ink-aubergine outline and paper-grain texture, faded-rose freckle spots on green skin, off-white painterly paper background, NOT fingers NOT human-hand NOT lizard-claw NOT pointed-claw NOT mitten NOT ear NOT cheek NOT face NOT headphones NOT folded-arms NOT tucked-arms",
+      "scripts": [
+        "scripts/sprint6a/cosmo_inpaint.py (v1 — both passes failed)",
+        "scripts/sprint6a/cosmo_inpaint_v2.py (hands-only retry, failed)",
+        "scripts/sprint6a/cosmo_inpaint_v3.py (PRODUCTION — extended arms)",
+        "scripts/sprint6a/cosmo_inpaint_v4.py (refinement regression, abandoned)"
+      ],
+      "wiring_change": "src/phaser/scenes/L1Scene.ts:86 — canonical const updated from cosmo-canonical-cleaned.png to cosmo-canonical-v2-cleaned.png",
+      "cost_breakdown": {
+        "v1_two_pass_inpaint": "$0.10 (2x Flux Fill + 1x BiRefNet)",
+        "v2_hands_only_retry": "$0.05",
+        "v3_extended_arms_PRODUCTION": "$0.05",
+        "v4_disc_fuse_refinement": "$0.05",
+        "total": "~$0.25 (within $0.20-0.40 budget)"
+      },
+      "key_learnings": [
+        "Flux Fill ADDS-geometry-in-bg-space well, FAILS to override anatomy-bias inside body silhouette",
+        "Tail-removal: SKIP inpaint, use deterministic PIL alpha-erase post-BiRefNet (zero cost, 100% reliable)",
+        "Disc-fuse refinement passes risk regression (Flux interprets small masked area as separate creature)",
+        "Multi-frame anim still NOT solved — needs ControlNet or sketch-to-img (per Sprint 5B learnings)"
+      ],
+      "open_issues": [
+        "Disc not fully fused to wrist — claw-fingers visible around black ball. Acceptable as suction-cup hint.",
+        "Tiny tail-stub remnant under feet (cosmetic only at 120px in-game display)"
+      ]
     }
   ]
 }

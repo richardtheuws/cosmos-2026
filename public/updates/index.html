@@ -206,6 +206,91 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.6.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 6: parallel-team — gameplay verticaal compleet</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Vier agents tegelijk: Cosmo canonical inpaint-fix (6A), enemies + damage-systeem (6B), bombs + VFX + breekbare walls (6C), audio-FFT bridge (6D). Resultaat: L1 is van een speel-loop met items + parallax naar een <strong>echte gameplay-sandbox</strong> met vijanden, kills, bombs, walls, en muziek-reactieve post-FX.</p>
+        </div>
+        <h3>ADDED (6A — COSMO CANONICAL V2)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>cosmo-canonical-v2-cleaned.png</code></strong> wired in L1Scene (<code>src/phaser/scenes/L1Scene.ts:88</code>) — extended-arm geometry met zwarte disc-pads aan de tips, tail bijna volledig verwijderd</li>
+          <li><strong>Pipeline-doorbraak</strong>: Flux Fill (<code>fal-ai/flux-lora-fill</code>) bleek wél te werken voor <em>ADD-geometry</em> in lege bg-space (anders dan image-to-image die alleen noise-init was). Combineren met <strong>PIL alpha-erase</strong> voor <em>REMOVE-geometry</em> (tail) — deterministisch, $0.</li>
+          <li>15-image case-study series in <code>public/assets/case-study/cosmo-inpaint-process/</code> met manifest</li>
+        </ul>
+        <figure class="update__figure update__figure--grid update__figure--cols-4">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/01-source.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/09-result-extended-arms.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/15-final-v4.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>Bron canonical (v053) · Mask voor extended arms · Flux Fill output · Final v4 in-engine</figcaption>
+          </figure>
+        <blockquote class="update__quote">Wat NIET werkte: tail-inpaint met &quot;no tail no lizard&quot; prompt (Flux regenereerde identieke lizard-tail — sample-bias is anti-prompt-resistent), hand-inpaint op torso-edge (renderde als over-ear headphones door face-level Y-coord), refinement-pass op v3 (Flux voegde mini-extra-head toe aan disc).</blockquote>
+        <blockquote class="update__quote">Wat WEL werkte: extended-arm-mask in PAPER bg-area (Flux Fill genereerde nieuwe arm-anatomie out of nothing) + alpha-erase post-BiRefNet voor cosmetische cleanup. Cost ~$0.25 binnen budget.</blockquote>
+<h3>ADDED (6B — 12 ENEMIES + DAMAGE-SYSTEEM)</h3>
+        <ul class="update__highlights">
+          <li><strong>12 enemy-kinds</strong> in <code>src/phaser/entities/enemies/</code> (Enemy.ts + EnemyTypes.ts + EnemyProjectile.ts): brumberry, hopper, parachute, eyePlant, pinkWorm, ghost, spittingWall, dragonfly, flyingWisp, suctionCrawler, tulipLauncher, sparkHazard</li>
+          <li><strong>11 gedragsknopen</strong> wired: patrol (met edge-flip probe), hop (timed), drifter (post-stomp fall), wallTurret (aimed projectile), burrow (proximity-surface), proximityGhost (chase only-when-faced-away), homing (lerp), sinusoid + dive-alignment, wallCrawler (placeholder), tulipLauncher (friendly bounce), rail</li>
+          <li><strong>Stomp-detectie</strong>: <code>cosmo.vy &gt; 60</code> AND <code>cosmo.bottom &lt;= enemyTop + 35% * height + 8px</code> → kill + bounce-up. Side-touch → damage met invuln-frames.</li>
+          <li><strong>Eye Plant + Spitting Wall</strong> zijn <code>bombOnly</code> (skippen stomp-branch, alleen bom-kill). <strong>Ghost + Spark</strong> zijn <code>invincible</code>.</li>
+          <li><strong>Hint Globe L1-1/2/3</strong> voices wired aan trigger-zones (col 2/50/30)</li>
+          <li>Legend uitgebreid met 12 lower-case enemy-chars (b/h/p/e/w/g/s/d/f/c/t/z) — geen botsing met bestaande tile-chars</li>
+          <li>3 echte sprites + 9 hergebruikt-met-tint (<code>spriteTodo: true</code> flag voor toekomstige asset-gen — geen canvas-primitives, geen emoji&#039;s)</li>
+        </ul>
+<h3>ADDED (6C — BOMBS + EXPLOSION VFX + BREEKBARE WALLS)</h3>
+        <ul class="update__highlights">
+          <li><strong>Bomb entity</strong> (<code>src/phaser/entities/Bomb.ts</code>): throw-arc ±320X / -450Y, 1.5s fuse met red/cream blink-tween in laatste 0.6s, 64px explosion-radius, 0.4s throw-cooldown</li>
+          <li><strong>Cosmo throw-action</strong>: <code>bombJustPressed</code> AND <code>bombs &gt; 0</code> → squash-tween + spawn (bestaande <code>bombs</code> counter wordt nu echt gebruikt)</li>
+          <li><strong>BreakableWall entity</strong> (<code>src/phaser/entities/BreakableWall.ts</code>): legend <code>B</code>, ink-crack overlay (Graphics, 3 lijnen + saffron tip-dot), 280ms scale/alpha tween-out bij explosion-overlap</li>
+          <li><strong>Bomb-pickup</strong> (legend <code>Q</code>): overlap-only sprite, <code>cosmo.pickupBomb(1)</code>, scale-up + fade-tween</li>
+          <li><strong>BombTarget contract</strong> afgestemd met 6B: enemies registreren in <code>bombTargets[]</code>, <code>vulnerableToBomb</code> flag wordt gerespecteerd</li>
+          <li><strong>Explosion VFX</strong>: kaleidoTrigger +0.9 (drives bloom +0.45 + chroma +0.004), damagePulse +0.6 (drives datamosh-tear ~0.3s), 3-laag canvas flash-circle (faded-rose halo / saffron core / cream center) r 8→74px alpha 1→0 over 400ms easeOut. NO emoji-fallback.</li>
+        </ul>
+<h3>ADDED (6D — AUDIO-FFT BRIDGE)</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/audio/audioFFTBridge.ts</code></strong> (nieuw): AnalyserNode op een dedicated <code>musicGain</code> sub-bus (deelt Howler.ctx, geen extra AudioContext-leak), fftSize 256, smoothing 0.8</li>
+          <li><strong>8-band log-aggregator</strong>: edges <code>[2, 4, 8, 16, 32, 64, 96, 128]</code> — denser in lage frequenties (matcht palet kick/bass/koto-pluck). Per frame <code>getByteFrequencyData()</code> → 8-band → <code>mix(prev, new, 0.4)</code> lerp → <code>globalUniforms.audioFFT</code></li>
+          <li><strong>Shader-mapping</strong>: - <code>bloom.intensity += lows<em>0.6</code> (avg band 0–1) - <code>kaleido.strength += mids</em>0.25</code>, <code>kaleido.angle += mids<em>0.6</code> (avg band 2–4) - <code>fluid.amplitude = 0.022 + highs</em>0.025</code> (avg band 5–7) - 1-line mapping-comment toegevoegd in <code>kaleidoscope.ts</code> en <code>fluidDisplacement.ts</code>. Bestaande uniforms hergebruikt — geen rename, geen sloop. - <strong>Three Pass Rule</strong> intact: FFT is geen extra convolution-pass.</li>
+          <li><strong>Placeholder-synth</strong> voor dev: triangle 110Hz + saw 55Hz door swept lowpass (LFO 0.07Hz) + tremolo 1.1Hz. Excitet alle 8 bands voor visuele verificatie. <strong>Suno-swap = 1 line</strong> (<code>MUSIC_TRACK = &#039;/assets/audio/music/title-theme.mp3&#039;</code> → <code>createStreamedTrack()</code> neemt over via <code>&lt;audio&gt;</code> + MediaElementAudioSourceNode).</li>
+          <li><strong>UI</strong>: <code>M</code> mute music (alleen sub-bus, SFX onaangetast), <code>F</code> FFT-snapshot in console. AudioContext-resume idempotent gewired aan click/keydown/touchstart.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><code>src/main.ts</code> — audioFFTBridge boot wiring + key-handlers M/F</li>
+          <li><code>src/three/postFX/postFX.ts</code> — audioFFT consumeert in update() (lows→bloom, mids→kaleido, highs→fluid)</li>
+          <li><code>src/data/levelL1.ts</code> — legend uitgebreid (12 enemy-chars, B breakable-wall, Q bomb-pickup) + sample placements row 18</li>
+          <li><code>src/phaser/scenes/L1Scene.ts</code> — enemiesGroup + enemyProjectilesGroup + bombTargets[] + 209 regels Sprint 6B/6C wiring</li>
+          <li><code>src/phaser/entities/Cosmo.ts</code> — <code>attachBombHooks({ throwBomb })</code> injection-pattern (avoid scene/entity import-cycle), squash-tween, <code>pickupBomb()</code> exposed</li>
+        </ul>
+<h3>SPRINT 6 ARCHITECTUUR-LERINGEN</h3>
+        <ul class="update__highlights">
+          <li><strong>Flux Fill werkt voor ADD-geometry</strong> in lege canvas-zones, <strong>niet voor REMOVE met semantic anti-prompt</strong> (sample-bias wint). Voor REMOVE: PIL alpha-erase deterministisch, $0.</li>
+          <li><strong>Refinement-passes zijn risk-prone</strong> (Flux interpreteerde gemaskeerde claw-zone als &quot;small entity attached to disc&quot; → mini-extra-head op v4). Stop bij eerste werkbare result.</li>
+          <li><strong>Injection-pattern voor scene→entity hooks</strong>: <code>cosmo.attachBombHooks({ throwBomb })</code> voorkomt circular import (Cosmo zou anders L1Scene moeten importeren).</li>
+          <li><strong>BombTarget interface</strong> als runtime-contract laat 6B en 6C parallel werken zonder file-conflicts. Pattern voor toekomstige cross-system features (e.g. damage-modifiers, status-effects).</li>
+        </ul>
+<h3>NIET GEDAAN (SPRINT 7)</h3>
+        <ul class="update__highlights">
+          <li>Multi-frame Cosmo anim (ControlNet of sketch-to-img — image-to-image bewezen niet)</li>
+          <li>Suno-tracks genereren (handmatig via suno.com — niet binnen agent scope)</li>
+          <li>Mobile/touch-controls</li>
+          <li>Bundle-size optimalisatie (<code>manualChunks</code> voor Three.js + Phaser zou de 2.2MB main chunk halveren)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.5.2</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 5: parallel-team — trampolines, polish, deploy</h2>
