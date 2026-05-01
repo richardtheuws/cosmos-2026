@@ -54,12 +54,14 @@ export class ParallaxScene {
     this.bindResize();
   }
 
-  /** Replace all layers with the chosen biome's far/mid/near images. */
+  /** Replace all layers with the chosen biome's sky/far/mid/near images. */
   async loadBiome(biome: Biome): Promise<void> {
     this.clearLayers();
     (this.ambientPlane.material as THREE.MeshBasicMaterial).color.setHex(biome.ambient);
     this.renderer.setClearColor(biome.ambient, 1);
-    const order: BiomeLayer[] = [biome.far, biome.mid, biome.near];
+    const order: BiomeLayer[] = [];
+    if (biome.sky) order.push(biome.sky);
+    order.push(biome.far, biome.mid, biome.near);
     for (const layer of order) {
       try {
         await this.addLayer(layer);

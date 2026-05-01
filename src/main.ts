@@ -12,6 +12,7 @@ import { InputController } from './core/inputController';
 import { ParallaxScene } from './three/parallaxScene';
 import { L1Scene } from './phaser/scenes/L1Scene';
 import { BIOMES } from './data/biomes';
+import { TrippyEventDirector } from './three/postFX/trippyEventDirector';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -49,14 +50,16 @@ async function boot(): Promise<void> {
 
   phaserGame.scene.start('L1Scene', { input, uniforms });
 
+  const eventDirector = new TrippyEventDirector();
+  manager.register((u) => eventDirector.update(u));
   manager.register((u) => parallax.update(u));
   manager.start();
 
   // Expose for console-debug. Strip in production via tree-shake on `import.meta.env.DEV`.
   if (import.meta.env.DEV) {
-    (window as unknown as { cosmos: object }).cosmos = { uniforms, parallax, phaserGame, input };
+    (window as unknown as { cosmos: object }).cosmos = { uniforms, parallax, phaserGame, input, eventDirector };
     // eslint-disable-next-line no-console
-    console.log('[cosmos] dual-canvas ready. window.cosmos = { uniforms, parallax, phaserGame, input }');
+    console.log('[cosmos] dual-canvas ready. window.cosmos = { uniforms, parallax, phaserGame, input, eventDirector }');
   }
 }
 

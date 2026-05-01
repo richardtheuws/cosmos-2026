@@ -191,6 +191,126 @@
         },
         "alternative_for_near": "If multiply blend introduces unwanted darkening, run a one-shot Pillow color-key script (PIL.Image: convert near-white pixels to alpha=0) instead of BiRefNet. Cheaper and more controllable for landscape framing layers."
       }
+    },
+    {
+      "sprint": "Sprint 4.5 Fase B — coherentie-pass (alle in-game assets gere-genereerd)",
+      "generated": "2026-04-30",
+      "purpose": "Locked style-stem (v4 hybrid) consistent toepassen op alle in-game assets — Cosmo, enemies, tiles, pickups, backgrounds — voor visuele coherentie met _LOCKED-REFERENCE.png",
+      "reference": "research/visual-references/_LOCKED-REFERENCE.png",
+      "style_stem_doc": "research/visual-references/_STYLE-STEM.md",
+      "report": "research/visual-references/_FASE-B-REPORT.md",
+      "batch_script": "scripts/fase-b-batch.sh",
+      "stem_canonical": "Moebius Arzach woodcut illustration crossed with Tenniel Alice in Wonderland and Hayao Miyazaki, HEAVY INK LINEWORK with visible ink-aubergine underdrawing and ragged outlines, BUT filled with SATURATED LUSH WATERCOLOR — cosmic dreamy luminous palette with glowing magenta-pink fluo-lime electric sky-wash and saffron-glow accents, paper-grain texture, slightly uncanny psychedelic illustration, cosmic-adventure mood, NOT dusk NOT dark NOT moody, full daylight luminous, NOT kawaii NOT chibi NOT pixar NOT cute NOT children-book NOT roblox NOT digital NOT 3D NOT photoreal, INK LINEWORK COMPULSORY",
+      "totals": {"generations": 22, "birefnet_calls": 18, "v2_retries": 1, "estimated_cost_usd": 0.77},
+      "categories": {
+        "sprite_cosmo": {
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024",
+          "post": "fal-ai/birefnet",
+          "prompt_pattern": "[STEM] + cosmo-base + per-frame-pose + sprite-rider",
+          "status": "ship",
+          "files": [
+            "public/assets/sprites/v2/cosmo-walk-1.png",
+            "public/assets/sprites/v2/cosmo-walk-1-cleaned.png",
+            "public/assets/sprites/v2/cosmo-walk-2.png",
+            "public/assets/sprites/v2/cosmo-walk-2-cleaned.png",
+            "public/assets/sprites/v2/cosmo-walk-3.png",
+            "public/assets/sprites/v2/cosmo-walk-3-cleaned.png",
+            "public/assets/sprites/v2/cosmo-jump-up.png",
+            "public/assets/sprites/v2/cosmo-jump-up-cleaned.png",
+            "public/assets/sprites/v2/cosmo-jump-fall.png",
+            "public/assets/sprites/v2/cosmo-jump-fall-cleaned.png",
+            "public/assets/sprites/v2/cosmo-cling.png",
+            "public/assets/sprites/v2/cosmo-cling-cleaned.png"
+          ],
+          "caveat": "body-form drift (sucker-hands → claw-fingers, antenna → spikes/quills); style-coherentie 5/5 met reference, body-form lower priority polish"
+        },
+        "sprite_enemy": {
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024",
+          "post": "fal-ai/birefnet",
+          "prompt_pattern": "[STEM] + enemy-description + sprite-rider",
+          "status": "ship",
+          "files": [
+            "public/assets/sprites/v2/enemy-brumberry.png",
+            "public/assets/sprites/v2/enemy-brumberry-cleaned.png",
+            "public/assets/sprites/v2/enemy-hopper-cabbage.png",
+            "public/assets/sprites/v2/enemy-hopper-cabbage-cleaned.png",
+            "public/assets/sprites/v2/enemy-eye-plant.png",
+            "public/assets/sprites/v2/enemy-eye-plant-cleaned.png"
+          ],
+          "note": "alle 3 enemies SHIP-quality met perfecte Tenniel-Moebius-Miyazaki coherentie"
+        },
+        "tile": {
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024 (v2 dirt-retry: 1024x512)",
+          "post": "fal-ai/birefnet (faalt op landscape-strips)",
+          "prompt_pattern": "TILE_FORMAT_PREFIX (rider-FRONT) + per-tile + [STEM]",
+          "files": [
+            {"file": "public/assets/tiles/tile-ground.png", "cleaned": "public/assets/tiles/tile-ground-cleaned.png", "status": "ship"},
+            {"file": "public/assets/tiles/tile-dirt.png", "cleaned": null, "status": "ship-raw-only", "note": "v2 retry 1024x512 succeeded; BiRefNet overstrips landscape-strips, gebruik raw met multiply-blend"},
+            {"file": "public/assets/tiles/tile-wall.png", "cleaned": "public/assets/tiles/tile-wall-cleaned.png", "status": "v2-retry-aanbevolen", "note": "v1 = full landscape; cleaned = vertical stone column herbruikbaar als wall pillar"},
+            {"file": "public/assets/tiles/tile-mushroom.png", "cleaned": "public/assets/tiles/tile-mushroom-cleaned.png", "status": "v2-retry-vereist", "note": "BiRefNet kept whole landscape, niet bruikbaar"},
+            {"file": "public/assets/tiles/tile-spike.png", "cleaned": "public/assets/tiles/tile-spike-cleaned.png", "status": "ship"}
+          ],
+          "lesson": "STEM-keywords 'psychedelic illustration' + 'cosmic-adventure mood' biased Flux Dev naar landscapes voor 4/5 tiles. Werkende fix = aspect 2:1 + texture-strip-rider FRONT + STEM-keywords gestripped voor tiles"
+        },
+        "pickup": {
+          "model": "fal-ai/flux/dev",
+          "size": "1024x1024",
+          "post": "fal-ai/birefnet",
+          "prompt_pattern": "PICKUP_FORMAT_PREFIX (rider-FRONT) + per-pickup + [STEM]",
+          "status": "ship",
+          "files": [
+            "public/assets/pickups/pickup-star.png",
+            "public/assets/pickups/pickup-star-cleaned.png",
+            "public/assets/pickups/pickup-powerup.png",
+            "public/assets/pickups/pickup-powerup-cleaned.png",
+            "public/assets/pickups/pickup-cheeseburger.png",
+            "public/assets/pickups/pickup-cheeseburger-cleaned.png",
+            "public/assets/pickups/hint-globe.png",
+            "public/assets/pickups/hint-globe-cleaned.png"
+          ],
+          "note": "rider-FRONT pattern werkt voor pickups omdat object dominant is en BiRefNet betrouwbaar extract"
+        },
+        "background_parallax": {
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1024x576",
+          "post": "none — multiply blend in engine",
+          "prompt_pattern": "[STEM] + per-layer-rider",
+          "status": "ship",
+          "files": [
+            "public/assets/backgrounds/slow-bloom-v2/bg-sky.png",
+            "public/assets/backgrounds/slow-bloom-v2/bg-far.png",
+            "public/assets/backgrounds/slow-bloom-v2/bg-mid.png",
+            "public/assets/backgrounds/slow-bloom-v2/bg-near.png"
+          ],
+          "blend_modes": {
+            "bg-sky": "normal (opaque, parallax 0.10)",
+            "bg-far": "normal opaque or multiply (parallax 0.25)",
+            "bg-mid": "multiply (parallax 0.50)",
+            "bg-near": "multiply (parallax 0.85)"
+          },
+          "caveat": "3 van 4 BG's hebben tiny human-figures ondanks NO characters. Voor v0.5.0 polish: 6-fold negatives stack"
+        }
+      },
+      "shipping_recommendation": {
+        "ship_now": [
+          "all 6 cosmo frames (sprites/v2/)",
+          "all 3 enemies (sprites/v2/)",
+          "tile-ground, tile-dirt, tile-spike",
+          "all 4 pickups",
+          "all 4 backgrounds (slow-bloom-v2/)"
+        ],
+        "v2_retry_recommended": [
+          "tile-wall (1024x512 + texture-strip-prefix)",
+          "tile-mushroom (idem)"
+        ],
+        "polish_later": [
+          "6 cosmo body-form drift (sucker-hands, antenna shape)",
+          "4 backgrounds with stronger figure-negative"
+        ]
+      }
     }
   ]
 }

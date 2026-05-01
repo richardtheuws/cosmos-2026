@@ -52,15 +52,33 @@ export class L1Scene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Real Cosmo frames generated via fal.ai (see Sprint 2 generation report).
-    // Each PNG is a 1024-wide painted single pose. We display them at 64x64 and
-    // align the body to a 28x36 inset (texture-space).
-    this.load.image('cosmo-walk-1', '/assets/sprites/cosmo-walk-1-cleaned.png');
-    this.load.image('cosmo-walk-2', '/assets/sprites/cosmo-walk-2-cleaned.png');
-    this.load.image('cosmo-walk-3', '/assets/sprites/cosmo-walk-3-cleaned.png');
-    this.load.image('cosmo-jump-up', '/assets/sprites/cosmo-jump-up-cleaned.png');
-    this.load.image('cosmo-jump-fall', '/assets/sprites/cosmo-jump-fall-cleaned.png');
-    this.load.image('cosmo-cling', '/assets/sprites/cosmo-cling-cleaned.png');
+    // Sprint 4.5 Fase B v2 — Cosmo, enemies, painted tiles, painted pickups.
+    // Each sprite is a square painted PNG with transparent BG. We display sprites
+    // at 64x64 and align the body to a 28x36 inset (texture-space).
+    const v2 = '/assets/sprites/v2';
+    this.load.image('cosmo-walk-1', `${v2}/cosmo-walk-1-cleaned.png`);
+    this.load.image('cosmo-walk-2', `${v2}/cosmo-walk-2-cleaned.png`);
+    this.load.image('cosmo-walk-3', `${v2}/cosmo-walk-3-cleaned.png`);
+    this.load.image('cosmo-jump-up', `${v2}/cosmo-jump-up-cleaned.png`);
+    this.load.image('cosmo-jump-fall', `${v2}/cosmo-jump-fall-cleaned.png`);
+    this.load.image('cosmo-cling', `${v2}/cosmo-cling-cleaned.png`);
+
+    this.load.image('enemy-brumberry', `${v2}/enemy-brumberry-cleaned.png`);
+    this.load.image('enemy-hopper', `${v2}/enemy-hopper-cabbage-cleaned.png`);
+    this.load.image('enemy-eye-plant', `${v2}/enemy-eye-plant-cleaned.png`);
+
+    // Painted tiles — replace procedural Graphics in S5 wiring.
+    this.load.image('tile-ground-painted', '/assets/tiles/tile-ground-cleaned.png');
+    this.load.image('tile-dirt-painted', '/assets/tiles/tile-dirt.png');
+    this.load.image('tile-wall-painted', '/assets/tiles/tile-wall-cleaned.png');
+    this.load.image('tile-mushroom-painted', '/assets/tiles/tile-mushroom-cleaned.png');
+    this.load.image('tile-spike-painted', '/assets/tiles/tile-spike-cleaned.png');
+
+    // Painted pickups
+    this.load.image('pickup-star-painted', '/assets/pickups/pickup-star-cleaned.png');
+    this.load.image('pickup-powerup-painted', '/assets/pickups/pickup-powerup-cleaned.png');
+    this.load.image('pickup-cheeseburger-painted', '/assets/pickups/pickup-cheeseburger-cleaned.png');
+    this.load.image('hint-globe-painted', '/assets/pickups/hint-globe-cleaned.png');
   }
 
   create(): void {
@@ -76,10 +94,11 @@ export class L1Scene extends Phaser.Scene {
     this.populateLevel();
 
     this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-walk-2');
-    this.cosmo.sprite.setDisplaySize(64, 64);
-    // Body for 1024x1024 texture: roughly center, slightly below visual center.
+    // Cosmo painted PNGs are ~1024x1024. Display at 80x80, body sized to where the
+    // character actually sits in the texture (centered slim figure).
+    this.cosmo.sprite.setDisplaySize(80, 80);
     const body = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
-    body.setSize(160, 380, false).setOffset(420, 380);
+    body.setSize(180, 380, false).setOffset(420, 360);
     this.physics.add.collider(this.cosmo.sprite, this.platforms);
     this.physics.add.overlap(this.cosmo.sprite, this.starsGroup, (_player, starSprite) => {
       const star = (starSprite as Phaser.Physics.Arcade.Sprite).getData('star') as Star | undefined;
@@ -144,37 +163,36 @@ export class L1Scene extends Phaser.Scene {
           this.cosmoSpawn = { x: s.x, y: s.y - 8 };
           break;
         case 'ground':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-ground', this.platforms);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-ground-painted', this.platforms);
           break;
         case 'dirt':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-dirt', this.platforms);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-dirt-painted', this.platforms);
           break;
         case 'wall':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-wall', this.platforms);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-wall-painted', this.platforms);
           break;
         case 'mushroom':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-mushroom', this.platforms);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-mushroom-painted', this.platforms);
           break;
         case 'platform':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-platform', this.platforms);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-mushroom-painted', this.platforms);
           break;
         case 'spike':
-          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tex-spike', this.hazards);
+          this.addStaticTile(s.x, s.y, TILE_SIZE, TILE_SIZE, 'tile-spike-painted', this.hazards);
           break;
         case 'star': {
-          const star = new Star(this, s.x, s.y);
+          const star = new Star(this, s.x, s.y, 'pickup-star-painted');
           this.stars.push(star);
           this.starsGroup.add(star.sprite);
           break;
         }
         case 'hint': {
-          const globe = new HintGlobe(this, s.x, s.y, s.hintIdx ?? 0);
+          const globe = new HintGlobe(this, s.x, s.y, s.hintIdx ?? 0, 'hint-globe-painted');
           this.globes.push(globe);
           break;
         }
         case 'powerup':
-          // Visual placeholder until proper powerup-class lands.
-          this.add.image(s.x, s.y, 'tex-mushroom').setScale(0.7).setTint(0xFFFFFF);
+          this.add.image(s.x, s.y, 'pickup-powerup-painted').setDisplaySize(40, 40);
           break;
         default:
           break;
@@ -190,7 +208,8 @@ export class L1Scene extends Phaser.Scene {
     key: string,
     group: Phaser.Physics.Arcade.StaticGroup,
   ): void {
-    const block = this.add.image(x, y, key).setOrigin(0, 0);
+    // Painted tiles ship as ~1024-wide PNGs; we want them displayed at 32x32.
+    const block = this.add.image(x, y, key).setOrigin(0, 0).setDisplaySize(w, h);
     this.physics.add.existing(block, true);
     const body = block.body as Phaser.Physics.Arcade.StaticBody;
     body.setSize(w, h, false).setOffset(0, 0);

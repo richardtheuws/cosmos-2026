@@ -141,6 +141,50 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.5.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 4.5: visuele coherentie-pass + TrippyEventDirector</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li>**TrippyEventDirector** — autonome event-scheduler die elke 8-15s een diëgetisch trippy event vuurt: cosmic-eclipse / spore-cloud / synesthesia-flash / reality-tear / gravity-wobble / star-rain / mushroom-pulse. Weighted-random, 4s cooldown</li>
+          <li>**Canonical style-stem** locked in `research/visual-references/_STYLE-STEM.md` op basis van keyframe v4 (hybrid Moebius woodcut + cosmic-saturated palette)</li>
+          <li>**22 nieuwe in-game assets** allemaal met letterlijk dezelfde style-stem: 6 Cosmo frames + 3 enemies + 5 painted tiles + 4 painted pickups + 4 parallax-layers</li>
+          <li>**4-laagse parallax** (sky / far / mid / near) ipv 3 — biome-config supports optional sky-layer voor extreem diepe cosmic backdrop</li>
+          <li>`cosmo_dna.md` memory voor 1992→2026 character-bridge eis</li>
+        </ul>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>L1Scene preload + populateLevel switcht van procedural Graphics-tiles naar painted PNG tiles</li>
+          <li>Star + HintGlobe entities accepteren textureKey parameter — gebruiken painted pickup-art ipv canvas-graphics</li>
+          <li>Slow Bloom biome wijst nu naar `slow-bloom-v2/` met de nieuwe 4 layers (cosmic moon-nebula sky, ink-aubergine mountains, glowing magenta-mushroom mid, foreground vines)</li>
+          <li>Cosmo display-size 80x80 met aangepaste body-offset voor de painted 1024 sprite</li>
+        </ul>
+        <h3>MEMORY</h3>
+        <ul class="update__highlights">
+          <li>`visual_coherence.md` uitgebreid met diepte-eis (4 parallax-lagen) + onverwachte-events-eis (TrippyEventDirector)</li>
+          <li>`asset_learnings.md` met cosmos-specifieke gotchas: tile-asset trap, BiRefNet niet voor landscapes, fal.ai queue quirks</li>
+          <li>`_STYLE-STEM.md` met per-asset-rider templates (sprite / tile / pickup / background-layer)</li>
+        </ul>
+        <h3>KNOWN ISSUES (VOLGENDE SPRINT)</h3>
+        <ul class="update__highlights">
+          <li>tile-wall + tile-mushroom v1 werden full landscapes ondanks rider — v2-retry-pattern gevalideerd</li>
+          <li>Cosmo&#039;s suction-cups landden op voet ipv hands — Fase C (Cosmo case study) gaat dit fixen</li>
+          <li>3/4 backgrounds hebben tiny human-figures ondanks `NO characters` — bekend Flux-bias</li>
+          <li>HUD pill version-string nog v0.3.0 — fix volgende sprint</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.4.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 4: post-FX stack — constant trippy</h2>

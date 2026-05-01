@@ -14,8 +14,9 @@ export class HintGlobe {
   /** Prevents re-trigger spam while Cosmo lingers. Resets when he leaves the radius. */
   private lingerLatch = false;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, hintIdx: number) {
-    this.sprite = scene.add.image(x, y, 'hint-globe');
+  constructor(scene: Phaser.Scene, x: number, y: number, hintIdx: number, textureKey = 'hint-globe') {
+    this.sprite = scene.add.image(x, y, textureKey);
+    this.sprite.setDisplaySize(36, 36);
     this.sprite.setData('hint', this);
     this.baseY = y;
     this.wobblePhase = Math.random() * Math.PI * 2;

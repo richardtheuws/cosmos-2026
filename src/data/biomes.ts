@@ -24,6 +24,8 @@ export interface Biome {
   label: string;
   /** Tint colour applied to the Three.js clear-color when no layers cover. */
   ambient: number;
+  /** Optional sky layer at the back — slowest parallax, no transparency. */
+  sky?: BiomeLayer;
   far: BiomeLayer;
   mid: BiomeLayer;
   near: BiomeLayer;
@@ -32,24 +34,31 @@ export interface Biome {
 const SLOW_BLOOM: Biome = {
   id: 'slow-bloom',
   label: 'Slow Bloom — Bloomroot Veld',
-  ambient: 0xf5edd8,
+  ambient: 0x1a1330,
+  sky: {
+    url: '/assets/backgrounds/slow-bloom-v2/bg-sky.png',
+    parallax: 0.10,
+    depth: -14,
+    scaleY: 1.8,
+    blend: 'normal',
+  },
   far: {
-    url: '/assets/backgrounds/slow-bloom/bg-far.png',
-    parallax: 0.18,
+    url: '/assets/backgrounds/slow-bloom-v2/bg-far.png',
+    parallax: 0.25,
     depth: -10,
-    scaleY: 1.6,
+    scaleY: 1.5,
     blend: 'normal',
   },
   mid: {
-    url: '/assets/backgrounds/slow-bloom/bg-mid.png',
-    parallax: 0.42,
+    url: '/assets/backgrounds/slow-bloom-v2/bg-mid.png',
+    parallax: 0.50,
     depth: -5,
-    scaleY: 1.3,
+    scaleY: 1.25,
     blend: 'normal',
   },
   near: {
-    url: '/assets/backgrounds/slow-bloom/bg-near.png',
-    parallax: 0.78,
+    url: '/assets/backgrounds/slow-bloom-v2/bg-near.png',
+    parallax: 0.85,
     depth: -2,
     scaleY: 1.1,
     blend: 'normal',

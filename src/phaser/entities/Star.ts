@@ -11,8 +11,9 @@ export class Star {
   private wobblePhase: number;
   collected = false;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    this.sprite = scene.add.image(x, y, 'star');
+  constructor(scene: Phaser.Scene, x: number, y: number, textureKey = 'star') {
+    this.sprite = scene.add.image(x, y, textureKey);
+    this.sprite.setDisplaySize(28, 28);
     this.sprite.setData('star', this);
     scene.physics.add.existing(this.sprite);
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
