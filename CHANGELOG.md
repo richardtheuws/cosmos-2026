@@ -4,6 +4,46 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.5.1] — 2026-05-01 — Sprint 4.5 Fase C: Cosmo canonical case study
+
+### Het verhaal achter dit besluit
+
+Cosmo's huidige verschijning was technisch bruikbaar maar miste karakter. De gebruiker (Richard) speelde Cosmo's Cosmic Adventure in 1992 onder invloed van psychedelica — Cosmo werd onderdeel van die persoonlijke trip-herinnering. Cosmos 2026 is dus geen aesthetic homage maar een herontwerp van een eigen acid-droom. Cosmo moest "TE GEK" worden + prominenter.
+
+### Casa study procedure (8 + 4 fal.ai generaties, ~$0.30)
+
+We genereerden 6 redesign-varianten met expliciete 1992-DNA-checklist en verschillende stylistic-bridges:
+- V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut
+
+**Kritieke vondst**: Flux Dev kan **NIET text-only zuignap-handen renderen** — 8 van 8 generaties leverden ofwel mensen-vingers ofwel hagedis-klauwen ondanks aggressieve emphasis. Sample-bias > prompt. Workaround: image-to-image of inpainting na text-pass.
+
+**User-kies**: V2 Hayao + V3 Moebius hybrid met chameleon-style bulging eyes.
+
+We genereerden 4 hybrid-iteraties (h1-h4); H3 won met:
+- Pear-drop Hayao-head + soft Moebius linework
+- Single antenna met faded-rose flower-bulb tip
+- BIG bulging chameleon-eyes (precies wat Richard vroeg)
+- Soft Hayao watercolor body, faded-rose spots
+- Pink-peach moon halo backdrop
+
+### Added
+- `research/visual-references/_COSMO-CANONICAL.png` — Cosmo H3 locked
+- `public/assets/sprites/v3/cosmo-canonical-cleaned.png` — BiRefNet-cleaned version voor in-game gebruik
+- `cosmo_dna.md` memory-file met de complete 1992-DNA-tabel + Fase C learnings
+- L1Scene laadt nu canonical Cosmo voor alle 6 states (multi-frame anim komt via image-to-image in Sprint 5+)
+
+### Changed
+- Cosmo display-size 80 → 120px voor "TE GEK + prominenter" eis
+- Tail wegcrop nog niet gedaan (text-prompt-bias) — kunnen we negeren door body-crop in Phaser
+
+### Known issues
+- 6 cosmo-state textures wijzen naar dezelfde canonical PNG (geen multi-frame anim yet)
+- Lizard-tail nog zichtbaar op canonical
+- Hands zijn niet specifiek zuignap-vorm (sample-bias) — fix via image-to-image of inpainting in Sprint 5
+
+### Cost
+~$0.30 fal.ai (10 character-generaties + 1 BiRefNet)
+
 ## [0.5.0] — 2026-05-01 — Sprint 4.5: visuele coherentie-pass + TrippyEventDirector
 
 ### Added

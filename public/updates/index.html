@@ -141,6 +141,49 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.5.1</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 4.5 Fase C: Cosmo canonical case study</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--feat">Feature</span>
+          </div>
+        <h3>CASA STUDY PROCEDURE (8 + 4 FAL.AI GENERATIES, ~$0.30)</h3>
+        <ul class="update__highlights">
+          <li>V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut</li>
+          <li>Pear-drop Hayao-head + soft Moebius linework</li>
+          <li>Single antenna met faded-rose flower-bulb tip</li>
+          <li>BIG bulging chameleon-eyes (precies wat Richard vroeg)</li>
+          <li>Soft Hayao watercolor body, faded-rose spots</li>
+          <li>Pink-peach moon halo backdrop</li>
+        </ul>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li>`research/visual-references/_COSMO-CANONICAL.png` — Cosmo H3 locked</li>
+          <li>`public/assets/sprites/v3/cosmo-canonical-cleaned.png` — BiRefNet-cleaned version voor in-game gebruik</li>
+          <li>`cosmo_dna.md` memory-file met de complete 1992-DNA-tabel + Fase C learnings</li>
+          <li>L1Scene laadt nu canonical Cosmo voor alle 6 states (multi-frame anim komt via image-to-image in Sprint 5+)</li>
+        </ul>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>Cosmo display-size 80 → 120px voor &quot;TE GEK + prominenter&quot; eis</li>
+          <li>Tail wegcrop nog niet gedaan (text-prompt-bias) — kunnen we negeren door body-crop in Phaser</li>
+        </ul>
+        <h3>KNOWN ISSUES</h3>
+        <ul class="update__highlights">
+          <li>6 cosmo-state textures wijzen naar dezelfde canonical PNG (geen multi-frame anim yet)</li>
+          <li>Lizard-tail nog zichtbaar op canonical</li>
+          <li>Hands zijn niet specifiek zuignap-vorm (sample-bias) — fix via image-to-image of inpainting in Sprint 5</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.5.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 4.5: visuele coherentie-pass + TrippyEventDirector</h2>

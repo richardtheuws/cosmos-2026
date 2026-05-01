@@ -52,16 +52,19 @@ export class L1Scene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Sprint 4.5 Fase B v2 — Cosmo, enemies, painted tiles, painted pickups.
-    // Each sprite is a square painted PNG with transparent BG. We display sprites
-    // at 64x64 and align the body to a 28x36 inset (texture-space).
+    // Sprint 4.5 Fase B v2 — enemies, painted tiles, painted pickups.
+    // Sprint 4.5 Fase C v3 — Cosmo CANONICAL (Hayao-Moebius hybrid, chameleon eyes).
+    // Single canonical texture used across all 6 states for now; multi-frame
+    // animation lands via image-to-image regen in Sprint 5+.
+    const v3 = '/assets/sprites/v3';
     const v2 = '/assets/sprites/v2';
-    this.load.image('cosmo-walk-1', `${v2}/cosmo-walk-1-cleaned.png`);
-    this.load.image('cosmo-walk-2', `${v2}/cosmo-walk-2-cleaned.png`);
-    this.load.image('cosmo-walk-3', `${v2}/cosmo-walk-3-cleaned.png`);
-    this.load.image('cosmo-jump-up', `${v2}/cosmo-jump-up-cleaned.png`);
-    this.load.image('cosmo-jump-fall', `${v2}/cosmo-jump-fall-cleaned.png`);
-    this.load.image('cosmo-cling', `${v2}/cosmo-cling-cleaned.png`);
+    const canonical = `${v3}/cosmo-canonical-cleaned.png`;
+    this.load.image('cosmo-walk-1', canonical);
+    this.load.image('cosmo-walk-2', canonical);
+    this.load.image('cosmo-walk-3', canonical);
+    this.load.image('cosmo-jump-up', canonical);
+    this.load.image('cosmo-jump-fall', canonical);
+    this.load.image('cosmo-cling', canonical);
 
     this.load.image('enemy-brumberry', `${v2}/enemy-brumberry-cleaned.png`);
     this.load.image('enemy-hopper', `${v2}/enemy-hopper-cabbage-cleaned.png`);
@@ -94,9 +97,9 @@ export class L1Scene extends Phaser.Scene {
     this.populateLevel();
 
     this.cosmo = new Cosmo(this, this.cosmoSpawn.x, this.cosmoSpawn.y, 'cosmo-walk-2');
-    // Cosmo painted PNGs are ~1024x1024. Display at 80x80, body sized to where the
-    // character actually sits in the texture (centered slim figure).
-    this.cosmo.sprite.setDisplaySize(80, 80);
+    // Cosmo MOET prominenter zijn — TE GEK eis. Display 120x120. Body still slim (28x36
+    // worth in display-pixels) — texture-space body proportional to display.
+    this.cosmo.sprite.setDisplaySize(120, 120);
     const body = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(180, 380, false).setOffset(420, 360);
     this.physics.add.collider(this.cosmo.sprite, this.platforms);
