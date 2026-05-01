@@ -6,7 +6,7 @@
   "description": "Cosmos Cosmic Adventure 2026 — 2.5D psychedelische browser-platformer remake van Cosmo's Cosmic Adventure (Apogee, 1992)",
   "scripts": {
     "dev": "vite --host",
-    "build": "npm run updates:build && tsc --noEmit && vite build && node scripts/postbuild-rewrite-paths.mjs",
+    "build": "npm run updates:build && tsc --noEmit && vite build && node scripts/postbuild-rewrite-paths.mjs && node scripts/postbuild-copy-public.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "updates:build": "node scripts/changelog-to-html.mjs",
