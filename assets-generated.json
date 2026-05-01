@@ -1,0 +1,80 @@
+{
+  "generated": "2026-04-30",
+  "sprint": "Sprint 2 — Phaser 4 controller animation frames",
+  "strategy": "Option B (individual frames, falsprite endpoint not available on fal.ai)",
+  "model_default": "fal-ai/flux/dev",
+  "post_processing": "fal-ai/birefnet (remove-bg)",
+  "image_size": {"width": 1024, "height": 1024},
+  "palette_locked": ["#E8D5B7", "#7B9E89", "#4A6FA5", "#B85C7E", "#3D2E4A", "#F4A261", "#2D4A3E"],
+  "stem_prompt": "uncute angular hand-painted watercolor 2.5D platformer hero, [POSE], Cosmo a small moss-sage green alien boy, two long suction-cup hands and feet, narrow dark eyes with subtle saffron glow catchlight, faded-rose cheek tint very subtle, single small antenna on head, ink-line underdrawing visible through transparent watercolor washes, ink aubergine ragged outline, neutral mushroom-cream paper card background, Studio Ghibli x Moebius Arzach x Tenniel illustration grit, Tenniel woodcut linework, slightly weathered uncute proportions, NOT kawaii NOT chibi NOT blush sparkle NOT airbrush NOT cute mascot, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep",
+  "assets": [
+    {
+      "file": "public/assets/sprites/cosmo-walk-1-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-walk-1.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "side-view facing right mid-stride left foot forward right arm forward left arm back body slight forward lean",
+      "version": "v1",
+      "kawaii_bias": "medium",
+      "notes": "blush + grin still present; pose works for walk cycle frame 1"
+    },
+    {
+      "file": "public/assets/sprites/cosmo-walk-2-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-walk-2.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "profile side-view facing right standing upright neutral pose feet together arms hanging down at sides",
+      "version": "v2",
+      "kawaii_bias": "low",
+      "notes": "v1 was blurry + front-view; v2 prefixed with 'crisp sharp focus high detail' fixed both issues"
+    },
+    {
+      "file": "public/assets/sprites/cosmo-walk-3-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-walk-3.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "profile side-view facing right walking mid-stride right leg forward left leg back left arm forward right arm back forward lean",
+      "version": "v2",
+      "kawaii_bias": "low",
+      "notes": "BEST stylistic frame — Tenniel ragged ink line achieved, narrow eye visible, longer limbs"
+    },
+    {
+      "file": "public/assets/sprites/cosmo-jump-up-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-jump-up.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "side-view facing right jump apex pose both arms raised slightly both feet tucked up under body looking forward determined",
+      "version": "v1",
+      "kawaii_bias": "medium-low",
+      "notes": "model rendered as mid-air running pose instead of feet-tucked; works fine for jump apex"
+    },
+    {
+      "file": "public/assets/sprites/cosmo-jump-fall-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-jump-fall.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "profile side-view facing right falling through air arms outstretched sideways for balance legs angled apart loose body in mid-air descent antenna trailing back",
+      "version": "v2",
+      "kawaii_bias": "medium",
+      "notes": "v1 was blurry + dancing pose; v2 with 'crisp sharp focus' + 'antenna trailing back' nailed dynamic falling pose"
+    },
+    {
+      "file": "public/assets/sprites/cosmo-cling-cleaned.png",
+      "raw": "public/assets/sprites/cosmo-cling.png",
+      "model": "fal-ai/flux/dev",
+      "post": "fal-ai/birefnet",
+      "pose_prompt": "front-view facing camera suction-cup hands pressed against invisible wall in front palms forward body pressed flat legs together feet on wall focused expression",
+      "version": "v1",
+      "kawaii_bias": "medium-high",
+      "notes": "sucker-finger-tips visible but standing free i.p.v. pressed against wall — text-only prompt insufficient for this pose; consider image-to-image variant for v2"
+    }
+  ],
+  "regeneration_recommendations": [
+    {
+      "frame": "cosmo-cling",
+      "reason": "pose mismatch (standing free, not pressed against wall)",
+      "approach": "use image-to-image with reference of climber pressed against wall, or accept current asset for MVP"
+    }
+  ],
+  "ready_for_phaser": true
+}
