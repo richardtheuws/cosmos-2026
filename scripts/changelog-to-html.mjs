@@ -6,6 +6,17 @@
  * of public/updates/index.html. The page itself contains a placeholder marker
  * — <!-- TIMELINE:START --> ... <!-- TIMELINE:END --> — that gets replaced.
  *
+ * Supported rich-media in CHANGELOG entries:
+ *   - Standard markdown image:   ![caption](path/to/img.png)
+ *       → renders as <figure> with caption
+ *   - Image grid (2-6 cols):     [grid: img1.png img2.png img3.png "Caption"]
+ *       → renders as a CSS grid of figures with shared caption
+ *   - Quote:                     > Some quote text
+ *       → renders as styled <blockquote>
+ *   - Lead paragraph (intro):    Plain text on lines after `## [version]` and
+ *       before the first `###` is treated as the entry's lead paragraph
+ *       (italic, larger, set off above the section bullets).
+ *
  * Run via `npm run updates:build` (also chained inside `npm run build`).
  */
 import { readFile, writeFile } from 'node:fs/promises';
@@ -36,33 +47,81 @@ const escapeHtml = (s) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
+/** Inline-format a single line of markdown:
+ *  `code`, **bold**, *italic*, [link](url). Order matters. */
+function inlineMd(text) {
+  let out = escapeHtml(text);
+  // `code`
+  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // **bold**
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // *italic*
+  out = out.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+  // [text](url)
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return out;
+}
+
+/** Detect special block-line patterns (image, grid, quote). Returns { type, ... } or null. */
+function parseBlockLine(line) {
+  // ![caption](path)
+  const imgMatch = line.match(/^\!\[([^\]]*)\]\(([^)]+)\)\s*$/);
+  if (imgMatch) {
+    return { type: 'image', caption: imgMatch[1], src: imgMatch[2] };
+  }
+
+  // [grid: a.png b.png c.png "Caption"]
+  const gridMatch = line.match(/^\[grid:\s*(.+?)(?:\s+"([^"]+)")?\]\s*$/);
+  if (gridMatch) {
+    const tokens = gridMatch[1].trim().split(/\s+/);
+    const caption = gridMatch[2] || '';
+    return { type: 'grid', images: tokens, caption };
+  }
+
+  // > quote
+  const quoteMatch = line.match(/^>\s+(.+)$/);
+  if (quoteMatch) {
+    return { type: 'quote', text: quoteMatch[1] };
+  }
+
+  return null;
+}
+
 /**
  * Parse a Keep-a-Changelog markdown into structured entries.
- * Returns: [{ version, date, sections: [{ title, items: [string] }] }, ...]
+ * Each entry: { version, date, lead: [paragraph-line...], sections: [{title, blocks: [...]}] }
+ * Each block is either { type: 'item', text } or { type: 'image'|'grid'|'quote', ... }
  */
 function parseChangelog(md) {
   const lines = md.split('\n');
   const entries = [];
   let current = null;
   let sectionTitle = null;
-  let sectionItems = null;
+  let sectionBlocks = null;
+  let preSectionLines = null;  // collects lead-paragraph + media before first ###
 
   const flushSection = () => {
-    if (current && sectionTitle && sectionItems && sectionItems.length) {
-      current.sections.push({ title: sectionTitle, items: sectionItems });
+    if (current && sectionTitle && sectionBlocks && sectionBlocks.length) {
+      current.sections.push({ title: sectionTitle, blocks: sectionBlocks });
     }
     sectionTitle = null;
-    sectionItems = null;
+    sectionBlocks = null;
   };
 
   const flushEntry = () => {
     flushSection();
-    if (current) entries.push(current);
+    if (current) {
+      if (preSectionLines && preSectionLines.length) current.preBlocks = preSectionLines;
+      entries.push(current);
+    }
     current = null;
+    preSectionLines = null;
   };
 
   for (const raw of lines) {
     const line = raw.replace(/\r$/, '');
+
+    // Version header
     const versionMatch = line.match(/^##\s+\[([^\]]+)\]\s*[—\-]?\s*(.*)$/);
     if (versionMatch) {
       flushEntry();
@@ -70,25 +129,45 @@ function parseChangelog(md) {
         version: versionMatch[1].trim(),
         date: versionMatch[2].trim(),
         sections: [],
+        preBlocks: [],
       };
+      preSectionLines = [];
       continue;
     }
     if (!current) continue;
 
+    // Section header
     const sectionMatch = line.match(/^###\s+(.+)$/);
     if (sectionMatch) {
       flushSection();
       sectionTitle = sectionMatch[1].trim();
-      sectionItems = [];
+      sectionBlocks = [];
       continue;
     }
 
-    if (!sectionItems) continue;
+    const blockLine = parseBlockLine(line);
+
+    if (!sectionBlocks) {
+      // We are in lead-paragraph zone (before first section)
+      if (blockLine) {
+        preSectionLines.push(blockLine);
+      } else if (line.trim()) {
+        preSectionLines.push({ type: 'paragraph', text: line.trim() });
+      }
+      continue;
+    }
+
+    if (blockLine) {
+      sectionBlocks.push(blockLine);
+      continue;
+    }
+
     const itemMatch = line.match(/^[\-\*]\s+(.+)$/);
     if (itemMatch) {
-      sectionItems.push(itemMatch[1].trim());
-    } else if (line.startsWith('  ') && sectionItems.length) {
-      sectionItems[sectionItems.length - 1] += ' ' + line.trim();
+      sectionBlocks.push({ type: 'item', text: itemMatch[1].trim() });
+    } else if (line.startsWith('  ') && sectionBlocks.length) {
+      const last = sectionBlocks[sectionBlocks.length - 1];
+      if (last.type === 'item') last.text += ' ' + line.trim();
     }
   }
   flushEntry();
@@ -97,7 +176,10 @@ function parseChangelog(md) {
 
 function tagFor(sectionTitle) {
   const key = sectionTitle.toLowerCase().trim();
-  return TAG_VOCAB[key] || 'change';
+  for (const [k, v] of Object.entries(TAG_VOCAB)) {
+    if (key.startsWith(k)) return v;
+  }
+  return 'change';
 }
 
 function tagLabel(tag) {
@@ -115,22 +197,74 @@ function tagLabel(tag) {
   return labels[tag] || tag;
 }
 
+function renderBlock(block) {
+  switch (block.type) {
+    case 'item':
+      return `<li>${inlineMd(block.text)}</li>`;
+    case 'image':
+      return `<figure class="update__figure">
+            <img src="${escapeHtml(block.src)}" alt="${escapeHtml(block.caption || '')}" loading="lazy">
+            ${block.caption ? `<figcaption>${inlineMd(block.caption)}</figcaption>` : ''}
+          </figure>`;
+    case 'grid': {
+      const cols = Math.min(Math.max(block.images.length, 2), 6);
+      const items = block.images
+        .map((src) => `<div class="update__grid-item"><img src="${escapeHtml(src)}" alt="" loading="lazy"></div>`)
+        .join('\n            ');
+      return `<figure class="update__figure update__figure--grid update__figure--cols-${cols}">
+            <div class="update__grid">
+            ${items}
+            </div>
+            ${block.caption ? `<figcaption>${inlineMd(block.caption)}</figcaption>` : ''}
+          </figure>`;
+    }
+    case 'quote':
+      return `<blockquote class="update__quote">${inlineMd(block.text)}</blockquote>`;
+    case 'paragraph':
+      return `<p class="update__lead-line">${inlineMd(block.text)}</p>`;
+    default:
+      return '';
+  }
+}
+
+function renderPreBlocks(blocks) {
+  if (!blocks || !blocks.length) return '';
+  return `
+        <div class="update__lead">
+          ${blocks.map(renderBlock).join('\n          ')}
+        </div>`;
+}
+
+function renderSection(section) {
+  // Separate items from non-item blocks. Items go in <ul>, others stand-alone in order.
+  const out = [`<h3>${escapeHtml(section.title.toUpperCase())}</h3>`];
+  let buf = [];
+  const flushItems = () => {
+    if (buf.length) {
+      out.push(`<ul class="update__highlights">\n          ${buf.join('\n          ')}\n        </ul>`);
+      buf = [];
+    }
+  };
+  for (const b of section.blocks) {
+    if (b.type === 'item') buf.push(renderBlock(b));
+    else {
+      flushItems();
+      out.push(renderBlock(b));
+    }
+  }
+  flushItems();
+  return out.join('\n        ');
+}
+
 function renderEntry(entry) {
   const tags = new Set();
   entry.sections.forEach((s) => tags.add(tagFor(s.title)));
+  if (entry.sections.length === 0 && (entry.preBlocks?.length ?? 0) > 0) tags.add('feat');
   const tagPills = Array.from(tags)
     .map((t) => `<span class="tag tag--${t}">${tagLabel(t)}</span>`)
     .join('\n          ');
 
-  const sectionsHtml = entry.sections
-    .map(
-      (s) => `
-        <h3>${escapeHtml(s.title.toUpperCase())}</h3>
-        <ul class="update__highlights">
-          ${s.items.map((it) => `<li>${escapeHtml(it)}</li>`).join('\n          ')}
-        </ul>`,
-    )
-    .join('');
+  const sectionsHtml = entry.sections.map(renderSection).join('\n');
 
   // Try to extract a title from the date string if author put one inline; fall back to version.
   const titleMatch = entry.date.match(/[—\-]\s*(.+)$/);
@@ -148,7 +282,8 @@ function renderEntry(entry) {
         <div class="update__body">
           <div class="update__tags">
           ${tagPills}
-          </div>${sectionsHtml}
+          </div>${renderPreBlocks(entry.preBlocks)}
+        ${sectionsHtml}
         </div>
       </div>
     </article>`;

@@ -114,6 +114,71 @@
   border-top: 1px dashed var(--border-strong);
 }
 .timeline-end a { color: var(--ink-aubergine); }
+
+/* Rich-media in updates */
+.update__lead {
+  margin-bottom: 1.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px dashed var(--border);
+}
+.update__lead-line {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.12rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0 0 0.6rem;
+}
+.update__lead-line:last-child { margin-bottom: 0; }
+.update__quote {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.18rem;
+  color: var(--faded-rose);
+  border-left: 4px solid var(--saffron-glow);
+  padding: 0.5rem 0 0.5rem 1.2rem;
+  margin: 1.2rem 0;
+  line-height: 1.5;
+}
+.update__figure {
+  margin: 1.4rem 0;
+  background: var(--paper-shade);
+  border-radius: var(--radius);
+  padding: 12px;
+  border: 1px solid var(--border);
+}
+.update__figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+.update__figure figcaption {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+  font-family: var(--font-heading);
+}
+.update__figure--grid .update__grid {
+  display: grid;
+  gap: 8px;
+}
+.update__figure--cols-2 .update__grid { grid-template-columns: repeat(2, 1fr); }
+.update__figure--cols-3 .update__grid { grid-template-columns: repeat(3, 1fr); }
+.update__figure--cols-4 .update__grid { grid-template-columns: repeat(4, 1fr); }
+.update__figure--cols-5 .update__grid { grid-template-columns: repeat(5, 1fr); }
+.update__figure--cols-6 .update__grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 720px) {
+  .update__figure--grid .update__grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+.update__grid-item img {
+  border-radius: 4px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--paper-bg);
+}
 </style>
 </head>
 <body class="paper-grain">
@@ -148,50 +213,54 @@
         <div class="update__body">
           <div class="update__tags">
           <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--feat">Feature</span>
           </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Vier agents tegelijk: trampolines (5A), Cosmo multi-frame anim test (5B), production deploy (5C), visual polish (5D). Resultaat: cosmos-2026 is <strong>live</strong>.</p>
+        </div>
         <h3>🚀 LIVE OP PRODUCTIE</h3>
         <ul class="update__highlights">
-          <li>**https://theuws.com/games/cosmos-2026/** — alle 7 routes HTTP 200</li>
+          <li><strong>https://theuws.com/games/cosmos-2026/</strong> — alle 7 routes HTTP 200</li>
           <li>87 files / ~19MB FTP upload (~35s)</li>
-          <li>Cosmos-card toegevoegd aan `theuws.com/games/` portfolio</li>
-          <li>`INVENTORY.md` updated met Cosmos onder &quot;Vlaggenschip Projecten&quot;</li>
+          <li>Cosmos-card toegevoegd aan <code>theuws.com/games/</code> portfolio</li>
+          <li><code>INVENTORY.md</code> updated met Cosmos onder &quot;Vlaggenschip Projecten&quot;</li>
         </ul>
-        <h3>ADDED (5A TRAMPOLINES)</h3>
+<h3>ADDED (5A TRAMPOLINES)</h3>
         <ul class="update__highlights">
-          <li>**Trampoline entity** (`src/phaser/entities/Trampoline.ts`) met beat-jump fysica (-820 Y velocity, ~1.8x normal jump), 0.3s cooldown, on-bounce squash-tween, kaleidoscope-spike trigger 1.0</li>
-          <li>**Trampoline tile** in level grid: nieuwe `T` legend-character, 2 paren in L1 row 17</li>
-          <li>`tile-trampoline.png` (full-scene Flux scene-bias workaround, bottom 25% via `setCrop`)</li>
-          <li>`pickup-bounce-burst-cleaned.png` voor on-bounce particle VFX</li>
+          <li><strong>Trampoline entity</strong> (<code>src/phaser/entities/Trampoline.ts</code>) met beat-jump fysica (-820 Y velocity, ~1.8x normal jump), 0.3s cooldown, on-bounce squash-tween, kaleidoscope-spike trigger 1.0</li>
+          <li><strong>Trampoline tile</strong> in level grid: nieuwe <code>T</code> legend-character, 2 paren in L1 row 17</li>
+          <li><code>tile-trampoline.png</code> (full-scene Flux scene-bias workaround, bottom 25% via <code>setCrop</code>)</li>
+          <li><code>pickup-bounce-burst-cleaned.png</code> voor on-bounce particle VFX</li>
         </ul>
-        <h3>ADDED (5D POLISH)</h3>
+<h3>ADDED (5D POLISH)</h3>
         <ul class="update__highlights">
-          <li>`tile-wall-v2.png` (eindelijk werkend — Flux landscape-bias gefixed met aspect 1024×512)</li>
-          <li>`tile-mushroom-v2.png` (close-up mushroom-cap photoreal-then-tinted approach)</li>
-          <li>`bg-near-v2.png` lichtere foreground frame voor gameplay-zicht</li>
+          <li><code>tile-wall-v2.png</code> (eindelijk werkend — Flux landscape-bias gefixed met aspect 1024×512)</li>
+          <li><code>tile-mushroom-v2.png</code> (close-up mushroom-cap photoreal-then-tinted approach)</li>
+          <li><code>bg-near-v2.png</code> lichtere foreground frame voor gameplay-zicht</li>
         </ul>
-        <h3>ADDED (5C DEPLOY INFRA)</h3>
+<h3>ADDED (5C DEPLOY INFRA)</h3>
         <ul class="update__highlights">
-          <li>`scripts/postbuild-rewrite-paths.mjs` — herschrijft anchor hrefs en residuele absolute asset paths in `dist/*.html` naar productie-base. Zonder dit breken cross-page navigatie-links op subpath-deploy.</li>
+          <li><code>scripts/postbuild-rewrite-paths.mjs</code> — herschrijft anchor hrefs en residuele absolute asset paths in <code>dist/*.html</code> naar productie-base. Zonder dit breken cross-page navigatie-links op subpath-deploy.</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
-          <li>`vite.config.ts` is nu **command-aware** — dev-server blijft op `/`, production-build gaat naar `/games/cosmos-2026/`. Override met `VITE_BASE=/ npm run build` voor root-deploys.</li>
-          <li>`package.json` build-script wired postbuild-rewriter aan `npm run build`</li>
-          <li>L1Scene preload swap: `tile-wall-v2` + `tile-mushroom-v2` ipv v1</li>
-          <li>Slow Bloom biome `bg-near` switcht naar `bg-near-v2.png` met scaleY 0.85</li>
+          <li><code>vite.config.ts</code> is nu <strong>command-aware</strong> — dev-server blijft op <code>/</code>, production-build gaat naar <code>/games/cosmos-2026/</code>. Override met <code>VITE_BASE=/ npm run build</code> voor root-deploys.</li>
+          <li><code>package.json</code> build-script wired postbuild-rewriter aan <code>npm run build</code></li>
+          <li>L1Scene preload swap: <code>tile-wall-v2</code> + <code>tile-mushroom-v2</code> ipv v1</li>
+          <li>Slow Bloom biome <code>bg-near</code> switcht naar <code>bg-near-v2.png</code> met scaleY 0.85</li>
         </ul>
-        <h3>SPRINT 5B IMAGE-TO-IMAGE LEARNINGS (PRODUCTIVE FAILURE)</h3>
+<h3>SPRINT 5B IMAGE-TO-IMAGE LEARNINGS (PRODUCTIVE FAILURE)</h3>
         <ul class="update__highlights">
           <li>12 image-to-image attempts (strength 0.55-0.82) → 0/6 pose-shift, 0/6 suction-cup hands</li>
           <li>Diagnose: fal.ai/flux/dev/image-to-image gebruikt input als noise-init, niet als skeletal anchor</li>
           <li>Suction-cup-hands fail is universeel (text-only én image-to-image)</li>
           <li>Workaround voor pose-set: ControlNet/openpose of sketch-to-img (Sprint 6+)</li>
           <li>Workaround voor suction-cups: canonical-fix via Photoshop of masked inpainting eerst</li>
-          <li>Frames in `public/assets/sprites/v3/cosmo-walk-*.png` zijn archive-only, NIET wired</li>
+          <li>Frames in <code>public/assets/sprites/v3/cosmo-walk-*.png</code> zijn archive-only, NIET wired</li>
         </ul>
-        <h3>DEPLOY NOTES</h3>
+<h3>DEPLOY NOTES</h3>
         <ul class="update__highlights">
-          <li>Naam-mismatch: lokaal `cosmos-cosmic-adventure-2026`, server `cosmos-2026` (vergt handmatige FTP, `deploy-ftp.sh` gebruikt folder-naam = upload-path)</li>
+          <li>Naam-mismatch: lokaal <code>cosmos-cosmic-adventure-2026</code>, server <code>cosmos-2026</code> (vergt handmatige FTP, <code>deploy-ftp.sh</code> gebruikt folder-naam = upload-path)</li>
         </ul>
         </div>
       </div>
@@ -209,28 +278,52 @@
           <span class="tag tag--change">Wijziging</span>
           <span class="tag tag--feat">Feature</span>
           </div>
-        <h3>CASA STUDY PROCEDURE (8 + 4 FAL.AI GENERATIES, ~$0.30)</h3>
+        <div class="update__lead">
+          <p class="update__lead-line">Cosmo&#039;s huidige verschijning was technisch bruikbaar maar miste karakter. De gebruiker speelde Cosmo&#039;s Cosmic Adventure in 1992 onder invloed van psychedelica — Cosmo werd onderdeel van die persoonlijke trip-herinnering. Cosmos 2026 is dus geen aesthetic homage maar een herontwerp van een eigen acid-droom. Cosmo moest TE GEK worden + prominenter.</p>
+          <blockquote class="update__quote">Die moet echt wel heel duidelijk de 2026 versie van de &#039;oude&#039; zijn, dat was ook al zo&#039;n trippy ventje met zuignaphanden — Richard, 2026-05-01</blockquote>
+        </div>
+        <h3>STAP 1 — 6 REDESIGN VARIANTEN</h3>
+        <figure class="update__figure update__figure--grid update__figure--cols-6">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v1-acid-tenniel.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v2-cosmic-hayao.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v4-pulse-trip.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v5-bart-mushroom.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v6-wide-eye-astronaut.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut</figcaption>
+          </figure>
+<h3>STAP 2 — RICHARD KIEST HYBRID</h3>
+        <blockquote class="update__quote">Hayao met chameleon-eyes, eventueel iets bollere ogen — Richard</blockquote>
+        <figure class="update__figure update__figure--grid update__figure--cols-4">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>H1 + H2 Hayao×Moebius (te tame) · H3 chameleon (te gek!) · H4 alt-iteration</figcaption>
+          </figure>
+        <blockquote class="update__quote">H3 is te gek! — Richard</blockquote>
+<h3>STAP 3 — LOCKED CANONICAL</h3>
+        <figure class="update__figure">
+            <img src="/assets/case-study/_LOCKED-REFERENCE.png" alt="Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)" loading="lazy">
+            <figcaption>Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)</figcaption>
+          </figure>
+<h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut</li>
-          <li>Pear-drop Hayao-head + soft Moebius linework</li>
-          <li>Single antenna met faded-rose flower-bulb tip</li>
-          <li>BIG bulging chameleon-eyes (precies wat Richard vroeg)</li>
-          <li>Soft Hayao watercolor body, faded-rose spots</li>
-          <li>Pink-peach moon halo backdrop</li>
-        </ul>
-        <h3>ADDED</h3>
-        <ul class="update__highlights">
-          <li>`research/visual-references/_COSMO-CANONICAL.png` — Cosmo H3 locked</li>
-          <li>`public/assets/sprites/v3/cosmo-canonical-cleaned.png` — BiRefNet-cleaned version voor in-game gebruik</li>
-          <li>`cosmo_dna.md` memory-file met de complete 1992-DNA-tabel + Fase C learnings</li>
+          <li><code>research/visual-references/_COSMO-CANONICAL.png</code> — Cosmo H3 locked</li>
+          <li><code>public/assets/sprites/v3/cosmo-canonical-cleaned.png</code> — BiRefNet-cleaned version voor in-game gebruik</li>
+          <li><code>cosmo_dna.md</code> memory-file met de complete 1992-DNA-tabel + Fase C learnings</li>
           <li>L1Scene laadt nu canonical Cosmo voor alle 6 states (multi-frame anim komt via image-to-image in Sprint 5+)</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
           <li>Cosmo display-size 80 → 120px voor &quot;TE GEK + prominenter&quot; eis</li>
           <li>Tail wegcrop nog niet gedaan (text-prompt-bias) — kunnen we negeren door body-crop in Phaser</li>
         </ul>
-        <h3>KNOWN ISSUES</h3>
+<h3>KNOWN ISSUES</h3>
         <ul class="update__highlights">
           <li>6 cosmo-state textures wijzen naar dezelfde canonical PNG (geen multi-frame anim yet)</li>
           <li>Lizard-tail nog zichtbaar op canonical</li>
@@ -252,32 +345,46 @@
           <span class="tag tag--feat">Feature</span>
           <span class="tag tag--change">Wijziging</span>
           </div>
+        <div class="update__lead">
+          <p class="update__lead-line">We zochten een visuele waarheid voor de hele game door 4 keyframe-iteraties van een complete L1-scene te renderen. Elke iteratie probeerde een andere art-direction en we lockten v4 (hybrid v1-cosmic-palette × v3-Moebius-linework) als canonical style-stem.</p>
+          <figure class="update__figure update__figure--grid update__figure--cols-4">
+            <div class="update__grid">
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v1.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v2.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v3.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v4.png" alt="" loading="lazy"></div>
+            </div>
+            <figcaption>v1 Pixar-children-book (kawaii drift) · v2 Moebius woodcut (te abstract) · v3 Tenniel woodcut (te dark) · v4 cosmic+Moebius hybrid (LOCKED)</figcaption>
+          </figure>
+          <blockquote class="update__quote">Kies B-hybride (Cosmic Watercolor + kaleidoscope/fluo-pop/datamosh hallucinatie-pieken) — visie-document, locked</blockquote>
+          <p class="update__lead-line">Met het v4 keyframe als visuele waarheid genereerden we 22 nieuwe in-game assets allemaal met letterlijk dezelfde style-stem-prefix. Resultaat: ~80% coherentie tussen Cosmo, enemies, tiles, pickups en backgrounds.</p>
+        </div>
         <h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>**TrippyEventDirector** — autonome event-scheduler die elke 8-15s een diëgetisch trippy event vuurt: cosmic-eclipse / spore-cloud / synesthesia-flash / reality-tear / gravity-wobble / star-rain / mushroom-pulse. Weighted-random, 4s cooldown</li>
-          <li>**Canonical style-stem** locked in `research/visual-references/_STYLE-STEM.md` op basis van keyframe v4 (hybrid Moebius woodcut + cosmic-saturated palette)</li>
-          <li>**22 nieuwe in-game assets** allemaal met letterlijk dezelfde style-stem: 6 Cosmo frames + 3 enemies + 5 painted tiles + 4 painted pickups + 4 parallax-layers</li>
-          <li>**4-laagse parallax** (sky / far / mid / near) ipv 3 — biome-config supports optional sky-layer voor extreem diepe cosmic backdrop</li>
-          <li>`cosmo_dna.md` memory voor 1992→2026 character-bridge eis</li>
+          <li><strong>TrippyEventDirector</strong> — autonome event-scheduler die elke 8-15s een diëgetisch trippy event vuurt: cosmic-eclipse / spore-cloud / synesthesia-flash / reality-tear / gravity-wobble / star-rain / mushroom-pulse. Weighted-random, 4s cooldown</li>
+          <li><strong>Canonical style-stem</strong> locked in <code>research/visual-references/_STYLE-STEM.md</code> op basis van keyframe v4 (hybrid Moebius woodcut + cosmic-saturated palette)</li>
+          <li><strong>22 nieuwe in-game assets</strong> allemaal met letterlijk dezelfde style-stem: 6 Cosmo frames + 3 enemies + 5 painted tiles + 4 painted pickups + 4 parallax-layers</li>
+          <li><strong>4-laagse parallax</strong> (sky / far / mid / near) ipv 3 — biome-config supports optional sky-layer voor extreem diepe cosmic backdrop</li>
+          <li><code>cosmo_dna.md</code> memory voor 1992→2026 character-bridge eis</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
           <li>L1Scene preload + populateLevel switcht van procedural Graphics-tiles naar painted PNG tiles</li>
           <li>Star + HintGlobe entities accepteren textureKey parameter — gebruiken painted pickup-art ipv canvas-graphics</li>
-          <li>Slow Bloom biome wijst nu naar `slow-bloom-v2/` met de nieuwe 4 layers (cosmic moon-nebula sky, ink-aubergine mountains, glowing magenta-mushroom mid, foreground vines)</li>
+          <li>Slow Bloom biome wijst nu naar <code>slow-bloom-v2/</code> met de nieuwe 4 layers (cosmic moon-nebula sky, ink-aubergine mountains, glowing magenta-mushroom mid, foreground vines)</li>
           <li>Cosmo display-size 80x80 met aangepaste body-offset voor de painted 1024 sprite</li>
         </ul>
-        <h3>MEMORY</h3>
+<h3>MEMORY</h3>
         <ul class="update__highlights">
-          <li>`visual_coherence.md` uitgebreid met diepte-eis (4 parallax-lagen) + onverwachte-events-eis (TrippyEventDirector)</li>
-          <li>`asset_learnings.md` met cosmos-specifieke gotchas: tile-asset trap, BiRefNet niet voor landscapes, fal.ai queue quirks</li>
-          <li>`_STYLE-STEM.md` met per-asset-rider templates (sprite / tile / pickup / background-layer)</li>
+          <li><code>visual_coherence.md</code> uitgebreid met diepte-eis (4 parallax-lagen) + onverwachte-events-eis (TrippyEventDirector)</li>
+          <li><code>asset_learnings.md</code> met cosmos-specifieke gotchas: tile-asset trap, BiRefNet niet voor landscapes, fal.ai queue quirks</li>
+          <li><code>_STYLE-STEM.md</code> met per-asset-rider templates (sprite / tile / pickup / background-layer)</li>
         </ul>
-        <h3>KNOWN ISSUES (VOLGENDE SPRINT)</h3>
+<h3>KNOWN ISSUES (VOLGENDE SPRINT)</h3>
         <ul class="update__highlights">
           <li>tile-wall + tile-mushroom v1 werden full landscapes ondanks rider — v2-retry-pattern gevalideerd</li>
           <li>Cosmo&#039;s suction-cups landden op voet ipv hands — Fase C (Cosmo case study) gaat dit fixen</li>
-          <li>3/4 backgrounds hebben tiny human-figures ondanks `NO characters` — bekend Flux-bias</li>
+          <li>3/4 backgrounds hebben tiny human-figures ondanks <code>NO characters</code> — bekend Flux-bias</li>
           <li>HUD pill version-string nog v0.3.0 — fix volgende sprint</li>
         </ul>
         </div>
@@ -298,33 +405,33 @@
           </div>
         <h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>**`pmndrs/postprocessing` EffectComposer** stacked op de Three.js parallax renderer — elke frame gaat door post-FX voor render</li>
-          <li>`src/three/postFX/postFX.ts` — orchestrator met 3 effect-passes (UV transforms / per-pixel / convolution + composite)</li>
-          <li>`src/three/postFX/kaleidoscope.ts` — custom radial-mirror UV shader (N-fold symmetry), strength-driven</li>
-          <li>`src/three/postFX/fluidDisplacement.ts` — custom curl-noise 2D-hash displacement, time-driven gentle wobble</li>
-          <li>`src/three/postFX/datamosh.ts` — custom horizontal stripe-shift + RGB channel-split, voor damage-pulse</li>
+          <li><strong><code>pmndrs/postprocessing</code> EffectComposer</strong> stacked op de Three.js parallax renderer — elke frame gaat door post-FX voor render</li>
+          <li><code>src/three/postFX/postFX.ts</code> — orchestrator met 3 effect-passes (UV transforms / per-pixel / convolution + composite)</li>
+          <li><code>src/three/postFX/kaleidoscope.ts</code> — custom radial-mirror UV shader (N-fold symmetry), strength-driven</li>
+          <li><code>src/three/postFX/fluidDisplacement.ts</code> — custom curl-noise 2D-hash displacement, time-driven gentle wobble</li>
+          <li><code>src/three/postFX/datamosh.ts</code> — custom horizontal stripe-shift + RGB channel-split, voor damage-pulse</li>
         </ul>
-        <h3>PERMANENT BASE STACK (CONSTANT-TRIPPY)</h3>
+<h3>PERMANENT BASE STACK (CONSTANT-TRIPPY)</h3>
         <ul class="update__highlights">
-          <li>**Bloom** intensity 0.7-1.15 met breathing sine, mipmap radius 0.85 — saffron sun + stars + globes glowen continu</li>
-          <li>**ChromaticAberration** offset 0.005-0.009 met radialModulation — cyan/magenta fringing op alle randen</li>
-          <li>**FluidDisplacement** amplitude 0.022 frequency 2.6 — wereld wiggelt zachtjes als waterverf in beweging</li>
-          <li>**Kaleidoscope** ambient strength 0.16-0.24 met angle rotatie 0.12rad/s — subtiele constante 8-fold symmetry-shimmer</li>
-          <li>**Vignette** darkness 0.55, offset 0.28</li>
-          <li>**Noise** overlay opacity 0.32 — paper-grain feel constant</li>
-          <li>**Datamosh** strength 0 default; spike to 1.0 on damage, decays over 200ms</li>
+          <li><strong>Bloom</strong> intensity 0.7-1.15 met breathing sine, mipmap radius 0.85 — saffron sun + stars + globes glowen continu</li>
+          <li><strong>ChromaticAberration</strong> offset 0.005-0.009 met radialModulation — cyan/magenta fringing op alle randen</li>
+          <li><strong>FluidDisplacement</strong> amplitude 0.022 frequency 2.6 — wereld wiggelt zachtjes als waterverf in beweging</li>
+          <li><strong>Kaleidoscope</strong> ambient strength 0.16-0.24 met angle rotatie 0.12rad/s — subtiele constante 8-fold symmetry-shimmer</li>
+          <li><strong>Vignette</strong> darkness 0.55, offset 0.28</li>
+          <li><strong>Noise</strong> overlay opacity 0.32 — paper-grain feel constant</li>
+          <li><strong>Datamosh</strong> strength 0 default; spike to 1.0 on damage, decays over 200ms</li>
         </ul>
-        <h3>TRIGGERED PEAKS</h3>
+<h3>TRIGGERED PEAKS</h3>
         <ul class="update__highlights">
-          <li>Star pickup → `kaleidoTrigger += 0.35` (kaleido pop). Elke 5e star → `kaleidoTrigger = 1.0` (volle peak)</li>
-          <li>Spike contact → `damagePulse = 1.0` → datamosh-tear horizontale stripes, decay 200ms</li>
+          <li>Star pickup → <code>kaleidoTrigger += 0.35</code> (kaleido pop). Elke 5e star → <code>kaleidoTrigger = 1.0</code> (volle peak)</li>
+          <li>Spike contact → <code>damagePulse = 1.0</code> → datamosh-tear horizontale stripes, decay 200ms</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
-          <li>Bg-mid + bg-near layers terug naar `blend: normal` (raw png&#039;s hebben transparant gebied al)</li>
-          <li>ParallaxScene render gebruikt nu `composer.render()` ipv `renderer.render()`</li>
+          <li>Bg-mid + bg-near layers terug naar <code>blend: normal</code> (raw png&#039;s hebben transparant gebied al)</li>
+          <li>ParallaxScene render gebruikt nu <code>composer.render()</code> ipv <code>renderer.render()</code></li>
         </ul>
-        <h3>PIPELINE NOTE</h3>
+<h3>PIPELINE NOTE</h3>
         <ul class="update__highlights">
           <li>pass 1: UV-transform (fluid + kaleido)</li>
           <li>pass 2: per-pixel (datamosh)</li>
@@ -349,22 +456,22 @@
           </div>
         <h3>FIXED</h3>
         <ul class="update__highlights">
-          <li>**Parallax-stack toonde 3 verschillende biomes door elkaar** (cathedral / jungle / cave). Refactor: per level wordt nu **één biome** geladen — drie layers (far / mid / near) van DEZELFDE scene. PRD §5.3 conform</li>
+          <li><strong>Parallax-stack toonde 3 verschillende biomes door elkaar</strong> (cathedral / jungle / cave). Refactor: per level wordt nu <strong>één biome</strong> geladen — drie layers (far / mid / near) van DEZELFDE scene. PRD §5.3 conform</li>
           <li>Mushroom-tile zag eruit als dobbelstenen (3 kleine roze stippen). Vervangen door painterly cream-band met faded-rose underglow en flush-zijden voor naadloze tile-merge</li>
           <li>Ground-tile box-grid weggehaald; vervangen door grass-band variatie + sub-ground hint</li>
           <li>Wall-tile vertical wood-grain band ipv volledige rand-outline</li>
           <li>Black backdrop wanneer mid/near layers transparant zijn — ambient clear-color is nu opaque biome-tint</li>
         </ul>
-        <h3>ADDED</h3>
+<h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>`src/data/biomes.ts` — 3 biome configs (Slow Bloom / Inkpool Hollow / Cloud Cathedral) met per-layer parallax-multipliers en LEVEL_TO_BIOME mapping</li>
-          <li>3 nieuwe Slow Bloom backgrounds via Flux Pro: `bg-far.png` (sky + mountains), `bg-mid-cleaned.png` (cream mushroom canopy met BiRefNet alpha), `bg-near-cleaned.png` (faded-rose foreground frame met BiRefNet alpha)</li>
+          <li><code>src/data/biomes.ts</code> — 3 biome configs (Slow Bloom / Inkpool Hollow / Cloud Cathedral) met per-layer parallax-multipliers en LEVEL_TO_BIOME mapping</li>
+          <li>3 nieuwe Slow Bloom backgrounds via Flux Pro: <code>bg-far.png</code> (sky + mountains), <code>bg-mid-cleaned.png</code> (cream mushroom canopy met BiRefNet alpha), <code>bg-near-cleaned.png</code> (faded-rose foreground frame met BiRefNet alpha)</li>
           <li>3 nieuwe Inkpool Hollow backgrounds (bonus generation) — staan klaar voor S5 wanneer L4-L6 levels landen</li>
           <li>L1Scene gebruikt nu de echte FalSprite Cosmo-frames (walk-1/walk-2/walk-3 + jump-up + jump-fall + cling) met per-state texture-swap</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
-          <li>ParallaxScene API: `loadBiome(biome)` ipv hardcoded `loadDefaultBiome()`. Biome wordt geconfigureerd in main.ts en kan straks dynamisch wisselen tussen levels.</li>
+          <li>ParallaxScene API: <code>loadBiome(biome)</code> ipv hardcoded <code>loadDefaultBiome()</code>. Biome wordt geconfigureerd in main.ts en kan straks dynamisch wisselen tussen levels.</li>
         </ul>
         </div>
       </div>
@@ -385,33 +492,33 @@
           </div>
         <h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>**L1 &quot;First Steps&quot;** — Bloomroot Veld biome speelbaar op `/play/`. 60×22 grid-level uit `src/data/levelL1.ts` met decoder voor cosmo-spawn, stars, hint-globes, walls, mushroom-platforms, dirt, ground, spikes</li>
-          <li>`src/phaser/entities/Star.ts` — bobbing fluo-pop Dewdrop met magenta+lime halo, collect-tween + cleanup</li>
-          <li>`src/phaser/entities/HintGlobe.ts` — pulsing saffron+sky-wash orb met proximity-trigger en linger-latch tegen spam</li>
-          <li>`src/audio/sfxBus.ts` — Howler-backed SFX + voice playback, lazy-load, silent-fail bij missing files</li>
-          <li>`src/phaser/scenes/L1Scene.ts` — eerste echte level scene met SFX-wired collisions, hint-tekst-overlay (Cormorant Garamond italic), ↑↓ camera-pan-offset, debug-HUD met live state</li>
+          <li><strong>L1 &quot;First Steps&quot;</strong> — Bloomroot Veld biome speelbaar op <code>/play/</code>. 60×22 grid-level uit <code>src/data/levelL1.ts</code> met decoder voor cosmo-spawn, stars, hint-globes, walls, mushroom-platforms, dirt, ground, spikes</li>
+          <li><code>src/phaser/entities/Star.ts</code> — bobbing fluo-pop Dewdrop met magenta+lime halo, collect-tween + cleanup</li>
+          <li><code>src/phaser/entities/HintGlobe.ts</code> — pulsing saffron+sky-wash orb met proximity-trigger en linger-latch tegen spam</li>
+          <li><code>src/audio/sfxBus.ts</code> — Howler-backed SFX + voice playback, lazy-load, silent-fail bij missing files</li>
+          <li><code>src/phaser/scenes/L1Scene.ts</code> — eerste echte level scene met SFX-wired collisions, hint-tekst-overlay (Cormorant Garamond italic), ↑↓ camera-pan-offset, debug-HUD met live state</li>
         </ul>
-        <h3>AUDIO (8 SFX + 3 VOICES VIA ELEVENLABS)</h3>
+<h3>AUDIO (8 SFX + 3 VOICES VIA ELEVENLABS)</h3>
         <ul class="update__highlights">
           <li>SFX: cling/jump/stomp/hurt + pickup-star/bonus + globe-trigger + bonus-warp (totaal ~$0.37 API kosten)</li>
-          <li>Voices: 3 NL Hint Globe lines met Sarah voice (`EXAVITQu4vr4xnSDxMaL`, multilingual_v2, stability 0.6 / similarity 0.8 / style 0.4)</li>
-          <li>Suno-prompts gedocumenteerd in `public/assets/audio/music/_SUNO_PROMPTS.md` — 12 tracks D-minor, mapped naar Surface/Hollow/Cathedral biomes</li>
-          <li>`_HOWLER_CONFIG.json` met 23 logical-name → file mappings, levelMusicMap, globeVoiceMap</li>
+          <li>Voices: 3 NL Hint Globe lines met Sarah voice (<code>EXAVITQu4vr4xnSDxMaL</code>, multilingual_v2, stability 0.6 / similarity 0.8 / style 0.4)</li>
+          <li>Suno-prompts gedocumenteerd in <code>public/assets/audio/music/_SUNO_PROMPTS.md</code> — 12 tracks D-minor, mapped naar Surface/Hollow/Cathedral biomes</li>
+          <li><code>_HOWLER_CONFIG.json</code> met 23 logical-name → file mappings, levelMusicMap, globeVoiceMap</li>
           <li>ElevenLabs sound-generation min-duration is 0.5s (niet 0.3) — SFX-targets aangepast</li>
         </ul>
-        <h3>CHANGED</h3>
+<h3>CHANGED</h3>
         <ul class="update__highlights">
           <li>SandboxScene verwijderd — vervangen door L1Scene als hoofd-scene</li>
           <li>Cosmo controller wired naar sfx-bus: cling-pop / jump / hurt vuren via Howler</li>
-          <li>play/index.html HUD-pill nu `v0.3.0 · L1 First Steps`</li>
+          <li>play/index.html HUD-pill nu <code>v0.3.0 · L1 First Steps</code></li>
         </ul>
-        <h3>FIXED</h3>
+<h3>FIXED</h3>
         <ul class="update__highlights">
-          <li>Above-fold IntersectionObserver fired niet voor `[data-reveal]` items in viewport — toegevoegd `requestAnimationFrame` first-paint pass + threshold 0.05</li>
+          <li>Above-fold IntersectionObserver fired niet voor <code>[data-reveal]</code> items in viewport — toegevoegd <code>requestAnimationFrame</code> first-paint pass + threshold 0.05</li>
         </ul>
-        <h3>PIPELINE</h3>
+<h3>PIPELINE</h3>
         <ul class="update__highlights">
-          <li>6 Cosmo animation-frames staan klaar in `public/assets/sprites/` voor S4 atlas-pack</li>
+          <li>6 Cosmo animation-frames staan klaar in <code>public/assets/sprites/</code> voor S4 atlas-pack</li>
           <li>Star + HintGlobe entities gebruiken procedural Graphics-textures (geen externe assets nodig)</li>
         </ul>
         </div>
@@ -433,38 +540,38 @@
           </div>
         <h3>ADDED</h3>
         <ul class="update__highlights">
-          <li>Three.js + Phaser 4 dual-canvas live op `/play/` — Three.js draait 3-layer parallax achter, Phaser overlay-canvas met transparante background voor 2D gameplay</li>
-          <li>`src/core/globalUniforms.ts` — gedeelde state tussen renderers (time, audioFFT, cosmoX/Y/state, kaleidoTrigger, damagePulse)</li>
-          <li>`src/core/canvasManager.ts` — single-rAF orchestrator met decay-uniform-helper</li>
-          <li>`src/core/inputController.ts` — keyboard met just-pressed-edge-detection voor jump en bomb</li>
-          <li>`src/three/parallaxScene.ts` — Three.js OrthographicCamera + 3 textured planes met parallax-multipliers (0.18 / 0.42 / 0.78)</li>
-          <li>`src/phaser/entities/Cosmo.ts` — Cosmo controller met state-machine (idle/run/jump/fall/cling/damage/death), suction-cup wallcling, coyote-time, stomp-bounce, i-frames</li>
-          <li>`src/phaser/scenes/SandboxScene.ts` — test-arena met procedural tile-textures, ground/walls/stair-steps/high-platform, debug-HUD overlay</li>
-          <li>`src/main.ts` — boot-flow met dev-mode `window.cosmos` exposure</li>
+          <li>Three.js + Phaser 4 dual-canvas live op <code>/play/</code> — Three.js draait 3-layer parallax achter, Phaser overlay-canvas met transparante background voor 2D gameplay</li>
+          <li><code>src/core/globalUniforms.ts</code> — gedeelde state tussen renderers (time, audioFFT, cosmoX/Y/state, kaleidoTrigger, damagePulse)</li>
+          <li><code>src/core/canvasManager.ts</code> — single-rAF orchestrator met decay-uniform-helper</li>
+          <li><code>src/core/inputController.ts</code> — keyboard met just-pressed-edge-detection voor jump en bomb</li>
+          <li><code>src/three/parallaxScene.ts</code> — Three.js OrthographicCamera + 3 textured planes met parallax-multipliers (0.18 / 0.42 / 0.78)</li>
+          <li><code>src/phaser/entities/Cosmo.ts</code> — Cosmo controller met state-machine (idle/run/jump/fall/cling/damage/death), suction-cup wallcling, coyote-time, stomp-bounce, i-frames</li>
+          <li><code>src/phaser/scenes/SandboxScene.ts</code> — test-arena met procedural tile-textures, ground/walls/stair-steps/high-platform, debug-HUD overlay</li>
+          <li><code>src/main.ts</code> — boot-flow met dev-mode <code>window.cosmos</code> exposure</li>
         </ul>
-        <h3>GAMEPLAY</h3>
+<h3>GAMEPLAY</h3>
         <ul class="update__highlights">
-          <li>Suction-cup wallcling werkend — `body.velocity.y &gt; -50` + `!onFloor` + side-touching = cling met `CLING_GRAVITY` 220</li>
-          <li>Walljump fires van cling-state met `WALL_PUSHOFF_X` 230 en `WALL_CLIMB_VELOCITY` -320</li>
+          <li>Suction-cup wallcling werkend — <code>body.velocity.y &gt; -50</code> + <code>!onFloor</code> + side-touching = cling met <code>CLING_GRAVITY</code> 220</li>
+          <li>Walljump fires van cling-state met <code>WALL_PUSHOFF_X</code> 230 en <code>WALL_CLIMB_VELOCITY</code> -320</li>
           <li>Run-speed 200, jump-velocity -460, gravity 1300 — strakke arcade-feel zonder Sonic-acceleration</li>
         </ul>
-        <h3>VISUAL</h3>
+<h3>VISUAL</h3>
         <ul class="update__highlights">
           <li>Procedurele Cosmo placeholder (moss-sage met saffron eye-glow + faded-rose antenna-tip) — 1:1 body-texture match</li>
           <li>Procedurele tile-set (ground sage / walls aubergine / stairs faded-rose / high-platforms saffron)</li>
           <li>Three.js parallax laadt automatisch 3 showcase-backgrounds (cathedral / jungle / cave)</li>
         </ul>
-        <h3>FIXED</h3>
+<h3>FIXED</h3>
         <ul class="update__highlights">
           <li>Body-offset mismatch op cosmo-hero.png (1024×1024 texture vs 28×36 body) opgelost door procedural texture in S2</li>
-          <li>`state === jump` werd direct overschreven door post-frame on-floor-check — nu pas overschreven als velocity.y &gt;= 0</li>
-          <li>Vite `allowedHosts: true` toegevoegd zodat MCP browser-tests via `host.docker.internal` werken</li>
+          <li><code>state === jump</code> werd direct overschreven door post-frame on-floor-check — nu pas overschreven als velocity.y &gt;= 0</li>
+          <li>Vite <code>allowedHosts: true</code> toegevoegd zodat MCP browser-tests via <code>host.docker.internal</code> werken</li>
         </ul>
-        <h3>PIPELINE</h3>
+<h3>PIPELINE</h3>
         <ul class="update__highlights">
-          <li>6 nieuwe Cosmo animation-frames gegenereerd via fal.ai (`public/assets/sprites/cosmo-walk-1/2/3`, `cosmo-jump-up`, `cosmo-jump-fall`, `cosmo-cling`) — staan klaar voor Sprint 3 atlas-pack</li>
+          <li>6 nieuwe Cosmo animation-frames gegenereerd via fal.ai (<code>public/assets/sprites/cosmo-walk-1/2/3</code>, <code>cosmo-jump-up</code>, <code>cosmo-jump-fall</code>, <code>cosmo-cling</code>) — staan klaar voor Sprint 3 atlas-pack</li>
           <li>FalSprite gebleken niet als hosted fal.ai endpoint te bestaan; teruggevallen op individuele Flux Dev frames met BiRefNet remove-bg</li>
-          <li>4 nieuwe lessen genoteerd in `shared/reference_asset_gen.md` (FalSprite-status, anti-blur prefix, profile-side-view-wint, tekst-only pose-limits)</li>
+          <li>4 nieuwe lessen genoteerd in <code>shared/reference_asset_gen.md</code> (FalSprite-status, anti-blur prefix, profile-side-view-wint, tekst-only pose-limits)</li>
         </ul>
         </div>
       </div>
@@ -486,11 +593,11 @@
         <h3>ADDED</h3>
         <ul class="update__highlights">
           <li>Multi-entry Vite + TypeScript scaffolding (8 HTML entries)</li>
-          <li>Site-architectuur naar RoB-blueprint: `/`, `/play/`, `/prd/`, `/updates/`, `/lore/`, `/support/`, `/press/`, `/thanks/`</li>
-          <li>Locked CSS design tokens in `public/assets/css/tokens.css` (Cosmos watercolor palette + Cormorant Garamond + Inter + JetBrains Mono)</li>
+          <li>Site-architectuur naar RoB-blueprint: <code>/</code>, <code>/play/</code>, <code>/prd/</code>, <code>/updates/</code>, <code>/lore/</code>, <code>/support/</code>, <code>/press/</code>, <code>/thanks/</code></li>
+          <li>Locked CSS design tokens in <code>public/assets/css/tokens.css</code> (Cosmos watercolor palette + Cormorant Garamond + Inter + JetBrains Mono)</li>
           <li>Sticky-nav component met paper-grain overlay en vignette</li>
-          <li>Reveal-on-scroll IntersectionObserver in `public/assets/js/site.js`</li>
-          <li>Auto-generator `scripts/changelog-to-html.mjs` parseert dit bestand naar de updates-page</li>
+          <li>Reveal-on-scroll IntersectionObserver in <code>public/assets/js/site.js</code></li>
+          <li>Auto-generator <code>scripts/changelog-to-html.mjs</code> parseert dit bestand naar de updates-page</li>
           <li>Homepage met hero (Cosmo bobbing tegen Cloud Cathedral background), 3-world showcase, numbers grid, about-strip, CTA banner</li>
           <li>Play-launcher placeholder met sprint-progress-bar (Sprint 1/8 = 13%)</li>
           <li>Updates-page met auto-generated timeline-template + first entry (deze release)</li>
@@ -499,7 +606,7 @@
           <li>Press-page met factsheet, key art-grid en 5 suggested angles</li>
           <li>Thanks-page voor post-donation flow</li>
         </ul>
-        <h3>DECISIONS</h3>
+<h3>DECISIONS</h3>
         <ul class="update__highlights">
           <li>Visual: B-hybride (Cosmic Watercolor base + kaleidoscope/fluo-pop/datamosh hallucinatie-pieken)</li>
           <li>Architecture: Dual-canvas (Three.js root + Phaser 4 overlay)</li>
@@ -509,11 +616,11 @@
           <li>Site-laag: vanilla HTML/CSS/JS multi-entry Vite (RoB-blueprint, geen framework)</li>
           <li>Donation: Mollie placeholder voor Sprint 5 activatie; e-mail werkt direct in v0.1.0</li>
         </ul>
-        <h3>PIPELINE</h3>
+<h3>PIPELINE</h3>
         <ul class="update__highlights">
-          <li>8 fal.ai showcase-assets (Cosmo + 4 enemies + 3 backgrounds + logo) — verplaatst naar `public/showcase-assets/`</li>
-          <li>gitignore-whitelist toegevoegd voor `cosmos-cosmic-adventure-2026/`</li>
-          <li>Eerste push naar `github.com/RichardTheuws/game-master.git`</li>
+          <li>8 fal.ai showcase-assets (Cosmo + 4 enemies + 3 backgrounds + logo) — verplaatst naar <code>public/showcase-assets/</code></li>
+          <li>gitignore-whitelist toegevoegd voor <code>cosmos-cosmic-adventure-2026/</code></li>
+          <li>Eerste push naar <code>github.com/RichardTheuws/game-master.git</code></li>
         </ul>
         </div>
       </div>
