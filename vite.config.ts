@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
-export default defineConfig({
-  base: '/',
+export default defineConfig(({ command }) => ({
+  // Production builds deploy under theuws.com/games/cosmos-2026/, so all /-prefixed
+  // asset references must be rewritten to that base. Dev server stays at root so
+  // localhost:5173/play/ keeps working. Override per-build via `VITE_BASE=/ ...`.
+  base: command === 'build' ? (process.env.VITE_BASE ?? '/games/cosmos-2026/') : '/',
 
   resolve: {
     alias: {
@@ -43,4 +46,4 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
-});
+}));

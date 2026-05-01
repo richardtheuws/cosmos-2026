@@ -11,6 +11,7 @@
  *   D   dirt block
  *   P   platform (forest-deep wood)
  *   M   mushroom platform (mushroom-cream)
+ *   T   trampoline (beat-jump spring) — personal psychedelic-trip-anchor
  *   #   wall (ink-aubergine pillar)
  *   ^   spike hazard
  *   *   star pickup
@@ -43,7 +44,7 @@ export const L1_GRID = [
   '....*......#......^^^......*..........#.........#...........',
   '...MMM.....#.....DDDDDD..MMMMMM........#.....*.MMMMM........', // 15
   '...........#.................**........#....MMM.............',
-  '...........#......*.....................#...................',
+  '...........#......*..TT.................#......TT...........',
   'E....*..o..#.....MMM..........H.........#......*............',
   'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG^^GGGGGGGGGGGGGGGGGGGGGGGGGGGGG', // 19
   'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD', // 20
@@ -58,7 +59,7 @@ export const HINT_LINES = [
 ];
 
 export interface L1Spawn {
-  type: 'cosmo' | 'star' | 'powerup' | 'hint' | 'exit' | 'spike' | 'wall' | 'platform' | 'mushroom' | 'ground' | 'dirt';
+  type: 'cosmo' | 'star' | 'powerup' | 'hint' | 'exit' | 'spike' | 'wall' | 'platform' | 'mushroom' | 'ground' | 'dirt' | 'trampoline';
   x: number;
   y: number;
   hintIdx?: number;
@@ -86,6 +87,7 @@ export function decodeLevel(grid: string[]): L1Spawn[] {
         case 'M': out.push({ type: 'mushroom', x, y }); break;
         case 'G': out.push({ type: 'ground', x, y }); break;
         case 'D': out.push({ type: 'dirt', x, y }); break;
+        case 'T': out.push({ type: 'trampoline', x, y }); break;
         default: break;
       }
     }

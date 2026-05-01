@@ -4,6 +4,50 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.5.2] — 2026-05-01 — Sprint 5: parallel-team — trampolines, polish, deploy
+
+Vier agents tegelijk: trampolines (5A), Cosmo multi-frame anim test (5B), production deploy (5C), visual polish (5D). Resultaat: cosmos-2026 is **live**.
+
+### 🚀 LIVE op productie
+- **https://theuws.com/games/cosmos-2026/** — alle 7 routes HTTP 200
+- 87 files / ~19MB FTP upload (~35s)
+- Cosmos-card toegevoegd aan `theuws.com/games/` portfolio
+- `INVENTORY.md` updated met Cosmos onder "Vlaggenschip Projecten"
+
+### Added (5A trampolines)
+- **Trampoline entity** (`src/phaser/entities/Trampoline.ts`) met beat-jump fysica (-820 Y velocity, ~1.8x normal jump), 0.3s cooldown, on-bounce squash-tween, kaleidoscope-spike trigger 1.0
+- **Trampoline tile** in level grid: nieuwe `T` legend-character, 2 paren in L1 row 17
+- `tile-trampoline.png` (full-scene Flux scene-bias workaround, bottom 25% via `setCrop`)
+- `pickup-bounce-burst-cleaned.png` voor on-bounce particle VFX
+
+### Added (5D polish)
+- `tile-wall-v2.png` (eindelijk werkend — Flux landscape-bias gefixed met aspect 1024×512)
+- `tile-mushroom-v2.png` (close-up mushroom-cap photoreal-then-tinted approach)
+- `bg-near-v2.png` lichtere foreground frame voor gameplay-zicht
+
+### Added (5C deploy infra)
+- `scripts/postbuild-rewrite-paths.mjs` — herschrijft anchor hrefs en residuele absolute asset paths in `dist/*.html` naar productie-base. Zonder dit breken cross-page navigatie-links op subpath-deploy.
+
+### Changed
+- `vite.config.ts` is nu **command-aware** — dev-server blijft op `/`, production-build gaat naar `/games/cosmos-2026/`. Override met `VITE_BASE=/ npm run build` voor root-deploys.
+- `package.json` build-script wired postbuild-rewriter aan `npm run build`
+- L1Scene preload swap: `tile-wall-v2` + `tile-mushroom-v2` ipv v1
+- Slow Bloom biome `bg-near` switcht naar `bg-near-v2.png` met scaleY 0.85
+
+### Sprint 5B image-to-image learnings (productive failure)
+- 12 image-to-image attempts (strength 0.55-0.82) → 0/6 pose-shift, 0/6 suction-cup hands
+- Diagnose: fal.ai/flux/dev/image-to-image gebruikt input als noise-init, niet als skeletal anchor
+- Suction-cup-hands fail is universeel (text-only én image-to-image)
+- Workaround voor pose-set: ControlNet/openpose of sketch-to-img (Sprint 6+)
+- Workaround voor suction-cups: canonical-fix via Photoshop of masked inpainting eerst
+- Frames in `public/assets/sprites/v3/cosmo-walk-*.png` zijn archive-only, NIET wired
+
+### Deploy notes
+- Naam-mismatch: lokaal `cosmos-cosmic-adventure-2026`, server `cosmos-2026` (vergt handmatige FTP, `deploy-ftp.sh` gebruikt folder-naam = upload-path)
+
+### Cost
+~$0.51 fal.ai (5A: $0.076 + 5B: $0.36 mislukte attempts + 5D: $0.20)
+
 ## [0.5.1] — 2026-05-01 — Sprint 4.5 Fase C: Cosmo canonical case study
 
 ### Het verhaal achter dit besluit

@@ -57,10 +57,10 @@ const SLOW_BLOOM: Biome = {
     blend: 'normal',
   },
   near: {
-    url: '/assets/backgrounds/slow-bloom-v2/bg-near.png',
+    url: '/assets/backgrounds/slow-bloom-v2/bg-near-v2.png',
     parallax: 0.85,
     depth: -2,
-    scaleY: 1.1,
+    scaleY: 0.85,
     blend: 'normal',
   },
 };

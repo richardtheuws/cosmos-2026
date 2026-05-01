@@ -8,6 +8,7 @@ import Phaser from 'phaser';
 import { Cosmo } from '../entities/Cosmo';
 import { Star } from '../entities/Star';
 import { HintGlobe } from '../entities/HintGlobe';
+import { Trampoline } from '../entities/Trampoline';
 import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import { L1_GRID, TILE_SIZE, decodeLevel, HINT_LINES } from '../../data/levelL1';
@@ -38,6 +39,7 @@ export class L1Scene extends Phaser.Scene {
   private hintText!: Phaser.GameObjects.Text;
   private stars: Star[] = [];
   private globes: HintGlobe[] = [];
+  private trampolines: Trampoline[] = [];
   private starsCollected = 0;
   private currentHintTimer = 0;
   private cosmoSpawn = { x: 96, y: 480 };
@@ -73,9 +75,10 @@ export class L1Scene extends Phaser.Scene {
     // Painted tiles — replace procedural Graphics in S5 wiring.
     this.load.image('tile-ground-painted', '/assets/tiles/tile-ground-cleaned.png');
     this.load.image('tile-dirt-painted', '/assets/tiles/tile-dirt.png');
-    this.load.image('tile-wall-painted', '/assets/tiles/tile-wall-cleaned.png');
-    this.load.image('tile-mushroom-painted', '/assets/tiles/tile-mushroom-cleaned.png');
+    this.load.image('tile-wall-painted', '/assets/tiles/tile-wall-v2.png');
+    this.load.image('tile-mushroom-painted', '/assets/tiles/tile-mushroom-v2.png');
     this.load.image('tile-spike-painted', '/assets/tiles/tile-spike-cleaned.png');
+    this.load.image('tile-trampoline-painted', '/assets/tiles/tile-trampoline.png');
 
     // Painted pickups
     this.load.image('pickup-star-painted', '/assets/pickups/pickup-star-cleaned.png');
@@ -103,6 +106,15 @@ export class L1Scene extends Phaser.Scene {
     const body = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(180, 380, false).setOffset(420, 360);
     this.physics.add.collider(this.cosmo.sprite, this.platforms);
+    // Trampolines: collider with custom callback for bounce.
+    for (const tramp of this.trampolines) {
+      this.physics.add.collider(this.cosmo.sprite, tramp.sprite, () => {
+        const cosmoBody = this.cosmo.sprite.body as Phaser.Physics.Arcade.Body;
+        if (cosmoBody.touching.down || cosmoBody.blocked.down) {
+          tramp.tryBounce(cosmoBody, this.uniforms, this.game.loop.delta / 1000);
+        }
+      });
+    }
     this.physics.add.overlap(this.cosmo.sprite, this.starsGroup, (_player, starSprite) => {
       const star = (starSprite as Phaser.Physics.Arcade.Sprite).getData('star') as Star | undefined;
       if (star && !star.collected) {
@@ -196,6 +208,9 @@ export class L1Scene extends Phaser.Scene {
         }
         case 'powerup':
           this.add.image(s.x, s.y, 'pickup-powerup-painted').setDisplaySize(40, 40);
+          break;
+        case 'trampoline':
+          this.trampolines.push(new Trampoline(this, s.x, s.y));
           break;
         default:
           break;
