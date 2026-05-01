@@ -141,6 +141,54 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.3.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 3: L1 + asset pipeline + audio</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li>**L1 &quot;First Steps&quot;** — Bloomroot Veld biome speelbaar op `/play/`. 60×22 grid-level uit `src/data/levelL1.ts` met decoder voor cosmo-spawn, stars, hint-globes, walls, mushroom-platforms, dirt, ground, spikes</li>
+          <li>`src/phaser/entities/Star.ts` — bobbing fluo-pop Dewdrop met magenta+lime halo, collect-tween + cleanup</li>
+          <li>`src/phaser/entities/HintGlobe.ts` — pulsing saffron+sky-wash orb met proximity-trigger en linger-latch tegen spam</li>
+          <li>`src/audio/sfxBus.ts` — Howler-backed SFX + voice playback, lazy-load, silent-fail bij missing files</li>
+          <li>`src/phaser/scenes/L1Scene.ts` — eerste echte level scene met SFX-wired collisions, hint-tekst-overlay (Cormorant Garamond italic), ↑↓ camera-pan-offset, debug-HUD met live state</li>
+        </ul>
+        <h3>AUDIO (8 SFX + 3 VOICES VIA ELEVENLABS)</h3>
+        <ul class="update__highlights">
+          <li>SFX: cling/jump/stomp/hurt + pickup-star/bonus + globe-trigger + bonus-warp (totaal ~$0.37 API kosten)</li>
+          <li>Voices: 3 NL Hint Globe lines met Sarah voice (`EXAVITQu4vr4xnSDxMaL`, multilingual_v2, stability 0.6 / similarity 0.8 / style 0.4)</li>
+          <li>Suno-prompts gedocumenteerd in `public/assets/audio/music/_SUNO_PROMPTS.md` — 12 tracks D-minor, mapped naar Surface/Hollow/Cathedral biomes</li>
+          <li>`_HOWLER_CONFIG.json` met 23 logical-name → file mappings, levelMusicMap, globeVoiceMap</li>
+          <li>ElevenLabs sound-generation min-duration is 0.5s (niet 0.3) — SFX-targets aangepast</li>
+        </ul>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>SandboxScene verwijderd — vervangen door L1Scene als hoofd-scene</li>
+          <li>Cosmo controller wired naar sfx-bus: cling-pop / jump / hurt vuren via Howler</li>
+          <li>play/index.html HUD-pill nu `v0.3.0 · L1 First Steps`</li>
+        </ul>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li>Above-fold IntersectionObserver fired niet voor `[data-reveal]` items in viewport — toegevoegd `requestAnimationFrame` first-paint pass + threshold 0.05</li>
+        </ul>
+        <h3>PIPELINE</h3>
+        <ul class="update__highlights">
+          <li>6 Cosmo animation-frames staan klaar in `public/assets/sprites/` voor S4 atlas-pack</li>
+          <li>Star + HintGlobe entities gebruiken procedural Graphics-textures (geen externe assets nodig)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.2.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 2: Cosmo controller + dual-canvas</h2>

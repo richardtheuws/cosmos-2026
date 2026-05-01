@@ -10,7 +10,7 @@ import { createGlobalUniforms } from './core/globalUniforms';
 import { CanvasManager } from './core/canvasManager';
 import { InputController } from './core/inputController';
 import { ParallaxScene } from './three/parallaxScene';
-import { SandboxScene } from './phaser/scenes/SandboxScene';
+import { L1Scene } from './phaser/scenes/L1Scene';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -43,10 +43,10 @@ async function boot(): Promise<void> {
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     fps: { target: 60, forceSetTimeOut: false },
-    scene: [SandboxScene],
+    scene: [L1Scene],
   });
 
-  phaserGame.scene.start('SandboxScene', { input, uniforms });
+  phaserGame.scene.start('L1Scene', { input, uniforms });
 
   manager.register((u) => parallax.update(u));
   manager.start();

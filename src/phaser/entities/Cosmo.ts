@@ -9,6 +9,7 @@
 import Phaser from 'phaser';
 import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
+import { sfx } from '../../audio/sfxBus';
 
 export const COSMO = {
   RUN_SPEED: 200,
@@ -70,7 +71,9 @@ export class Cosmo {
     if (inputX !== 0) this.facing = inputX > 0 ? 1 : -1;
 
     const canCling = !onFloor && ((onWallLeft && inputX < 0) || (onWallRight && inputX > 0)) && body.velocity.y > -50;
+    const wasNotCling = this.state !== 'cling';
     if (canCling && this.state !== 'damage') {
+      if (wasNotCling) sfx.play('cling');
       this.state = 'cling';
       this.clingSide = onWallLeft ? -1 : 1;
       body.setGravityY(COSMO.CLING_GRAVITY);
@@ -90,10 +93,12 @@ export class Cosmo {
         this.state = 'jump';
         body.setGravityY(COSMO.GRAVITY);
         this.clingJumpBuffer = 0.08;
+        sfx.play('jump');
       } else if (onFloor || this.coyoteTime > 0) {
         this.sprite.setVelocityY(COSMO.JUMP_VELOCITY);
         this.state = 'jump';
         this.coyoteTime = 0;
+        sfx.play('jump');
       }
     }
 

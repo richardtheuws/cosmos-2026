@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$comment": "Howler.js sound mapping for Cosmos Cosmic Adventure 2026. Logical-name → Howl options. Import in TS as: import audioConfig from '@/assets/audio/_HOWLER_CONFIG.json'.",
+  "basePath": "/assets/audio",
+  "globalVolume": 0.85,
+  "fadeMs": {
+    "musicCrossfade": 1200,
+    "sfxFadeOut": 80,
+    "voiceDuck": 250
+  },
+  "categories": {
+    "sfx": { "volume": 0.7 },
+    "voices": { "volume": 0.95 },
+    "music": { "volume": 0.55 }
+  },
+  "sounds": {
+    "cosmo-cling": {
+      "src": "sfx/cosmo-cling.mp3",
+      "volume": 0.65,
+      "loop": false,
+      "category": "sfx",
+      "pool": 4
+    },
+    "cosmo-jump": {
+      "src": "sfx/cosmo-jump.mp3",
+      "volume": 0.7,
+      "loop": false,
+      "category": "sfx",
+      "pool": 6
+    },
+    "cosmo-stomp": {
+      "src": "sfx/cosmo-stomp.mp3",
+      "volume": 0.75,
+      "loop": false,
+      "category": "sfx",
+      "pool": 4
+    },
+    "cosmo-hurt": {
+      "src": "sfx/cosmo-hurt.mp3",
+      "volume": 0.8,
+      "loop": false,
+      "category": "sfx",
+      "pool": 2
+    },
+    "pickup-star": {
+      "src": "sfx/pickup-star.mp3",
+      "volume": 0.7,
+      "loop": false,
+      "category": "sfx",
+      "pool": 8
+    },
+    "pickup-bonus": {
+      "src": "sfx/pickup-bonus.mp3",
+      "volume": 0.85,
+      "loop": false,
+      "category": "sfx",
+      "pool": 2
+    },
+    "globe-trigger": {
+      "src": "sfx/globe-trigger.mp3",
+      "volume": 0.75,
+      "loop": false,
+      "category": "sfx",
+      "pool": 2
+    },
+    "bonus-warp": {
+      "src": "sfx/bonus-warp.mp3",
+      "volume": 0.9,
+      "loop": false,
+      "category": "sfx",
+      "pool": 1
+    },
+    "globe-l1-1": {
+      "src": "voices/globe-l1-1.mp3",
+      "volume": 1.0,
+      "loop": false,
+      "category": "voices",
+      "pool": 1
+    },
+    "globe-l1-2": {
+      "src": "voices/globe-l1-2.mp3",
+      "volume": 1.0,
+      "loop": false,
+      "category": "voices",
+      "pool": 1
+    },
+    "globe-l1-3": {
+      "src": "voices/globe-l1-3.mp3",
+      "volume": 1.0,
+      "loop": false,
+      "category": "voices",
+      "pool": 1
+    },
+    "music-title-theme": {
+      "src": "music/title-theme.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l1": {
+      "src": "music/slow-bloom-l1.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l2-l3": {
+      "src": "music/slow-bloom-l2-l3.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l4": {
+      "src": "music/inkpool-hollow-l4.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l5": {
+      "src": "music/inkpool-hollow-l5.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l6": {
+      "src": "music/inkpool-hollow-l6.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l7": {
+      "src": "music/cloud-cathedral-l7.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-l8": {
+      "src": "music/cloud-cathedral-l8.mp3",
+      "volume": 0.55,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-bonus-l9": {
+      "src": "music/bonus-warp-l9.mp3",
+      "volume": 0.6,
+      "loop": false,
+      "category": "music",
+      "html5": true
+    },
+    "music-l10-boss-intro": {
+      "src": "music/cloud-cathedral-l10-boss-intro.mp3",
+      "volume": 0.6,
+      "loop": false,
+      "category": "music",
+      "html5": true
+    },
+    "music-boss-fight": {
+      "src": "music/boss-fight-l10.mp3",
+      "volume": 0.6,
+      "loop": true,
+      "category": "music",
+      "html5": true
+    },
+    "music-cliffhanger-credits": {
+      "src": "music/cliffhanger-credits.mp3",
+      "volume": 0.6,
+      "loop": false,
+      "category": "music",
+      "html5": true
+    }
+  },
+  "levelMusicMap": {
+    "title": "music-title-theme",
+    "L1": "music-l1",
+    "L2": "music-l2-l3",
+    "L3": "music-l2-l3",
+    "L4": "music-l4",
+    "L5": "music-l5",
+    "L6": "music-l6",
+    "L7": "music-l7",
+    "L8": "music-l8",
+    "L9": "music-bonus-l9",
+    "L10-intro": "music-l10-boss-intro",
+    "L10-boss": "music-boss-fight",
+    "credits": "music-cliffhanger-credits"
+  },
+  "globeVoiceMap": {
+    "L1": ["globe-l1-1", "globe-l1-2", "globe-l1-3"]
+  }
+}

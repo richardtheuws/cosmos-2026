@@ -4,6 +4,34 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.3.0] — 2026-05-01 — Sprint 3: L1 + asset pipeline + audio
+
+### Added
+- **L1 "First Steps"** — Bloomroot Veld biome speelbaar op `/play/`. 60×22 grid-level uit `src/data/levelL1.ts` met decoder voor cosmo-spawn, stars, hint-globes, walls, mushroom-platforms, dirt, ground, spikes
+- `src/phaser/entities/Star.ts` — bobbing fluo-pop Dewdrop met magenta+lime halo, collect-tween + cleanup
+- `src/phaser/entities/HintGlobe.ts` — pulsing saffron+sky-wash orb met proximity-trigger en linger-latch tegen spam
+- `src/audio/sfxBus.ts` — Howler-backed SFX + voice playback, lazy-load, silent-fail bij missing files
+- `src/phaser/scenes/L1Scene.ts` — eerste echte level scene met SFX-wired collisions, hint-tekst-overlay (Cormorant Garamond italic), ↑↓ camera-pan-offset, debug-HUD met live state
+
+### Audio (8 SFX + 3 voices via ElevenLabs)
+- SFX: cling/jump/stomp/hurt + pickup-star/bonus + globe-trigger + bonus-warp (totaal ~$0.37 API kosten)
+- Voices: 3 NL Hint Globe lines met Sarah voice (`EXAVITQu4vr4xnSDxMaL`, multilingual_v2, stability 0.6 / similarity 0.8 / style 0.4)
+- Suno-prompts gedocumenteerd in `public/assets/audio/music/_SUNO_PROMPTS.md` — 12 tracks D-minor, mapped naar Surface/Hollow/Cathedral biomes
+- `_HOWLER_CONFIG.json` met 23 logical-name → file mappings, levelMusicMap, globeVoiceMap
+- ElevenLabs sound-generation min-duration is 0.5s (niet 0.3) — SFX-targets aangepast
+
+### Changed
+- SandboxScene verwijderd — vervangen door L1Scene als hoofd-scene
+- Cosmo controller wired naar sfx-bus: cling-pop / jump / hurt vuren via Howler
+- play/index.html HUD-pill nu `v0.3.0 · L1 First Steps`
+
+### Fixed
+- Above-fold IntersectionObserver fired niet voor `[data-reveal]` items in viewport — toegevoegd `requestAnimationFrame` first-paint pass + threshold 0.05
+
+### Pipeline
+- 6 Cosmo animation-frames staan klaar in `public/assets/sprites/` voor S4 atlas-pack
+- Star + HintGlobe entities gebruiken procedural Graphics-textures (geen externe assets nodig)
+
 ## [0.2.0] — 2026-05-01 — Sprint 2: Cosmo controller + dual-canvas
 
 ### Added
