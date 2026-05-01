@@ -4,6 +4,38 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.4.0] — 2026-05-01 — Sprint 4: post-FX stack — constant trippy
+
+### Added
+- **`pmndrs/postprocessing` EffectComposer** stacked op de Three.js parallax renderer — elke frame gaat door post-FX voor render
+- `src/three/postFX/postFX.ts` — orchestrator met 3 effect-passes (UV transforms / per-pixel / convolution + composite)
+- `src/three/postFX/kaleidoscope.ts` — custom radial-mirror UV shader (N-fold symmetry), strength-driven
+- `src/three/postFX/fluidDisplacement.ts` — custom curl-noise 2D-hash displacement, time-driven gentle wobble
+- `src/three/postFX/datamosh.ts` — custom horizontal stripe-shift + RGB channel-split, voor damage-pulse
+
+### Permanent base stack (constant-trippy)
+- **Bloom** intensity 0.7-1.15 met breathing sine, mipmap radius 0.85 — saffron sun + stars + globes glowen continu
+- **ChromaticAberration** offset 0.005-0.009 met radialModulation — cyan/magenta fringing op alle randen
+- **FluidDisplacement** amplitude 0.022 frequency 2.6 — wereld wiggelt zachtjes als waterverf in beweging
+- **Kaleidoscope** ambient strength 0.16-0.24 met angle rotatie 0.12rad/s — subtiele constante 8-fold symmetry-shimmer
+- **Vignette** darkness 0.55, offset 0.28
+- **Noise** overlay opacity 0.32 — paper-grain feel constant
+- **Datamosh** strength 0 default; spike to 1.0 on damage, decays over 200ms
+
+### Triggered peaks
+- Star pickup → `kaleidoTrigger += 0.35` (kaleido pop). Elke 5e star → `kaleidoTrigger = 1.0` (volle peak)
+- Spike contact → `damagePulse = 1.0` → datamosh-tear horizontale stripes, decay 200ms
+
+### Changed
+- Bg-mid + bg-near layers terug naar `blend: normal` (raw png's hebben transparant gebied al)
+- ParallaxScene render gebruikt nu `composer.render()` ipv `renderer.render()`
+
+### Pipeline note
+Twee EffectPass-conflicten opgelost door drie aparte passes:
+- pass 1: UV-transform (fluid + kaleido)
+- pass 2: per-pixel (datamosh)
+- pass 3: convolution + composite (chroma + bloom + vignette + noise)
+
 ## [0.3.1] — 2026-05-01 — Sprint 3.1: per-biome parallax + visuele polish
 
 ### Fixed

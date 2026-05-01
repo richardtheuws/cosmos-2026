@@ -1,6 +1,6 @@
 {
   "name": "cosmos-cosmic-adventure-2026",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Cosmos Cosmic Adventure 2026 — 2.5D psychedelische browser-platformer remake van Cosmo's Cosmic Adventure (Apogee, 1992)",
@@ -16,6 +16,7 @@
   "dependencies": {
     "howler": "^2.2.4",
     "phaser": "^4.0.0",
+    "postprocessing": "^6.39.1",
     "three": "^0.180.0",
     "tone": "^15.0.0"
   },

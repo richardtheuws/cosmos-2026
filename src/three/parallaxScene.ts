@@ -10,6 +10,7 @@
 import * as THREE from 'three';
 import type { GlobalUniforms } from '../core/globalUniforms';
 import type { Biome, BiomeLayer } from '../data/biomes';
+import { createPostFX, type PostFX } from './postFX/postFX';
 
 interface RuntimeLayer {
   mesh: THREE.Mesh;
@@ -22,6 +23,7 @@ export class ParallaxScene {
   renderer: THREE.WebGLRenderer;
   private layers: RuntimeLayer[] = [];
   private ambientPlane: THREE.Mesh;
+  private postFX: PostFX;
 
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new THREE.Scene();
@@ -46,6 +48,8 @@ export class ParallaxScene {
     this.ambientPlane = new THREE.Mesh(ambientGeo, ambientMat);
     this.ambientPlane.position.z = -20;
     this.scene.add(this.ambientPlane);
+
+    this.postFX = createPostFX(this.renderer, this.scene, this.camera);
 
     this.bindResize();
   }
@@ -101,13 +105,16 @@ export class ParallaxScene {
     this.layers = [];
   }
 
-  /** Per-frame tick. Reads global cameraX (Phaser-pixel space) and shifts layers. */
+  /** Per-frame tick. Reads global cameraX (Phaser-pixel space) and shifts layers,
+   *  then runs the EffectComposer instead of a raw render — every frame goes
+   *  through the post-FX stack. */
   update(u: GlobalUniforms): void {
     const norm = u.cameraX / Math.max(1, u.viewportW);
     for (const layer of this.layers) {
       layer.mesh.position.x = -norm * layer.parallax;
     }
-    this.renderer.render(this.scene, this.camera);
+    this.postFX.update(u);
+    this.postFX.composer.render();
   }
 
   private bindResize(): void {
@@ -115,6 +122,7 @@ export class ParallaxScene {
       const w = window.innerWidth;
       const h = window.innerHeight;
       this.renderer.setSize(w, h, false);
+      this.postFX?.resize(w, h);
       const aspect = w / h;
       this.camera.left = -aspect;
       this.camera.right = aspect;

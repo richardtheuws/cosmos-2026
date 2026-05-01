@@ -45,14 +45,14 @@ const SLOW_BLOOM: Biome = {
     parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
-    blend: 'multiply',
+    blend: 'normal',
   },
   near: {
     url: '/assets/backgrounds/slow-bloom/bg-near.png',
     parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
-    blend: 'multiply',
+    blend: 'normal',
   },
 };
 
@@ -72,14 +72,14 @@ const INKPOOL_HOLLOW: Biome = {
     parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
-    blend: 'multiply',
+    blend: 'normal',
   },
   near: {
     url: '/assets/backgrounds/inkpool-hollow/bg-near.png',
     parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
-    blend: 'multiply',
+    blend: 'normal',
   },
 };
 
@@ -99,14 +99,14 @@ const CLOUD_CATHEDRAL: Biome = {
     parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
-    blend: 'multiply',
+    blend: 'normal',
   },
   near: {
     url: '/assets/backgrounds/cloud-cathedral/bg-near.png',
     parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
-    blend: 'multiply',
+    blend: 'normal',
   },
 };
 

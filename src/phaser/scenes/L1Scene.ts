@@ -87,10 +87,18 @@ export class L1Scene extends Phaser.Scene {
         star.collect(this);
         sfx.play('starPickup');
         this.starsCollected += 1;
+        // Trippy pulse — short kaleidoscope flicker + brief chromatic peak.
+        this.uniforms.kaleidoTrigger = Math.min(1, this.uniforms.kaleidoTrigger + 0.35);
+        if (this.starsCollected % 5 === 0) {
+          this.uniforms.kaleidoTrigger = 1.0;  // every 5th star is a louder peak
+        }
       }
     });
     this.physics.add.overlap(this.cosmo.sprite, this.hazards, () => {
-      if (this.cosmo.takeDamage()) sfx.play('hurt');
+      if (this.cosmo.takeDamage()) {
+        sfx.play('hurt');
+        this.uniforms.damagePulse = 1.0;
+      }
     });
 
     this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);

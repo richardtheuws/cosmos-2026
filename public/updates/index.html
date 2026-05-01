@@ -141,6 +141,56 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.4.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 4: post-FX stack — constant trippy</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li>**`pmndrs/postprocessing` EffectComposer** stacked op de Three.js parallax renderer — elke frame gaat door post-FX voor render</li>
+          <li>`src/three/postFX/postFX.ts` — orchestrator met 3 effect-passes (UV transforms / per-pixel / convolution + composite)</li>
+          <li>`src/three/postFX/kaleidoscope.ts` — custom radial-mirror UV shader (N-fold symmetry), strength-driven</li>
+          <li>`src/three/postFX/fluidDisplacement.ts` — custom curl-noise 2D-hash displacement, time-driven gentle wobble</li>
+          <li>`src/three/postFX/datamosh.ts` — custom horizontal stripe-shift + RGB channel-split, voor damage-pulse</li>
+        </ul>
+        <h3>PERMANENT BASE STACK (CONSTANT-TRIPPY)</h3>
+        <ul class="update__highlights">
+          <li>**Bloom** intensity 0.7-1.15 met breathing sine, mipmap radius 0.85 — saffron sun + stars + globes glowen continu</li>
+          <li>**ChromaticAberration** offset 0.005-0.009 met radialModulation — cyan/magenta fringing op alle randen</li>
+          <li>**FluidDisplacement** amplitude 0.022 frequency 2.6 — wereld wiggelt zachtjes als waterverf in beweging</li>
+          <li>**Kaleidoscope** ambient strength 0.16-0.24 met angle rotatie 0.12rad/s — subtiele constante 8-fold symmetry-shimmer</li>
+          <li>**Vignette** darkness 0.55, offset 0.28</li>
+          <li>**Noise** overlay opacity 0.32 — paper-grain feel constant</li>
+          <li>**Datamosh** strength 0 default; spike to 1.0 on damage, decays over 200ms</li>
+        </ul>
+        <h3>TRIGGERED PEAKS</h3>
+        <ul class="update__highlights">
+          <li>Star pickup → `kaleidoTrigger += 0.35` (kaleido pop). Elke 5e star → `kaleidoTrigger = 1.0` (volle peak)</li>
+          <li>Spike contact → `damagePulse = 1.0` → datamosh-tear horizontale stripes, decay 200ms</li>
+        </ul>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>Bg-mid + bg-near layers terug naar `blend: normal` (raw png&#039;s hebben transparant gebied al)</li>
+          <li>ParallaxScene render gebruikt nu `composer.render()` ipv `renderer.render()`</li>
+        </ul>
+        <h3>PIPELINE NOTE</h3>
+        <ul class="update__highlights">
+          <li>pass 1: UV-transform (fluid + kaleido)</li>
+          <li>pass 2: per-pixel (datamosh)</li>
+          <li>pass 3: convolution + composite (chroma + bloom + vignette + noise)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.3.1</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 3.1: per-biome parallax + visuele polish</h2>
