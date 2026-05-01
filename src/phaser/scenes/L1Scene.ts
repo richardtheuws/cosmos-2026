@@ -15,6 +15,7 @@ import { Enemy } from '../entities/enemies/Enemy';
 import type { EnemyProjectile } from '../entities/enemies/EnemyProjectile';
 import { ENEMY_DEFS, type BombTarget } from '../entities/enemies/EnemyTypes';
 import { assetPath } from '../../core/assetPath';
+import { AudioFFTBridge, DAMAGE_WARPS } from '../../audio/audioFFTBridge';
 import type { InputController } from '../../core/inputController';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import { L1_GRID, TILE_SIZE, decodeLevel, HINT_LINES } from '../../data/levelL1';
@@ -41,6 +42,7 @@ export class L1Scene extends Phaser.Scene {
   private starsGroup!: Phaser.Physics.Arcade.Group;
   private inputCtl!: InputController;
   private uniforms!: GlobalUniforms;
+  private audioBridge: AudioFFTBridge | null = null;
   private hudText!: Phaser.GameObjects.Text;
   private hintText!: Phaser.GameObjects.Text;
   private stars: Star[] = [];
@@ -72,9 +74,10 @@ export class L1Scene extends Phaser.Scene {
 
   constructor() { super({ key: 'L1Scene' }); }
 
-  init(data: { input: InputController; uniforms: GlobalUniforms }): void {
+  init(data: { input: InputController; uniforms: GlobalUniforms; audioBridge?: AudioFFTBridge }): void {
     this.inputCtl = data.input;
     this.uniforms = data.uniforms;
+    this.audioBridge = data.audioBridge ?? null;
   }
 
   preload(): void {
@@ -190,6 +193,7 @@ export class L1Scene extends Phaser.Scene {
       if (this.cosmo.takeDamage()) {
         sfx.play('hurt');
         this.uniforms.damagePulse = 1.0;
+        this.audioBridge?.playStinger(DAMAGE_WARPS);
       }
     });
 
@@ -223,6 +227,7 @@ export class L1Scene extends Phaser.Scene {
       if (this.cosmo.takeDamage()) {
         sfx.play('hurt');
         this.uniforms.damagePulse = 1.0;
+        this.audioBridge?.playStinger(DAMAGE_WARPS);
       }
       proj.destroy();
     });
@@ -578,8 +583,9 @@ export class L1Scene extends Phaser.Scene {
 
   private updateHUD(): void {
     const c = this.cosmo;
-    const heartsFull = '♥'.repeat(c.hp);
-    const heartsEmpty = '♡'.repeat(c.maxHp - c.hp);
+    const hp = Math.max(0, Math.min(c.maxHp, c.hp));
+    const heartsFull = '♥'.repeat(hp);
+    const heartsEmpty = '♡'.repeat(c.maxHp - hp);
     this.hudText.setText([
       `Cosmos · L1 — First Steps · v0.3.0`,
       `${heartsFull}${heartsEmpty}    bombs ${c.bombs}`,

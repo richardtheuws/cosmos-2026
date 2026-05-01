@@ -93,8 +93,37 @@ import { Howler } from 'howler';
  */
 const MUSIC_TRACK: string = assetPath('assets/audio/music/title-theme.mp3');
 
+/**
+ * Track-pools for stingers and hallucinations. Sprint 10 architecture:
+ * the same trigger picks a random track per fire so the listener never
+ * gets fatigued by the same audio cue. Pools can grow without code changes.
+ *
+ *   audio.playStinger(DAMAGE_WARPS)        → one-shot, full-length, fades on `ended`
+ *   audio.startHallucination(HALLUCINATION_PEAKS) → up to MAX_HALLUCINATION_S, then fade
+ */
+export const DAMAGE_WARPS: readonly string[] = [
+  assetPath('assets/audio/music/damage-warp-1.mp3'),
+  // damage-warp-2 lands when Richard renders the second variant; the
+  // pool grows automatically and pickFrom() handles it.
+];
+
+export const HALLUCINATION_PEAKS: readonly string[] = [
+  assetPath('assets/audio/music/hallucination-peak-1.mp3'),
+  assetPath('assets/audio/music/hallucination-peak-2.mp3'),
+];
+
+const MAX_HALLUCINATION_S = 30;
+const STINGER_GAIN = 0.85;
+const HALLUCINATION_GAIN = 0.55;
+const HALLUCINATION_FADE_S = 4;
+
 /** Smoothing factor for the per-band lerp. Higher = snappier, lower = sleepier. */
 const BAND_LERP_ALPHA = 0.4;
+
+function pickFrom<T>(pool: readonly T[]): T | null {
+  if (pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 
 /** Bin index *exclusive* upper-bound for each of the 8 logarithmic bands. */
 const BAND_EDGES: readonly number[] = [2, 4, 8, 16, 32, 64, 96, 128];
@@ -111,11 +140,13 @@ export class AudioFFTBridge {
   private ctx: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
   private musicGain: GainNode | null = null;
+  private stingerGain: GainNode | null = null;
   private source: MusicSource | null = null;
   private freqData: Uint8Array<ArrayBuffer> | null = null;
   private muted = false;
   private initialised = false;
   private musicVolume = 0.55;
+  private hallucinationActive: { audio: HTMLAudioElement; node: MediaElementAudioSourceNode; gain: GainNode; timer: number } | null = null;
 
   constructor(uniforms: GlobalUniforms) {
     this.uniforms = uniforms;
@@ -147,8 +178,17 @@ export class AudioFFTBridge {
     this.musicGain = this.ctx.createGain();
     this.musicGain.gain.value = this.musicVolume;
 
-    // music → musicGain → analyser → Howler.masterGain → destination
+    // Stingers + hallucinations go through their own sub-bus so they can
+    // be ducked independently. Both buses meet at the analyser, so the
+    // post-FX shaders react to insanity-cues as well as the base music.
+    this.stingerGain = this.ctx.createGain();
+    this.stingerGain.gain.value = 1.0;
+
+    // music → musicGain    ─┐
+    //                       ├→ analyser → Howler.masterGain → destination
+    // stingers → stingerGain─┘
     this.musicGain.connect(this.analyser);
+    this.stingerGain.connect(this.analyser);
     this.analyser.connect(Howler.masterGain);
 
     this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
@@ -210,13 +250,121 @@ export class AudioFFTBridge {
     return Array.from(this.uniforms.audioFFT);
   }
 
+  /**
+   * One-shot stinger overlay (e.g. damage-warp). Picks a random track from
+   * the pool, plays it once via the stinger sub-bus, auto-disposes on `ended`.
+   * Multiple stingers may overlap — that's fine, the analyser sums them.
+   */
+  playStinger(pool: readonly string[]): void {
+    if (this.muted || !this.ctx || !this.stingerGain) return;
+    const url = pickFrom(pool);
+    if (!url) return;
+    if (this.ctx.state === 'suspended') void this.ctx.resume();
+
+    const audio = document.createElement('audio');
+    audio.src = url;
+    audio.crossOrigin = 'anonymous';
+    audio.preload = 'auto';
+    audio.addEventListener('error', () => {
+      // eslint-disable-next-line no-console
+      console.warn(`[audioFFTBridge] stinger load failed: ${url}`);
+    });
+
+    const gain = this.ctx.createGain();
+    gain.gain.value = STINGER_GAIN;
+    const node = this.ctx.createMediaElementSource(audio);
+    node.connect(gain).connect(this.stingerGain);
+
+    const cleanup = (): void => {
+      audio.pause();
+      audio.src = '';
+      try {
+        node.disconnect();
+        gain.disconnect();
+      } catch {
+        /* ignore — already disposed */
+      }
+    };
+    audio.addEventListener('ended', cleanup);
+
+    void audio.play().catch(() => cleanup());
+  }
+
+  /**
+   * Sustained hallucination overlay (e.g. hallucination-peak). Only one
+   * hallucination plays at a time — re-trigger while active is a no-op,
+   * keeping the soundscape from becoming a smear of overlapping textures.
+   * Auto-fades out after MAX_HALLUCINATION_S, then disposes.
+   */
+  startHallucination(pool: readonly string[]): void {
+    if (this.muted || !this.ctx || !this.stingerGain) return;
+    if (this.hallucinationActive) return;
+    const url = pickFrom(pool);
+    if (!url) return;
+    if (this.ctx.state === 'suspended') void this.ctx.resume();
+
+    const audio = document.createElement('audio');
+    audio.src = url;
+    audio.crossOrigin = 'anonymous';
+    audio.preload = 'auto';
+    audio.loop = false;
+    audio.addEventListener('error', () => {
+      // eslint-disable-next-line no-console
+      console.warn(`[audioFFTBridge] hallucination load failed: ${url}`);
+    });
+
+    const gain = this.ctx.createGain();
+    gain.gain.value = 0;
+    const node = this.ctx.createMediaElementSource(audio);
+    node.connect(gain).connect(this.stingerGain);
+
+    // Quick fade-in (1s) so the entry isn't a click; held at HALLUCINATION_GAIN
+    // until the fade-out begins at (MAX - FADE_S).
+    const now = this.ctx.currentTime;
+    gain.gain.linearRampToValueAtTime(HALLUCINATION_GAIN, now + 1);
+    gain.gain.setValueAtTime(HALLUCINATION_GAIN, now + (MAX_HALLUCINATION_S - HALLUCINATION_FADE_S));
+    gain.gain.linearRampToValueAtTime(0, now + MAX_HALLUCINATION_S);
+
+    const dispose = (): void => {
+      audio.pause();
+      audio.src = '';
+      try {
+        node.disconnect();
+        gain.disconnect();
+      } catch {
+        /* ignore */
+      }
+      if (this.hallucinationActive?.audio === audio) {
+        clearTimeout(this.hallucinationActive.timer);
+        this.hallucinationActive = null;
+      }
+    };
+    audio.addEventListener('ended', dispose);
+    const timer = window.setTimeout(dispose, MAX_HALLUCINATION_S * 1000 + 100);
+
+    this.hallucinationActive = { audio, node, gain, timer };
+    void audio.play().catch(() => dispose());
+  }
+
+  /** True if a hallucination is currently playing. */
+  hallucinationPlaying(): boolean {
+    return this.hallucinationActive !== null;
+  }
+
   /** Tear down. Call on hot-reload / scene swap. */
   dispose(): void {
     this.source?.dispose();
     this.source = null;
+    if (this.hallucinationActive) {
+      clearTimeout(this.hallucinationActive.timer);
+      this.hallucinationActive.audio.pause();
+      this.hallucinationActive = null;
+    }
     this.musicGain?.disconnect();
+    this.stingerGain?.disconnect();
     this.analyser?.disconnect();
     this.musicGain = null;
+    this.stingerGain = null;
     this.analyser = null;
     this.initialised = false;
   }

@@ -134,8 +134,23 @@ export class TrippyEventDirector {
         this.currentEvent = ev;
         this.currentStartT = t;
         this.lastEvent = ev.name;
+        // Sprint 10C — sparse hallucination overlay. ~25% of fires trigger
+        // a hallucination-peak track on the audio bridge. The director itself
+        // doesn't know which tracks; the consumer registers a callback.
+        if (this.onSpikeFire && Math.random() < 0.25) {
+          this.onSpikeFire(ev.name);
+        }
         return;
       }
     }
   }
+
+  /** Sprint 10C — set a callback fired on spike events. Used to pipe trippy
+   *  events into the audio bridge so hallucination-tracks land on the same
+   *  beats as kaleidoscope/datamosh peaks. */
+  setOnSpikeFire(cb: (eventName: string) => void): void {
+    this.onSpikeFire = cb;
+  }
+
+  private onSpikeFire: ((eventName: string) => void) | null = null;
 }

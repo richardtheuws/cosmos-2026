@@ -206,6 +206,49 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v0.7.3</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 10: insanity live — hallucinations + damage warps</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Sprint 9 leverde één base-track per biome; v0.7.3 voegt <strong>mesmerizing insanity overlays</strong> toe — psychedelic peaks die random uit een pool crossfaden bovenop de base-music. Plus hot-fix voor een <code>String.repeat(-1)</code> crash in de HUD bij dubbele damage-hits.</p>
+        </div>
+        <h3>ADDED (SPRINT 10 — INSANITY OVERLAYS)</h3>
+        <ul class="update__highlights">
+          <li><strong>3 nieuwe Suno tracks</strong> in <code>public/assets/audio/music/</code>: - <code>hallucination-peak-1.mp3</code> (3:24, microtonal koto + reversed flute fragments) - <code>hallucination-peak-2.mp3</code> (3:24, alt variant — random-picker schakelt elke trigger tussen variant 1 en 2) - <code>damage-warp-1.mp3</code> (28s, sub-bass pulse + tape-warp glitch + reversed pluck) - Loudnorm-pass identiek aan Sprint 9 (−14 LUFS, 112kbps); originelen in <code>_originals/</code>.</li>
+          <li><strong>Multi-source audio architectuur</strong> in <code>audioFFTBridge.ts</code>: - Aparte <code>stingerGain</code> sub-bus naast <code>musicGain</code>; beide → analyser → masterGain. Post-FX shaders reageren dus ook op insanity-events (lows pulsen bloom, mids drijven kaleido, highs sturen fluid). - <code>playStinger(pool)</code> voor one-shots (auto-dispose op <code>ended</code>) - <code>startHallucination(pool)</code> voor sustained overlays (max 30s, 1s fade-in / 4s fade-out, één-tegelijk dedupe) - <code>pickFrom(pool)</code> random-picker pattern; pools (<code>HALLUCINATION_PEAKS</code>, <code>DAMAGE_WARPS</code>) zijn <code>readonly string[]</code> constants — pool-uitbreiding is een 1-line append zonder code-changes elders.</li>
+          <li><strong>Trigger-wiring</strong>: - <code>Cosmo.takeDamage</code> → <code>audioBridge.playStinger(DAMAGE_WARPS)</code> (3 sites: hazard-overlap, enemy-touch, projectile-overlap) - <code>TrippyEventDirector.fire</code> → 25% kans op <code>audioBridge.startHallucination(HALLUCINATION_PEAKS)</code> per kaleidoscope-spike. Bridge dedupe voorkomt overlapping hallucinations.</li>
+          <li><strong>Pattern</strong>: dezelfde event triggert random tracks → anti-fatigue. Bridge dedupe (één hallucination tegelijk) voorkomt soundscape-smear.</li>
+        </ul>
+<h3>FIXED (SPRINT 10 — HUD CRASH)</h3>
+        <ul class="update__highlights">
+          <li><code>L1Scene.updateHUD</code> crashte met <code>RangeError: Invalid count value: -1</code> op <code>&#039;♥&#039;.repeat(c.hp)</code> als <code>hp</code> onder 0 zakte (mogelijk bij gelijktijdige damage-hits voorbij death). Fix: clamp in HUD (<code>Math.max(0, Math.min(maxHp, hp))</code>) + clamp in <code>Cosmo.takeDamage</code> (<code>hp = Math.max(0, hp - 1)</code>). Defense-in-depth — beide paths beschermd.</li>
+        </ul>
+<h3>ARCHITECTUUR-LERINGEN SPRINT 10</h3>
+        <ul class="update__highlights">
+          <li><strong>Random-picker pattern voor anti-fatigue</strong>: zelfde event-trigger, telkens andere track. Pool-as-readonly-array maakt uitbreiding triviaal. Werkt ook voor SFX-variation (toekomst: 3 jump-sounds, 3 stomp-sounds).</li>
+          <li><strong>Aparte stinger-bus die door analyser komt</strong> = post-FX reageert ook op overlays. Goedkoop trippy: damage-warp pulse drijft vanzelf bloom + kaleido.</li>
+          <li><strong>One-tegelijk dedupe</strong> voor sustained tracks voorkomt cacophonie. Voor stingers (one-shot) is overlap juist gewenst.</li>
+        </ul>
+<h3>OPEN VOOR SPRINT 11+</h3>
+        <ul class="update__highlights">
+          <li>2e damage-warp variant (Suno regenerate, ~20s). Pool kan vandaag 1 track aan; uitbreiding is 1-line append in <code>DAMAGE_WARPS</code>.</li>
+          <li>Per-biome music-switching (slow-bloom-loop voor L1, inkpool-loop voor L2). Vereist biome-event op level-load.</li>
+          <li>Ducking: music gain dimmen tijdens hallucination zodat de overlay duidelijker uitkomt.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.7.2</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 9: music live — Suno × audio-FFT bridge</h2>

@@ -13,7 +13,7 @@ import { ParallaxScene } from './three/parallaxScene';
 import { L1Scene } from './phaser/scenes/L1Scene';
 import { BIOMES } from './data/biomes';
 import { TrippyEventDirector } from './three/postFX/trippyEventDirector';
-import { AudioFFTBridge } from './audio/audioFFTBridge';
+import { AudioFFTBridge, HALLUCINATION_PEAKS } from './audio/audioFFTBridge';
 import { TouchOverlay } from './ui/touchOverlay';
 import { isTouchDevice } from './core/deviceDetect';
 
@@ -51,11 +51,11 @@ async function boot(): Promise<void> {
     scene: [L1Scene],
   });
 
-  phaserGame.scene.start('L1Scene', { input, uniforms });
-
   const eventDirector = new TrippyEventDirector();
   const audioBridge = new AudioFFTBridge(uniforms);
   audioBridge.init();
+
+  phaserGame.scene.start('L1Scene', { input, uniforms, audioBridge });
 
   // Browser autoplay policy — first user gesture unlocks the AudioContext.
   const unlockAudio = (): void => {
@@ -81,6 +81,11 @@ async function boot(): Promise<void> {
   manager.register((u) => eventDirector.update(u));
   manager.register((u) => parallax.update(u));
   manager.start();
+
+  // Sprint 10C — wire trippy event director into audio bridge so kaleidoscope
+  // peaks occasionally drag a hallucination-track over the base music. 25%
+  // chance per fire is enforced in the director; bridge dedupes overlap.
+  eventDirector.setOnSpikeFire(() => audioBridge.startHallucination(HALLUCINATION_PEAKS));
 
   // Sprint 7B — touch overlay + mobile disclaimer. Only attaches on touch devices
   // with viewport <1024px. Desktop sees nothing.

@@ -156,7 +156,7 @@ export class Cosmo {
 
   takeDamage(): boolean {
     if (this.iframe > 0 || this.state === 'death') return false;
-    this.hp -= 1;
+    this.hp = Math.max(0, this.hp - 1);
     this.iframe = 1.2;
     if (this.hp <= 0) {
       this.state = 'death';
