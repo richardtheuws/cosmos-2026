@@ -71,10 +71,18 @@ export class ParallaxScene {
     tex.anisotropy = 4;
     const aspect = tex.image.width / tex.image.height;
     const geo = new THREE.PlaneGeometry(layer.scaleY * aspect * 2, layer.scaleY * 2);
+    const blending =
+      layer.blend === 'multiply'
+        ? THREE.MultiplyBlending
+        : layer.blend === 'additive'
+          ? THREE.AdditiveBlending
+          : THREE.NormalBlending;
     const mat = new THREE.MeshBasicMaterial({
       map: tex,
       transparent: true,
       depthWrite: false,
+      blending,
+      premultipliedAlpha: layer.blend === 'multiply',
     });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.z = layer.depth;

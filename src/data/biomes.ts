@@ -6,11 +6,17 @@
  * for how big the plane should render in the orthographic view.
  */
 
+export type BlendMode = 'normal' | 'multiply' | 'additive';
+
 export interface BiomeLayer {
   url: string;
   parallax: number;
   depth: number;
   scaleY: number;
+  /** Compositing mode. `multiply` lets light centers fade to transparent — used
+   *  for foreground frame layers that have white-ish empty centers around dark
+   *  edge silhouettes. */
+  blend?: BlendMode;
 }
 
 export interface Biome {
@@ -32,18 +38,21 @@ const SLOW_BLOOM: Biome = {
     parallax: 0.18,
     depth: -10,
     scaleY: 1.6,
+    blend: 'normal',
   },
   mid: {
-    url: '/assets/backgrounds/slow-bloom/bg-mid-cleaned.png',
-    parallax: 0.45,
+    url: '/assets/backgrounds/slow-bloom/bg-mid.png',
+    parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
+    blend: 'multiply',
   },
   near: {
-    url: '/assets/backgrounds/slow-bloom/bg-near-cleaned.png',
-    parallax: 0.85,
+    url: '/assets/backgrounds/slow-bloom/bg-near.png',
+    parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
+    blend: 'multiply',
   },
 };
 
@@ -56,18 +65,21 @@ const INKPOOL_HOLLOW: Biome = {
     parallax: 0.18,
     depth: -10,
     scaleY: 1.6,
+    blend: 'normal',
   },
   mid: {
-    url: '/assets/backgrounds/inkpool-hollow/bg-mid-cleaned.png',
-    parallax: 0.45,
+    url: '/assets/backgrounds/inkpool-hollow/bg-mid.png',
+    parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
+    blend: 'multiply',
   },
   near: {
-    url: '/assets/backgrounds/inkpool-hollow/bg-near-cleaned.png',
-    parallax: 0.85,
+    url: '/assets/backgrounds/inkpool-hollow/bg-near.png',
+    parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
+    blend: 'multiply',
   },
 };
 
@@ -80,18 +92,21 @@ const CLOUD_CATHEDRAL: Biome = {
     parallax: 0.18,
     depth: -10,
     scaleY: 1.6,
+    blend: 'normal',
   },
   mid: {
-    url: '/assets/backgrounds/cloud-cathedral/bg-mid-cleaned.png',
-    parallax: 0.45,
+    url: '/assets/backgrounds/cloud-cathedral/bg-mid.png',
+    parallax: 0.42,
     depth: -5,
     scaleY: 1.3,
+    blend: 'multiply',
   },
   near: {
-    url: '/assets/backgrounds/cloud-cathedral/bg-near-cleaned.png',
-    parallax: 0.85,
+    url: '/assets/backgrounds/cloud-cathedral/bg-near.png',
+    parallax: 0.78,
     depth: -2,
     scaleY: 1.1,
+    blend: 'multiply',
   },
 };
 

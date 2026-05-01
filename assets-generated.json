@@ -1,80 +1,196 @@
 {
-  "generated": "2026-04-30",
-  "sprint": "Sprint 2 — Phaser 4 controller animation frames",
-  "strategy": "Option B (individual frames, falsprite endpoint not available on fal.ai)",
-  "model_default": "fal-ai/flux/dev",
-  "post_processing": "fal-ai/birefnet (remove-bg)",
-  "image_size": {"width": 1024, "height": 1024},
-  "palette_locked": ["#E8D5B7", "#7B9E89", "#4A6FA5", "#B85C7E", "#3D2E4A", "#F4A261", "#2D4A3E"],
-  "stem_prompt": "uncute angular hand-painted watercolor 2.5D platformer hero, [POSE], Cosmo a small moss-sage green alien boy, two long suction-cup hands and feet, narrow dark eyes with subtle saffron glow catchlight, faded-rose cheek tint very subtle, single small antenna on head, ink-line underdrawing visible through transparent watercolor washes, ink aubergine ragged outline, neutral mushroom-cream paper card background, Studio Ghibli x Moebius Arzach x Tenniel illustration grit, Tenniel woodcut linework, slightly weathered uncute proportions, NOT kawaii NOT chibi NOT blush sparkle NOT airbrush NOT cute mascot, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep",
-  "assets": [
+  "palette_locked": ["#E8D5B7 mushroom-cream", "#7B9E89 moss-sage", "#4A6FA5 sky-wash-blue", "#B85C7E faded-rose", "#3D2E4A ink-aubergine", "#F4A261 saffron-glow", "#2D4A3E forest-deep"],
+  "sprints": [
     {
-      "file": "public/assets/sprites/cosmo-walk-1-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-walk-1.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "side-view facing right mid-stride left foot forward right arm forward left arm back body slight forward lean",
-      "version": "v1",
-      "kawaii_bias": "medium",
-      "notes": "blush + grin still present; pose works for walk cycle frame 1"
+      "sprint": "Sprint 2 — Phaser 4 controller animation frames",
+      "generated": "2026-04-30",
+      "strategy": "Option B (individual frames, falsprite endpoint not available on fal.ai)",
+      "model_default": "fal-ai/flux/dev",
+      "post_processing": "fal-ai/birefnet (remove-bg)",
+      "image_size": {"width": 1024, "height": 1024},
+      "stem_prompt": "uncute angular hand-painted watercolor 2.5D platformer hero, [POSE], Cosmo a small moss-sage green alien boy, two long suction-cup hands and feet, narrow dark eyes with subtle saffron glow catchlight, faded-rose cheek tint very subtle, single small antenna on head, ink-line underdrawing visible through transparent watercolor washes, ink aubergine ragged outline, neutral mushroom-cream paper card background, Studio Ghibli x Moebius Arzach x Tenniel illustration grit, Tenniel woodcut linework, slightly weathered uncute proportions, NOT kawaii NOT chibi NOT blush sparkle NOT airbrush NOT cute mascot, palette mushroom-cream moss-sage sky-wash-blue faded-rose ink-aubergine saffron-glow forest-deep",
+      "assets": [
+        {
+          "file": "public/assets/sprites/cosmo-walk-1-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-walk-1.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "side-view facing right mid-stride left foot forward right arm forward left arm back body slight forward lean",
+          "version": "v1",
+          "kawaii_bias": "medium",
+          "notes": "blush + grin still present; pose works for walk cycle frame 1"
+        },
+        {
+          "file": "public/assets/sprites/cosmo-walk-2-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-walk-2.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "profile side-view facing right standing upright neutral pose feet together arms hanging down at sides",
+          "version": "v2",
+          "kawaii_bias": "low",
+          "notes": "v1 was blurry + front-view; v2 prefixed with 'crisp sharp focus high detail' fixed both issues"
+        },
+        {
+          "file": "public/assets/sprites/cosmo-walk-3-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-walk-3.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "profile side-view facing right walking mid-stride right leg forward left leg back left arm forward right arm back forward lean",
+          "version": "v2",
+          "kawaii_bias": "low",
+          "notes": "BEST stylistic frame — Tenniel ragged ink line achieved, narrow eye visible, longer limbs"
+        },
+        {
+          "file": "public/assets/sprites/cosmo-jump-up-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-jump-up.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "side-view facing right jump apex pose both arms raised slightly both feet tucked up under body looking forward determined",
+          "version": "v1",
+          "kawaii_bias": "medium-low",
+          "notes": "model rendered as mid-air running pose instead of feet-tucked; works fine for jump apex"
+        },
+        {
+          "file": "public/assets/sprites/cosmo-jump-fall-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-jump-fall.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "profile side-view facing right falling through air arms outstretched sideways for balance legs angled apart loose body in mid-air descent antenna trailing back",
+          "version": "v2",
+          "kawaii_bias": "medium",
+          "notes": "v1 was blurry + dancing pose; v2 with 'crisp sharp focus' + 'antenna trailing back' nailed dynamic falling pose"
+        },
+        {
+          "file": "public/assets/sprites/cosmo-cling-cleaned.png",
+          "raw": "public/assets/sprites/cosmo-cling.png",
+          "model": "fal-ai/flux/dev",
+          "post": "fal-ai/birefnet",
+          "pose_prompt": "front-view facing camera suction-cup hands pressed against invisible wall in front palms forward body pressed flat legs together feet on wall focused expression",
+          "version": "v1",
+          "kawaii_bias": "medium-high",
+          "notes": "sucker-finger-tips visible but standing free i.p.v. pressed against wall — text-only prompt insufficient for this pose; consider image-to-image variant for v2"
+        }
+      ],
+      "regeneration_recommendations": [
+        {
+          "frame": "cosmo-cling",
+          "reason": "pose mismatch (standing free, not pressed against wall)",
+          "approach": "use image-to-image with reference of climber pressed against wall, or accept current asset for MVP"
+        }
+      ],
+      "ready_for_phaser": true
     },
     {
-      "file": "public/assets/sprites/cosmo-walk-2-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-walk-2.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "profile side-view facing right standing upright neutral pose feet together arms hanging down at sides",
-      "version": "v2",
-      "kawaii_bias": "low",
-      "notes": "v1 was blurry + front-view; v2 prefixed with 'crisp sharp focus high detail' fixed both issues"
-    },
-    {
-      "file": "public/assets/sprites/cosmo-walk-3-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-walk-3.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "profile side-view facing right walking mid-stride right leg forward left leg back left arm forward right arm back forward lean",
-      "version": "v2",
-      "kawaii_bias": "low",
-      "notes": "BEST stylistic frame — Tenniel ragged ink line achieved, narrow eye visible, longer limbs"
-    },
-    {
-      "file": "public/assets/sprites/cosmo-jump-up-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-jump-up.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "side-view facing right jump apex pose both arms raised slightly both feet tucked up under body looking forward determined",
-      "version": "v1",
-      "kawaii_bias": "medium-low",
-      "notes": "model rendered as mid-air running pose instead of feet-tucked; works fine for jump apex"
-    },
-    {
-      "file": "public/assets/sprites/cosmo-jump-fall-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-jump-fall.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "profile side-view facing right falling through air arms outstretched sideways for balance legs angled apart loose body in mid-air descent antenna trailing back",
-      "version": "v2",
-      "kawaii_bias": "medium",
-      "notes": "v1 was blurry + dancing pose; v2 with 'crisp sharp focus' + 'antenna trailing back' nailed dynamic falling pose"
-    },
-    {
-      "file": "public/assets/sprites/cosmo-cling-cleaned.png",
-      "raw": "public/assets/sprites/cosmo-cling.png",
-      "model": "fal-ai/flux/dev",
-      "post": "fal-ai/birefnet",
-      "pose_prompt": "front-view facing camera suction-cup hands pressed against invisible wall in front palms forward body pressed flat legs together feet on wall focused expression",
-      "version": "v1",
-      "kawaii_bias": "medium-high",
-      "notes": "sucker-finger-tips visible but standing free i.p.v. pressed against wall — text-only prompt insufficient for this pose; consider image-to-image variant for v2"
+      "sprint": "Sprint 3.1 — Single-biome parallax backgrounds (Slow Bloom L1 + Inkpool Hollow bonus)",
+      "generated": "2026-04-30",
+      "purpose": "Replace 3-biome z-stack chaos with 3 depth-layers of one biome per level",
+      "model_default": "fal-ai/flux-pro/v1.1",
+      "post_processing_attempted": "fal-ai/birefnet (remove-bg) — found unsuitable for landscape watercolor, see report",
+      "image_size": {"width": 1024, "height": 576},
+      "biomes": {
+        "slow-bloom": {
+          "level": "L1 (Bloomroot Veld jungle, mushroom forest)",
+          "assets": [
+            {
+              "file": "public/assets/backgrounds/slow-bloom/bg-far.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.18,
+              "version": "v2",
+              "status": "use",
+              "prompt": "luminous bright pastel mystical sky background hand-painted watercolor, soft sky-wash blue gradient filling most of frame, NOT dark NOT black NOT night, fluffy mushroom-cream cumulus clouds drifting in upper third, very faint distant moss-sage rolling hill silhouettes barely visible at horizon line bottom edge, gentle saffron-glow warm sun haze backlit from upper-right corner, atmospheric daylight haze, watercolor wet-edge bleeds, paper grain texture, soft Studio Ghibli sky illustration, NOT detailed foreground, soft focus, NO mountains NO ink-aubergine NO dark masses NO characters NO trees NO emoji NO photoreal, palette mushroom-cream sky-wash-blue moss-sage saffron-glow only, predominantly blue and cream values",
+              "notes": "v1 was pure black image (Flux Pro misread 'ink-aubergine mountains + saffron sun ray' as night scene). v2 fix: 'luminous bright pastel' lead, replaced ink-aubergine mountains with moss-sage hills, added 'NOT dark NOT black NOT night'."
+            },
+            {
+              "file": "public/assets/backgrounds/slow-bloom/bg-mid.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.42,
+              "version": "v1",
+              "status": "use",
+              "prompt": "alien mushroom forest mid-distance silhouettes hand-painted watercolor, translucent moss-sage canopy mushrooms in mid-plane, mushroom-cream tree trunks scattered, faded-rose lichen patches, sky-wash-blue mist drifting between trees, gentle ground line at bottom 1/4 of image, transparent upper half showing sky beyond, paper grain wet-edge bleeds, ink underdrawing, Studio Ghibli x Moebius, NO characters NO foreground close-up flora NO emoji NO photoreal, palette moss-sage mushroom-cream faded-rose sky-wash-blue ink-aubergine",
+              "notes": "On-style first try. Built-in sky-window in upper portion makes it stack-compatible without true alpha."
+            },
+            {
+              "file": "public/assets/backgrounds/slow-bloom/bg-mid-cleaned.png",
+              "model": "fal-ai/birefnet",
+              "size": "1024x576",
+              "status": "reference_only_overstripped",
+              "notes": "BiRefNet stripped trees/ground/lichen/mist; only kept 5-6 largest mushroom caps. Not a useful mid-layer replacement."
+            },
+            {
+              "file": "public/assets/backgrounds/slow-bloom/bg-near.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.78,
+              "version": "v1",
+              "status": "use",
+              "prompt": "foreground frame elements of mushroom forest hand-painted watercolor, large ink-aubergine drooping vines and mushroom-stalks at the edges of the image (mostly left and right edges and bottom), forest-deep silhouette of large foliage, faded-rose drippy berries hanging in upper corners, ink-aubergine darker edge shadows for depth-framing effect, transparent center showing through to mid/far layers, paper grain heavy outline, Moebius Arzach edge linework, NO characters NO sky NO ground center NO emoji NO photoreal, palette ink-aubergine forest-deep faded-rose mushroom-cream",
+              "notes": "Excellent depth-frame composition. Engine should apply multiply blend mode (canvas globalCompositeOperation='multiply') so light center disappears against bright far/mid layers."
+            },
+            {
+              "file": "public/assets/backgrounds/slow-bloom/bg-near-cleaned.png",
+              "model": "fal-ai/birefnet",
+              "size": "1024x576",
+              "status": "reference_only_overstripped",
+              "notes": "BiRefNet kept only the largest mushrooms; lost vines, berries, and frame foliage."
+            }
+          ]
+        },
+        "inkpool-hollow": {
+          "level": "L4-L6 (S5, bonus generated)",
+          "description": "Cavern interior with crystals, stalactites, and ink pools",
+          "assets": [
+            {
+              "file": "public/assets/backgrounds/inkpool-hollow/bg-far.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.18,
+              "status": "use",
+              "prompt": "cool palette ONLY, NO warm tones NO orange, distant alien cavern interior background hand-painted watercolor, vast ink-aubergine cave ceiling vault dissolving into deep darkness, faint sky-wash-blue bioluminescent glow seeping from far recesses, forest-deep stalactite silhouettes hanging from upper edge, mushroom-cream phosphorescent specks like distant stars, atmospheric haze, watercolor wet-edge bleeds, paper grain texture, ink-line underdrawing, Studio Ghibli x Moebius x Tenniel illustration, NOT detailed foreground, soft focus, NO characters NO trees NO emoji NO photoreal, palette ink-aubergine forest-deep sky-wash-blue mushroom-cream only",
+              "notes": "Cool-only enforcement worked — no warm/orange drift."
+            },
+            {
+              "file": "public/assets/backgrounds/inkpool-hollow/bg-mid.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.42,
+              "status": "use_with_caveat",
+              "prompt": "cool palette ONLY, NO warm tones NO orange, mid-distance cavern chamber hand-painted watercolor, mid-plane ink-aubergine rock columns and stalagmite silhouettes, sky-wash-blue ink pools reflecting on chamber floor at bottom 1/4, faded-rose crystal clusters glowing softly between columns, forest-deep moss patches on rocks, sky-wash-blue mist drifting through chamber, transparent upper half showing the void beyond, paper grain wet-edge bleeds, ink underdrawing, Studio Ghibli x Moebius, NO characters NO foreground close-up NO emoji NO photoreal, palette ink-aubergine sky-wash-blue faded-rose forest-deep mushroom-cream",
+              "notes": "Contains 1 small silhouetted figure despite NO characters constraint."
+            },
+            {
+              "file": "public/assets/backgrounds/inkpool-hollow/bg-near.png",
+              "model": "fal-ai/flux-pro/v1.1",
+              "size": "1024x576",
+              "parallax": 0.78,
+              "status": "use_with_caveat",
+              "prompt": "cool palette ONLY, NO warm tones NO orange, foreground frame elements of cavern hand-painted watercolor, large ink-aubergine jagged stalactites hanging from top edges, forest-deep boulder silhouettes at bottom-left and bottom-right corners, faded-rose dripping crystal tendrils on left and right edges, ink-aubergine darker edge shadows for depth-framing effect, transparent center showing through to mid/far layers, paper grain heavy outline, Moebius Arzach edge linework, NO characters NO sky NO ground center NO emoji NO photoreal, palette ink-aubergine forest-deep faded-rose mushroom-cream",
+              "notes": "Contains 2 small silhouetted figures despite NO characters constraint."
+            }
+          ],
+          "skipped": [
+            {
+              "file": "public/assets/backgrounds/inkpool-hollow/bg-mid-cleaned.png",
+              "reason": "BiRefNet wiped image entirely (2.4KB pure white). Cave scenes have no clear foreground subject. File deleted."
+            },
+            {
+              "file": "public/assets/backgrounds/inkpool-hollow/bg-near-cleaned.png",
+              "reason": "Same. File deleted."
+            }
+          ]
+        }
+      },
+      "engine_recommendations": {
+        "load_layers": ["bg-far.png", "bg-mid.png", "bg-near.png"],
+        "skip_cleaned_variants": true,
+        "blend_modes": {
+          "bg-far": "normal (opaque)",
+          "bg-mid": "normal (opaque, has built-in upper sky-window)",
+          "bg-near": "multiply (canvas: ctx.globalCompositeOperation = 'multiply')"
+        },
+        "alternative_for_near": "If multiply blend introduces unwanted darkening, run a one-shot Pillow color-key script (PIL.Image: convert near-white pixels to alpha=0) instead of BiRefNet. Cheaper and more controllable for landscape framing layers."
+      }
     }
-  ],
-  "regeneration_recommendations": [
-    {
-      "frame": "cosmo-cling",
-      "reason": "pose mismatch (standing free, not pressed against wall)",
-      "approach": "use image-to-image with reference of climber pressed against wall, or accept current asset for MVP"
-    }
-  ],
-  "ready_for_phaser": true
+  ]
 }
