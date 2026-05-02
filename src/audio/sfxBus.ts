@@ -23,7 +23,18 @@ const SFX_MANIFEST: Record<string, { src: string; volume?: number }> = {
   // Sprint 7D — bomb SFX (ElevenLabs sound-generation, dry one-shots).
   'bomb-throw': { src: `${SFX_BASE}/bomb-throw.mp3`, volume: 0.55 },
   'bomb-boom': { src: `${SFX_BASE}/bomb-boom.mp3`, volume: 0.85 },
+  // Sprint 16D — Cosmo gibberish-coo (ElevenLabs sound-generation, NOT voice).
+  // 3 variants picked at random in CosmoScene.playGibberishCoo() so the
+  // BONDING-state stinger never fatigues. Replaces the Sprint 15D mistake
+  // of routing the Hint-Globe Dutch voice (`globe-l1-1`) into the bonding
+  // moment — see scripts/sprint16d/generate_cosmo_coo.py.
+  'cosmo-coo-1': { src: `${SFX_BASE}/cosmo-coo-1.mp3`, volume: 0.85 },
+  'cosmo-coo-2': { src: `${SFX_BASE}/cosmo-coo-2.mp3`, volume: 0.85 },
+  'cosmo-coo-3': { src: `${SFX_BASE}/cosmo-coo-3.mp3`, volume: 0.85 },
 };
+
+/** Pool of Cosmo coo variants; pick at random per BONDING fire. */
+export const COSMO_COO_POOL: readonly string[] = ['cosmo-coo-1', 'cosmo-coo-2', 'cosmo-coo-3'];
 
 const VOICE_BASE = assetPath('assets/audio/voices');
 

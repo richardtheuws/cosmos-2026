@@ -1,0 +1,24 @@
+{
+  "sprint": "16A",
+  "endpoint": "fal-ai/flux-lora-fast-training",
+  "request_id": "019de7ee-9e17-76a3-b873-5008d35e7cd0",
+  "trigger_word": "rtcosmo",
+  "steps": 2000,
+  "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+  "config_url": "https://v3b.fal.media/files/b/0a98931e/ZEQLpXMiWJ7daiEtMNita_config.json",
+  "full_payload": {
+    "diffusers_lora_file": {
+      "url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+      "content_type": "application/octet-stream",
+      "file_name": "pytorch_lora_weights.safetensors",
+      "file_size": 89745224
+    },
+    "config_file": {
+      "url": "https://v3b.fal.media/files/b/0a98931e/ZEQLpXMiWJ7daiEtMNita_config.json",
+      "content_type": "application/octet-stream",
+      "file_name": "config.json",
+      "file_size": 506
+    },
+    "debug_preprocessed_output": null
+  }
+}

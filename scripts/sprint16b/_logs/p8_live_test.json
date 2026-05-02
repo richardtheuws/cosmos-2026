@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS",
+  "stats": {
+    "meshes": 1,
+    "verts": 15137,
+    "tris": 21978,
+    "materials": 1,
+    "height": 1.911,
+    "width": 1.556,
+    "sizeMB": 10.08
+  }
+}

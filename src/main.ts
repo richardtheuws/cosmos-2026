@@ -35,7 +35,7 @@ import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -92,9 +92,15 @@ async function boot(): Promise<void> {
     audioNow: () => audioBridge.musicCurrentTime(),
   });
   // Sprint 15E — swap default canvas-primitives for the 8 fal.ai weirdo objects
-  // (Sprint 15C deliverable). Each ObstacleKind picks a random pool member per
-  // spawn so the playthrough never feels repetitive.
-  obstacles.setObstacleFactory(createWeirdoObstacleFactory());
+  // (Sprint 15C deliverable). Each ObstacleKind picks a weighted-random pool
+  // member per spawn so the playthrough never feels repetitive.
+  // Sprint 16E — pass a kaleidoTrigger reader so the secret-crystal stays
+  // hidden until DeepTripMode/power-ups push the trigger above 0.8.
+  obstacles.setObstacleFactory(
+    createWeirdoObstacleFactory({
+      getKaleidoTrigger: () => uniforms.kaleidoTrigger,
+    }),
+  );
 
   phaserGame.scene.start('CosmoScene', {
     input,

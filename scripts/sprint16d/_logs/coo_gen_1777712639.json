@@ -1,0 +1,26 @@
+[
+  {
+    "label": "cosmo-coo-1",
+    "prompt": "tiny cute alien baby cooing, 3 syllable nonsensical babble, kid-alien gibberish, no language, soft, friendly",
+    "duration": 1.0,
+    "status": "ok",
+    "size": 17180,
+    "path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/audio/sfx/cosmo-coo-1.mp3"
+  },
+  {
+    "label": "cosmo-coo-2",
+    "prompt": "small alien creature wonder coo, 4 syllable melodic gibberish, child-like, mystic",
+    "duration": 1.2,
+    "status": "ok",
+    "size": 20106,
+    "path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/audio/sfx/cosmo-coo-2.mp3"
+  },
+  {
+    "label": "cosmo-coo-3",
+    "prompt": "weird cosmic baby gurgle, ascending 3-tone babble, no words, dreamy",
+    "duration": 0.9,
+    "status": "ok",
+    "size": 15090,
+    "path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/audio/sfx/cosmo-coo-3.mp3"
+  }
+]

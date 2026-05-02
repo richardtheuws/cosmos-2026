@@ -1,0 +1,32 @@
+[
+  {
+    "label": "A_realistic",
+    "task_id": "019de80e-1bf0-7db5-8521-be429fbb113e",
+    "art_style": "",
+    "target_polycount": 22000,
+    "texture_resolution": 2048,
+    "status": "SUCCEEDED",
+    "glb_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/case-study/cosmo-3d-v16b/attempts/cosmo-A_realistic.glb",
+    "thumb_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/case-study/cosmo-3d-v16b/attempts/cosmo-A_realistic-thumb.png",
+    "glb_url": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de80e-1bf0-7db5-8521-be429fbb113e/output/model.glb?Expires=1777974060&Signature=XU0CB8Z2sTSYqkF-CiUTlorCls5XHH5NZp1wcgWHhA0aYh6gViFSYq5NGAHOv4q7Ww6Ys8RsDUz1j4cgSgQhEdRpGm6n-MBpxcIXbSziexLAvsZBQArT4BGX0WgWuFcCoLJRkgwJ59s~xv7TSyQiutkUPRZobI-wetmPe9dv4GFOpLygCqD3aj0xPLjYJEsrC3fwZxO3fARwxaxIsW3IQGGhZp1q5h6ytYvmEaUTfWopxtQ43mqInmi5O7bv3aMHeY9r3Hd8pNPcAhfG13~8-VusSGxjeKxkLNkDv8N0-LU1xojuVaSVacbKQh4vZCmZGPbzQAIc8kjZQDnP6weOzw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "thumb_url": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de80e-1bf0-7db5-8521-be429fbb113e/output/preview.png?Expires=1777974060&Signature=K86sk3CuFrNVgKK5cv9L5frM0-MNY-C6Pe90n3SsWcvrGMoOesWwSdtztZE5Fw9mUskxJOGy1gEvHvWzy5M6F5jw5BV13-Z5YGohwhE5Cc2UXstI6~Z3EooZRbPyHY3rMxV0qgYl1Eico4vEODy9LSSB2-zmEzZqzcSBuiOPQT2zJ43ecpYIwAYHjj9BdvAdN6imOE6leyTGwONkK-u8bM-1Ldtz-DyoIGj~D6BOiNAK~JX2g~R~VUiIJ5mngEkSWGRsmrFVORLjziim5f9O~j-~ll9y9Y7npd6ZhYgefVVH25uGHO7RgJwPrgbNQ5YFtU93vc7Xc732K2bRZ77VbA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "video_url": null,
+    "consumed_credits": 30,
+    "poly_count": null
+  },
+  {
+    "label": "B_sculpture",
+    "task_id": "019de80e-3356-7dbb-8750-fa871e1b8e70",
+    "art_style": "",
+    "target_polycount": 25000,
+    "texture_resolution": 2048,
+    "status": "SUCCEEDED",
+    "glb_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/case-study/cosmo-3d-v16b/attempts/cosmo-B_sculpture.glb",
+    "thumb_path": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/case-study/cosmo-3d-v16b/attempts/cosmo-B_sculpture-thumb.png",
+    "glb_url": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de80e-3356-7dbb-8750-fa871e1b8e70/output/model.glb?Expires=1777974055&Signature=EPB-HR4EfRKk8ij7o1zZRsVsDDr7l7iQvvCMaN8uXTdsOXVL8o5uTz7WeSOdhqOVOL5SPtJ3DhwZaKqE8jt02CuuOBpI4yAOHRdWq2PT6vja1nLxdimRshK7AAz91K1SFJ5Ho7i53SkZRuE1Nixy7-oR2N375oADZxZeUmNbCA44JgYNnZZWVmRXZVvQkzwMSt8-uLVjZ3EIjZgI22OQXoVjFtRmvW-v3Yrr4LhNtN~6~zx~Pf98urDihaCfQcjX9QNHsvAyZGNcPCiX9PhyhRLBbOcZ-wsIlb8eTLf6xDL6g1Hc-4o-67nJeaF3Kq~HYyL~NQsbOQVgfBrbWVwNnA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "thumb_url": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de80e-3356-7dbb-8750-fa871e1b8e70/output/preview.png?Expires=1777974055&Signature=hTqiS89ubDulfkO62K64uwMdvK2xbjQX0qIKUSCZD23AyeGR4J57~1yv94AcyEZU-I0VwWi-pv3~5VE5jTMt6fvXzTx5JgxbKBsV1sZpK8yMuce~eIyuwD7viG8wj3b2f~P4K81CC-ynmTAFjznD3liVQY5bpdOmjOTYo-zgROva~TpOPtRe8vIebuKnHhY65dWQAgNSCzi1~g~NOCPPOQ9umRsZH5ZH-3hcAuO6rHUNrGGrXPwAJEgvg~OnJKV-~qa4XV23oYzG06ohVdccArMh6rR-wDi3PGLh2ytZImb2uQVXcdFAIR2VT2qqP9Jd6E-75ioFxpZXx0um7YgcOg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "video_url": null,
+    "consumed_credits": 30,
+    "poly_count": null
+  }
+]

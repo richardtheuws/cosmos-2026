@@ -1,5 +1,5 @@
 /**
- * ObstacleManager — Sprint 15B
+ * ObstacleManager — Sprint 15B + 16E.
  *
  * Spawns obstacles ahead of Cosmo (≈ 6 world-units ahead) into the THREE.Scene
  * the CosmoStage owns. Recycles a pool of MAX_POOL_SIZE so we never allocate
@@ -13,8 +13,14 @@
  * Spawn timing
  *   - Loosely beat-coupled: we read `audioBridge.musicCurrentTime()` and
  *     spawn on bar-edges (BPM-derived) when one is due. If audioCurrentTime
- *     hasn't moved in 0.3s (paused / pre-gesture), we fall back to a 1.6-2.4s
+ *     hasn't moved in 0.3s (paused / pre-gesture), we fall back to a 2.4-3.8s
  *     drift-loose timer so onboarding still has obstacles.
+ *
+ * Sprint 16E — spawn-balance:
+ *   - Spacing bumped from 1.6-2.4s → 2.4-3.8s (felt overrun on mobile).
+ *   - Beat-loose period bumped 4 beats → 6 beats (~4.2s @ 86 BPM).
+ *   - Per-kind cooldown: 'tall' max once per 8s (mouth-pillar/tree dominated).
+ *   - Anti-repeat: never spawn the same obstacle id more than 2× in a row.
  */
 import * as THREE from 'three';
 
@@ -22,10 +28,16 @@ const MAX_POOL_SIZE = 12;
 const SPAWN_AHEAD_X = 6.0;
 /** Distance behind Cosmo a recycled obstacle is "off-screen". */
 const RECYCLE_BEHIND_X = 4.0;
-/** Drift-loose fallback spawn period. */
-const FALLBACK_SPAWN_MIN_S = 1.6;
-const FALLBACK_SPAWN_MAX_S = 2.4;
+/** Drift-loose fallback spawn period (Sprint 16E — was 1.6-2.4s). */
+const FALLBACK_SPAWN_MIN_S = 2.4;
+const FALLBACK_SPAWN_MAX_S = 3.8;
 const ASSUMED_BPM = 86; // matches slow-bloom default; doesn't need to be exact
+/** Sprint 16E — minimum gap between two 'tall' spawns (audio-clock seconds). */
+const TALL_COOLDOWN_S = 8.0;
+/** Sprint 16E — anti-repeat: max consecutive spawns of the same obstacle id. */
+const MAX_SAME_ID_RUN = 2;
+/** Sprint 16E — bounded re-pick attempts so we never busy-loop on a degenerate pool. */
+const MAX_REPICK_ATTEMPTS = 4;
 
 export type ObstacleKind = 'low' | 'tall' | 'gap';
 
@@ -41,6 +53,18 @@ export interface Obstacle {
 }
 
 export type ObstacleFactory = (kind: ObstacleKind) => THREE.Group;
+
+/**
+ * Sprint 16E — anti-repeat protocol. Factories may attach an optional
+ * `lastSpawnedId` getter so ObstacleManager can know which weirdo was just
+ * picked from a weighted pool (without unwrapping the THREE.Group). Standard
+ * `ObstacleFactory` instances without this field are tolerated — anti-repeat
+ * just degrades to kind-level (still useful, since tall+gap each have one
+ * heavy item).
+ */
+type FactoryWithIdReadout = ObstacleFactory & {
+  lastSpawnedId?: () => string | null;
+};
 
 /** Default canvas-primitive factory. Sprint 15C swaps via setObstacleFactory(). */
 function defaultFactory(kind: ObstacleKind): THREE.Group {
@@ -111,6 +135,16 @@ export class ObstacleManager {
   /** Sprint 15D — onboarding gate. While paused, update() is a no-op so no
    *  obstacles spawn during AWAIT_TOUCH/PORTAL_OPENING/COSMO_ARRIVING/BONDING. */
   paused = false;
+  /** Sprint 16E — last 'tall' spawn time (audio-seconds; -Infinity = never).
+   *  When audio is frozen we use uniformsTime (passed into update). The two
+   *  domains never mix because we only update this field via the active path. */
+  private lastTallSpawnAt = -Infinity;
+  /** Sprint 16E — anti-repeat tracking (works at the asset-id level when the
+   *  factory exposes lastSpawnedId(); otherwise falls back to kind-level). */
+  private lastSpawnedId: string | null = null;
+  private sameIdRun = 0;
+  private lastSpawnedKind: ObstacleKind | null = null;
+  private sameKindRun = 0;
 
   constructor(scene: THREE.Scene, hooks: ObstacleManagerHooks) {
     this.scene = scene;
@@ -144,27 +178,36 @@ export class ObstacleManager {
       this.audioFrozenSince > 0 && uniformsTime - this.audioFrozenSince > 0.3;
 
     if (!audioFrozen && audioT > 0) {
-      // Beat-loose mode: spawn on a beat near every 2 bars (8 beats).
+      // Beat-loose mode: spawn on a beat near every ~6 beats (Sprint 16E
+      // bumped from 4 → 6 to match the calmer 2.4-3.8s fallback spacing).
       const beatPeriod = 60 / ASSUMED_BPM;
-      const spawnPeriod = beatPeriod * 4; // ~2.8s at 86 BPM
+      const spawnPeriod = beatPeriod * 6; // ~4.2s at 86 BPM
       if (audioT - this.lastAudioSpawnAt >= spawnPeriod) {
         this.lastAudioSpawnAt = audioT;
-        this.spawnAhead(cosmoX);
+        this.spawnAhead(cosmoX, audioT);
       }
     } else {
       // Drift-loose fallback.
       this.fallbackSpawnT += dt;
       if (this.fallbackSpawnT >= this.fallbackNextSpawn) {
-        this.spawnAhead(cosmoX);
+        this.spawnAhead(cosmoX, uniformsTime);
         this.scheduleNextFallback(this.fallbackSpawnT);
       }
     }
 
-    // Recycle obstacles that have fallen far behind Cosmo.
+    // Recycle obstacles that have fallen far behind Cosmo + Sprint 16C: tick
+    // any per-obstacle frame-cyclers (mouth-pillar sprite-sheet) using the
+    // shared audio clock so all live mouths breathe in lock-step.
     for (const o of this.pool) {
-      if (o.alive && o.x < cosmoX - RECYCLE_BEHIND_X) {
+      if (!o.alive) continue;
+      if (o.x < cosmoX - RECYCLE_BEHIND_X) {
         this.recycle(o);
+        continue;
       }
+      const cycler = o.group.userData.mouthFrameUpdate as
+        | ((audioNow: number, bpm?: number) => void)
+        | undefined;
+      if (cycler) cycler(audioT, ASSUMED_BPM);
     }
   }
 
@@ -175,16 +218,61 @@ export class ObstacleManager {
     this.fallbackNextSpawn = now + interval;
   }
 
-  private spawnAhead(cosmoX: number): void {
-    if (this.aliveCount() >= MAX_POOL_SIZE) return;
+  /** Pick the next ObstacleKind, honouring the 'tall' cooldown (Sprint 16E).
+   *  `now` is whichever clock domain the caller is in (audio or uniforms). */
+  private pickKind(now: number): ObstacleKind {
     const kinds: ObstacleKind[] = ['low', 'tall', 'gap'];
-    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    const tallOnCooldown = now - this.lastTallSpawnAt < TALL_COOLDOWN_S;
+    const candidates = tallOnCooldown ? kinds.filter((k) => k !== 'tall') : kinds;
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  /** Build a fresh THREE.Group from the factory and return both the group
+   *  and the asset-id the factory produced (when exposed). */
+  private invokeFactory(kind: ObstacleKind): { group: THREE.Group; id: string | null } {
+    const group = this.factory(kind);
+    const fac = this.factory as FactoryWithIdReadout;
+    const id = fac.lastSpawnedId
+      ? fac.lastSpawnedId()
+      : ((group.userData.weirdoId as string | undefined) ?? null);
+    return { group, id };
+  }
+
+  /** Sprint 16E spawn pipeline:
+   *   1. Pick kind honouring TALL_COOLDOWN_S.
+   *   2. Build via factory; if the produced asset-id matches the last >= 2 in
+   *      a row, re-roll up to MAX_REPICK_ATTEMPTS. After that we accept the
+   *      pick to avoid infinite loops on degenerate pools.
+   *   3. Update bookkeeping (lastTallSpawnAt, lastSpawnedId/Kind run-length).
+   */
+  private spawnAhead(cosmoX: number, now: number): void {
+    if (this.aliveCount() >= MAX_POOL_SIZE) return;
+
+    let kind = this.pickKind(now);
+    let result = this.invokeFactory(kind);
+
+    // Anti-repeat: re-roll if we'd produce the same id more than MAX_SAME_ID_RUN
+    // times in a row. We re-pick the kind too — that gives the loop a real
+    // chance to escape (otherwise a single-entry pool would never converge).
+    let attempts = 0;
+    while (
+      attempts < MAX_REPICK_ATTEMPTS &&
+      result.id !== null &&
+      result.id === this.lastSpawnedId &&
+      this.sameIdRun >= MAX_SAME_ID_RUN
+    ) {
+      // Dispose the rejected group's children references — they were never
+      // added to the scene, but we still want the GC to reclaim them quickly.
+      while (result.group.children.length) result.group.remove(result.group.children[0]);
+      kind = this.pickKind(now);
+      result = this.invokeFactory(kind);
+      attempts++;
+    }
 
     // Try to recycle a dead one, else allocate new.
     let obstacle = this.pool.find((o) => !o.alive);
     if (!obstacle) {
-      const group = this.factory(kind);
-      obstacle = { group, alive: false, kind, x: 0 };
+      obstacle = { group: result.group, alive: false, kind, x: 0 };
       this.pool.push(obstacle);
     } else {
       // Replace the kind & visuals — strip old children + repopulate.
@@ -193,14 +281,31 @@ export class ObstacleManager {
         obstacle.group.remove(c);
         // Don't dispose geometries — recycled instances are short-lived.
       }
-      const fresh = this.factory(kind);
-      while (fresh.children.length) obstacle.group.add(fresh.children[0]);
+      while (result.group.children.length) obstacle.group.add(result.group.children[0]);
+      // Carry over the per-frame cycler (mouth-pillar) and asset-id tag from
+      // the freshly-built group so frame-stepping still works after recycle.
+      obstacle.group.userData.mouthFrameUpdate = result.group.userData.mouthFrameUpdate;
+      obstacle.group.userData.weirdoId = result.group.userData.weirdoId;
       obstacle.kind = kind;
     }
+
     obstacle.x = cosmoX + SPAWN_AHEAD_X;
     obstacle.group.position.set(obstacle.x, 0, 0);
     obstacle.alive = true;
     this.scene.add(obstacle.group);
+
+    // Bookkeeping for cooldown + anti-repeat.
+    if (kind === 'tall') this.lastTallSpawnAt = now;
+    if (result.id !== null) {
+      this.sameIdRun = result.id === this.lastSpawnedId ? this.sameIdRun + 1 : 1;
+      this.lastSpawnedId = result.id;
+    } else {
+      // No id readout — reset to 0 so a future id-aware factory starts clean.
+      this.sameIdRun = 0;
+      this.lastSpawnedId = null;
+    }
+    this.sameKindRun = kind === this.lastSpawnedKind ? this.sameKindRun + 1 : 1;
+    this.lastSpawnedKind = kind;
   }
 
   private recycle(o: Obstacle): void {

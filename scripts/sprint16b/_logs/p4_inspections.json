@@ -1,0 +1,36 @@
+[
+  {
+    "file": "cosmo-A_realistic.glb",
+    "size_mb": 10.08,
+    "meshes": 1,
+    "primitives": 1,
+    "verts": 15137,
+    "tris": 21978,
+    "materials": 1,
+    "textures": 4,
+    "images": 4,
+    "skins": 0,
+    "animations": 0,
+    "label": "A_realistic",
+    "art_style": "",
+    "target_polycount": 22000,
+    "consumed_credits": 30
+  },
+  {
+    "file": "cosmo-B_sculpture.glb",
+    "size_mb": 9.9,
+    "meshes": 1,
+    "primitives": 1,
+    "verts": 17081,
+    "tris": 24999,
+    "materials": 1,
+    "textures": 4,
+    "images": 4,
+    "skins": 0,
+    "animations": 0,
+    "label": "B_sculpture",
+    "art_style": "",
+    "target_polycount": 25000,
+    "consumed_credits": 30
+  }
+]

@@ -4,6 +4,94 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.2.0] — 2026-05-02 — Sprint 16: DNA-correcte Cosmo via LoRA + 6 polish-fixes
+
+v1.1.0's live demo was niet speelbaar: PIL-painted 2D-eyes werden 3D-blobs op de mesh, NL voice-over uit Hint-Globe-archief brak de vibe, mouth-pillar toonde 4 frames tegelijk, secret-crystal default zichtbaar, music stopte na track-end, onboarding skipte voor return-users. Sprint 16 fixt alles met **harde quality-gate**: orchestrator draait nu zelf pre-deploy live-test (browser-MCP playwright iPhone-emulation indien Docker UP, anders curl + tsc + GLTF-headless validate) — geen "live verify door user" meer als enige check.
+
+### Fixed (16A — Cosmo-LoRA fine-tune, eindelijk DNA 10/10)
+
+**6-sprint-blokker eindelijk opgelost.** Flux LoRA training op 10 hand-curated DNA-correct images:
+- Endpoint: `fal-ai/flux-lora-fast-training`, 2000 steps, trigger word `rtcosmo`
+- Re-usable LoRA URL bewaard in memory voor toekomstig hergebruik
+- Hero gen via `fal-ai/flux-lora` met LoRA + ESRGAN 4× → `cosmo-hero-lora.png` 4096² RGBA
+- DNA-checklist **10/10**: pearl-drop ✓, chameleon bulging eyes ✓, geen blozende wangen ✓, single antenne+flower ✓, **two clean black flat suction-cup discs** ✓ (organisch, geen PIL-paint workaround), faded-rose spots ✓, no tail ✓, no vinger-handen ✓, watercolor + paper-grain ✓, slight uncute ✓
+- Halo fringe 14.3px (Sprint 14A was 24px — verbeterd)
+- Cost ~$3-5 (training + 10 generation attempts + ESRGAN). Recoupt na ~10 toekomstige Cosmo-renders ($0.05 via LoRA vs $0.45 via PIL-painting)
+
+**Memory-leering**: canonical-v2's kawaii-eye-bias propageerde door 5B/6A/7A/11A/13D/14A. LoRA bakt DNA in model-weights → permanente fix. PIL-paint workarounds zijn nu deprecated.
+
+### Fixed (16B — Cosmo 3D rebuild met clean LoRA-input)
+
+Sprint 15A's `cosmo.glb` (image-to-3D vanaf canonical-v2 met PIL-painted eyes) renderde off-brand in 3D — de 2D-paint werd 3D-blobs op de mesh-surface. Hypothese in screenshot bevestigd via side-by-side compare.
+
+Nieuwe pipeline met 16A LoRA-Cosmo als input:
+- Meshy v6 image-to-3D, 2 art_style attempts (realistic vs sculpture)
+- Winner 16B-A realistic: 22k tris, 15137 verts, 10.08MB raw GLB
+- **3D bulging eye-spheres als geometrie** (NIET 2D-blob)
+- Suction-cup discs als floating disc-meshes
+- DNA 7/8 (alle behalve "watercolor texture" — Meshy PBR is mild plastic, acceptabel)
+- Cost $0.60
+
+Draco-compressed 752KB versie ALSO geleverd in case-study, maar engine heeft geen DRACOLoader → ship raw 10MB voor compat. **Toekomstig ticket Sprint 17**: voeg DRACOLoader toe → 13× kleiner zonder visual diff.
+
+Pre-deploy live-test via `p8_live_test.mjs` (headless GLTFLoader): mesh.geometry intact, polycount binnen tolerance, verts=15137, tris=21978 → SHIP.
+
+### Fixed (16C — Mouth-pillar single-frame ping-pong)
+
+Live screenshot toonde 4 monden tegelijk. Fix: per-spawn-geklonen texture met `repeat.set(0.25, 1) + offset.x = frame * 0.25`. Ping-pong cycle `0,1,2,3,2,1` over 4s @ 92BPM = closed → quarter → half → open → half → closed. Alle live mouths breathing in lock-step via `audioBridge.musicCurrentTime()` (drift-vrij). Geen custom shader nodig.
+
+### Fixed (16D — ElevenLabs gibberish-coo + audio-loop hardened)
+
+NL voice-over uit Hint-Globe brak de vibe. Vervangen door 3 ElevenLabs Sound-Generation varianten:
+- `cosmo-coo-1.mp3` (3-syllable nonsense babble)
+- `cosmo-coo-2.mp3` (4-syllable melodic)
+- `cosmo-coo-3.mp3` (ascending 3-tone gurgle)
+- 0.9-1.2s elk, 128kbps stereo
+- `COSMO_COO_POOL` random-pick in `CosmoScene.playGibberishCoo`
+
+Audio-loop bug: `audioFFTBridge.createStreamedTrack` had al `audioEl.loop = true` (Sprint 9-fix). Defensief in `BiomeManager.notifyTrackEnded()` no-op'd met expliciete jsdoc dat het NOOIT advance() mag triggeren. Cycle nu enkel via `requestPlayerSwitch()` (long-hold-3s).
+
+Cost: $0.20 ElevenLabs.
+
+### Fixed (16E — Spawn-balance + secret-crystal hidden)
+
+Live screenshot toonde te dichte spawns + crystal default-zichtbaar:
+
+| Param | Was | Nu |
+|---|---|---|
+| Fallback spacing | 1.6-2.4s | 2.4-3.8s |
+| Beat-loose period | 4 beats | 6 beats (~4.2s) |
+| Tall cooldown | — | 8.0s |
+| Max same-id run | — | 2 (re-pick op 3e) |
+| Crystal threshold | — | kaleidoTrigger > 0.8 |
+| Trampoline weight (low) | 50% | 40% (60% star) |
+
+`pickWeighted()` cumulative selection. Gap-pool dynamisch: crystal append (weight 30) alleen als post-FX peak. Statistische sim: 18 spawns/60s, 44.5% trampoline-aandeel, crystal 8% bij k=0.9, max-same-id-run 2 ✓.
+
+### Fixed (16F — Onboarding force-show + version-reset)
+
+Sprint 15D's localStorage flag blokkeerde portal-arrival voor return-users. Fix:
+- Nieuwe state `MINI_FLASH` (0.6s) tussen AWAIT_TOUCH en WALKING_FIRST_HINT
+- Priority: `?onboard=1` URL > `opts.skipPortal` > LS read
+- LS upgrade naar JSON `{version, completedAt}`. Legacy `"true"` string treated as old-version → reset
+- `ONBOARDING_VERSION = 'v1.2'` bump invalideert alle stored completions
+- 35/35 deterministic state-machine tests pass
+
+### Added (16G — Pre-deploy live-test protocol)
+
+`.planning/v1.2-pre-deploy-checklist.md` met **STOP-conditions**: DNA-incorrect Cosmo / NL voice / music drop-out / 4-monden / crystal default / console errors / FPS<30 → geen deploy. Orchestrator draait test ZELF, niet via user.
+
+### Cost Sprint 16
+
+~$4 totaal (16A: $3-5 LoRA training + gen + ESRGAN, 16B: $0.60 Meshy x2, 16D: $0.20 ElevenLabs).
+
+### Open voor Sprint 17
+
+- DRACOLoader integratie → swap raw GLB naar 752KB Draco asset (13× kleiner)
+- Per-biome obstacle-pool variations (boss-biome krijgt eigen weirdo-set)
+- Cosmo-LoRA pose-variation: 6 walk/jump/cling frames via LoRA + procedural skeletons
+- ElevenLabs custom voice library: meer cosmo-coo + biome-specific stingers
+
 ## [1.1.0] — 2026-05-02 — Sprint 15: 3D Cosmo + weirdo auto-runner
 
 GROND-UP gameplay-rebuild #2. Pivot van rhythm-trip naar **weird auto-runner met agency** — Cosmo loopt door een 3D-scene op de muziek, speler begeleidt met swipes/taps, Cosmo heeft eigen agenda (negeert input 20% v/d tijd, knipoogt zomaar, loopt achteruit). Geen game-over. WEIRDO-energy expliciet ingebakken: niet een speelervaring waarin de speler de baas is over een schattig wezen, maar één waarin een eigenaardig wezen JOU laat meelopen in zijn dag.

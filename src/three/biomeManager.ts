@@ -21,11 +21,14 @@
  *     re-render the biome-name without polling.
  *
  * Track lifecycle
- *   - Each biome has its own <audio> element (lazy-created the first time the
- *     biome activates), looped FALSE so the 'ended' event fires for cycling.
- *     For the v1.0.0 MVP we want auto-cycle on each track-end, *not* loop in
- *     place; Suno tracks are 90-120s long and the next biome is the natural
- *     "loop" point of the trip-room.
+ *   - Each biome track loops in place (audioFFTBridge `audioEl.loop = true`).
+ *     Sprint 16D revert: the original "auto-cycle on track-end" plan turned
+ *     out to be a regression — when an `<audio>` element fires `ended`, the
+ *     follow-up `setMusicTrack(nextUrl)` call frequently fails to autoplay
+ *     (autoplay-policy reset) and the music drops out entirely. Auto-cycle
+ *     is now driven EXCLUSIVELY by `requestPlayerSwitch()` (long-hold-3s
+ *     gesture, Sprint 13A drift-loose mode). `notifyTrackEnded()` is kept
+ *     as a no-op shim for backwards compatibility, but no longer advances.
  */
 
 import type { GlobalUniforms } from '../core/globalUniforms';
@@ -59,11 +62,12 @@ export interface BiomeManagerHooks {
   onTrackSwap(nextUrl: string, previousUrl: string | null): void;
 
   /**
-   * Called when the active track reports ended — manager uses this only as a
-   * heartbeat for cycling logic. The hook itself is *also* what wires the
-   * ended-event from `<audio>` → manager. Set up by main.ts.
+   * Sprint 16D: removed. Tracks now loop in place via `audioEl.loop = true`,
+   * and biome cycling is driven only by player long-hold-3s gestures. Kept
+   * the field name reserved (commented) so a future host that wants to
+   * resurrect auto-cycling has a known callsite to wire.
    */
-  onTrackEnded?(): void;
+  // onTrackEnded?(): void;
 }
 
 export class BiomeManager {
@@ -124,10 +128,19 @@ export class BiomeManager {
     this.advance();
   }
 
-  /** Track-end hook — fired by main.ts when the active <audio> element fires 'ended'. */
+  /**
+   * Track-end hook — Sprint 16D: NO-OP.
+   *
+   * The `<audio>` element loops in place (`audioEl.loop = true` in
+   * audioFFTBridge.createStreamedTrack), so this method should not actually
+   * fire under normal playback. Even if a host wires it up defensively, we
+   * deliberately do NOT auto-advance: Sprint 16D found that re-loading the
+   * track on `ended` race-conditions with autoplay-policy and silently kills
+   * the music. Biome cycling is now driven exclusively by
+   * `requestPlayerSwitch()` (long-hold-3s gesture).
+   */
   notifyTrackEnded(): void {
-    if (this.state.kind !== 'active') return;
-    this.advance();
+    /* intentionally empty — see jsdoc above */
   }
 
   /** Per-frame tick: drives crossfade lerp + writes biomeIntensity. */

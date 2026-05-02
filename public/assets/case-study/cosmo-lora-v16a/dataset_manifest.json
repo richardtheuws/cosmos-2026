@@ -1,0 +1,58 @@
+{
+  "sprint": "16A",
+  "trigger_word": "rtcosmo",
+  "style_stem": "hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney",
+  "image_count": 10,
+  "images": [
+    {
+      "label": "cosmo_01_h3",
+      "source": "public/assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.png",
+      "caption": "rtcosmo, standing front-facing pose centered against soft peach-pink moon halo backdrop, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_02_v14a_painted",
+      "source": "public/assets/case-study/cosmo-rerender-v14a/routeBplus-painted-eyes-1024.png",
+      "caption": "rtcosmo, standing pose with arms slightly out chameleon eye spheres clearly visible, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_03_canonical_v2",
+      "source": "public/assets/sprites/v3/cosmo-canonical-v2-cleaned.png",
+      "caption": "rtcosmo, standing neutral pose three-quarter view full body silhouette on transparent background, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_04_h1",
+      "source": "public/assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.png",
+      "caption": "rtcosmo, side-view standing with both suction-cup hands hanging at sides, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_05_h2",
+      "source": "public/assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.png",
+      "caption": "rtcosmo, three-quarter view standing with arms slightly raised showing suction cup discs, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_06_h4",
+      "source": "public/assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.png",
+      "caption": "rtcosmo, larger frame fill standing pose chameleon eyes prominent, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_07_walk1",
+      "source": "public/assets/sprites/cosmo-walk-1.png",
+      "caption": "rtcosmo, walking pose mid-stride side profile facing right, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_08_jumpup",
+      "source": "public/assets/sprites/cosmo-jump-up.png",
+      "caption": "rtcosmo, jumping upward apex pose arms slightly raised excited expression, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_09_cling",
+      "source": "public/assets/sprites/cosmo-cling.png",
+      "caption": "rtcosmo, wall-cling pose body pressed flat against vertical surface side view, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    },
+    {
+      "label": "cosmo_10_v3",
+      "source": "public/assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.png",
+      "caption": "rtcosmo, standing portrait moebius linework full body painterly watercolor, hayao moebius watercolor with paper grain, painterly ink underdrawing, chameleon bulging spherical eyes glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body, slim kid-frame proportions, no tail, slight overbite mouth, slightly uncute proportions, NOT kawaii NOT chibi NOT Disney"
+    }
+  ]
+}

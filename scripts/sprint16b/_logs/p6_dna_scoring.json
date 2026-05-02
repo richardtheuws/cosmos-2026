@@ -1,0 +1,42 @@
+{
+  "criteria": [
+    "Pearl-drop head shape geometry",
+    "Eye-area = dark bulging spheres (3D mesh, not 2D-painted)",
+    "Single antenna geometry + rose flower bulb tip",
+    "Suction-cup discs as flat disc-meshes (no claws/fingers)",
+    "Faded-rose spots as texture on body",
+    "No tail geometry",
+    "Watercolor-ish texture (not plastic glossy)",
+    "Slight uncute proportions"
+  ],
+  "scoring": {
+    "16B-A_realistic": {
+      "passed": 7,
+      "total": 8,
+      "detail": {
+        "Pearl-drop head shape geometry": true,
+        "Eye-area = dark bulging spheres (3D mesh, not 2D-painted)": true,
+        "Single antenna geometry + rose flower bulb tip": true,
+        "Suction-cup discs as flat disc-meshes (no claws/fingers)": true,
+        "Faded-rose spots as texture on body": true,
+        "No tail geometry": true,
+        "Watercolor-ish texture (not plastic glossy)": false,
+        "Slight uncute proportions": true
+      }
+    },
+    "16B-B_sculpture": {
+      "passed": 7,
+      "total": 8,
+      "detail": {
+        "Pearl-drop head shape geometry": true,
+        "Eye-area = dark bulging spheres (3D mesh, not 2D-painted)": true,
+        "Single antenna geometry + rose flower bulb tip": true,
+        "Suction-cup discs as flat disc-meshes (no claws/fingers)": true,
+        "Faded-rose spots as texture on body": true,
+        "No tail geometry": true,
+        "Watercolor-ish texture (not plastic glossy)": false,
+        "Slight uncute proportions": true
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "sprint": "16B",
+  "date": "2026-05-02",
+  "winner": "16B-A_realistic",
+  "production": {
+    "glb": "public/assets/3d/cosmo.glb",
+    "glb_uncompressed_fallback": "public/assets/3d/cosmo-uncompressed.glb",
+    "preview": "public/assets/3d/cosmo-preview.png"
+  },
+  "sizes": {
+    "glb_draco": 752284,
+    "glb_raw": 10079792,
+    "preview": 88293
+  },
+  "mesh_stats": {
+    "verts": 15137,
+    "tris": 21978,
+    "meshes": 1,
+    "materials": 1,
+    "textures": 4,
+    "skins": 0,
+    "animations": 0,
+    "height_units": 1.911,
+    "width_units": 1.556
+  },
+  "meshy_task_id": "019de80e-1bf0-7db5-8521-be429fbb113e",
+  "art_style": "realistic",
+  "target_polycount": 22000,
+  "texture_resolution": 2048,
+  "consumed_credits": 30,
+  "cost_usd_estimate": 0.3,
+  "source_image": "public/assets/sprites/cosmo-hero-lora.png (Sprint 16A LoRA hero, 4096\u00b2 RGBA)"
+}

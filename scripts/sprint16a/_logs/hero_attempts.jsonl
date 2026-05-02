@@ -1,0 +1,10 @@
+{"label": "a01", "body_summary": {"seed": 7777, "rider": "standing front-facing pose centered", "image_size": "2048x2048"}}
+{"label": "a02", "body_summary": {"seed": 4242, "rider": "three-quarter view standing pose", "image_size": "2048x2048"}}
+{"label": "a03", "body_summary": {"seed": 8181, "rider": "standing pose with arms slightly out showing suction discs", "image_size": "2048x2048"}}
+{"label": "a04", "body_summary": {"seed": 1234, "rider": "side profile standing pose suction cups visible", "image_size": "2048x2048"}}
+{"label": "a05", "body_summary": {"seed": 5555, "rider": "standing pose camera-facing portrait full body", "image_size": "2048x2048"}}
+{"label": "a06", "body_summary": {"seed": 9999, "rider": "three-quarter view standing pose with subtle motion blur", "image_size": "2048x2048"}}
+{"label": "a07", "seed": 8181, "scale": 1.0, "pose": "standing pose facing camera"}
+{"label": "a08", "seed": 3030, "scale": 1.05, "pose": "standing pose facing camera"}
+{"label": "a09", "seed": 8888, "scale": 1.0, "pose": "standing pose with arms slightly out showing both circular suction cup discs"}
+{"label": "a10", "seed": 6666, "scale": 0.95, "pose": "standing pose three-quarter view full body"}

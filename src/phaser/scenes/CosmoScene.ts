@@ -43,7 +43,7 @@ import { VibeMeter } from '../entities/VibeMeter';
 import { OnboardingDirector, type OnboardingHooks } from '../entities/OnboardingDirector';
 import { NebulaPortal } from '../entities/NebulaPortal';
 import { HintGlyph } from '../entities/HintGlyph';
-import { sfx } from '../../audio/sfxBus';
+import { sfx, COSMO_COO_POOL } from '../../audio/sfxBus';
 
 interface SceneInitData {
   input: InputController;
@@ -326,11 +326,14 @@ export class CosmoScene extends Phaser.Scene {
         this.uniforms.kaleidoTrigger = Math.min(1, this.uniforms.kaleidoTrigger + 0.4);
       },
       playGibberishCoo: () => {
-        // 3-syllable kid-alien babble. The Hint Globe voice (globe-l1-1)
-        // is the closest match in the existing voice library — 3-syllable,
-        // not-language, friendly-cosmic. Cheaper than a fresh ElevenLabs gen
-        // and consistent with the Hint Globe character.
-        sfx.voice('globe-l1-1');
+        // Sprint 16D fix — 3-syllable kid-alien babble via dedicated
+        // ElevenLabs sound-generation variants (cosmo-coo-{1,2,3}). The
+        // earlier Sprint 15D mapping reused the Hint-Globe Dutch voice
+        // (`globe-l1-1`) — full Dutch sentence, wrong character, broke the
+        // WEIRDO-brief. We now pick from a 3-variant pool at random so the
+        // BONDING moment never fatigues. See scripts/sprint16d/.
+        const pick = COSMO_COO_POOL[Math.floor(Math.random() * COSMO_COO_POOL.length)];
+        sfx.play(pick);
       },
       playCosmicChirp: () => {
         // Short cosmic chirp. pickup-bonus is bright, saffron-coloured,
@@ -387,6 +390,21 @@ export class CosmoScene extends Phaser.Scene {
         this.obstacles.paused = false;
         // Hide the boot-overlay since no portal-stage is showing.
         document.getElementById('boot')?.classList.add('hidden');
+      },
+      flashMiniPortal: (durationMs) => {
+        // Sprint 16F: return-user mini-portal flash. Re-uses NebulaPortal but
+        // with a much shorter open-duration. Auto-closes at ~60% so the
+        // fade-out overlaps the WALKING_FIRST_HINT entry — feels like a
+        // single burst rather than open→hold→close.
+        if (!this.nebulaPortal) {
+          this.nebulaPortal = new NebulaPortal(this);
+        }
+        this.nebulaPortal.open(durationMs);
+        const closeAfterMs = Math.max(50, durationMs * 0.6);
+        const fadeMs = Math.max(120, durationMs * 0.4);
+        this.time.delayedCall(closeAfterMs, () => {
+          this.nebulaPortal?.close(fadeMs);
+        });
       },
     };
   }

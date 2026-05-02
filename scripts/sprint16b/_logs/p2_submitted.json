@@ -1,0 +1,19 @@
+{
+  "hero_url": "https://v3b.fal.media/files/b/0a9893cf/hB8vqchv0oeYb2zjir7-c_cosmo-hero-lora.png",
+  "submissions": [
+    {
+      "label": "A_realistic",
+      "task_id": "019de80e-1bf0-7db5-8521-be429fbb113e",
+      "art_style": "realistic",
+      "target_polycount": 22000,
+      "texture_resolution": 2048
+    },
+    {
+      "label": "B_sculpture",
+      "task_id": "019de80e-3356-7dbb-8750-fa871e1b8e70",
+      "art_style": "sculpture",
+      "target_polycount": 25000,
+      "texture_resolution": 2048
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "sprint": "16A",
+  "phase": "p3_generate_hero",
+  "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+  "endpoint": "fal-ai/flux-lora",
+  "image_size": "2048x2048",
+  "base_prompt": "rtcosmo, standing pose facing camera, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney NOT pixar NOT cute, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip on top of pearl-drop head, two black flat suction cup discs at hand tips, faded rose spots on green moss-sage watercolor body with paper grain, NO TAIL, slim slightly elongated kid-frame proportions, small painted feet, slight overbite mouth, slightly uncute proportions, painterly ink underdrawing with ragged outline, Studio Ghibli x Moebius x Tenniel illustration style, soft peach-pink moon halo backdrop",
+  "attempts": [
+    {
+      "label": "a01",
+      "seed": 7777,
+      "rider": "standing front-facing pose centered",
+      "request_id": "019de7f3-6f6e-77f2-aed6-c0acc044a4be",
+      "src_url": "https://v3b.fal.media/files/b/0a989323/xVM2gdQcbfkGM9gSfzA11_cab954a607df4dc19349923e50f2cf4d.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a01.png",
+      "bytes": 1633790
+    },
+    {
+      "label": "a02",
+      "seed": 4242,
+      "rider": "three-quarter view standing pose",
+      "request_id": "019de7f3-acd6-7811-a30d-a9812128cae3",
+      "src_url": "https://v3b.fal.media/files/b/0a989324/vQSnIPHrCyJk4TDUxXz-M_b90b951c41984d73a6c81fc0ebcbcf7b.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a02.png",
+      "bytes": 955952
+    },
+    {
+      "label": "a03",
+      "seed": 8181,
+      "rider": "standing pose with arms slightly out showing suction discs",
+      "request_id": "019de7f3-df49-7c92-9261-a7cda9ddf58f",
+      "src_url": "https://v3b.fal.media/files/b/0a989326/Bkk4JBfynpDcKFyhy2VSJ_6a81e0606cc14e72b4a05131dbc55369.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a03.png",
+      "bytes": 1942645
+    },
+    {
+      "label": "a04",
+      "seed": 1234,
+      "rider": "side profile standing pose suction cups visible",
+      "request_id": "019de7f4-23a6-72c0-90a9-ad94003c3a92",
+      "src_url": "https://v3b.fal.media/files/b/0a989328/a6hL2rDS9bKIbM-OTQQVi_77c315ebb6c24a64b2cde5f0e2edb1a1.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a04.png",
+      "bytes": 1505575
+    },
+    {
+      "label": "a05",
+      "seed": 5555,
+      "rider": "standing pose camera-facing portrait full body",
+      "request_id": "019de7f4-7d09-73d3-81b5-67d56abea6e2",
+      "src_url": "https://v3b.fal.media/files/b/0a98932a/n-F-QRnSImbVtQwKX-1ep_c2802d53e22b45b0ab1aad6cb7357f48.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a05.png",
+      "bytes": 1605786
+    },
+    {
+      "label": "a06",
+      "seed": 9999,
+      "rider": "three-quarter view standing pose with subtle motion blur",
+      "request_id": "019de7f4-e434-7a03-85d1-91a55bfcf979",
+      "src_url": "https://v3b.fal.media/files/b/0a98932e/FuqwYwG0teP0pP8zluVWz_a7ac77c91ec2475e8849e6cb381af784.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a06.png",
+      "bytes": 1863071
+    }
+  ],
+  "extras_p3b": [
+    {
+      "label": "a07",
+      "seed": 8181,
+      "scale": 1.0,
+      "pose": "standing pose facing camera",
+      "request_id": "019de7f6-89ab-7e60-b565-00496c90ae2b",
+      "src_url": "https://v3b.fal.media/files/b/0a989338/eULLDbKWFy-QBO2b77abm_0f8ac67441314625813f83ef514cb4f3.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a07.png"
+    },
+    {
+      "label": "a08",
+      "seed": 3030,
+      "scale": 1.05,
+      "pose": "standing pose facing camera",
+      "request_id": "019de7f6-f98b-7d92-9b8d-a271cf93daab",
+      "src_url": "https://v3b.fal.media/files/b/0a98933a/5h92eluIATzDXEJ7ttwwL_3be6e30587e5428e966ee34ab1e9220b.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a08.png"
+    },
+    {
+      "label": "a09",
+      "seed": 8888,
+      "scale": 1.0,
+      "pose": "standing pose with arms slightly out showing both circular suction cup discs",
+      "request_id": "019de7f7-488b-7561-a073-e2d6edb3972f",
+      "src_url": "https://v3b.fal.media/files/b/0a98933f/-zJOsJegvgHbtKywhbTZv_191e868cd4114a16a879d3a669c38b6e.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a09.png"
+    },
+    {
+      "label": "a10",
+      "seed": 6666,
+      "scale": 0.95,
+      "pose": "standing pose three-quarter view full body",
+      "request_id": "019de7f8-03ae-7b81-b534-21547d9a1539",
+      "src_url": "https://v3b.fal.media/files/b/0a989341/SMKH_RurwqOG5kIU7Q5v4_8aeae63cfa374ac5bd85748b996f8fd7.png",
+      "file": "public/assets/case-study/cosmo-lora-v16a/attempts/a10.png"
+    }
+  ],
+  "extras_prompt": "rtcosmo, {pose}, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney NOT pixar NOT cute NOT lashes NOT eyebrows, absolutely no tail no lizard tail no curly tail back is smooth no rear appendage, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip on top of pearl-drop head, two black flat suction cup discs at hand tips like wet rubber gloves, circular disc pads at wrists not fingers not claws, faded rose spots on green moss-sage watercolor body with paper grain, slim slightly elongated kid-frame proportions, small painted feet, slight overbite mouth, painterly ink underdrawing with ragged outline, Studio Ghibli x Moebius x Tenniel illustration style, soft peach-pink moon halo backdrop"
+}
