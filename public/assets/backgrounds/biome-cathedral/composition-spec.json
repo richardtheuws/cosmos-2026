@@ -1,0 +1,107 @@
+{
+  "biome_id": "cathedral",
+  "description": "bloom-pierced clouds, cosmic temple in sky",
+  "frame_size": {
+    "width": 1024,
+    "height": 1536
+  },
+  "layer_count": 6,
+  "layers": [
+    {
+      "idx": 1,
+      "name": "sky-gradient",
+      "role": "sky",
+      "file": "layer-1_sky-gradient.png",
+      "parallax_multiplier": 0.05,
+      "scale": 1.1,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "normal",
+      "z_position": -190.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 2,
+      "name": "distant-spires",
+      "role": "distant",
+      "file": "layer-2_distant-spires.png",
+      "parallax_multiplier": 0.2,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "normal",
+      "z_position": -160.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 3,
+      "name": "mid-clouds",
+      "role": "mid-a",
+      "file": "layer-3_mid-clouds.png",
+      "parallax_multiplier": 0.45,
+      "scale": 0.9,
+      "x_offset": -0.25,
+      "y_offset": 0.0,
+      "blend_mode": "normal",
+      "z_position": -110.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 4,
+      "name": "mid-gargoyles",
+      "role": "mid-b",
+      "file": "layer-4_mid-gargoyles.png",
+      "parallax_multiplier": 0.45,
+      "scale": 0.85,
+      "x_offset": 0.25,
+      "y_offset": -0.05,
+      "blend_mode": "normal",
+      "z_position": -110.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 5,
+      "name": "foreground-pillars",
+      "role": "foreground",
+      "file": "layer-5_foreground-pillars.png",
+      "parallax_multiplier": 0.85,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.2,
+      "blend_mode": "normal",
+      "z_position": -30.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 6,
+      "name": "particle-overlay",
+      "role": "particle",
+      "file": "layer-6_particle-overlay.png",
+      "parallax_multiplier": 1.0,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "additive",
+      "z_position": -0.0,
+      "opacity": 1.0
+    }
+  ],
+  "parallax_notes": "parallax_multiplier: world-space camera-X displacement is multiplied by this factor to shift each layer. 0.05 = nearly stationary (sky), 1.0 = full motion (foreground particle). z_position is for Three.js depth-sort; lower = farther back.",
+  "blend_modes": {
+    "normal": "standard alpha-over compositing",
+    "additive": "additive blend (THREE.AdditiveBlending or globalCompositeOperation=lighter); particle layers"
+  },
+  "decoration_spots": [
+    { "id": "breathing-portal", "x": 0.4, "y": 1.4, "z": -3.6, "scale": 1.1 },
+    { "id": "upside-down-tree", "x": -1.2, "y": 1.5, "z": -2.2 },
+    { "id": "floating-star", "x": 1.4, "y": 1.1, "z": -1.5 }
+  ],
+  "interactionSpots": {
+    "trampolines": [
+      { "x": -1.0, "y": 0.0, "z": -2.4 },
+      { "x": 0.6, "y": 0.0, "z": -3.4 },
+      { "x": 1.4, "y": 0.0, "z": -2.0 },
+      { "x": -0.4, "y": 0.0, "z": -4.5 }
+    ]
+  }
+}

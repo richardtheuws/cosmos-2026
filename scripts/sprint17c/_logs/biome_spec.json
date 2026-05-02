@@ -1,0 +1,226 @@
+[
+  {
+    "id": "slow-bloom",
+    "description": "alien-mushroom forest at twilight",
+    "layers": [
+      {
+        "name": "sky-gradient",
+        "idx": 1,
+        "role": "sky",
+        "parallax": 0.05,
+        "scale": 1.1,
+        "isolation": "fullbleed"
+      },
+      {
+        "name": "distant-mountains",
+        "idx": 2,
+        "role": "distant",
+        "parallax": 0.2,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-cluster-a",
+        "idx": 3,
+        "role": "mid-a",
+        "parallax": 0.45,
+        "scale": 0.85,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-cluster-b",
+        "idx": 4,
+        "role": "mid-b",
+        "parallax": 0.45,
+        "scale": 0.9,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "foreground-cluster",
+        "idx": 5,
+        "role": "foreground",
+        "parallax": 0.85,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "particle-overlay",
+        "idx": 6,
+        "role": "particle",
+        "parallax": 1.0,
+        "scale": 1.0,
+        "isolation": "fullbleed"
+      },
+      {
+        "name": "ambient-creature",
+        "idx": 7,
+        "role": "creature",
+        "parallax": 0.55,
+        "scale": 0.5,
+        "isolation": "transparent-target"
+      }
+    ]
+  },
+  {
+    "id": "inkpool",
+    "description": "deep ink-aubergine cave with bioluminescence",
+    "layers": [
+      {
+        "name": "sky-gradient",
+        "idx": 1,
+        "role": "sky",
+        "parallax": 0.05,
+        "scale": 1.1,
+        "isolation": "fullbleed"
+      },
+      {
+        "name": "distant-stalactites",
+        "idx": 2,
+        "role": "distant",
+        "parallax": 0.2,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-cluster-a",
+        "idx": 3,
+        "role": "mid-a",
+        "parallax": 0.45,
+        "scale": 0.9,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-cluster-b",
+        "idx": 4,
+        "role": "mid-b",
+        "parallax": 0.45,
+        "scale": 0.95,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "foreground-cluster",
+        "idx": 5,
+        "role": "foreground",
+        "parallax": 0.85,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "particle-overlay",
+        "idx": 6,
+        "role": "particle",
+        "parallax": 1.0,
+        "scale": 1.0,
+        "isolation": "fullbleed"
+      }
+    ]
+  },
+  {
+    "id": "cathedral",
+    "description": "bloom-pierced clouds, cosmic temple in sky",
+    "layers": [
+      {
+        "name": "sky-gradient",
+        "idx": 1,
+        "role": "sky",
+        "parallax": 0.05,
+        "scale": 1.1,
+        "isolation": "fullbleed"
+      },
+      {
+        "name": "distant-spires",
+        "idx": 2,
+        "role": "distant",
+        "parallax": 0.2,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-clouds",
+        "idx": 3,
+        "role": "mid-a",
+        "parallax": 0.45,
+        "scale": 0.9,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-gargoyles",
+        "idx": 4,
+        "role": "mid-b",
+        "parallax": 0.45,
+        "scale": 0.85,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "foreground-pillars",
+        "idx": 5,
+        "role": "foreground",
+        "parallax": 0.85,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "particle-overlay",
+        "idx": 6,
+        "role": "particle",
+        "parallax": 1.0,
+        "scale": 1.0,
+        "isolation": "fullbleed"
+      }
+    ]
+  },
+  {
+    "id": "boss",
+    "description": "saffron-storm chaos with floating eyes/mouths",
+    "layers": [
+      {
+        "name": "sky-gradient",
+        "idx": 1,
+        "role": "sky",
+        "parallax": 0.05,
+        "scale": 1.1,
+        "isolation": "fullbleed"
+      },
+      {
+        "name": "distant-spires",
+        "idx": 2,
+        "role": "distant",
+        "parallax": 0.2,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-tornado",
+        "idx": 3,
+        "role": "mid-a",
+        "parallax": 0.45,
+        "scale": 0.95,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "mid-eyes-mouths",
+        "idx": 4,
+        "role": "mid-b",
+        "parallax": 0.45,
+        "scale": 0.8,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "foreground-rocks",
+        "idx": 5,
+        "role": "foreground",
+        "parallax": 0.85,
+        "scale": 1.0,
+        "isolation": "transparent-target"
+      },
+      {
+        "name": "particle-overlay",
+        "idx": 6,
+        "role": "particle",
+        "parallax": 1.0,
+        "scale": 1.0,
+        "isolation": "fullbleed"
+      }
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "file": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/case-study/cosmo-rig-v17a/glb/cosmo_rigged.glb",
+  "size_mb": 10.42,
+  "meshes": 1,
+  "verts": 15137,
+  "tris": 21978,
+  "materials": 1,
+  "textures": 4,
+  "skins": 1,
+  "bones": [
+    "bone_root",
+    "bone_spine",
+    "bone_head",
+    "bone_eye_l",
+    "bone_eye_r",
+    "bone_antenne",
+    "bone_arm_l",
+    "bone_disc_l",
+    "bone_arm_r",
+    "bone_disc_r"
+  ],
+  "bone_count": 10,
+  "animations": [
+    "idle",
+    "sit",
+    "stretch",
+    "wave"
+  ],
+  "animation_count": 4,
+  "animation_lengths_s": [
+    4,
+    6,
+    2,
+    1.5
+  ],
+  "acceptance_ok": true,
+  "acceptance_failures": []
+}

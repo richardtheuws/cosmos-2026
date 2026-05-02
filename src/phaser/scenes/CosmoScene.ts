@@ -44,6 +44,7 @@ import { OnboardingDirector, type OnboardingHooks } from '../entities/Onboarding
 import { NebulaPortal } from '../entities/NebulaPortal';
 import { HintGlyph } from '../entities/HintGlyph';
 import { sfx, COSMO_COO_POOL } from '../../audio/sfxBus';
+import type { TrampolineSpots } from '../entities/TrampolineSpots';
 
 interface SceneInitData {
   input: InputController;
@@ -53,6 +54,15 @@ interface SceneInitData {
   cosmoAgent: CosmoAgent;
   cosmoStage: CosmoStage;
   obstacles: ObstacleManager;
+  /** Sprint 17D — fixed trampoline-spots in the active biome. Owned by main.ts. */
+  trampolineSpots: TrampolineSpots;
+  /** Sprint 17D — mutable event-bag main.ts pre-wires to forward CosmoAgent
+   *  onBounce / onPet to the InteractionManager (which is constructed inside
+   *  this scene's create() and didn't exist when CosmoAgent was built). */
+  agentEventShim: {
+    onBounce?: (info: { rollHallucination: boolean }) => void;
+    onPet?: () => void;
+  };
   version: string;
 }
 
@@ -66,6 +76,8 @@ export class CosmoScene extends Phaser.Scene {
   private obstacles!: ObstacleManager;
   private interactions!: InteractionManager;
   private deepTrip!: DeepTripMode;
+  private trampolineSpots!: TrampolineSpots;
+  private agentEventShim!: SceneInitData['agentEventShim'];
   private version = '0.0.0';
 
   private vibeMeter!: VibeMeter;
@@ -100,6 +112,8 @@ export class CosmoScene extends Phaser.Scene {
     this.cosmoAgent = data.cosmoAgent;
     this.cosmoStage = data.cosmoStage;
     this.obstacles = data.obstacles;
+    this.trampolineSpots = data.trampolineSpots;
+    this.agentEventShim = data.agentEventShim;
     this.version = data.version;
   }
 
@@ -108,12 +122,33 @@ export class CosmoScene extends Phaser.Scene {
     this.vibeMeter = new VibeMeter(this);
 
     // Build the rest of the gameplay-stack now that we have a Phaser.Scene.
+    // Sprint 17D — pass the TrampolineSpots + camera + viewport hooks so
+    // the manager can raycast taps and project the long-hold pet target.
     this.interactions = new InteractionManager(
       this.inputCtl,
       this.cosmoAgent,
       this.obstacles,
       this.vibeMeter,
       this.cosmoStage.scene,
+      {
+        spots: this.trampolineSpots,
+        camera: this.cosmoStage.camera,
+        projectToScreen: (world, w, h) => this.cosmoStage.projectToScreen(world, w, h),
+        viewportW: () => this.scale.width,
+        viewportH: () => this.scale.height,
+        onPetEngaged: () => {
+          // Pet always reads as a saffron flush + bonus chirp — visible reward
+          // for the player who lingered. The pet-affect visuals (blush + antenne
+          // tilt) are handled inside CosmoAgent; the host adds the audio/post-FX.
+          this.uniforms.kaleidoTrigger = Math.min(1, this.uniforms.kaleidoTrigger + 0.25);
+          sfx.play('bonus');
+        },
+        onSpotTapped: () => {
+          // Light kaleido nudge so the player feels the tap landed before
+          // Cosmo even finishes walking to the spot.
+          this.uniforms.kaleidoTrigger = Math.min(1, this.uniforms.kaleidoTrigger + 0.1);
+        },
+      },
     );
     this.deepTrip = new DeepTripMode(
       this.uniforms,
@@ -121,6 +156,18 @@ export class CosmoScene extends Phaser.Scene {
       this.cosmoAgent,
       this.vibeMeter,
     );
+
+    // Sprint 17D — now that the InteractionManager exists, wire the
+    // agent-event shim so each onBounce flows into notifyBounce (vibe-gain +
+    // 5-bounce DeepTripMode trigger). main.ts already applies the
+    // kaleido-spike + maybe-hallucination on the same event.
+    this.agentEventShim.onBounce = () => {
+      this.interactions.notifyBounce(this.uniforms.time);
+    };
+    this.agentEventShim.onPet = () => {
+      // Pet vibe-gain is awarded inside InteractionManager.armPetTimer;
+      // no extra work needed here. Hook reserved for future polish.
+    };
 
     this.buildHUD();
     this.hudBootT = this.uniforms.time;
@@ -272,6 +319,7 @@ export class CosmoScene extends Phaser.Scene {
     this.cosmoStage.group.scale.setScalar(1);
     this.cosmoAgent.paused = false;
     this.obstacles.paused = false;
+    this.interactions.paused = false;
     void this.audioBridge;
   }
 
@@ -289,6 +337,8 @@ export class CosmoScene extends Phaser.Scene {
         // (set 0.6s after page-paint). Director only needs to pause gameplay.
         this.cosmoAgent.paused = true;
         this.obstacles.paused = true;
+        // Sprint 17D — also gate trampoline interactions until BONDING ends.
+        this.interactions.paused = true;
       },
       hideBootOverlay: () => {
         document.getElementById('boot')?.classList.add('hidden');
@@ -342,9 +392,14 @@ export class CosmoScene extends Phaser.Scene {
       },
       pauseObstacleSpawn: () => {
         this.obstacles.paused = true;
+        // Sprint 17D — also gate trampoline-tap interactions during the
+        // pre-bonding states so the player can't accidentally bounce Cosmo
+        // before the magic-moment onboarding completes.
+        this.interactions.paused = true;
       },
       resumeObstacleSpawn: () => {
         this.obstacles.paused = false;
+        this.interactions.paused = false;
       },
       startCosmoWalk: () => {
         // Un-pause the agent so its state-machine can advance into 'walking'
@@ -388,6 +443,8 @@ export class CosmoScene extends Phaser.Scene {
         this.cosmoStage.group.scale.setScalar(1);
         this.cosmoAgent.paused = false;
         this.obstacles.paused = false;
+        // Sprint 17D — return-visit player gets immediate trampoline access.
+        this.interactions.paused = false;
         // Hide the boot-overlay since no portal-stage is showing.
         document.getElementById('boot')?.classList.add('hidden');
       },

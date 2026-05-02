@@ -1,0 +1,119 @@
+{
+  "biome_id": "slow-bloom",
+  "description": "alien-mushroom forest at twilight",
+  "frame_size": {
+    "width": 1024,
+    "height": 1536
+  },
+  "layer_count": 7,
+  "layers": [
+    {
+      "idx": 1,
+      "name": "sky-gradient",
+      "role": "sky",
+      "file": "layer-1_sky-gradient.png",
+      "parallax_multiplier": 0.05,
+      "scale": 1.1,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "normal",
+      "z_position": -190.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 2,
+      "name": "distant-mountains",
+      "role": "distant",
+      "file": "layer-2_distant-mountains.png",
+      "parallax_multiplier": 0.2,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.15,
+      "blend_mode": "normal",
+      "z_position": -160.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 3,
+      "name": "mid-cluster-a",
+      "role": "mid-a",
+      "file": "layer-3_mid-cluster-a.png",
+      "parallax_multiplier": 0.45,
+      "scale": 0.85,
+      "x_offset": -0.25,
+      "y_offset": 0.1,
+      "blend_mode": "normal",
+      "z_position": -110.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 4,
+      "name": "mid-cluster-b",
+      "role": "mid-b",
+      "file": "layer-4_mid-cluster-b.png",
+      "parallax_multiplier": 0.45,
+      "scale": 0.9,
+      "x_offset": 0.25,
+      "y_offset": 0.05,
+      "blend_mode": "normal",
+      "z_position": -110.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 5,
+      "name": "foreground-cluster",
+      "role": "foreground",
+      "file": "layer-5_foreground-cluster.png",
+      "parallax_multiplier": 0.85,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.2,
+      "blend_mode": "normal",
+      "z_position": -30.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 6,
+      "name": "particle-overlay",
+      "role": "particle",
+      "file": "layer-6_particle-overlay.png",
+      "parallax_multiplier": 1.0,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "additive",
+      "z_position": -0.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 7,
+      "name": "ambient-creature",
+      "role": "creature",
+      "file": "layer-7_ambient-creature.png",
+      "parallax_multiplier": 0.55,
+      "scale": 0.5,
+      "x_offset": 0.3,
+      "y_offset": -0.2,
+      "blend_mode": "normal",
+      "z_position": -90.0,
+      "opacity": 1.0
+    }
+  ],
+  "parallax_notes": "parallax_multiplier: world-space camera-X displacement is multiplied by this factor to shift each layer. 0.05 = nearly stationary (sky), 1.0 = full motion (foreground particle). z_position is for Three.js depth-sort; lower = farther back.",
+  "blend_modes": {
+    "normal": "standard alpha-over compositing",
+    "additive": "additive blend (THREE.AdditiveBlending or globalCompositeOperation=lighter); particle layers"
+  },
+  "decoration_spots": [
+    { "id": "upside-down-tree", "x": -1.6, "y": 1.2, "z": -2.0 },
+    { "id": "eyeball-sentry", "x": 1.8, "y": 0.6, "z": -3.5, "scale": 0.85 },
+    { "id": "floating-star", "x": 0.2, "y": 0.9, "z": -1.2 }
+  ],
+  "interactionSpots": {
+    "trampolines": [
+      { "x": -1.2, "y": 0.0, "z": -3.0 },
+      { "x": 0.8, "y": 0.0, "z": -2.0 },
+      { "x": 1.5, "y": 0.0, "z": -4.0 }
+    ]
+  }
+}

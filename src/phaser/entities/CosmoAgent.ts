@@ -1,5 +1,5 @@
 /**
- * CosmoAgent — Sprint 15B
+ * CosmoAgent — Sprint 15B + Sprint 17B refactor
  *
  * Wraps the 3D Cosmo (cosmo.glb from Sprint 15A) inside a state-machine with
  * RANDOM AGENCY. This is the WEIRDO-brief enforcer: Cosmo is not a remote-
@@ -7,6 +7,18 @@
  * to comply (RNG-gated). On top of that, his idle tick rolls a small random
  * chance for self-initiated weirdness (knipoog, walk-backward, eigen-jump,
  * antenne-bloem-petal-spew). The "voorspelbare modus" is by design impossible.
+ *
+ * Sprint 17B — runner-mechanic OFF
+ *   The auto-runner X-progression is stripped. Cosmo no longer auto-walks the
+ *   world from left to right; he stays anchored at biome-centre (worldX=0).
+ *   The camera does the moving (driven by MotionController, see CosmoStage.
+ *   panCamera). State-machine still ticks (jumping/ducking/dancing remain
+ *   useful for response-feel), but `walking` and `walking-backward` only
+ *   change facing + animation-clip — no X-translation.
+ *
+ *   `applyMotion(motion)` per-frame nudges the head-bone yaw/pitch so Cosmo
+ *   visibly reacts to the player's gyro/cursor. Falls back gracefully when
+ *   no head-bone is found (2D fallback, or GLB without skeleton).
  *
  * State machine
  * ─────────────
@@ -44,12 +56,23 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GlobalUniforms } from '../../core/globalUniforms';
+import type { MotionController } from '../../core/motionController';
 import { assetPath } from '../../core/assetPath';
+import type { CosmoAI, AIDirective } from './CosmoAI';
+
+// ─── Sprint 17B head-track tunables ──────────────────────────────────────────
+/** Max head-yaw sweep (rad). Maps motion.panX in [-1..1] → [-MAX..MAX]. */
+const HEAD_YAW_MAX = 0.4;
+/** Max head-pitch sweep (rad). Maps motion.panY in [-1..1] → [-MAX..MAX]. */
+const HEAD_PITCH_MAX = 0.2;
+/** Lerp factor — head smoothing on top of MotionController smoothing. */
+const HEAD_LERP = 0.18;
+/** Common bone-name patterns we treat as the head for head-track. */
+const HEAD_BONE_NAMES = ['head', 'Head', 'HEAD', 'mixamorigHead', 'Bip01_Head', 'head_bone'];
 
 // ─── Tunables ────────────────────────────────────────────────────────────────
 /** World-units / second. Tuned so 60s of idle walking covers ~12 obstacles. */
 export const WALK_SPEED = 0.85;
-const BACKWARD_SPEED = 0.55;
 /** Per-frame chance of random agency-event firing (at 60fps). */
 const RANDOM_EVENT_CHANCE_PER_FRAME = 0.005;
 /** Cooldown so an event-burst doesn't smash 3 events in 0.5s. */
@@ -72,16 +95,40 @@ const PETAL_SPEW_DURATION_S = 2.0;
 const FALL_FADE_DURATION_S = 1.2;
 const RESPAWN_DELAY_S = 1.5;
 
+// ─── Sprint 17D — trampoline / pet tunables ─────────────────────────────────
+/** Walk-to navigation duration (s). Brief: ~1.5s ease-in/out toward target. */
+const WALK_TO_DURATION_S = 1.5;
+/** Trampoline-bounce duration — sin-wave 0 → BOUNCE_HEIGHT → 0. */
+const BOUNCE_DURATION_S = 0.8;
+/** Bounce apex (world-units). Brief: 0 → 0.6 → 0. */
+const BOUNCE_HEIGHT = 0.6;
+/** Pet-affect total duration — saffron blush + heart-emote tilt + petal-spew. */
+const PET_AFFECT_DURATION_S = 0.8;
+/** Heart-emote: peak antenne yaw deviation during pet (rad ≈ ±20°). */
+const PET_ANTENNA_TILT_RAD = 0.35;
+/** Bone-name patterns we treat as "antenne" for the pet heart-emote. */
+const ANTENNA_BONE_NAMES = ['antenne', 'antenna', 'antennae', 'Antenne', 'Antenna', 'antenne_bone'];
+/** Probability of a hallucination-overlay firing on a successful trampoline-bounce. */
+const BOUNCE_HALLUCINATION_CHANCE = 0.3;
+/** Kaleido-trigger spike applied on every bounce. */
+const BOUNCE_KALEIDO_SPIKE = 0.6;
+/** Saffron tint applied to the body material during pet-affect (emissive). */
+const PET_BLUSH_COLOR = 0xf4a261;
+const PET_BLUSH_INTENSITY = 0.3;
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 export type CosmoState =
   | 'idle'
   | 'walking'
   | 'walking-backward'
+  | 'walking-to'
   | 'jumping'
   | 'falling'
   | 'ducking'
   | 'dancing'
-  | 'looking';
+  | 'looking'
+  | 'bouncing'
+  | 'petted';
 
 export type ActionKind = 'jump' | 'duck' | 'ignore';
 
@@ -101,6 +148,12 @@ export interface CosmoAgentEvents {
   onRespawn?: (newX: number) => void;
   /** Petal-spew is firing — particle system can hook here. */
   onPetalSpew?: () => void;
+  /** Sprint 17D — Cosmo just bounced off a trampoline. Fires at apex
+   *  (peak of the parabola). Hosts can hook kaleido-spike + maybe-hallucination. */
+  onBounce?: (info: { rollHallucination: boolean }) => void;
+  /** Sprint 17D — Player long-held on Cosmo → pet-affect engaged. Hosts hook
+   *  particle-spew + audio cue. */
+  onPet?: () => void;
 }
 
 // ─── Implementation ──────────────────────────────────────────────────────────
@@ -150,6 +203,57 @@ export class CosmoAgent {
    *  OnboardingDirector flips this to false at WALKING_FIRST_HINT. */
   paused = false;
 
+  // ── Sprint 17B — head-track ───────────────────────────────────────────────
+  /** Cached reference to the head-bone (or fallback Object3D). Resolved once
+   *  after the GLB loads; null if no match is found. */
+  private headBone: THREE.Object3D | null = null;
+  /** Smoothed head-yaw (rad). Lerped per-frame in applyMotion(). */
+  private headYaw = 0;
+  private headPitch = 0;
+  /** Resting rotation captured the first time we touch the head-bone, so
+   *  applying yaw/pitch is additive rather than overwriting clip animation. */
+  private headRestQuat: THREE.Quaternion | null = null;
+
+  // ── Sprint 17D — trampoline navigation + pet-affect ──────────────────────
+  /** When the active walking-to interpolation should land. */
+  private walkToUntil = 0;
+  /** Start (worldX, worldZ) for the walking-to interpolation. */
+  private walkFromX = 0;
+  private walkFromZ = 0;
+  /** Target for the walking-to interpolation. */
+  private walkTargetX = 0;
+  private walkTargetZ = 0;
+  /** What to do once we arrive. 'bounce' = trigger bounce. 'idle' = settle. */
+  private walkArrivalAction: 'bounce' | 'idle' = 'idle';
+  /** World-Z (depth) — separate from worldY which is jump-height. Defaults 0. */
+  worldZ = 0;
+  /** True while a bounce is in progress. */
+  private bouncingUntil = 0;
+  /** Antenne-bone reference for the heart-emote during pet-affect. */
+  private antennaBone: THREE.Object3D | null = null;
+  private antennaRestQuat: THREE.Quaternion | null = null;
+  /** Pet-affect end-time. */
+  private pettingUntil = 0;
+  /** Body material refs cached at GLB-load time so the saffron-blush tint can
+   *  be applied/restored cheaply without traversing on every frame. */
+  private bodyMaterials: THREE.MeshStandardMaterial[] = [];
+
+  // ── Sprint 17E — companion-mode AI bridge ────────────────────────────────
+  /** Optional CosmoAI handle — exposed read-only for diagnostics + tests.
+   *  Per-frame the host calls cosmoAgent.applyAI(cosmoAI) directly; this
+   *  field is just a back-reference set by attachAI(). */
+  ai: CosmoAI | null = null;
+  /** Cached spine-bone for AI's spineBendHint (sniff state). */
+  private spineBone: THREE.Object3D | null = null;
+  private spineRestQuat: THREE.Quaternion | null = null;
+  /** Smoothed AI head-yaw (rad). Lerped per-frame in applyAI(). */
+  private aiHeadYaw = 0;
+  private aiSpineBend = 0;
+  /** Lerp factor for AI-driven worldX/Z chase. */
+  private static readonly AI_POS_LERP = 0.04;
+  /** Lerp factor for AI-driven head-yaw / spine-bend. */
+  private static readonly AI_BONE_LERP = 0.08;
+
   constructor(parentGroup: THREE.Group, events: CosmoAgentEvents = {}) {
     this.parentGroup = parentGroup;
     this.events = events;
@@ -172,7 +276,7 @@ export class CosmoAgent {
       this.disposeFallback(this.root);
       this.root = gltf.scene;
       this.parentGroup.add(this.root);
-      this.root.position.set(this.worldX, this.worldY, 0);
+      this.root.position.set(this.worldX, this.worldY, this.worldZ);
       // Normalise scale — GLBs vary; we want Cosmo at ~30-40% screen height.
       // PerspectiveCamera FOV 35, distance 6 → 1 world unit ≈ ~30% portrait.
       this.root.scale.setScalar(1.1);
@@ -184,6 +288,16 @@ export class CosmoAgent {
       this.fallback2D = false;
       this.loading = false;
       this.playClip('idle', true);
+      // Sprint 17B — try to find a head-bone for head-track. Falls back
+      // gracefully (headBone stays null) if the rig uses an unfamiliar
+      // naming scheme, in which case applyMotion is a no-op.
+      this.resolveHeadBone();
+      // Sprint 17D — resolve antenne-bone for pet heart-emote + cache body
+      // MeshStandardMaterials for saffron-blush tint during petAffect().
+      this.resolveAntennaBone();
+      this.cacheBodyMaterials();
+      // Sprint 17E — resolve spine-bone for AI sniff bend-forward hint.
+      this.resolveSpineBone();
     } catch (err) {
       // GLB missing / decode-fail — stay on 2D fallback. Quiet warn so dev
       // sees it, ship-mode users never notice.
@@ -232,7 +346,7 @@ export class CosmoAgent {
       // externally via cosmoArrivalScale on the parent group) renders,
       // and we still update opacity (post-fall fade-in). But the state-
       // machine, RNG agency, and pendingActions all freeze.
-      this.root.position.set(this.worldX, this.worldY, 0);
+      this.root.position.set(this.worldX, this.worldY, this.worldZ);
       this.applyOpacity();
       return;
     }
@@ -270,7 +384,7 @@ export class CosmoAgent {
     }
 
     // Apply position to root.
-    this.root.position.set(this.worldX, this.worldY, 0);
+    this.root.position.set(this.worldX, this.worldY, this.worldZ);
     this.root.scale.x = (this.fallback2D ? 1 : 1.1) * this.facing;
 
     // Fade for nevel-portal.
@@ -335,11 +449,94 @@ export class CosmoAgent {
     this.events.onFalling?.();
   }
 
+  // ── Sprint 17D — trampoline navigation + bounce + pet-affect ────────────
+
+  /**
+   * Sprint 17D — interpolate Cosmo's worldX/Z toward (targetX, targetZ) over
+   * ~1.5s ease-in/out. On arrival the agent triggers `bounce()` so the player
+   * sees one continuous "walk → spring" motion. While walking, the 'walk'
+   * clip plays (or 'idle' fallback if the rig has no walk clip).
+   *
+   * Safe to call repeatedly — re-target supersedes the previous walk-to.
+   * Cosmo refuses new walk-to calls during 'falling' / 'dancing' / 'petted'
+   * so onboarding/dance/pet state stays uninterrupted.
+   */
+  walkTo(targetX: number, targetZ: number, action: 'bounce' | 'idle' = 'bounce'): void {
+    if (this.state === 'falling' || this.state === 'dancing' || this.state === 'petted') return;
+    this.walkFromX = this.worldX;
+    this.walkFromZ = this.worldZ;
+    this.walkTargetX = targetX;
+    this.walkTargetZ = targetZ;
+    this.walkToUntil = this.t + WALK_TO_DURATION_S;
+    this.walkArrivalAction = action;
+    this.setState('walking-to');
+    // Prefer 'walk' clip when the rig provides it; fall back to looping 'idle'.
+    if (this.clips.has('walk')) this.playClip('walk', true);
+    else this.playClip('idle', true);
+  }
+
+  /**
+   * Sprint 17D — trigger a one-shot trampoline-bounce in place. Plays the
+   * 'stretch' clip as the spring-up animation (per Sprint 17A rig spec) and
+   * runs a sin-arc 0 → 0.6 → 0 in worldY over BOUNCE_DURATION_S. The bounce
+   * fires the `onBounce` event with a pre-rolled `rollHallucination` flag
+   * (30% chance per the brief) so the host can decide to start a hallucination
+   * overlay-track in parallel with the kaleido-spike.
+   *
+   * Public so tests/scripts can poke it; gameplay reaches it via walkTo's
+   * arrival callback.
+   */
+  bounce(): void {
+    this.startBounce();
+  }
+
+  /**
+   * Sprint 17D — engage the pet-affect for PET_AFFECT_DURATION_S. Fires:
+   *   - rose-petal spew (via `onPet` event so the host scene can hook
+   *     particle-systems with their own canvas-drawn primitives).
+   *   - heart-emote: antenne-bone yaws ±PET_ANTENNA_TILT_RAD over a
+   *     half-sine on top of clip animation.
+   *   - blush-tint: saffron emissive flush across the body materials.
+   *   - on release: 'wave' clip plays + state returns to walking.
+   *
+   * Refuses while bouncing/falling/dancing — those windows take priority.
+   */
+  petAffect(): void {
+    if (
+      this.state === 'falling' ||
+      this.state === 'dancing' ||
+      this.state === 'bouncing'
+    ) {
+      return;
+    }
+    this.setState('petted');
+    this.pettingUntil = this.t + PET_AFFECT_DURATION_S;
+    this.events.onPet?.();
+    // Apply blush tint immediately; per-frame `applyPetAffect()` keeps it
+    // alive + wiggles the antenne for the duration.
+    this.beginPetAffect();
+  }
+
+  /** Internal: start a bounce in place. Called by walkTo's arrival action and
+   *  by the public `bounce()`. Idempotent during an active bounce. */
+  private startBounce(): void {
+    if (this.state === 'bouncing') return;
+    if (this.state === 'falling' || this.state === 'dancing') return;
+    this.setState('bouncing');
+    this.bouncingUntil = this.t + BOUNCE_DURATION_S;
+    this.playClip('stretch', false);
+    const rollHallucination = Math.random() < BOUNCE_HALLUCINATION_CHANCE;
+    this.events.onBounce?.({ rollHallucination });
+  }
+
+  /** Total kaleido-spike per bounce — host applies on event. */
+  static readonly BOUNCE_KALEIDO_SPIKE = BOUNCE_KALEIDO_SPIKE;
+
   // ── Screen-projection helpers used by HUD ────────────────────────────────
 
   worldPositionVec(): THREE.Vector3 {
     // Aim for the middle of Cosmo's body (~0.75 above feet).
-    return new THREE.Vector3(this.worldX, this.worldY + 0.75, 0);
+    return new THREE.Vector3(this.worldX, this.worldY + 0.75, this.worldZ);
   }
 
   // ── State machine internals ──────────────────────────────────────────────
@@ -427,17 +624,23 @@ export class CosmoAgent {
   }
 
   private advanceState(dt: number): void {
+    // Sprint 17B — runner-mechanic disabled. worldX is locked at the biome
+    // centre (initial 0); state-machine only drives Y, animation-clip, and
+    // facing. The previous WALK_SPEED * dt translations are removed; each
+    // case below sets worldX = 0 (anchored). The camera (CosmoStage.panCamera)
+    // and head-bone (applyMotion) supply ALL on-screen motion.
     switch (this.state) {
       case 'idle':
         this.worldY = this.groundY;
         break;
       case 'walking':
-        this.worldX += WALK_SPEED * dt * this.facing;
+        // Anchored — only the walk animation-clip and facing register here.
         this.worldY = this.groundY;
-        if (this.facing !== 1) this.facing = 1; // recover from walk-backward
+        if (this.facing !== 1) this.facing = 1;
+        void dt;
         break;
       case 'walking-backward':
-        this.worldX -= BACKWARD_SPEED * dt;
+        // Cosmo "moonwalks" in place during the random walk-backward event.
         this.worldY = this.groundY;
         if (this.t >= this.stateUntil) {
           this.facing = 1;
@@ -445,9 +648,8 @@ export class CosmoAgent {
         }
         break;
       case 'jumping': {
-        // Parabolic arc; X still advances.
+        // Parabolic arc — Y only, anchored X.
         const phase = 1 - Math.max(0, (this.stateUntil - this.t) / JUMP_DURATION_S);
-        this.worldX += WALK_SPEED * dt * this.facing;
         this.worldY = this.groundY + Math.sin(phase * Math.PI) * JUMP_HEIGHT;
         if (this.t >= this.stateUntil) {
           this.worldY = this.groundY;
@@ -456,13 +658,10 @@ export class CosmoAgent {
         break;
       }
       case 'ducking':
-        // X still advances (squash-and-slide).
-        this.worldX += WALK_SPEED * dt * this.facing * 0.7;
         this.worldY = this.groundY;
         if (this.t >= this.stateUntil) this.setState('walking');
         break;
       case 'dancing':
-        // Locks position, but bobs vertically with the music.
         this.worldY = this.groundY + Math.sin(this.t * 6) * 0.18;
         if (this.t >= this.stateUntil) this.setState('walking');
         break;
@@ -471,9 +670,8 @@ export class CosmoAgent {
         if (this.t >= this.stateUntil) this.setState('walking');
         break;
       case 'falling':
-        // Drift down + sideways while opacity goes to 0.
+        // Drift down only (no sideways translation now that the world is fixed).
         this.worldY -= 0.6 * dt;
-        this.worldX += WALK_SPEED * dt * 0.4 * this.facing;
         if (this.t >= this.stateUntil) {
           // Schedule respawn.
           this.respawnAt = this.t + RESPAWN_DELAY_S;
@@ -481,6 +679,79 @@ export class CosmoAgent {
           this.opacity = 0;
         }
         break;
+      case 'walking-to': {
+        // Sprint 17D — interpolate worldX/Z toward (walkTargetX, walkTargetZ).
+        // Ease-in-out cubic for a natural step-toward feeling. On arrival,
+        // either trigger bounce or settle to idle/walking depending on
+        // walkArrivalAction.
+        const remaining = this.walkToUntil - this.t;
+        const dur = WALK_TO_DURATION_S;
+        const phase = remaining <= 0 ? 1 : 1 - Math.max(0, Math.min(1, remaining / dur));
+        const eased = phase < 0.5
+          ? 4 * phase * phase * phase
+          : 1 - Math.pow(-2 * phase + 2, 3) / 2;
+        this.worldX = this.walkFromX + (this.walkTargetX - this.walkFromX) * eased;
+        this.worldZ = this.walkFromZ + (this.walkTargetZ - this.walkFromZ) * eased;
+        this.worldY = this.groundY;
+        // Face the direction of travel.
+        const dx = this.walkTargetX - this.walkFromX;
+        if (Math.abs(dx) > 0.01) this.facing = dx >= 0 ? 1 : -1;
+        if (phase >= 1) {
+          this.worldX = this.walkTargetX;
+          this.worldZ = this.walkTargetZ;
+          if (this.walkArrivalAction === 'bounce') {
+            this.startBounce();
+          } else {
+            this.setState('walking');
+          }
+        }
+        break;
+      }
+      case 'bouncing': {
+        // Sprint 17D — sin-arc parabola 0 → BOUNCE_HEIGHT → 0 over BOUNCE_DURATION_S.
+        // worldX / worldZ stay locked at the trampoline-spot during the bounce.
+        const remaining = this.bouncingUntil - this.t;
+        const dur = BOUNCE_DURATION_S;
+        const phase = remaining <= 0 ? 1 : 1 - Math.max(0, Math.min(1, remaining / dur));
+        this.worldY = this.groundY + Math.sin(phase * Math.PI) * BOUNCE_HEIGHT;
+        if (phase >= 1) {
+          this.worldY = this.groundY;
+          this.setState('walking');
+        }
+        break;
+      }
+      case 'petted': {
+        // Sprint 17D — pet-affect plays a saffron-blush tint + antenne tilt
+        // for PET_AFFECT_DURATION_S, then crossfades to 'wave' clip on release
+        // and returns to walking. The tint/tilt application happens in
+        // applyPetAffect() which is called every frame regardless of state.
+        this.worldY = this.groundY;
+        this.worldX = 0;
+        this.worldZ = 0;
+        if (this.t >= this.pettingUntil) {
+          // Crossfade into the wave clip on release per the brief.
+          this.playClip('wave', false);
+          this.clearPetAffect();
+          this.setState('walking');
+        }
+        break;
+      }
+    }
+
+    // Sprint 17D — pet-affect tint+tilt is driven each frame from the pet
+    // window even outside the 'petted' branch above (so the antenna keeps
+    // wiggling smoothly into the wave-clip transition).
+    this.applyPetAffect();
+
+    // Anchored worldX (only the new walking-to / bouncing / petted states
+    // override this above). All other states keep Cosmo at biome-centre.
+    if (
+      this.state !== 'walking-to' &&
+      this.state !== 'bouncing' &&
+      this.state !== 'petted'
+    ) {
+      this.worldX = 0;
+      this.worldZ = 0;
     }
 
     // Respawn after fall delay.
@@ -490,16 +761,16 @@ export class CosmoAgent {
   }
 
   private respawn(): void {
-    // Land in a random offset ahead of camera. The InteractionManager listens
-    // via onRespawn and may shift the camera or obstacle-pool accordingly.
-    const newX = this.worldX + 2 + Math.random() * 2;
-    this.worldX = newX;
+    // Sprint 17B — Cosmo respawns at the biome centre (worldX=0). The earlier
+    // "drift ahead by random offset" only made sense for the auto-runner; in
+    // the companion-mode pivot we just fade Cosmo back in at his anchor.
+    this.worldX = 0;
     this.worldY = this.groundY;
     this.opacity = 0;
     this.respawnAt = 0;
     this.setState('idle');
     this.stateUntil = this.t + 0.6;
-    this.events.onRespawn?.(newX);
+    this.events.onRespawn?.(0);
     // Fade back in over 0.6s; applyOpacity handles the lerp.
   }
 
@@ -551,12 +822,284 @@ export class CosmoAgent {
     this.currentClipName = name;
   }
 
+  // ── Sprint 17B — head-track ──────────────────────────────────────────────
+
+  /** Walk the GLB scene-graph looking for a head-bone (or any bone whose
+   *  lowercased name contains "head"). Caches it + its rest-quaternion so
+   *  applyMotion can additively rotate it on top of clip animation. */
+  private resolveHeadBone(): void {
+    if (this.fallback2D) return;
+    let found: THREE.Object3D | null = null;
+    this.root.traverse((child) => {
+      if (found) return;
+      if (HEAD_BONE_NAMES.includes(child.name)) {
+        found = child;
+      } else if (child.name && child.name.toLowerCase().includes('head')) {
+        found = child;
+      }
+    });
+    if (found) {
+      this.headBone = found;
+      this.headRestQuat = (found as THREE.Object3D).quaternion.clone();
+    } else {
+      this.headBone = null;
+      this.headRestQuat = null;
+    }
+  }
+
+  // ── Sprint 17D — antenne-bone + body-materials resolution ───────────────
+
+  /** Walk the GLB scene-graph for an antenne-bone (Sprint 17A rig labels it
+   *  `antenne` per cosmo-rig-spec.json; we tolerate variants). Caches its
+   *  rest-quat so applyPetAffect can additively rotate it. */
+  private resolveAntennaBone(): void {
+    if (this.fallback2D) return;
+    let found: THREE.Object3D | null = null;
+    this.root.traverse((child) => {
+      if (found) return;
+      if (ANTENNA_BONE_NAMES.includes(child.name)) {
+        found = child;
+      } else if (child.name && child.name.toLowerCase().includes('antenn')) {
+        found = child;
+      }
+    });
+    if (found) {
+      this.antennaBone = found;
+      this.antennaRestQuat = (found as THREE.Object3D).quaternion.clone();
+    } else {
+      this.antennaBone = null;
+      this.antennaRestQuat = null;
+    }
+  }
+
+  /** Cache MeshStandardMaterial refs on the body — used by pet-affect to
+   *  apply a saffron blush via emissive without traversing every frame. */
+  private cacheBodyMaterials(): void {
+    if (this.fallback2D) return;
+    this.bodyMaterials = [];
+    this.root.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
+      const list = Array.isArray(m) ? m : m ? [m] : [];
+      for (const mat of list) {
+        if ((mat as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+          this.bodyMaterials.push(mat as THREE.MeshStandardMaterial);
+        }
+      }
+    });
+  }
+
+  /** Stash original emissive colour/intensity per material so clearPetAffect
+   *  can restore them. Stored on the material itself via userData so we don't
+   *  need a parallel map. */
+  private beginPetAffect(): void {
+    for (const mat of this.bodyMaterials) {
+      if (mat.userData.cosmoPetOrigEmissiveSet) continue;
+      mat.userData.cosmoPetOrigEmissiveSet = true;
+      mat.userData.cosmoPetOrigEmissive = mat.emissive.clone();
+      mat.userData.cosmoPetOrigEmissiveIntensity = mat.emissiveIntensity ?? 1;
+    }
+  }
+
+  /** Per-frame: apply blush tint + antenne tilt while pet-affect is active.
+   *  Outside the window this is a no-op (and clears stale tint if needed). */
+  private applyPetAffect(): void {
+    const remaining = this.pettingUntil - this.t;
+    if (remaining <= 0) return;
+    // Phase 0..1 across PET_AFFECT_DURATION_S.
+    const phase = 1 - Math.max(0, Math.min(1, remaining / PET_AFFECT_DURATION_S));
+    // Sine-bell intensity profile so blush fades in + out gracefully.
+    const bell = Math.sin(phase * Math.PI);
+
+    // Blush: lerp emissive toward saffron + scale intensity by bell.
+    for (const mat of this.bodyMaterials) {
+      const origCol = mat.userData.cosmoPetOrigEmissive as THREE.Color | undefined;
+      const origInt = (mat.userData.cosmoPetOrigEmissiveIntensity as number | undefined) ?? 1;
+      if (!origCol) continue;
+      mat.emissive.copy(origCol).lerp(new THREE.Color(PET_BLUSH_COLOR), bell);
+      mat.emissiveIntensity = origInt + PET_BLUSH_INTENSITY * bell;
+    }
+
+    // Antenne tilt: ±PET_ANTENNA_TILT_RAD oscillating 2× per pet-window so the
+    // emote reads as a "happy nod". 2 cycles = sin(2*PI*phase).
+    if (this.antennaBone && this.antennaRestQuat) {
+      const tilt = Math.sin(phase * Math.PI * 2) * PET_ANTENNA_TILT_RAD;
+      const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), tilt);
+      this.antennaBone.quaternion.copy(this.antennaRestQuat).multiply(q);
+    }
+  }
+
+  /** Restore body-material emissive + antenne rest-pose at end-of-pet. */
+  private clearPetAffect(): void {
+    for (const mat of this.bodyMaterials) {
+      const origCol = mat.userData.cosmoPetOrigEmissive as THREE.Color | undefined;
+      const origInt = (mat.userData.cosmoPetOrigEmissiveIntensity as number | undefined) ?? 1;
+      if (origCol) {
+        mat.emissive.copy(origCol);
+        mat.emissiveIntensity = origInt;
+      }
+      mat.userData.cosmoPetOrigEmissiveSet = false;
+    }
+    if (this.antennaBone && this.antennaRestQuat) {
+      this.antennaBone.quaternion.copy(this.antennaRestQuat);
+    }
+  }
+
+  /** Apply MotionController-driven head-yaw/pitch on top of the current clip
+   *  rotation. Called per-frame from main.ts. Safe to call when paused or
+   *  when no head-bone was found — both branches are no-ops. */
+  applyMotion(motion: MotionController): void {
+    if (this.paused) return;
+    const targetYaw = motion.getPanX() * HEAD_YAW_MAX;
+    const targetPitch = -motion.getPanY() * HEAD_PITCH_MAX;
+    this.headYaw += (targetYaw - this.headYaw) * HEAD_LERP;
+    this.headPitch += (targetPitch - this.headPitch) * HEAD_LERP;
+
+    if (this.headBone && this.headRestQuat) {
+      // Compose: rest-quat * yaw(Y) * pitch(X). Mixer has already written
+      // its clip-driven rotation into headBone before this call (mixer.update
+      // happens earlier in update()), so we replace it with rest-derived
+      // base. The clip-pose is acceptable to lose for the head specifically
+      // because most idle clips barely animate the head.
+      const yawQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.headYaw);
+      const pitchQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), this.headPitch);
+      this.headBone.quaternion.copy(this.headRestQuat).multiply(yawQ).multiply(pitchQ);
+    } else if (this.fallback2D) {
+      // 2D fallback — rotate the entire root very subtly so the player still
+      // gets a "Cosmo is looking at me" cue. Half magnitude so it doesn't
+      // look like he's spinning.
+      this.root.rotation.y = this.headYaw * 0.5;
+      this.root.rotation.x = this.headPitch * 0.5;
+    }
+  }
+
+  // ── Sprint 17E — AI bridge ──────────────────────────────────────────────
+
+  /** Wire a CosmoAI to this agent. The AI ticks externally; CosmoAgent reads
+   *  its directive each frame via applyAI(). Pass `null` to detach. */
+  attachAI(ai: CosmoAI | null): void {
+    this.ai = ai;
+  }
+
+  /** Per-frame AI consumer. Called from main.ts AFTER cosmoAgent.update() so
+   *  the AI's directive lerps Cosmo's worldX/Z toward the goal smoothly,
+   *  on top of the state-machine's own pose work. The AI never overrides
+   *  Sprint 17D's special states (walking-to / bouncing / petted) or
+   *  Sprint 15B's falling state — those own Cosmo exclusively.
+   *
+   *  The `ai` argument is optional — when omitted we read from the AI
+   *  attached via `attachAI()`. The argument-form is preserved for tests
+   *  that stub a fake AI. */
+  applyAI(ai?: CosmoAI): void {
+    if (this.paused) return;
+    const source = ai ?? this.ai;
+    if (!source) return;
+    const d: AIDirective = source.getDirective();
+    if (!d.active) {
+      // Decay AI bone hints back toward 0 so we don't leave a stale tilt
+      // when the user comes back.
+      this.aiHeadYaw += (0 - this.aiHeadYaw) * CosmoAgent.AI_BONE_LERP;
+      this.aiSpineBend += (0 - this.aiSpineBend) * CosmoAgent.AI_BONE_LERP;
+      this.applyAIBoneHints();
+      return;
+    }
+
+    // Bail out of AI-driven position chase if a Sprint 17D / 15B special
+    // state owns the agent — those own X/Z exclusively.
+    const ownedByOtherSprint =
+      this.state === 'walking-to' ||
+      this.state === 'bouncing' ||
+      this.state === 'petted' ||
+      this.state === 'falling' ||
+      this.state === 'jumping' ||
+      this.state === 'ducking' ||
+      this.state === 'dancing';
+
+    if (!ownedByOtherSprint) {
+      // Lerp worldX/Z toward AI target (anchored Y; jumping is owned elsewhere).
+      const dx = d.targetX - this.worldX;
+      const dz = d.targetZ - this.worldZ;
+      this.worldX += dx * CosmoAgent.AI_POS_LERP;
+      this.worldZ += dz * CosmoAgent.AI_POS_LERP;
+      // Face direction of travel so the walk-cycle reads correctly.
+      if (Math.abs(dx) > 0.005) this.facing = dx >= 0 ? 1 : -1;
+      // Crossfade to AI's clip suggestion. playClip is a no-op if the
+      // requested clip is already current.
+      this.playClip(d.clip, d.clip === 'idle' || d.clip === 'sit');
+      // Slow-breath = sleep state — quarter-speed the mixer.
+      if (this.mixer) {
+        const targetTimeScale = d.slowBreath ? 0.4 : 1;
+        // Lerp toward target so we don't jolt on enter/exit sleep.
+        this.mixer.timeScale = this.mixer.timeScale + (targetTimeScale - this.mixer.timeScale) * 0.05;
+      }
+    }
+
+    // Smooth AI head-yaw + spine-bend on top of the bone rest-quaternion.
+    this.aiHeadYaw += (d.headYawHint - this.aiHeadYaw) * CosmoAgent.AI_BONE_LERP;
+    this.aiSpineBend += (d.spineBendHint - this.aiSpineBend) * CosmoAgent.AI_BONE_LERP;
+    this.applyAIBoneHints();
+  }
+
+  /** Apply the smoothed AI head-yaw + spine-bend on top of clip animation.
+   *  Called from applyAI() — head-bone may have already been touched by
+   *  applyMotion() this frame, so we additively compose: rest * motionYaw *
+   *  aiYaw. To avoid double-application, we read off the current quaternion
+   *  produced by applyMotion (rest * motionYaw * motionPitch) and multiply
+   *  the AI yaw on top of it. */
+  private applyAIBoneHints(): void {
+    if (Math.abs(this.aiHeadYaw) > 1e-4 && this.headBone) {
+      // Multiplicative additive yaw on top of whatever applyMotion wrote.
+      const yawQ = new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        this.aiHeadYaw,
+      );
+      this.headBone.quaternion.multiply(yawQ);
+    }
+    if (this.spineBone && this.spineRestQuat && Math.abs(this.aiSpineBend) > 1e-4) {
+      const bendQ = new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(1, 0, 0),
+        this.aiSpineBend,
+      );
+      // Spine writes from rest each frame because clips barely animate the
+      // spine in idle/sit/wave/stretch — losing clip-spine-pose is acceptable.
+      this.spineBone.quaternion.copy(this.spineRestQuat).multiply(bendQ);
+    }
+  }
+
+  /** Walk the GLB scene-graph for a spine-bone (cosmo-rig-spec.json names it
+   *  `bone_spine`). Falls back to any bone whose name contains "spine". */
+  private resolveSpineBone(): void {
+    if (this.fallback2D) return;
+    let found: THREE.Object3D | null = null;
+    this.root.traverse((child) => {
+      if (found) return;
+      if (child.name === 'bone_spine' || child.name === 'spine' || child.name === 'Spine') {
+        found = child;
+      } else if (child.name && child.name.toLowerCase().includes('spine')) {
+        found = child;
+      }
+    });
+    if (found) {
+      this.spineBone = found;
+      this.spineRestQuat = (found as THREE.Object3D).quaternion.clone();
+    }
+  }
+
   destroy(): void {
     if (this.root.parent) this.root.parent.remove(this.root);
     if (this.fallback2D) this.disposeFallback(this.root);
     this.mixer = null;
     this.clips.clear();
     this.pendingActions = [];
+    this.headBone = null;
+    this.headRestQuat = null;
+    this.antennaBone = null;
+    this.antennaRestQuat = null;
+    this.bodyMaterials = [];
+    this.spineBone = null;
+    this.spineRestQuat = null;
+    this.ai = null;
   }
 
   // Loading helper for tests

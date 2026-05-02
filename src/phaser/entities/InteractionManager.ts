@@ -1,67 +1,116 @@
 /**
- * InteractionManager — Sprint 15B
+ * InteractionManager — Sprint 17D refactor.
  *
- * Listens to gestures from the global InputController and translates them into
- * suggestions for CosmoAgent. NOT a controller — Cosmo's RNG decides if the
- * suggestion sticks. This file is the boundary where "player intent" becomes
- * "agency RNG roll". The brief explicitly forbids a deterministic
- * voorspelbare-mode toggle, so this manager has no `force` param anywhere.
+ * Player → Cosmo dialogue is now mediated by THREE.Raycaster against fixed
+ * `TrampolineSpots` (the only player-driven interaction in 17D besides pet).
+ * The runner-mechanic is gone, so the file no longer:
+ *   - Spawns transient trampoline / mushroom platforms (now static spots).
+ *   - Decides jump-vs-duck on tap-near-obstacle (no obstacles to dodge).
+ *   - Tracks per-frame collision against the obstacle pool (no pool).
  *
- * Gesture vocabulary
- * ──────────────────
- *   swipe-up     → spawn trampoline under Cosmo, queue jump-decision (80% commit)
- *   swipe-down   → spawn duck-mushroom platform, queue duck-decision (80% commit)
- *   tap         → if a tap-window obstacle exists, queue tap-decision (50/50 jump/duck)
- *   longHold    → trigger wave + vibe-meter +25%
- *   holdEnd 350+ms → no-op for 15B (was platformer shockwave; doesn't fit weirdo-runner)
+ * What it DOES (17D):
+ *   - tap → raycast through tap-NDC against TrampolineSpots; closest hit →
+ *     CosmoAgent.walkTo(spot, 'bounce'). Miss → no-op (no penalty).
+ *   - holdStart → raycast at hold position against Cosmo's worldPosition (a
+ *     bounding-sphere check is enough, no need for full-mesh raycast). If the
+ *     hold lands on Cosmo we arm a 500ms petAffect timer; if the player
+ *     releases before 500ms the timer fires nothing. If the hold extends
+ *     beyond 500ms, CosmoAgent.petAffect() runs and the long-hold-3s wave
+ *     is suppressed for THIS hold-cycle.
+ *   - longHold (3s, gesture-bus) → CosmoAgent.triggerWave (unchanged from
+ *     15B), only when the hold-on-Cosmo path didn't fire petAffect first.
+ *   - Bounce-counter: 5 bounces inside BOUNCE_COUNTER_WINDOW_S (30s) elevates
+ *     the VibeMeter to 1.0, triggering DeepTripMode. Pet-cumulative time of
+ *     ≥ 2s does the same.
  *
- * Trampoline + mushroom platforms
- *   Spawned as transient THREE.Group meshes, lifetime ≈ 1.4s. They fade out
- *   after Cosmo is past them. They're cosmetic, not collision — Cosmo's RNG
- *   does the actual jump/duck decision; the platform is just a hint to the
- *   player that their input registered.
+ * Vibe-meter changes
+ *   The combo-counter is gone. Vibe is now driven exclusively by trampoline-
+ *   bounces (gain) and pet-affect (gain). Idle decay still runs in VibeMeter.
  *
- * Failure detection
- *   Per the brief: "Cosmo valt off-platform → nevel-portal opent". We
- *   detect a "tall" obstacle that Cosmo didn't jump over (because RNG-
- *   ignored) and trigger forceFall(). 10% vibe-meter decay is the cost.
+ * Compat
+ *   The constructor still accepts ObstacleManager (now a 17D compat-shim) so
+ *   CosmoScene wiring stays untouched. The reference is unused at runtime.
  */
 import * as THREE from 'three';
 import type { GestureEvent, InputController } from '../../core/inputController';
 import type { CosmoAgent } from './CosmoAgent';
-import type { Obstacle, ObstacleManager } from './ObstacleManager';
+import type { ObstacleManager } from './ObstacleManager';
 import type { VibeMeter } from './VibeMeter';
+import type { TrampolineSpots } from './TrampolineSpots';
 
-const TRAMPOLINE_LIFETIME_S = 1.4;
-const MUSHROOM_LIFETIME_S = 1.4;
-const TAP_WINDOW_AHEAD = 3.5;
-const FAILURE_VIBE_DECAY = 0.1;
-const SUCCESS_VIBE_GAIN = 0.18;
-const WAVE_VIBE_GAIN = 0.25;
-/** How close (world-X) Cosmo must be to a "tall" obstacle to fail-on-no-jump. */
-const COLLISION_X_TOLERANCE = 0.45;
+/** How close (CSS-pixels) a hold must land to Cosmo's projected position to
+ *  count as a pet-target. ~120px = a generous fingertip touch radius. */
+const PET_HOLD_RADIUS_PX = 120;
+/** Hold duration that counts as "long enough to pet" (per 17D brief: 0.5s). */
+const PET_HOLD_THRESHOLD_MS = 500;
+/** Vibe gain on each successful trampoline-bounce. */
+const BOUNCE_VIBE_GAIN = 0.18;
+/** Vibe gain at the START of pet-affect (the pet itself is short, ~800ms,
+ *  so we award the gain immediately on engage). */
+const PET_VIBE_GAIN = 0.25;
+/** Bounce-counter window for DeepTripMode auto-engage. */
+const BOUNCE_COUNTER_WINDOW_S = 30;
+const BOUNCE_COUNTER_THRESHOLD = 5;
+/** Cumulative pet-time for DeepTripMode auto-engage (seconds). */
+const PET_DEEPTRIP_THRESHOLD_S = 2.0;
 
-interface TransientPlatform {
-  group: THREE.Group;
-  spawnT: number;
-  lifetime: number;
-  /** World-X — used to decide "Cosmo passed it, fade out." */
-  x: number;
+interface BounceTimestamp {
+  t: number; // uniforms.time domain
+}
+
+interface ProjectFn {
+  (world: THREE.Vector3, viewportW: number, viewportH: number): { x: number; y: number };
+}
+
+export interface InteractionManagerHooks {
+  /** TrampolineSpots in the scene. Required for tap-driven walkTo+bounce. */
+  spots: TrampolineSpots;
+  /** Active perspective camera — needed to set up the raycaster. */
+  camera: THREE.Camera;
+  /** Project a world-space Vector3 → CSS-pixel screen-space. CosmoStage owns
+   *  this; we just borrow it via a callback to avoid a hard import-cycle. */
+  projectToScreen: ProjectFn;
+  /** Viewport size accessor (CSS pixels). */
+  viewportW: () => number;
+  viewportH: () => number;
+  /** When set true the host can ignore future longHold→wave events because
+   *  petAffect already consumed the gesture. Optional. */
+  onPetEngaged?: () => void;
+  /** Called when a tap hits a trampoline-spot — host may flash material. */
+  onSpotTapped?: (spotIndex: number) => void;
 }
 
 export class InteractionManager {
   private input: InputController;
   private agent: CosmoAgent;
+  /** Compat ref — runner-pool is gone but 17F decoration-placement may
+   *  consume it. Kept on the instance so `getObstacles()` accessors stay
+   *  available for tests + debug overlays. */
   private obstacles: ObstacleManager;
   private vibe: VibeMeter;
-  /** THREE.Scene where trampolines / mushrooms get added. */
+  /** THREE.Scene where we used to add trampolines/mushrooms. Kept for the 17F
+   *  decoration hook and so the constructor signature stays compat. */
   private scene: THREE.Scene;
+  private hooks: InteractionManagerHooks;
 
-  /** Live transient platforms (trampolines + mushrooms). */
-  private platforms: TransientPlatform[] = [];
   private offGesture: (() => void) | null = null;
-  /** Track which obstacles we've already evaluated (to avoid double-fail). */
-  private evaluatedObstacles = new WeakSet<Obstacle>();
+  /** Sprint 17D — when true, all gestures are ignored. The OnboardingDirector
+   *  flips this on during AWAIT_TOUCH/PORTAL_OPENING/COSMO_ARRIVING/BONDING so
+   *  early taps don't accidentally trigger a walkTo + bounce. */
+  paused = false;
+
+  // Hold-on-Cosmo state.
+  private petTimer: number | null = null;
+  private petArmed = false;
+  /** True while petAffect is active OR was armed-and-fired during the current
+   *  hold-cycle. Cleared on holdEnd. Suppresses the 3s longHold→wave path. */
+  private petConsumedThisHold = false;
+  /** Cumulative pet-affect time across the current vibe-window (seconds).
+   *  Reset when DeepTripMode auto-engages or when a 30s idle gap elapses. */
+  private petCumulativeS = 0;
+  private lastPetT = -Infinity;
+  /** Ring-buffer of bounce timestamps (uniforms.time) for the 5-in-30s rule. */
+  private bounceLog: BounceTimestamp[] = [];
 
   constructor(
     input: InputController,
@@ -69,12 +118,25 @@ export class InteractionManager {
     obstacles: ObstacleManager,
     vibe: VibeMeter,
     scene: THREE.Scene,
+    hooks: InteractionManagerHooks,
   ) {
     this.input = input;
     this.agent = agent;
     this.obstacles = obstacles;
     this.vibe = vibe;
     this.scene = scene;
+    this.hooks = hooks;
+  }
+
+  /** Compat accessor — 17F decorator-placement may want to introspect the
+   *  registered ObstacleManager (now a 17D shim). */
+  getObstacles(): ObstacleManager {
+    return this.obstacles;
+  }
+
+  /** Compat accessor — same rationale as getObstacles. */
+  getScene(): THREE.Scene {
+    return this.scene;
   }
 
   attach(): void {
@@ -84,152 +146,150 @@ export class InteractionManager {
   detach(): void {
     this.offGesture?.();
     this.offGesture = null;
-    for (const p of this.platforms) {
-      if (p.group.parent) p.group.parent.remove(p.group);
+    if (this.petTimer !== null) {
+      window.clearTimeout(this.petTimer);
+      this.petTimer = null;
     }
-    this.platforms = [];
+    this.petArmed = false;
+    this.petConsumedThisHold = false;
   }
 
-  /** Per-frame tick. Updates transient platforms + collision-fail detection. */
-  update(uniformsTime: number, cosmoX: number, cosmoY: number): void {
-    // Fade and recycle transient platforms.
-    this.platforms = this.platforms.filter((p) => {
-      const age = uniformsTime - p.spawnT;
-      const alpha = Math.max(0, 1 - age / p.lifetime);
-      p.group.traverse((child) => {
-        const mat = (child as THREE.Mesh).material as THREE.MeshBasicMaterial | undefined;
-        if (mat && 'opacity' in mat) {
-          mat.transparent = true;
-          mat.opacity = alpha;
-        }
-      });
-      if (age >= p.lifetime) {
-        if (p.group.parent) p.group.parent.remove(p.group);
-        return false;
-      }
-      return true;
-    });
-
-    // Collision / failure detection — only "tall" obstacles can knock Cosmo
-    // out, and only if Cosmo isn't currently jumping (i.e. ignored the request).
-    for (const o of this.obstacles.liveObstacles()) {
-      if (this.evaluatedObstacles.has(o)) continue;
-      const dx = o.x - cosmoX;
-      if (Math.abs(dx) <= COLLISION_X_TOLERANCE && o.kind === 'tall') {
-        this.evaluatedObstacles.add(o);
-        if (this.agent.state !== 'jumping' && this.agent.state !== 'dancing') {
-          // Cosmo collided → fall.
-          this.agent.forceFall();
-          this.vibe.decay(FAILURE_VIBE_DECAY);
-        }
-      } else if (dx < -COLLISION_X_TOLERANCE) {
-        // Passed without incident — register so we don't re-eval and to
-        // grant a small vibe boost for surviving each obstacle.
-        this.evaluatedObstacles.add(o);
-        this.vibe.gain(SUCCESS_VIBE_GAIN * 0.4);
-      }
+  /**
+   * Per-frame tick. With the runner-pool gone there's no collision to test,
+   * but we still:
+   *   - prune the bounce-log to the 30s window;
+   *   - update petCumulativeS while pet-affect is active;
+   *   - check for the 5-bounce / 2s-pet DeepTripMode triggers and gain
+   *     vibe accordingly.
+   *
+   * `uniformsTime` matches CosmoScene.update which passes uniforms.time. The
+   * cosmoX / cosmoY arguments are kept for compat — InteractionManager v1
+   * used them for collision-tests; 17D doesn't need them but the host scene
+   * still passes them. Marked unused locally.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(uniformsTime: number, _cosmoX: number, _cosmoY: number): void {
+    // Prune bounce-log to the 30s window.
+    const cutoff = uniformsTime - BOUNCE_COUNTER_WINDOW_S;
+    while (this.bounceLog.length && this.bounceLog[0].t < cutoff) {
+      this.bounceLog.shift();
     }
-    void cosmoY; // reserved for vertical collision once gaps are wired
+
+    // Track pet-affect duration toward the 2s DeepTripMode trigger.
+    if (this.agent.state === 'petted') {
+      // We approximate dt from frame-spacing; uniforms.time is monotonic so
+      // (uniformsTime - lastPetT) gives us a stable per-frame delta.
+      if (this.lastPetT >= 0) {
+        const dt = Math.max(0, Math.min(0.1, uniformsTime - this.lastPetT));
+        this.petCumulativeS += dt;
+      }
+      this.lastPetT = uniformsTime;
+    } else {
+      this.lastPetT = uniformsTime;
+    }
   }
 
   // ── Gesture dispatch ─────────────────────────────────────────────────────
 
   private onGesture(e: GestureEvent): void {
+    if (this.paused) return;
     switch (e.name) {
-      case 'swipe':
-        this.handleSwipe(e.dy ?? 0, e.dx ?? 0);
-        break;
       case 'tap':
-        this.handleTap();
+        this.handleTap(e.x ?? 0, e.y ?? 0);
+        break;
+      case 'holdStart':
+        this.handleHoldStart(e.x ?? 0, e.y ?? 0);
+        break;
+      case 'holdEnd':
+        this.handleHoldEnd();
         break;
       case 'longHold':
         this.handleLongHold();
         break;
-      // holdStart / holdEnd / pinch — ignored for 15B (no platformer-style crouch).
+      // swipe / pinch — ignored for 17D. Trampoline-tap is the only spawn
+      // surface; vertical-swipes are no-ops. Pinch reserved for biome-zoom (18+).
     }
   }
 
-  private handleSwipe(dy: number, dx: number): void {
-    // Vertical-dominant swipe? Up = trampoline, Down = mushroom.
-    if (Math.abs(dy) <= Math.abs(dx) * 1.2) return; // horizontal swipe — ignored
-    if (dy < 0) {
-      this.spawnTrampoline();
-      this.agent.queueTrampolineDecision();
-    } else {
-      this.spawnMushroom();
-      this.agent.queueMushroomDecision();
+  /** Tap → raycast to TrampolineSpots; on hit walkTo + bounce. */
+  private handleTap(clientX: number, clientY: number): void {
+    const ndcX = (clientX / Math.max(1, this.hooks.viewportW())) * 2 - 1;
+    const ndcY = -(clientY / Math.max(1, this.hooks.viewportH())) * 2 + 1;
+    const pick = this.hooks.spots.pickAtNDC(this.hooks.camera, ndcX, ndcY);
+    if (!pick) return; // miss — no penalty per 17D brief
+    this.hooks.onSpotTapped?.(pick.index);
+    this.agent.walkTo(pick.world.x, pick.world.z, 'bounce');
+  }
+
+  private handleHoldStart(clientX: number, clientY: number): void {
+    // If the hold lands within PET_HOLD_RADIUS_PX of Cosmo's projected
+    // position, arm a 500ms timer that fires petAffect on expiry.
+    const cosmoWorld = this.agent.worldPositionVec();
+    const cosmoScreen = this.hooks.projectToScreen(
+      cosmoWorld,
+      this.hooks.viewportW(),
+      this.hooks.viewportH(),
+    );
+    const dx = clientX - cosmoScreen.x;
+    const dy = clientY - cosmoScreen.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist <= PET_HOLD_RADIUS_PX) {
+      this.armPetTimer();
     }
   }
 
-  private handleTap(): void {
-    const o = this.obstacles.closestAhead(this.agent.worldX, TAP_WINDOW_AHEAD);
-    if (!o) return;
-    this.agent.queueTapDecision();
+  private handleHoldEnd(): void {
+    // Cancel the pet-arm timer if hold ended before 500ms.
+    if (this.petTimer !== null) {
+      window.clearTimeout(this.petTimer);
+      this.petTimer = null;
+    }
+    this.petArmed = false;
+    // petConsumedThisHold stays true until the 3s-longHold dispatcher checks
+    // it; we clear here so the NEXT hold can fire petAffect again.
+    this.petConsumedThisHold = false;
   }
 
   private handleLongHold(): void {
+    // Suppress the legacy wave when this hold-cycle already fired petAffect.
+    if (this.petConsumedThisHold) return;
     this.agent.triggerWave();
-    this.vibe.gain(WAVE_VIBE_GAIN);
   }
 
-  // ── Transient platform meshes ────────────────────────────────────────────
+  // ── Pet timer ────────────────────────────────────────────────────────────
 
-  private spawnTrampoline(): void {
-    const group = new THREE.Group();
-    const ringGeo = new THREE.TorusGeometry(0.5, 0.06, 8, 32);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xf4a261,
-      transparent: true,
-      opacity: 0.95,
-    });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = 0.06;
-    group.add(ring);
-    const padGeo = new THREE.CircleGeometry(0.5, 24);
-    const padMat = new THREE.MeshBasicMaterial({
-      color: 0xb85c7e,
-      transparent: true,
-      opacity: 0.55,
-      side: THREE.DoubleSide,
-    });
-    const pad = new THREE.Mesh(padGeo, padMat);
-    pad.rotation.x = -Math.PI / 2;
-    pad.position.y = 0.02;
-    group.add(pad);
-    group.position.set(this.agent.worldX, 0, 0);
-    this.scene.add(group);
-    this.platforms.push({
-      group,
-      spawnT: performance.now() / 1000,
-      lifetime: TRAMPOLINE_LIFETIME_S,
-      x: this.agent.worldX,
-    });
+  private armPetTimer(): void {
+    if (this.petArmed) return;
+    this.petArmed = true;
+    this.petTimer = window.setTimeout(() => {
+      this.petTimer = null;
+      this.petArmed = false;
+      // Brief: pet engages on 500ms hold-on-Cosmo.
+      this.agent.petAffect();
+      this.petConsumedThisHold = true;
+      this.vibe.gain(PET_VIBE_GAIN);
+      this.hooks.onPetEngaged?.();
+      // Pet-cumulative DeepTripMode trigger: full meter on ≥2s pet.
+      if (this.petCumulativeS >= PET_DEEPTRIP_THRESHOLD_S) {
+        this.vibe.gain(1); // saturates → fullEdge → DeepTripMode auto-engages
+        this.petCumulativeS = 0;
+      }
+    }, PET_HOLD_THRESHOLD_MS);
   }
 
-  private spawnMushroom(): void {
-    const group = new THREE.Group();
-    const stemGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.4, 12);
-    const stemMat = new THREE.MeshBasicMaterial({ color: 0xf5edd8 });
-    const stem = new THREE.Mesh(stemGeo, stemMat);
-    stem.position.y = 0.2;
-    group.add(stem);
-    const capGeo = new THREE.SphereGeometry(0.32, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2);
-    const capMat = new THREE.MeshBasicMaterial({
-      color: 0xb85c7e,
-      transparent: true,
-      opacity: 0.92,
-    });
-    const cap = new THREE.Mesh(capGeo, capMat);
-    cap.position.y = 0.42;
-    group.add(cap);
-    group.position.set(this.agent.worldX + 0.3, 0, 0);
-    this.scene.add(group);
-    this.platforms.push({
-      group,
-      spawnT: performance.now() / 1000,
-      lifetime: MUSHROOM_LIFETIME_S,
-      x: this.agent.worldX + 0.3,
-    });
+  // ── Bounce hook (called by host on CosmoAgent.onBounce) ─────────────────
+
+  /**
+   * Host-scene calls this from the CosmoAgent `onBounce` event. We log the
+   * timestamp, gain vibe, and check for the 5-in-30s DeepTripMode trigger.
+   */
+  notifyBounce(uniformsTime: number): void {
+    this.bounceLog.push({ t: uniformsTime });
+    this.vibe.gain(BOUNCE_VIBE_GAIN);
+    if (this.bounceLog.length >= BOUNCE_COUNTER_THRESHOLD) {
+      // Saturate the vibe-meter so DeepTripMode.update() picks up fullEdge.
+      this.vibe.gain(1);
+      this.bounceLog = [];
+    }
   }
 }

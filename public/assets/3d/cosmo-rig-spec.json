@@ -1,0 +1,82 @@
+{
+  "version": "sprint17a",
+  "mesh_bounds": {
+    "xmin": -0.7791640162467957,
+    "xmax": 0.7773000001907349,
+    "ymin": -0.42788609862327576,
+    "ymax": 0.430525004863739,
+    "zmin": -0.9564340710639954,
+    "zmax": 0.9544061422348022,
+    "cx": -0.0009320080280303955,
+    "cy": 0.0013194531202316284,
+    "cz": -0.0010139644145965576,
+    "height": 1.9108402132987976,
+    "width": 1.5564640164375305
+  },
+  "bones": {
+    "bone_root": {
+      "role": "world driver / hips, body lean"
+    },
+    "bone_spine": {
+      "role": "chest pivot, body lean & breath"
+    },
+    "bone_head": {
+      "role": "head yaw/pitch (camera follow)"
+    },
+    "bone_eye_l": {
+      "role": "left eye look-track (Y-Z rot)"
+    },
+    "bone_eye_r": {
+      "role": "right eye look-track (Y-Z rot)"
+    },
+    "bone_antenne": {
+      "role": "antenne wiggle (FFT air-band)"
+    },
+    "bone_arm_l": {
+      "role": "left arm shoulder-elbow-wrist"
+    },
+    "bone_arm_r": {
+      "role": "right arm shoulder-elbow-wrist"
+    },
+    "bone_disc_l": {
+      "role": "left wrist suction-cup wiggle (FFT-low)"
+    },
+    "bone_disc_r": {
+      "role": "right wrist suction-cup wiggle (FFT-low)"
+    }
+  },
+  "clips": {
+    "idle": {
+      "length_frames": 96,
+      "fps": 24,
+      "loop": true,
+      "duration_s": 4.0
+    },
+    "wave": {
+      "length_frames": 36,
+      "fps": 24,
+      "loop": false,
+      "duration_s": 1.5
+    },
+    "stretch": {
+      "length_frames": 48,
+      "fps": 24,
+      "loop": false,
+      "duration_s": 2.0
+    },
+    "sit": {
+      "length_frames": 144,
+      "fps": 24,
+      "loop": true,
+      "duration_s": 6.0
+    }
+  },
+  "binding_hints": {
+    "head_yaw": "bone_head Y-rot drives left/right look (camera/cursor)",
+    "head_pitch": "bone_head X-rot drives up/down look",
+    "body_lean": "bone_spine X-rot small lean on gyro tilt",
+    "eye_track_independent": "bone_eye_l/_r quaternion override (overrides idle blink)",
+    "antenne_wiggle": "bone_antenne X/Z rot from FFT air-band",
+    "disc_bobble": "bone_disc_l/_r small Y-rot from FFT low-band"
+  }
+}

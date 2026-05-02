@@ -1,0 +1,5 @@
+{
+  "mode": "reuse_16b_glb",
+  "glb": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/3d/cosmo.glb",
+  "rationale": "16B GLB is verified DNA-correct (7/8 score, Sprint 16B). LoRA poses showed drift (tail/fingers) so re-running Meshy from idle-breath would propagate that drift into the rigged mesh. Reusing 16B base is safer and faster. Track B's value is the rig + animations, not regenerating the mesh."
+}

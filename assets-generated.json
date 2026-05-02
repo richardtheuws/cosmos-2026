@@ -1560,6 +1560,385 @@
       "rigging": "NOT attempted \u2014 Sprint 15A confirmed Meshy auto-rig fails on alien anatomy. CosmoAgent uses procedural transforms per cosmo-animation-spec.json (15A pattern).",
       "case_study": "public/assets/case-study/cosmo-3d-v16b/",
       "side_by_side_evidence": "public/assets/case-study/cosmo-3d-v16b/side-by-side-15a-vs-16b.png \u2014 shows 15A PIL-eye-disaster vs clean 16B mesh-eyes"
+    },
+    {
+      "sprint": "Sprint 17A \u2014 Cosmo 4 LoRA-poses + Blender handmade-rig + procedural-tilt-bones",
+      "generated": "2026-05-02",
+      "strategy": "Hybrid: Track A (4 LoRA static poses) + Track B (Blender rig on 16B base mesh) + Track C (rig-spec doc)",
+      "poses": [
+        {
+          "pose": "idle-breath",
+          "file": "public/assets/sprites/cosmo-pose-idle-breath.png",
+          "winner_attempt": "idle-breath_a02",
+          "esrgan_used": true,
+          "pipeline": "fal-ai/flux-lora (rtcosmo) \u2192 BiRefNet Heavy \u2192 ESRGAN 4x \u2192 Lanczos 4096",
+          "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+          "trigger_word": "rtcosmo"
+        },
+        {
+          "pose": "wave-uncanny",
+          "file": "public/assets/sprites/cosmo-pose-wave-uncanny.png",
+          "winner_attempt": "wave-uncanny_a01",
+          "esrgan_used": true,
+          "pipeline": "fal-ai/flux-lora (rtcosmo) \u2192 BiRefNet Heavy \u2192 ESRGAN 4x \u2192 Lanczos 4096",
+          "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+          "trigger_word": "rtcosmo"
+        },
+        {
+          "pose": "stretch",
+          "file": "public/assets/sprites/cosmo-pose-stretch.png",
+          "winner_attempt": "stretch_a01",
+          "esrgan_used": true,
+          "pipeline": "fal-ai/flux-lora (rtcosmo) \u2192 BiRefNet Heavy \u2192 ESRGAN 4x \u2192 Lanczos 4096",
+          "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+          "trigger_word": "rtcosmo"
+        },
+        {
+          "pose": "sit-sniff",
+          "file": "public/assets/sprites/cosmo-pose-sit-sniff.png",
+          "winner_attempt": "sit-sniff_a01",
+          "esrgan_used": true,
+          "pipeline": "fal-ai/flux-lora (rtcosmo) \u2192 BiRefNet Heavy \u2192 ESRGAN 4x \u2192 Lanczos 4096",
+          "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+          "trigger_word": "rtcosmo"
+        }
+      ],
+      "rigged_glb": {
+        "file": "public/assets/3d/cosmo.glb",
+        "spec_file": "public/assets/3d/cosmo-rig-spec.json",
+        "overwrites": "sprint16b cosmo.glb",
+        "pipeline": "Blender 5.1 headless: import 16B mesh \u2192 10-bone armature \u2192 distance-based weights \u2192 4 NLA clips \u2192 GLB export",
+        "tris": 21978,
+        "verts": 15137,
+        "bone_count": 10,
+        "animations": [
+          "idle",
+          "sit",
+          "stretch",
+          "wave"
+        ],
+        "size_mb": 10.42,
+        "acceptance_ok": true
+      },
+      "cost_usd_estimate": "~$1.00 (16 LoRA gens \u00d7 ~0.05 + 4 BiRefNet + 4 ESRGAN; Blender local = $0)"
+    },
+    {
+      "sprint": "17C",
+      "date": "2026-05-02",
+      "theme": "Composed worlds \u2014 layered parallax PNGs per biome",
+      "goal": "5-7 layered PNGs per biome (sky/distant/mid-A/mid-B/foreground/particle + optional creature for slow-bloom) for true 3D-feel parallax in companion-mode gyro-tilt.",
+      "models": {
+        "primary": "fal-ai/flux-pro/v1.1-ultra (aspect_ratio=2:3 \u2192 1024x1536)",
+        "remove_bg": "fal-ai/birefnet (model=\"General Use (Heavy)\", operating_resolution=2048x2048, refine_foreground=true)",
+        "fallback": "fal-ai/flux-pro/v1.1 (image_size width:1024 height:1536)"
+      },
+      "biomes": [
+        {
+          "id": "slow-bloom",
+          "description": "alien-mushroom forest at twilight",
+          "layer_count": 7,
+          "layers": [
+            {
+              "idx": 1,
+              "name": "sky-gradient",
+              "role": "sky",
+              "parallax_multiplier": 0.05,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            },
+            {
+              "idx": 2,
+              "name": "distant-mountains",
+              "role": "distant",
+              "parallax_multiplier": 0.2,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 3,
+              "name": "mid-cluster-a",
+              "role": "mid-a",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 4,
+              "name": "mid-cluster-b",
+              "role": "mid-b",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 5,
+              "name": "foreground-cluster",
+              "role": "foreground",
+              "parallax_multiplier": 0.85,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 6,
+              "name": "particle-overlay",
+              "role": "particle",
+              "parallax_multiplier": 1.0,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            },
+            {
+              "idx": 7,
+              "name": "ambient-creature",
+              "role": "creature",
+              "parallax_multiplier": 0.55,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            }
+          ]
+        },
+        {
+          "id": "inkpool",
+          "description": "deep ink-aubergine cave with bioluminescence",
+          "layer_count": 6,
+          "layers": [
+            {
+              "idx": 1,
+              "name": "sky-gradient",
+              "role": "sky",
+              "parallax_multiplier": 0.05,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 2,
+              "weirdo_rating": "n.a."
+            },
+            {
+              "idx": 2,
+              "name": "distant-stalactites",
+              "role": "distant",
+              "parallax_multiplier": 0.2,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 3,
+              "name": "mid-cluster-a",
+              "role": "mid-a",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 4,
+              "name": "mid-cluster-b",
+              "role": "mid-b",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 5,
+              "name": "foreground-cluster",
+              "role": "foreground",
+              "parallax_multiplier": 0.85,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 6,
+              "name": "particle-overlay",
+              "role": "particle",
+              "parallax_multiplier": 1.0,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            }
+          ]
+        },
+        {
+          "id": "cathedral",
+          "description": "bloom-pierced clouds, cosmic temple in sky",
+          "layer_count": 6,
+          "layers": [
+            {
+              "idx": 1,
+              "name": "sky-gradient",
+              "role": "sky",
+              "parallax_multiplier": 0.05,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            },
+            {
+              "idx": 2,
+              "name": "distant-spires",
+              "role": "distant",
+              "parallax_multiplier": 0.2,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 3,
+              "name": "mid-clouds",
+              "role": "mid-a",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 4,
+              "name": "mid-gargoyles",
+              "role": "mid-b",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 5,
+              "name": "foreground-pillars",
+              "role": "foreground",
+              "parallax_multiplier": 0.85,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 6,
+              "name": "particle-overlay",
+              "role": "particle",
+              "parallax_multiplier": 1.0,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            }
+          ]
+        },
+        {
+          "id": "boss",
+          "description": "saffron-storm chaos with floating eyes/mouths",
+          "layer_count": 6,
+          "layers": [
+            {
+              "idx": 1,
+              "name": "sky-gradient",
+              "role": "sky",
+              "parallax_multiplier": 0.05,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            },
+            {
+              "idx": 2,
+              "name": "distant-spires",
+              "role": "distant",
+              "parallax_multiplier": 0.2,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 3,
+              "name": "mid-tornado",
+              "role": "mid-a",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 4,
+              "name": "mid-eyes-mouths",
+              "role": "mid-b",
+              "parallax_multiplier": 0.45,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 5,
+              "name": "foreground-rocks",
+              "role": "foreground",
+              "parallax_multiplier": 0.85,
+              "isolation": "transparent-target",
+              "birefnet": true,
+              "attempts": 1,
+              "weirdo_rating": "high"
+            },
+            {
+              "idx": 6,
+              "name": "particle-overlay",
+              "role": "particle",
+              "parallax_multiplier": 1.0,
+              "isolation": "fullbleed",
+              "birefnet": false,
+              "attempts": 1,
+              "weirdo_rating": "n.a."
+            }
+          ]
+        }
+      ],
+      "totals": {
+        "layers_generated": 25,
+        "birefnet_runs": 17,
+        "first_pass_success": 24,
+        "regenerations": 1,
+        "composition_specs": 4,
+        "case_study_mockups": 4,
+        "side_by_side_renders": 4,
+        "layer_strip_renders": 4
+      },
+      "cost_breakdown": {
+        "flux_pro_ultra_calls": "25 + 1 regen = 26 \u00d7 ~$0.06 = $1.56",
+        "birefnet_calls": "17 \u00d7 ~$0.02 = $0.34",
+        "total_estimate_usd": 1.9
+      },
+      "gotchas": {
+        "flux_scene_magnet_on_cave_sky": "Inkpool sky-gradient first-pass rendered an OUTDOOR sunset cumulus scene despite \"deep underground cave-ceiling\" prompt. Same scene-magnet bias as tile-prompts in Sprint 4.5 Fase B. Fix: 9-fold anti-outdoor stack (\"NO sky NO outdoor NO sunset NO horizon NO clouds NO mountains NO landscape NO open-air NO atmosphere\") + frame-the-perspective (\"close-up underground cave-roof viewed from below, looking directly up at...\"). Worked first try on regen.",
+        "centered_clusters_despite_left_right_prompts": "Flux Pro Ultra centered the mushroom/crystal/gargoyle clusters in the canvas despite \"occupies the LEFT/RIGHT third leaving other side as empty void\" prompts. Workaround: composition-spec uses x_offset normalized [-1,1] to anchor BiRefNet'd layers to LEFT (-0.25) and RIGHT (+0.25) thirds at composite-time. Cleaner than forcing Flux composition.",
+        "birefnet_heavy_on_jet_black": "BiRefNet HEAVY @ 2048\u00b2 works flawlessly on jet-black-void backgrounds painted by Flux. 17/17 successful first try, no soft-edge halo loss. Crucial: prompt for \"isolated cluster on pure flat solid jet-black void background\" upfront \u2192 Flux paints clean cutout, BiRefNet extracts cleanly."
+      },
+      "output_paths": {
+        "layers": "public/assets/backgrounds/biome-{slow-bloom,inkpool,cathedral,boss}/layer-{1..6 or 7}_*.png",
+        "composition_specs": "public/assets/backgrounds/biome-{id}/composition-spec.json",
+        "case_study": "public/assets/case-study/biomes-v17c/{biome-{id}-composition-mockup.png,biome-{id}-sidebyside.png,biome-{id}-layer-strip.png}",
+        "raw_originals": "scripts/sprint17c/raw/biome-{id}/layer-{N}_*-raw.png"
+      },
+      "wiring_pending_17B_main_ts": "BiomeManager needs compositionSpec: BiomeCompositionSpec field with layers[] from each biome's composition-spec.json. Three.js parallaxScene must load N planes per biome and apply MotionController-driven camera pan effective-X to layer.position.x with parallax_multiplier scaling. See composition-spec.json parallax_notes for implementation details."
     }
   ]
 }

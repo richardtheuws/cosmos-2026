@@ -1,0 +1,26 @@
+[
+  {
+    "pose": "idle-breath",
+    "ok": true,
+    "final": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-pose-idle-breath.png",
+    "tag": "idle-breath_a02"
+  },
+  {
+    "pose": "wave-uncanny",
+    "ok": true,
+    "final": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-pose-wave-uncanny.png",
+    "tag": "wave-uncanny_a01"
+  },
+  {
+    "pose": "stretch",
+    "ok": true,
+    "final": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-pose-stretch.png",
+    "tag": "stretch_a01"
+  },
+  {
+    "pose": "sit-sniff",
+    "ok": true,
+    "final": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-pose-sit-sniff.png",
+    "tag": "sit-sniff_a01"
+  }
+]

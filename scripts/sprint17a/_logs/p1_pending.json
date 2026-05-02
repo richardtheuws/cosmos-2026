@@ -1,0 +1,130 @@
+[
+  {
+    "pose": "idle-breath",
+    "seed": 8181,
+    "request_id": "019de940-a881-7a83-9bdb-574aa614b151",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-a881-7a83-9bdb-574aa614b151",
+    "prompt": "rtcosmo, standing front-facing canonical pose, arms relaxed at sides, eyes calmly looking forward, body upright neutral, slight breath pulse, three-quarter view slightly toward camera, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "idle-breath_a01"
+  },
+  {
+    "pose": "idle-breath",
+    "seed": 8888,
+    "request_id": "019de940-abdf-7e90-ac29-fbf117f57c63",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-abdf-7e90-ac29-fbf117f57c63",
+    "prompt": "rtcosmo, standing front-facing canonical pose, arms relaxed at sides, eyes calmly looking forward, body upright neutral, slight breath pulse, three-quarter view slightly toward camera, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "idle-breath_a02"
+  },
+  {
+    "pose": "idle-breath",
+    "seed": 4242,
+    "request_id": "019de940-af64-7310-9fee-a76848314900",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-af64-7310-9fee-a76848314900",
+    "prompt": "rtcosmo, standing front-facing canonical pose, arms relaxed at sides, eyes calmly looking forward, body upright neutral, slight breath pulse, three-quarter view slightly toward camera, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "idle-breath_a03"
+  },
+  {
+    "pose": "idle-breath",
+    "seed": 1313,
+    "request_id": "019de940-b2e7-7ab2-b2f5-907a7e54e671",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-b2e7-7ab2-b2f5-907a7e54e671",
+    "prompt": "rtcosmo, standing front-facing canonical pose, arms relaxed at sides, eyes calmly looking forward, body upright neutral, slight breath pulse, three-quarter view slightly toward camera, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "idle-breath_a04"
+  },
+  {
+    "pose": "wave-uncanny",
+    "seed": 8181,
+    "request_id": "019de940-b6ef-7cb3-a4f4-42a1df00382b",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-b6ef-7cb3-a4f4-42a1df00382b",
+    "prompt": "rtcosmo, one disc-arm raised waving toward camera, the other arm relaxed at side, eyes locked directly toward viewer with intense uncanny stare, body upright facing viewer slightly tilted, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "wave-uncanny_a01"
+  },
+  {
+    "pose": "wave-uncanny",
+    "seed": 8888,
+    "request_id": "019de940-ba82-7731-8b3e-caa4dccca063",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-ba82-7731-8b3e-caa4dccca063",
+    "prompt": "rtcosmo, one disc-arm raised waving toward camera, the other arm relaxed at side, eyes locked directly toward viewer with intense uncanny stare, body upright facing viewer slightly tilted, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "wave-uncanny_a02"
+  },
+  {
+    "pose": "wave-uncanny",
+    "seed": 4242,
+    "request_id": "019de940-be54-7492-b01c-9f45d333076b",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-be54-7492-b01c-9f45d333076b",
+    "prompt": "rtcosmo, one disc-arm raised waving toward camera, the other arm relaxed at side, eyes locked directly toward viewer with intense uncanny stare, body upright facing viewer slightly tilted, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "wave-uncanny_a03"
+  },
+  {
+    "pose": "wave-uncanny",
+    "seed": 1313,
+    "request_id": "019de940-c1c0-7e00-860a-a5438b535963",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-c1c0-7e00-860a-a5438b535963",
+    "prompt": "rtcosmo, one disc-arm raised waving toward camera, the other arm relaxed at side, eyes locked directly toward viewer with intense uncanny stare, body upright facing viewer slightly tilted, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "wave-uncanny_a04"
+  },
+  {
+    "pose": "stretch",
+    "seed": 8181,
+    "request_id": "019de940-c535-77a3-ad80-1d4dfcf2b871",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-c535-77a3-ad80-1d4dfcf2b871",
+    "prompt": "rtcosmo, both arms raised up overhead arching back and stretching, looking up at sky with open eye-spheres, body slightly arched backward, antenna trailing back, full upright stretching pose, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "stretch_a01"
+  },
+  {
+    "pose": "stretch",
+    "seed": 8888,
+    "request_id": "019de940-c892-7f02-8a89-5e9f92450809",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-c892-7f02-8a89-5e9f92450809",
+    "prompt": "rtcosmo, both arms raised up overhead arching back and stretching, looking up at sky with open eye-spheres, body slightly arched backward, antenna trailing back, full upright stretching pose, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "stretch_a02"
+  },
+  {
+    "pose": "stretch",
+    "seed": 4242,
+    "request_id": "019de940-cc0f-7112-8607-42f8b37a9fcd",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-cc0f-7112-8607-42f8b37a9fcd",
+    "prompt": "rtcosmo, both arms raised up overhead arching back and stretching, looking up at sky with open eye-spheres, body slightly arched backward, antenna trailing back, full upright stretching pose, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "stretch_a03"
+  },
+  {
+    "pose": "stretch",
+    "seed": 1313,
+    "request_id": "019de940-cf77-7920-9450-d0f8bf17ffe8",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-cf77-7920-9450-d0f8bf17ffe8",
+    "prompt": "rtcosmo, both arms raised up overhead arching back and stretching, looking up at sky with open eye-spheres, body slightly arched backward, antenna trailing back, full upright stretching pose, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "stretch_a04"
+  },
+  {
+    "pose": "sit-sniff",
+    "seed": 8181,
+    "request_id": "019de940-d2f2-76f0-8bf8-448c235fb545",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-d2f2-76f0-8bf8-448c235fb545",
+    "prompt": "rtcosmo, squatting low to ground leaning forward sniffing a small mushroom in front, one disc-hand reaching down toward the tiny mushroom, eyes focused down on the mushroom, antenna leaning forward, low crouch posture knees bent, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "sit-sniff_a01"
+  },
+  {
+    "pose": "sit-sniff",
+    "seed": 8888,
+    "request_id": "019de940-d64f-7083-b40f-751e9c522cc1",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-d64f-7083-b40f-751e9c522cc1",
+    "prompt": "rtcosmo, squatting low to ground leaning forward sniffing a small mushroom in front, one disc-hand reaching down toward the tiny mushroom, eyes focused down on the mushroom, antenna leaning forward, low crouch posture knees bent, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "sit-sniff_a02"
+  },
+  {
+    "pose": "sit-sniff",
+    "seed": 4242,
+    "request_id": "019de940-da6a-7311-93af-c243edf5f03b",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-da6a-7311-93af-c243edf5f03b",
+    "prompt": "rtcosmo, squatting low to ground leaning forward sniffing a small mushroom in front, one disc-hand reaching down toward the tiny mushroom, eyes focused down on the mushroom, antenna leaning forward, low crouch posture knees bent, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "sit-sniff_a03"
+  },
+  {
+    "pose": "sit-sniff",
+    "seed": 1313,
+    "request_id": "019de940-ddd5-7b50-9b2d-20d85a54a3ee",
+    "response_url": "https://queue.fal.run/fal-ai/flux-lora/requests/019de940-ddd5-7b50-9b2d-20d85a54a3ee",
+    "prompt": "rtcosmo, squatting low to ground leaning forward sniffing a small mushroom in front, one disc-hand reaching down toward the tiny mushroom, eyes focused down on the mushroom, antenna leaning forward, low crouch posture knees bent, hayao moebius watercolor, NOT kawaii NOT chibi NOT Disney, chameleon bulging eye spheres glossy black with saffron catchlight, single antenna with faded rose flower bulb tip, two black flat suction cup discs at hand tips, no tail, faded rose spots on green moss-sage body, slim kid-frame",
+    "tag": "sit-sniff_a04"
+  }
+]

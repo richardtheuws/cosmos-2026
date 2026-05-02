@@ -4,6 +4,99 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.3.0] — 2026-05-02 — Sprint 17: motion-controlled world explorer + companion-mode
+
+**Gameplay-shift**: weg van runner ("ren naar rechts"), naar **motion-controlled world explorer + stoned-watching companion**. Cosmo blijft center, wereld scrollt NIET. Camera pant binnen biome-scene op gyro/mouse. Trampolines op fixed posities zijn enige interactie. 8s no-input → companion-AI neemt over, Cosmo wandelt zelf rond, kijkt, zit, slaapt na 90s met hallucination-particles. Embrace the weirdness.
+
+### Added (17A — Cosmo handmade-rig)
+
+GLB rig (10 bones, 4 anim clips, 22k tris, 10MB):
+- `bone_root/spine/head/eye_l/eye_r/antenne/arm_l/arm_r/disc_l/disc_r`
+- Distance-based weight-painting met head-zone-lock + arm-zone-lock
+- 4 NLA clips → glTF: idle (4s loop, breath-pulse + blink), wave (1.5s arm-raise + slow eye-lock), stretch (2s arms overhead + spine arch), sit (6s squat + sniff-twitch)
+- Mesh hergebruikt van Sprint 16B (geen nieuwe Meshy run, voorkomt LoRA-tail-drift in 3D)
+
+**Caveat**: 4 LoRA-pose-PNGs gegenereerd MAAR DNA-drift terug naar gecko-archetype met tail+fingers (LoRA training-dataset bevatte tail-references). Skip de 2D-PNGs als asset, gebruik alleen GLB met embedded animation clips. Sprint 18 ticket: retrain LoRA op disc-only/no-tail dataset. Cost $1.08.
+
+### Added (17B — DeviceOrientation motion-control)
+
+`MotionController` met 4-source priority (companion-drift > gyro > pointer > none):
+- iOS 13+ `requestPermission()` op first-touch (eenmalig)
+- gyro mapping: gamma → panX (-1..1, /45°), beta → panY (-1..1, neutral 45°)
+- Magnitude < 0.04 = phone-op-tafel-noise-gate
+- Desktop pointermove fallback always-on
+- **Companion-drift**: na 8s no-input → `panX=sin(t·0.21)·0.6`, `panY=sin(t·0.18)·0.4` (non-rationele freqs, geen sync-loop)
+
+`CosmoStage.followCamera` (runner-volgende-camera) → `panCamera(motion, dt)` (camera pant binnen biome-bounds ±1.6 X / ±0.6 Y). Cosmo.worldX locked op 0 (geen scroll meer). Head-track via bone-search "head"/Mixamo: `restQuat · yaw(Y, ±0.4) · pitch(X, ±0.2)` na mixer.update().
+
+### Added (17C — Composed worlds, 25 layered PNGs)
+
+Per biome 5-7 transparante PNG-layers via Flux Pro Ultra (1024×1536), BiRefNet HEAVY 17/17 clean cutout via `BG_BLACK_FOR_BIREFNET` rider:
+- **slow-bloom** (7 layers): twilight forest met giant pink mushroom + jellyfish creature. Weirdo 9/10
+- **inkpool** (6): bioluminescent cave met crystal-spires. Weirdo 8/10
+- **cathedral** (6): bloom-pierced temple met body-horror multi-wing angels. Weirdo 9/10
+- **boss** (6): saffron-magenta storm met disembodied gaping mouths + uncanny eyes. **Weirdo 10/10**
+
+`composition-spec.json` per biome met `parallaxMultiplier`, `xOffset`, `yOffset`, `scale`, `zPosition`, `blendMode`, `opacity`, `role`. First-pass 24/25 (96%). Cost $1.90.
+
+### Added (17D — Trampolines + pet-Cosmo)
+
+`TrampolineSpots`: per biome 3-5 fixed posities uit `composition-spec.interactionSpots.trampolines`. Hover-bob met phase-offset (geen sync-loop). THREE.Raycaster pick op tap-NDC.
+
+`CosmoAgent.walkTo(x, z, 'bounce')`: 1.5s ease-in-out cubic naar trampoline → `bounce()` → playClip('stretch') + sin-arc 0→0.6→0 over 0.8s. On bounce: kaleidoTrigger += 0.6 + 30% kans `audioBridge.startHallucination(HALLUCINATION_PEAKS)`.
+
+`petAffect()` long-hold-Cosmo (500ms threshold, raycaster check op Cosmo bounds): 0.8s window met blush (saffron emissive lerp) + antenne-bone tilt ±0.35rad over 2 sine cycles. Op release → wave-clip.
+
+VibeMeter triggers: 5 bounces in 30s OR ≥2s cumulative pet → DeepTripMode auto-engage.
+
+`ObstacleManager` als compat-shim (alle public API behouden, update() no-op). Runner-spawn-pool definitief weg.
+
+### Added (17E — Companion-AI passive vibe)
+
+`CosmoAI` 7-state machine: `idle | roam | curious | sit | look-around | sniff | sleep`.
+
+Triggers:
+- 8s no-input → companion-mode (kaleido bloom-pulse 0.18)
+- 90s no-input → sleep latch (pulse 0.45)
+
+Transitions weighted: roam 35% / curious 18% / sit 17% / look-around 18% / sniff 12%. Sub-phases voor curious (approach→inspect→wave→leave) en sniff (approach→dip→leave).
+
+Sleep-state hallucination-particles: lazily-built `THREE.Points` 24 particles, radial-falloff canvas-drawn texture (geen asset), pop-magenta+saffron, AdditiveBlending, drift+recycle.
+
+Mixer-coupling: per frame `playClip(d.clip, loop)` met 180ms crossfade. `mixer.timeScale` lerp naar 0.4 (sleep) of 1.0. Position-chase met biome-bounds clamp X±1.6 / Z-4..0.
+
+Soft-coupling met 17D's `trampolineSpots.positions()` als interaction-targets-provider voor curious-state.
+
+### Added (17F — Multi-layer parallax-scene + decoration placement)
+
+`parallaxScene.loadBiome(biome)` refactored van single-4K-plane naar N-layer composition consumer:
+- Per layer: `mesh.position.x = baseX + motion.getPanX() * parallaxMultiplier * 1.6`
+- BlendMode mapping: additive / multiply / normal
+- Texture cache prevents re-fetch on biome-cycle
+
+Per biome 3 environmental decoration objects geplaatst (uit Sprint 15C library):
+- **slow-bloom**: upside-down-tree + eyeball-sentry deep right + floating-star
+- **inkpool**: breathing-portal + melting-clock-bubble drift + eyeball-sentry
+- **cathedral**: breathing-portal skybox + upside-down-tree top-hang + floating-star
+- **boss**: secret-crystal hidden + mouth-pillar + eyeball-sentry
+
+mouth-pillar pingpong-frame (Sprint 16C compat) + secret-crystal hidden tot kaleidoTrigger > 0.8 (Sprint 16E compat) behouden.
+
+### Pre-deploy live-test (17G)
+
+Combined `tsc --noEmit` exit 0. Build 521 files in /tmp staging. Vite preview boot test alle 6 critical assets 200 OK (HTML, GLB, composition-spec, layer-PNG, music, cosmo-coo). 0 TODO/FIXME in alle 10 src-files. Code-review groen.
+
+### Cost Sprint 17
+
+~$3 totaal (17A: $1.08 LoRA-poses + Blender-rig + ESRGAN, 17C: $1.90 25 layered PNGs + BiRefNet).
+
+### Open voor Sprint 18
+
+- LoRA retrain op disc-only/no-tail dataset (huidige LoRA reactiveert tail-bias bij pose-variation)
+- DRACOLoader integratie → GLB 10MB → 752KB
+- Biome-cycling auto elke 90s via crossfade (deels ge-implementeerd, full DeepTripMode auto needs CosmoScene exposure)
+- ElevenLabs custom voice library uitbreiden (meer cosmo-coo + biome-specific stingers)
+
 ## [1.2.0] — 2026-05-02 — Sprint 16: DNA-correcte Cosmo via LoRA + 6 polish-fixes
 
 v1.1.0's live demo was niet speelbaar: PIL-painted 2D-eyes werden 3D-blobs op de mesh, NL voice-over uit Hint-Globe-archief brak de vibe, mouth-pillar toonde 4 frames tegelijk, secret-crystal default zichtbaar, music stopte na track-end, onboarding skipte voor return-users. Sprint 16 fixt alles met **harde quality-gate**: orchestrator draait nu zelf pre-deploy live-test (browser-MCP playwright iPhone-emulation indien Docker UP, anders curl + tsc + GLTF-headless validate) — geen "live verify door user" meer als enige check.

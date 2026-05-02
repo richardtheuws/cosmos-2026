@@ -1,39 +1,52 @@
 /**
- * cosmoStage.ts — Sprint 15B
+ * cosmoStage.ts — Sprint 17B
  *
- * Dedicated Three.js sub-renderer for the 3D Cosmo character. Lives ON TOP of
+ * Dedicated Three.js sub-renderer for the 3D Cosmo character. Renders ON TOP of
  * the existing ParallaxScene (renderer.autoClear=false + clearDepth) so the
  * background still goes through the post-FX composer while Cosmo himself
- * stays crisp + legible. This matches the existing "world hallucinates,
- * Cosmo stays legible" rule in src/three/postFX/postFX.ts.
+ * stays crisp + legible.
  *
- * Render order per frame:
+ * Sprint 17B refactor — companion-mode camera
+ * ─────────────────────────────────────────────
+ *   The old `followCamera(cosmoX, cosmoY, dt)` runner-mechanic is GONE. Cosmo
+ *   no longer scrolls the world from right to left; he stays anchored at the
+ *   centre of the biome and only the camera pans on user-motion (gyro/mouse)
+ *   or companion auto-drift. This unlocks the "always-alive" feeling where
+ *   tilting the phone or moving the mouse subtly shifts the view, and after
+ *   8s of no-input the camera breathes on its own.
  *
- *    parallax composer renders into the canvas (with post-FX)
- *    cosmoStage clears depth, renders Cosmo group on top  ← here
- *    Phaser HUD canvas paints over (vibe ring + altitude)
+ * Render order per frame
+ *   parallax composer renders into the canvas (with post-FX)
+ *   cosmoStage clears depth, renders Cosmo group on top  ← here
+ *   Phaser HUD canvas paints over (vibe ring + altitude)
  *
- * The stage owns:
- *   - PerspectiveCamera that follows Cosmo's X with a deadzone
+ * The stage owns
+ *   - PerspectiveCamera that pans on motion within biome.cameraBounds
  *   - The Cosmo Object3D group (populated by CosmoAgent)
- *   - A simple soft-light setup (ambient + 2 directional) tuned for the
- *     Hayao×Moebius palette (warm fill, cool rim)
+ *   - A simple soft-light setup tuned for the Hayao×Moebius palette
  *
- * It deliberately does NOT load the GLB itself — CosmoAgent does that and
- * adds the resulting model + AnimationMixer to `this.group`. Keeping the
- * stage agnostic of the model lets the 2D fallback (a textured plane) plug
- * into the same group without special-casing.
+ * It deliberately does NOT load the GLB itself — CosmoAgent does that.
  */
 import * as THREE from 'three';
+import type { MotionController } from '../core/motionController';
 
 const CAMERA_FOV = 35;
 const CAMERA_DISTANCE = 6.0;
 const CAMERA_HEIGHT = 1.4;
-/** Horizontal deadzone (world units) — camera doesn't move while Cosmo
- *  walks inside this band. Keeps small idle wobbles from jiggling the view. */
-const CAMERA_DEADZONE_X = 0.6;
-/** Lerp factor for camera follow-X per frame at 60fps (frame-rate corrected). */
-const CAMERA_FOLLOW_LERP = 6.0;
+/** Default world-units the camera can pan from centre when no biome
+ *  cameraBounds are supplied. Half-extent on each axis. */
+const DEFAULT_PAN_RANGE_X = 1.6;
+const DEFAULT_PAN_RANGE_Y = 0.6;
+/** Lerp factor per frame at 60fps (frame-rate corrected) — smooth camera. */
+const CAMERA_PAN_LERP = 6.0;
+
+/** Biome-bounds the camera is clamped within during pan. Half-extents from
+ *  scene-centre on each axis. Optional — biomes that don't supply bounds
+ *  fall back to DEFAULT_PAN_RANGE_*. */
+export interface CameraBounds {
+  panRangeX: number;
+  panRangeY: number;
+}
 
 export class CosmoStage {
   readonly scene: THREE.Scene;
@@ -41,8 +54,18 @@ export class CosmoStage {
   /** Empty group; CosmoAgent adds the GLB or fallback plane to this. */
   readonly group: THREE.Group;
   private renderer: THREE.WebGLRenderer;
-  /** World-X the camera lerps toward. */
+  /** Target camera position the per-frame lerp moves toward. */
   private camTargetX = 0;
+  private camTargetY = CAMERA_HEIGHT;
+  /** Active biome bounds. Updated via setCameraBounds(). */
+  private bounds: CameraBounds = {
+    panRangeX: DEFAULT_PAN_RANGE_X,
+    panRangeY: DEFAULT_PAN_RANGE_Y,
+  };
+  /** Parallax shift applied to objects in `group` whose `userData.depth` is
+   *  set. depth=0 → moves with camera (no parallax); depth=1 → stays fixed in
+   *  scene-space (max parallax). */
+  private parallaxOffsetX = 0;
 
   constructor(renderer: THREE.WebGLRenderer) {
     this.renderer = renderer;
@@ -66,20 +89,45 @@ export class CosmoStage {
     this.scene.add(this.group);
   }
 
-  /** Per-frame camera follow with deadzone. `cosmoX` is world units. */
-  followCamera(cosmoX: number, cosmoY: number, dt: number): void {
-    const dx = cosmoX - this.camTargetX;
-    if (Math.abs(dx) > CAMERA_DEADZONE_X) {
-      // Pull the deadzone edge toward Cosmo (don't snap to centre).
-      this.camTargetX += dx - Math.sign(dx) * CAMERA_DEADZONE_X;
-    }
-    const k = 1 - Math.exp(-CAMERA_FOLLOW_LERP * dt);
+  /** Set the per-biome camera bounds. Pass partial — missing fields keep
+   *  their previous value. Called by main.ts when a biome loads. */
+  setCameraBounds(bounds: Partial<CameraBounds>): void {
+    if (bounds.panRangeX !== undefined) this.bounds.panRangeX = bounds.panRangeX;
+    if (bounds.panRangeY !== undefined) this.bounds.panRangeY = bounds.panRangeY;
+  }
+
+  /**
+   * Sprint 17B — replaces `followCamera`. Reads the MotionController's
+   * normalised pan vector in [-1..1] and maps it into world-units within
+   * the biome's cameraBounds. The world stays still; the camera moves.
+   *
+   * `dt` in seconds — used for frame-rate-independent lerp.
+   */
+  panCamera(motion: MotionController, dt: number): void {
+    const px = motion.getPanX();
+    const py = motion.getPanY();
+
+    this.camTargetX = px * this.bounds.panRangeX;
+    // PanY is inverted because pointer-Y grows downward but we want "look up"
+    // when the cursor goes up. Pixel-Y up = panY negative, so we negate.
+    this.camTargetY = CAMERA_HEIGHT + -py * this.bounds.panRangeY;
+
+    const k = 1 - Math.exp(-CAMERA_PAN_LERP * dt);
     this.camera.position.x += (this.camTargetX - this.camera.position.x) * k;
-    // Camera height matches Cosmo's height with a small upward offset so we
-    // see his face, not his feet.
-    const targetY = cosmoY + CAMERA_HEIGHT;
-    this.camera.position.y += (targetY - this.camera.position.y) * k;
-    this.camera.lookAt(this.camera.position.x, cosmoY + 0.6, 0);
+    this.camera.position.y += (this.camTargetY - this.camera.position.y) * k;
+    // Look slightly ahead-of-camera in the pan direction so the framing
+    // feels like Cosmo is reacting, not a locked-on portrait.
+    this.camera.lookAt(this.camera.position.x * 0.6, CAMERA_HEIGHT, 0);
+
+    // Subtle parallax — depth-tagged children of `group` shift counter to
+    // the camera so they appear closer/further. Iterate once; cheap.
+    this.parallaxOffsetX = this.camera.position.x;
+    for (const child of this.group.children) {
+      const depth = (child.userData?.depth as number | undefined) ?? 0;
+      if (depth !== 0) {
+        child.position.x = -this.parallaxOffsetX * depth;
+      }
+    }
   }
 
   /** Render Cosmo on top of the parallax pass. Caller has already rendered
