@@ -287,8 +287,50 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   pointer-events: none;
 }
 .boot-overlay.hidden { opacity: 0; pointer-events: none; }
-.boot-overlay .title { font-family: var(--font-heading); font-style: italic; font-size: 2rem; color: var(--saffron-glow); margin-bottom: 1rem; }
-.boot-overlay .sub { font-size: 0.85rem; color: rgba(245,237,216,0.6); letter-spacing: 0.06em; }
+.boot-overlay .title {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 2rem;
+  color: var(--saffron-glow);
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: boot-fade-in 600ms var(--ease-out-expo) 0ms forwards;
+}
+.boot-overlay .sub {
+  font-size: 0.85rem;
+  color: rgba(245,237,216,0.6);
+  letter-spacing: 0.06em;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.45;
+}
+/* Sprint 15D — "tik om te ontwaken" pulses with breath; mic-icon canvas lives
+   above it. Both hidden until 0.6s after page-paint so the title reads first. */
+.boot-overlay .await-touch {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  opacity: 0;
+  animation: boot-fade-in 600ms var(--ease-out-expo) 600ms forwards;
+}
+.boot-overlay.is-awaiting .await-touch { display: flex; }
+.boot-overlay .await-touch .breath {
+  font-style: italic;
+  animation: boot-breath 2.4s ease-in-out infinite;
+}
+.boot-overlay canvas.mic-icon {
+  width: 28px; height: 28px;
+  display: block;
+  opacity: 0.85;
+  animation: boot-breath 2.4s ease-in-out infinite;
+}
+@keyframes boot-fade-in { to { opacity: 1; } }
+@keyframes boot-breath {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50%      { opacity: 1.0;  transform: scale(1.04); }
+}
 </style>
 </head>
 <body>
@@ -311,13 +353,19 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
         <a href="/updates/">Updates</a>
         <a href="/support/">Steun</a>
       </nav>
-      <span class="hud-version">v1.0.1</span>
+      <span class="hud-version">v1.1.0 · weirdo runner</span>
     </div>
   </div>
 
   <div class="boot-overlay" id="boot">
-    <div class="title">Cosmos ontwaakt…</div>
-    <div class="sub">Tik. Houd vast. Veeg. Knijp. Houd het midden 3 seconden.<br/>Geen game. Geen score. De track is de game.</div>
+    <div class="title">Cosmos ontwaakt&hellip;</div>
+    <!-- Sprint 15D — await-touch sub-block. Hidden until JS adds .is-awaiting
+         on the boot element ~0.6s after page-paint, so the italic title fades
+         in first and only THEN the "tik om te ontwaken" prompt appears. -->
+    <div class="await-touch" id="boot-await">
+      <canvas class="mic-icon" id="boot-mic" width="28" height="28" aria-hidden="true"></canvas>
+      <div class="sub breath">tik om te ontwaken</div>
+    </div>
   </div>
 
   <div class="mobile-disclaimer" id="mobile-disclaimer" role="status">
@@ -327,18 +375,64 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
 </div>
 
 <script type="module">
-  import('/src/main.ts').then(() => {
-    setTimeout(() => {
-      document.getElementById('boot')?.classList.add('hidden');
-    }, 600);
-  }).catch((err) => {
+  // Sprint 15D — boot is now driven by OnboardingDirector. We:
+  //   1. paint a tiny canvas-drawn mic-icon (no emoji, no SVG asset)
+  //   2. at 0.6s reveal the "tik om te ontwaken" block (CSS animation handles fade)
+  //   3. NEVER auto-hide the overlay here — OnboardingDirector calls
+  //      hideBootOverlay() exactly when the first-touch lands.
+  function paintMicIcon(canvas) {
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.width, h = canvas.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.scale(dpr, dpr);
+    // Saffron-glow stroke (#F4A261). Cap-shape mic (rounded body + base + stand).
+    ctx.strokeStyle = '#F4A261';
+    ctx.fillStyle = 'rgba(244, 162, 97, 0.18)';
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = 'round';
+    // mic body: rounded-rect 10..18 wide, 6..18 tall, radius 4
+    const bx = 10, by = 6, bw = 8, bh = 12, br = 4;
+    ctx.beginPath();
+    ctx.moveTo(bx + br, by);
+    ctx.lineTo(bx + bw - br, by);
+    ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
+    ctx.lineTo(bx + bw, by + bh - br);
+    ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
+    ctx.lineTo(bx + br, by + bh);
+    ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
+    ctx.lineTo(bx, by + br);
+    ctx.quadraticCurveTo(bx, by, bx + br, by);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // U-shape pickup arc under the body
+    ctx.beginPath();
+    ctx.arc(14, 19, 6, 0, Math.PI, false);
+    ctx.stroke();
+    // stand
+    ctx.beginPath();
+    ctx.moveTo(14, 22); ctx.lineTo(14, 26);
+    ctx.moveTo(10, 26); ctx.lineTo(18, 26);
+    ctx.stroke();
+  }
+  paintMicIcon(document.getElementById('boot-mic'));
+  // Reveal "tik om te ontwaken" 0.6s after paint, matching the brief's
+  // checkpoint. The title's own 600ms fade-in happens via CSS keyframe.
+  window.setTimeout(() => {
+    document.getElementById('boot')?.classList.add('is-awaiting');
+  }, 600);
+  import('/src/main.ts').catch((err) => {
     console.error('Boot error:', err);
     const boot = document.getElementById('boot');
     if (boot) {
       boot.innerHTML = `
         <div class="title" style="color:#FF2D95;">Boot error</div>
         <div class="sub" style="max-width:600px;text-align:center;padding:1rem;">${String(err).replace(/</g, '&lt;')}</div>
-        <a href="/" style="margin-top:2rem;color:var(--saffron-glow);">← Terug naar home</a>
+        <a href="/" style="margin-top:2rem;color:var(--saffron-glow);">&larr; Terug naar home</a>
       `;
     }
   });

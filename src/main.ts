@@ -1,37 +1,41 @@
 /**
- * main.ts — Sprint 13A rebuild. Boots the dual-canvas (Three.js parallax + post-FX
- * underneath, Phaser 4 BeatScene on top) and wires the FFT bridge, gesture-bus,
- * progression and (Sprint 13C-ready) BiomeManager hooks.
+ * main.ts — Sprint 15B rebuild. Boots the dual-canvas (Three.js parallax + post-FX
+ * underneath, Phaser 4 CosmoScene HUD on top) and wires the FFT bridge, gesture-bus,
+ * progression, BiomeManager, and the new weirdo auto-runner gameplay stack:
+ *   ParallaxScene (background, post-FX) → CosmoStage (3D Cosmo + obstacles, no
+ *   post-FX, on top) → Phaser HUD (vibe ring + altitude).
  *
- * Compared to v0.8.0 (platformer):
- *   - L1Scene → BeatScene (single-screen, no physics, dead-centre Cosmo)
- *   - 8-band FFT bridge stays exactly the same (architectural keep)
- *   - InputController is now gesture-driven; legacy left/right keys still
- *     work as a desktop tap-emulator (Space taps centre)
- *   - TouchOverlay is *not* attached — Sprint 13A vereenvoudigt naar pure
- *     gesture-input. The d-pad / jump / bomb buttons are platformer relics.
+ * Compared to v1.0.x (rhythm-tap):
+ *   - BeatScene → CosmoScene (Phaser is HUD-only now)
+ *   - CosmoRig (2D sprite) → CosmoAgent (3D GLB w/ 2D fallback) on CosmoStage
+ *   - BeatTarget pool → ObstacleManager pool (in 3D scene)
+ *   - AutoVJ (idle-detector) → CosmoAgent.tickRandomAgency (per-frame RNG events)
+ *   - Combo counter → VibeMeter (ring around projected Cosmo) + DeepTripMode
  *
- * The BiomeManager is constructed but `start()` is gated on the BiomeManager
- * having beat-track audio sources; for now we keep the static slow-bloom
- * parallax loaded directly. Sprint 13C wires the manager to the audio bridge
- * and Phaser scene.
+ * Audio bridge / parallax / post-FX / globalUniforms / BiomeManager are
+ * untouched per sprint-15B brief.
  */
 import Phaser from 'phaser';
+import * as THREE from 'three';
 import { createGlobalUniforms } from './core/globalUniforms';
 import { CanvasManager } from './core/canvasManager';
 import { InputController } from './core/inputController';
 import { ParallaxScene } from './three/parallaxScene';
+import { CosmoStage } from './three/cosmoStage';
 import { BIOMES } from './data/biomePresets';
 import { TrippyEventDirector } from './three/postFX/trippyEventDirector';
 import { AudioFFTBridge, HALLUCINATION_PEAKS } from './audio/audioFFTBridge';
-import { BeatScene } from './phaser/scenes/BeatScene';
+import { CosmoScene } from './phaser/scenes/CosmoScene';
+import { CosmoAgent } from './phaser/entities/CosmoAgent';
+import { ObstacleManager } from './phaser/entities/ObstacleManager';
+import { createWeirdoObstacleFactory } from './phaser/entities/weirdoObstacleFactory';
 import { Progression } from './core/progression';
 import { isTouchDevice } from './core/deviceDetect';
 import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 
-const VERSION = '1.0.1';
+const VERSION = '1.1.0';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -46,10 +50,13 @@ async function boot(): Promise<void> {
   input.attach();
 
   const parallax = new ParallaxScene(sceneCanvas);
-  // Sprint 14B — single 4K plane per biome. BiomeManager.start() below also
-  // calls loadBiome via onChange, but we await the first one here so the
-  // BeatScene never paints over an empty clear-color frame.
+  // Sprint 14B — single 4K plane per biome. Awaited so the first frame paints.
   await parallax.loadBiome(BIOMES['slow-bloom']);
+
+  // Sprint 15B — Three.js sub-renderer for 3D Cosmo + obstacles. Renders ON
+  // TOP of the parallax composer (autoClear=false + clearDepth) so post-FX
+  // hits the world but not Cosmo.
+  const cosmoStage = new CosmoStage(parallax.renderer);
 
   const phaserGame = new Phaser.Game({
     type: Phaser.AUTO,
@@ -58,15 +65,14 @@ async function boot(): Promise<void> {
     height: window.innerHeight,
     backgroundColor: 'rgba(0,0,0,0)',
     transparent: true,
-    // No arcade physics — BeatScene is a single-screen presentation, all
-    // entities are pure GameObjects + Graphics. Removing the physics step
-    // removes a per-frame pass that the platformer needed.
+    // No arcade physics — CosmoScene is a HUD overlay, all motion is in
+    // CosmoStage's THREE.Scene.
     scale: {
       mode: Phaser.Scale.RESIZE,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     fps: { target: 60, forceSetTimeOut: false },
-    scene: [BeatScene],
+    scene: [CosmoScene],
   });
 
   const eventDirector = new TrippyEventDirector();
@@ -76,11 +82,28 @@ async function boot(): Promise<void> {
   const progression = new Progression();
   progression.load();
 
-  phaserGame.scene.start('BeatScene', {
+  // Sprint 15B — gameplay stack lives outside the Phaser scene so its
+  // lifetime tracks main.ts (Phaser scene swaps don't tear down the agent).
+  // VibeMeter / InteractionManager / DeepTripMode need a Phaser.Scene
+  // (VibeMeter draws Graphics) — they're constructed inside CosmoScene's
+  // create() using the agent/obstacles/audio passed in here.
+  const cosmoAgent = new CosmoAgent(cosmoStage.group);
+  const obstacles = new ObstacleManager(cosmoStage.scene, {
+    audioNow: () => audioBridge.musicCurrentTime(),
+  });
+  // Sprint 15E — swap default canvas-primitives for the 8 fal.ai weirdo objects
+  // (Sprint 15C deliverable). Each ObstacleKind picks a random pool member per
+  // spawn so the playthrough never feels repetitive.
+  obstacles.setObstacleFactory(createWeirdoObstacleFactory());
+
+  phaserGame.scene.start('CosmoScene', {
     input,
     uniforms,
     audioBridge,
     progression,
+    cosmoAgent,
+    cosmoStage,
+    obstacles,
     version: VERSION,
   });
 
@@ -104,11 +127,6 @@ async function boot(): Promise<void> {
     }
   });
 
-  // Sprint 13E — BiomeManager wires audio + post-FX intensity. main.ts owns
-  // the URL→audio swap; the manager only emits onTrackSwap with URLs.
-  // Sprint 14B — also swap the parallax background on biome change. We use
-  // onChange (fires once per arrived biome) instead of onTrackSwap (fires at
-  // crossfade-start) so the visual swap lands when audio has fully arrived.
   const biomeMgr = new BiomeManager(uniforms, {
     onTrackSwap: (nextUrl) => audioBridge.setMusicTrack(nextUrl),
   });
@@ -117,11 +135,29 @@ async function boot(): Promise<void> {
   });
   biomeMgr.start();
 
+  // Per-frame ticks. Order matters: audio first (so FFT is fresh for the
+  // event-director and Cosmo's mixer), then post-FX-driving systems, then
+  // gameplay (CosmoAgent), then renderers.
   manager.register(() => audioBridge.update());
   manager.register((u) => eventDirector.update(u));
   manager.register((u) => parallax.update(u));
+  manager.register((u) => {
+    const dt = u.delta;
+    cosmoAgent.update(u, dt);
+    obstacles.update(dt, u.time, cosmoAgent.worldX);
+    cosmoStage.followCamera(cosmoAgent.worldX, cosmoAgent.worldY, dt);
+    cosmoStage.render();
+  });
   manager.register((_u) => biomeMgr.update(1 / 60));
   manager.start();
+
+  // Track viewport for the CosmoStage camera.
+  window.addEventListener(
+    'resize',
+    () => cosmoStage.resize(window.innerWidth, window.innerHeight),
+    { passive: true },
+  );
+  cosmoStage.resize(window.innerWidth, window.innerHeight);
 
   // Sprint 10C — wire trippy event director into audio bridge so kaleidoscope
   // peaks occasionally drag a hallucination-track over the base music.
@@ -130,9 +166,7 @@ async function boot(): Promise<void> {
   // Sprint 13E — daily-streak pill on visit (auto-show 4s, dismissible).
   announceVisit();
 
-  // Sprint 13A — disclaimer-only touch overlay (no d-pad). All gestures flow
-  // through InputController's pointer listener, so the overlay only mounts a
-  // tiny "Tik Cosmo aan op het beat" hint on touch devices.
+  // Sprint 13A — disclaimer-only touch overlay (no d-pad).
   const touchOverlay = new TouchOverlay(input);
   touchOverlay.attachIfTouchDevice();
 
@@ -141,6 +175,9 @@ async function boot(): Promise<void> {
     (window as unknown as { cosmos: object }).cosmos = {
       uniforms,
       parallax,
+      cosmoStage,
+      cosmoAgent,
+      obstacles,
       phaserGame,
       input,
       eventDirector,
@@ -148,9 +185,10 @@ async function boot(): Promise<void> {
       progression,
       isTouchDevice: isTouchDevice(),
       version: VERSION,
+      THREE,
     };
     // eslint-disable-next-line no-console
-    console.log('[cosmos] BeatScene ready. version', VERSION);
+    console.log('[cosmos] CosmoScene ready. version', VERSION);
   }
 }
 

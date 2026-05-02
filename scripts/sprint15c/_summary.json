@@ -1,0 +1,103 @@
+{
+  "sprint": "15C",
+  "total": 8,
+  "success": 8,
+  "objects": [
+    {
+      "key": "organic-flesh-trampoline",
+      "altitude": 0,
+      "target_size": [
+        512,
+        512
+      ],
+      "birefnet": true,
+      "weirdo_dna": "breathing membrane + visible veins + puckered hole \u2014 body-horror fungus, not mushroom-icon",
+      "behaviour": "trampoline-bounce",
+      "audio_cue": "wet-thump pulse"
+    },
+    {
+      "key": "eyeball-sentry",
+      "altitude": 100,
+      "target_size": [
+        256,
+        256
+      ],
+      "birefnet": true,
+      "weirdo_dna": "disembodied + dangling optic-nerve + vertical slit pupil \u2014 sentient organ with no body",
+      "behaviour": "follow-cosmo-blink",
+      "audio_cue": "wet-blink + low whisper"
+    },
+    {
+      "key": "melting-clock-bubble",
+      "altitude": 500,
+      "target_size": [
+        384,
+        384
+      ],
+      "birefnet": true,
+      "weirdo_dna": "Dali-clock dripping inside iridescent bubble \u2014 temporal anomaly object, time-50%-slow on touch",
+      "behaviour": "time-slow-on-touch",
+      "audio_cue": "reverse-tick-warble"
+    },
+    {
+      "key": "secret-crystal",
+      "altitude": 1000,
+      "target_size": [
+        256,
+        256
+      ],
+      "birefnet": true,
+      "weirdo_dna": "non-euclidean facets + only-visible-when-trip \u2014 reality-glitch collectible",
+      "behaviour": "visible-only-when-kaleido-gt-0.8",
+      "audio_cue": "glass-shimmer-chord"
+    },
+    {
+      "key": "floating-star",
+      "altitude": 0,
+      "target_size": [
+        128,
+        128
+      ],
+      "birefnet": true,
+      "weirdo_dna": "cosmic painterly star with saffron+cyan watercolor \u2014 collectible +5 vibe",
+      "behaviour": "collect-on-touch",
+      "audio_cue": "chime-up"
+    },
+    {
+      "key": "upside-down-tree",
+      "altitude": 300,
+      "target_size": [
+        512,
+        768
+      ],
+      "birefnet": true,
+      "weirdo_dna": "root-up inverted tree levitating \u2014 gravity-defying decorative obstacle",
+      "behaviour": "static-obstacle-jump-under-or-around",
+      "audio_cue": "wind-chime-low-creak"
+    },
+    {
+      "key": "breathing-portal",
+      "altitude": 800,
+      "target_size": [
+        384,
+        384
+      ],
+      "birefnet": true,
+      "weirdo_dna": "breathing aura cycle + window-to-other-biome \u2014 biome-switch mid-run object",
+      "behaviour": "enter-on-touch-biome-switch",
+      "audio_cue": "breathing-drone + chord-shift"
+    },
+    {
+      "key": "mouth-pillar",
+      "altitude": 200,
+      "target_size": [
+        1024,
+        512
+      ],
+      "birefnet": false,
+      "weirdo_dna": "tooth-mouth carved into pillar that opens on-beat \u2014 body-horror rhythm-obstacle",
+      "behaviour": "open-on-beat-damage-when-open",
+      "audio_cue": "wet-jaw-creak + breath"
+    }
+  ]
+}

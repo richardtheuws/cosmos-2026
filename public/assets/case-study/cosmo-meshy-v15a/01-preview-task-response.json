@@ -1,0 +1,31 @@
+{
+  "id": "019de7b7-e986-77c1-8f0a-6e93b6727ae1",
+  "type": "text-to-3d-preview",
+  "mode": "preview",
+  "name": "",
+  "model_type": "standard",
+  "seed": 15042026,
+  "art_style": "realistic",
+  "texture_richness": "",
+  "prompt": "NOT kawaii NOT chibi NOT Disney alien creature, pearl-drop teardrop head, BULGING chameleon eye spheres glossy black with saffron crescent, single antenna with rose flower bulb tip, TWO BLACK FLAT CIRCULAR SUCTION CUP DISCS at hand tips, NO FINGERS NO claws, slim moss-sage green body with faded rose spots, NO TAIL, slight uncute uncanny proportions, woodcut accent ink underdrawing, watercolor paper-grain, Hayao Miyazaki Moebius Tenniel illustration",
+  "negative_prompt": "kawaii, chibi, Disney, Pixar, cute baby, manga, round eyes, sparkle eyes, blush, eyelashes, two antennae, tail, lizard tail, fingers, claws, human hands, fluorescent, neon, photoreal",
+  "texture_prompt": "",
+  "texture_image_url": "",
+  "status": "SUCCEEDED",
+  "created_at": 1777709085791,
+  "progress": 100,
+  "started_at": 1777709086264,
+  "finished_at": 1777709137272,
+  "task_error": null,
+  "model_urls": {
+    "glb": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/model.glb?Expires=4931280000&Signature=mzzJboQjjTmMMYxJCmxaZbNGPehzQAGI~hhIEh4YnQKkb2FvIhVudNduVps9oFGdx5lGgteU0c43HYT7Yb~Wrd3xOB-178apqp6PUZgOrsrNYV70jiicxsk3R20W9ZEu9kRZZenBpp5jAX7gGoDox8z2k7LEUrvHnRPUcItDTTbz9sapv8tr4m1rSjwiyD1wcZNkITLFpQkOEBYPUFvklZrI5fuaMuc45084IwZ4MYqRjvMAcND5SNYmPkqv8eED50dt1uA3p4tJCAh3ciHUnm6LyKOsgf0gfWaEipXk62OUVykfIo1rVNsaHDOhNkxy5B1vZJcWBw95lwiVX6jmlA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "fbx": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/model.fbx?Expires=4931280000&Signature=VweFI15ROZ1ZDyfXo9ki~7XXAsGMMwlvqDRCNTmDpvWDN-yQOtfPQQUz5ggRnmlI3JdKm6wNOs-dwwXPWDqFr6Qs1V1aNMrUrNbj2eFRxm4dtEsAgpb0gQB-zzRigrifgkn~hPpWqGC3hakuPs02YMlN0PLAPY8MNOSqQiyXQ8kBamSdG-H~cjhsS8ei7N-GVp86l7S79Z9zkxqCDYEWQijsjzBSs0Rp~BYCn6i7zztouXqrPyGPKAZZJM9xELSY3czeMV46e-R9rn36m502eGWtPlzRwc2JBsoLYf~hsXcV9Pbmx5mx1Pn2ZzBL73szMK76RiOUD7M~2jhb5ABdrQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "usdz": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/model.usdz?Expires=4931280000&Signature=Cmma6WVz~yT5kjHna5s00UU0Y8gkRskdfBhtvE1FaPnIG~KlLVDtkKdsO6C0aHpeBf8jAcUtX5I7EOsaTvk5kH-hCR2rDFKLoD-hd5hkK7s-1N9-rswoN8VzYRUa1ba7z6VV46azbccdChlEty~rnYCJ6xqaSh5~Ua-EG1bKUnm43ueM88UR-sjTQoZAYm23etBohQmueBbEY4jfaw4sXoJWEo-otVXV07DjVpSUCIy-W0DtUTCFpWXjBfnpTqkEgW0ejips6rJqNhL8oq7NyV2AQ3~1wMrOgoW7VGl~RUVCWHXQEma4g9dHwGRHj8AuEDLBrHY8Y2D1p-b5aQnntw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "obj": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/model.obj?Expires=4931280000&Signature=az7bLA93xiXm4NtVbPpZMYzbDr1I6sgNoCOpUskKuSSYG6bdNH7KHMf9xvQvKg0i~0f4c8ooTZ5drrduOfWPZohJsDNBfkQ-06YuG1g~RizpITsJpRP~oBM-jORWSLeTBK0CiWsQUOkVhX9OGU-y7R72Y-j5ePcndg06RtsTUw~dt0wkG~0aCH7cBdMbYfbqdBS5DhEYkiRZNDxnLx15JJlUz1xbHLCuPLCOdVzJHhk5uX0AR5NaPOo~mJXFTV5VklTVL0Kry8uvNztZlKTEeFOhcXng7d1nQ3goS4iKtEQs4B8QTZHCAcCMEnzsiXP-JmOwn5oYCpoMZXA1oc4BWQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "stl": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/model.stl?Expires=4931280000&Signature=ct0CphxQHGNp9Yria~HDsJTP5D4TZLLU1oyDW5qgs88kva9p4QqF13wa1sixq~M7krZsBXqrInkZV11~TliR-p9nuDZph946n6qtPIh-JK1hqIHeM~xBrsAz~raVhR~1xHvTihA27zdL66pU3lM13wyeb~8OyTXOY0Lgjtwvm0XiAEL-6hYD3qP27O-9xh8DsVf6daGJRLYHQsvdQGxVB05PnYNygyYQT9y9vVPptwiwwnh9iTtj23CI5Ey-FZu1DUnGhKmdaRaJ~FvsrtA1a~HYZdvU6vXAVcHtopZm--Tg-wjlL3XHqS22tQ0Zyx5MvMZMpU92ahVKYdUd~paSmw__&Key-Pair-Id=K1VGYTHIYLM9UM"
+  },
+  "thumbnail_url": "https://assets.meshy.ai/86b42aac-ec5b-4e33-8a58-3da06ff98e4e/tasks/019de7b7-e986-77c1-8f0a-6e93b6727ae1/output/preview.png?Expires=4931280000&Signature=LLtd0d2~MCbKOIXevpiHFKuFbVb7O0ouE622TfDxzL6wURSdceRAyiyfntUQcrLfWAff75KzMgp1rmeLyMFFfl6HNK30b-4PoaykV15UbB8qsJR72emUKV0BDMZM3WWynMi-wA3yh6qOc2kVBnFMEh2EXp2GaWKpFk6LNZNHrZ03xe3M1VpaxrxLYH2LTMg58aDtBLdanbeIj6Jzrj0igDscnwIsYTMS-uWuQ3RXl-pmuFvdS2JsWUovIvEfmByOFeGQYYsDjs6ThBwYlnGp5h1sTer9FBaALlNr8v9JsEV7dw--607UI9bRfhMXmo4p-90kWZ2nLJ~C0EBz-YjDPQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+  "video_url": "",
+  "texture_urls": [],
+  "consumed_credits": 5
+}

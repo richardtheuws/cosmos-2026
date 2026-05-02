@@ -4,6 +4,83 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.1.0] — 2026-05-02 — Sprint 15: 3D Cosmo + weirdo auto-runner
+
+GROND-UP gameplay-rebuild #2. Pivot van rhythm-trip naar **weird auto-runner met agency** — Cosmo loopt door een 3D-scene op de muziek, speler begeleidt met swipes/taps, Cosmo heeft eigen agenda (negeert input 20% v/d tijd, knipoogt zomaar, loopt achteruit). Geen game-over. WEIRDO-energy expliciet ingebakken: niet een speelervaring waarin de speler de baas is over een schattig wezen, maar één waarin een eigenaardig wezen JOU laat meelopen in zijn dag.
+
+### Added (15A — Meshy 3D Cosmo)
+
+- `public/assets/3d/cosmo.glb` — image-to-3D vanaf Sprint 14A canonical-v2 (de PIL-painted-eyes versie). 9/10 DNA-correct: pearl-drop ✓, chameleon-eyes met saffron crescent ✓, antenne+rose-flower ✓, faded-rose spots ✓, no tail ✓, uncanny-vibe ✓. Suction-cups partial (residual claws boven discs).
+- 22.5k verts, 8MB raw GLB, 3 PBR maps embedded (baseColor + normal + ORM).
+- Cost $0.20 (van $3-5 budget).
+- **Memory-leering**: Meshy auto-rig faalt deterministisch op alien anatomy (HTTP 422 op 4 parameter-varianten + 2 source-tasks). Pose-estimator is humanoid-trained. Workaround: procedural anim direct vanuit `cosmo-animation-spec.json` (idle-breath/walk/jump-up/jump-fall/cling/wave-uncanny). Skip AnimationMixer voor cleaner FFT-control.
+
+### Added (15B — Weirdo gameplay-stack)
+
+8 nieuwe files vervangen het rhythm-tap-systeem:
+- `CosmoStage` (Three.js sub-renderer met PerspectiveCamera + lights + camera-follow met deadzone, rendered ON TOP van parallax via `autoClear=false + clearDepth`)
+- `CosmoAgent` (GLB wrapper + state-machine + agency-RNG; 2D billboard fallback met `cosmo-hero-4k.png` tot GLB async loadt)
+- `ObstacleManager` (pool 12, kinds low/tall/gap, beat-loose timing op `audioBridge.musicCurrentTime()` met 1.6-2.4s drift-fallback, `setObstacleFactory()` exposed)
+- `InteractionManager` (gestures → CosmoAgent decisions + transient platform-meshes — trampoline torus + mushroom)
+- `VibeMeter` (Phaser Graphics ring rond geprojecteerde screen-pos, 5%/s decay, full → DeepTripMode)
+- `DeepTripMode` (5s post-FX peak + hallucination-track + dance)
+- `CosmoScene` (Phaser is HUD-only nu)
+
+**Agency-RNG tuning** (de WEIRDO-touch):
+- 0.5%/frame @ 60fps = ~3.3s avg random event, 4.5s cooldown
+- Distributie: 25% knipoog · 30% walk-backward · 30% eigen-jump · 15% petal-spew
+- Action-commit: 80% op swipe, **50/50** op tap-jump-of-duck
+- Decision-delay 120-280ms random
+- **Geen "voorspelbare modus" toggle** — per brief verboden
+- Failure (tall-obstacle collision tijdens niet-jumping) → forceFall 1.2s opacity-fade → respawn 1.5s 2-4 worldX vooruit, vibe -10%. Geen game-over.
+
+### Added (15C — 8 weirdo objects)
+
+Alle 8 fal.ai-generated, $1.85, geen code aangeraakt:
+
+- **eyeball-sentry** 9/10 (chameleon-iris die volgt) — first-pass STANDOUT via Flux Pro Ultra
+- **breathing-portal** 8/10 (adem-cycle saffron→magenta→cyan) — first-pass STANDOUT
+- **organic-flesh-trampoline** 8/10 (ademende membraan, body-horror)
+- **mouth-pillar-sheet** 8/10 (4-frame PIL-composite — single-image sheet bias unbreakable)
+- **upside-down-tree** 7/10 (V4 success na 3 fails — drop noun, gebruik 3-zone shape-prompt)
+- **melting-clock-bubble** 7/10 (Dali via "watercolor painting" lead-prefix)
+- **secret-crystal** 7/10 (hidden tot post-FX kaleido > 0.8)
+- **floating-star** 5/10 (collectable +5 vibe-meter)
+
+**Memory-leerings**:
+- Sprite-sheet symmetry-bias unbreakable: diffusion kan GEEN sequential-animation-states in één image renderen → 4 separate calls + PIL composite is werkende patroon
+- Sample-bias rond bekende nouns: drop het noun, beschrijf 3 SHAPE-zones — transferable
+- Flux Pro Ultra forceert photo-aesthetic op organische subjects; Flux Dev pliabler voor stylized watercolor + body-horror
+
+### Added (15D — Onboarding magic-moment)
+
+3-second hook met WEIRDO-energy:
+- `OnboardingDirector` state-machine: AWAIT_TOUCH → PORTAL_OPENING (1.5s) → COSMO_ARRIVING (1.5s) → BONDING (1.0s) → WALKING_FIRST_HINT → COMPLETE
+- `NebulaPortal` (Phaser canvas-drawn, 6 concentric rings, ease-out-cubic radial expand, palette saffron→faded-rose→ink-aubergine, per-ring breath + lichte rotation-eccentriciteit)
+- `HintGlyph` chevron-arrow + Cormorant-Garamond italic "veeg omhoog", anchored aan closest live obstacle, 1.6Hz bob → 3Hz intensify-pulse na 5s no-input
+- **Wave-uncanny** clip: te-traag, te-lang, te-gelocked. Eyes-locked-on-camera. "Alsof Cosmo JOU ontdekt"
+- Audio-stinger: bestaande `globe-l1-1.mp3` (3-syllable Hint Globe voice — kid-alien babble)
+- localStorage `cosmosOnboardingComplete` skip portal+arrival voor return-users
+- Geen text-instruction in stappen 0-2.5s
+
+### Added (15E — Wiring + deploy)
+
+- `weirdoObstacleFactory.ts` — vervangt canvas-primitive defaults door 15C's 8 objects als billboarded planes met THREE.TextureLoader + cache. Per kind random pool-pick zodat playthrough nooit repetitief voelt.
+- 3 ObstacleKinds → pools: low (trampoline + star), tall (sentry + tree + mouth-pillar), gap (portal + crystal + clock-bubble)
+- Pre-warm bij boot zodat eerste spawn niet pop't
+
+### Cost Sprint 15
+
+$2.05 totaal (15A: $0.20 + 15C: $1.85 + 15B/D/E: $0).
+
+### Open voor Sprint 16
+
+- **Cosmo-LoRA fine-tune** ($10-15) voor permanente DNA-fix in 4K renders + procedural-anim variants
+- Draco compress cosmo.glb (8MB → 2MB) in build-pipeline
+- 2 extra weirdo objects: levitating-tongue-bridge + antenna-flower-rain
+- Per-biome obstacle-pool variations
+- ElevenLabs custom Cosmo gibberish-voice library (3 varianten)
+
 ## [1.0.1] — 2026-05-02 — Sprint 14: complete-experience polish
 
 v1.0.0's eerste live demo had drie zichtbare gebreken: kawaii Cosmo, dubbele blended backgrounds, en HUD-clutter. Sprint 14 fixt alle drie + voegt drift-loose default mode toe (geen rhythm-druk, hypnose first).

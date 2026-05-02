@@ -1,0 +1,188 @@
+{
+  "version": "1.0.0",
+  "sprint": "15A",
+  "generated": "2026-05-01",
+  "model": {
+    "file": "cosmo.glb",
+    "source": "Meshy Studio image-to-3D from cosmo-hero-4k.png",
+    "task_id": "019de7bb-0092-7fd6-8455-1dfb86b5401e",
+    "vertices": 22563,
+    "triangles": 29424,
+    "size_mb": 8.08,
+    "meshes": 1,
+    "rigged": false,
+    "embedded_animations": 0,
+    "note": "Meshy auto-rig faalde op alien-anatomy (Pose estimation failed). Animations moeten procedural in Three.js — zie clips hieronder."
+  },
+  "dna_verification": {
+    "pearl_drop_head": "PASS",
+    "chameleon_bulging_eyes": "PASS",
+    "saffron_crescent_catchlight": "PASS",
+    "single_antenna_with_flower_bulb": "PASS",
+    "suction_cup_discs_at_handtips": "PARTIAL — visible discs but residual claw fingers from canonical bias",
+    "faded_rose_spots_on_green_body": "PASS",
+    "no_tail": "PASS",
+    "slight_uncute_proportions": "PASS",
+    "hayao_moebius_watercolor_texture": "PASS",
+    "slightly_menacing_uncanny": "PASS"
+  },
+  "animation_clips": [
+    {
+      "name": "idle-breath",
+      "duration_sec": 4.0,
+      "loop": true,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "body_y_scale_pulse": {
+          "amplitude": 0.04,
+          "frequency_hz": 0.25,
+          "easing": "sine"
+        },
+        "antenna_tip_bob": {
+          "amplitude_deg": 3,
+          "frequency_hz": 0.5,
+          "easing": "sine"
+        },
+        "blink_event": {
+          "interval_sec_random": [4, 7],
+          "duration_sec": 0.15,
+          "scale_y_eyes": 0.05,
+          "note": "Eyelid blink — modulate eye-mesh y-scale to 5% briefly"
+        }
+      }
+    },
+    {
+      "name": "walk",
+      "duration_sec": 1.5,
+      "loop": true,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "body_y_bob": {
+          "amplitude": 0.08,
+          "frequency_hz": 1.33,
+          "easing": "sine"
+        },
+        "body_z_rotation": {
+          "amplitude_deg": 4,
+          "frequency_hz": 1.33,
+          "phase_offset": 0
+        },
+        "suction_cup_alternate_slap": {
+          "left_arm_y_offset": "sin(2*PI*1.33*t) * 0.15",
+          "right_arm_y_offset": "sin(2*PI*1.33*t + PI) * 0.15",
+          "note": "Discs slap-down on alternating beats"
+        },
+        "antenna_tip_bob": {
+          "amplitude_deg": 8,
+          "frequency_hz": 1.33,
+          "phase_offset_deg": 90
+        }
+      }
+    },
+    {
+      "name": "jump-up",
+      "duration_sec": 0.8,
+      "loop": false,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "anticipation_phase": {
+          "duration_sec": 0.2,
+          "body_y_scale": [1.0, 0.85],
+          "body_x_scale": [1.0, 1.10],
+          "easing": "ease-out"
+        },
+        "launch_phase": {
+          "duration_sec": 0.4,
+          "body_y_scale": [0.85, 1.15],
+          "body_x_scale": [1.10, 0.92],
+          "easing": "ease-out"
+        },
+        "settle_phase": {
+          "duration_sec": 0.2,
+          "body_y_scale": [1.15, 1.0],
+          "body_x_scale": [0.92, 1.0],
+          "easing": "ease-in"
+        }
+      }
+    },
+    {
+      "name": "jump-fall",
+      "duration_sec": 0.6,
+      "loop": false,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "body_x_scale_stretch": 0.92,
+        "body_y_scale_stretch": 1.10,
+        "z_rotation_velocity_align": {
+          "max_deg": 12,
+          "easing": "linear",
+          "note": "Tilt forward toward velocity direction"
+        },
+        "antenna_drag_back": {
+          "rotation_deg": -15,
+          "easing": "ease-out"
+        }
+      }
+    },
+    {
+      "name": "cling",
+      "duration_sec": 2.0,
+      "loop": true,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "base_rotation_z_deg": 90,
+        "note": "Rotate entire body 90deg so suction-cup discs face wall",
+        "body_pulse": {
+          "amplitude": 0.02,
+          "frequency_hz": 0.5,
+          "easing": "sine"
+        },
+        "antenna_tip_dangle_swing": {
+          "amplitude_deg": 6,
+          "frequency_hz": 0.4,
+          "easing": "sine"
+        }
+      }
+    },
+    {
+      "name": "wave-uncanny",
+      "duration_sec": 1.5,
+      "loop": false,
+      "implementation": "procedural-object-transforms",
+      "spec": {
+        "right_arm_raise": {
+          "duration_sec": 0.3,
+          "rotation_deg": 100,
+          "easing": "ease-out",
+          "note": "Lift right arm up to head height"
+        },
+        "wave_oscillation": {
+          "duration_sec": 0.9,
+          "rotation_amplitude_deg": 25,
+          "frequency_hz": 1.5,
+          "note": "Slow wave — slightly too slow, slightly too long. WEIRDO TOUCH."
+        },
+        "hold_pause": {
+          "duration_sec": 0.3,
+          "note": "Eyes locked at player, hand frozen mid-wave — uncanny"
+        },
+        "eye_lock_at_camera": true,
+        "no_blink_during_wave": true
+      }
+    }
+  ],
+  "fft_audio_bridge": {
+    "lows_drives": "body_y_scale_pulse on idle-breath",
+    "mids_drives": "eye_emissive_intensity (chameleon-eye glow)",
+    "highs_drives": "antenna_tip_bobble amplitude",
+    "note": "15B implementation — connect Cosmos audio FFT analyzer to material uniforms + transform values"
+  },
+  "integration_hint_for_15b": {
+    "loader": "THREE.GLTFLoader",
+    "scene_root": "scene.children[0] (single mesh)",
+    "approach": "Object-level transforms via THREE.AnimationMixer with KeyframeTracks generated from this spec, OR direct mesh.scale/mesh.rotation manipulation in update loop",
+    "recommended_mode": "Procedural in update(deltaTime) loop — simpler than full Mixer for non-skeletal anim, gives exact FFT-bridge control",
+    "performance_target": "60fps on iPhone 14 baseline, mesh has 29k tris which is OK at 1 instance",
+    "compression_recommendation": "Run through gltf-transform draco compression in 15B build pipeline to drop from 8MB to ~2MB"
+  }
+}
