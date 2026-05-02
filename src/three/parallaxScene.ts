@@ -10,7 +10,7 @@
 import * as THREE from 'three';
 import { assetPath } from '../core/assetPath';
 import type { GlobalUniforms } from '../core/globalUniforms';
-import type { Biome, BiomeLayer } from '../data/biomes';
+import type { Biome, BiomeLayer } from '../data/biomePresets';
 import { createPostFX, type PostFX } from './postFX/postFX';
 
 interface RuntimeLayer {

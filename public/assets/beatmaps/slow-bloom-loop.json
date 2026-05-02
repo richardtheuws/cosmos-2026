@@ -1,0 +1,272 @@
+{
+  "track": "slow-bloom-loop",
+  "bpm": 88,
+  "duration": 169.92,
+  "manualTuned": false,
+  "events": [
+    {
+      "t": 32.879,
+      "x": 0.2,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 36.897,
+      "x": 0.8,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 40.914,
+      "x": 0.244,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 48.924,
+      "x": 0.761,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 51.455,
+      "x": 0.318,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 52.941,
+      "x": 0.655,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 55.449,
+      "x": 0.392,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 56.959,
+      "x": 0.61,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 59.466,
+      "x": 0.467,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 69.01,
+      "x": 0.564,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 73.027,
+      "x": 0.481,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 75.535,
+      "x": 0.518,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 81.061,
+      "x": 0.555,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 82.57,
+      "x": 0.412,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 83.569,
+      "x": 0.629,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 85.078,
+      "x": 0.366,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 89.095,
+      "x": 0.703,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 93.112,
+      "x": 0.32,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 96.386,
+      "x": 0.717,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 115.728,
+      "x": 0.275,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 119.745,
+      "x": 0.792,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 120.512,
+      "x": 0.229,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 120.999,
+      "x": 0.8,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 121.255,
+      "x": 0.2,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 123.762,
+      "x": 0.8,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 137.346,
+      "x": 0.2,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 146.936,
+      "x": 0.774,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 147.934,
+      "x": 0.211,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 149.444,
+      "x": 0.788,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 150.953,
+      "x": 0.225,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 151.951,
+      "x": 0.8,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 153.461,
+      "x": 0.2,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    },
+    {
+      "t": 161.89,
+      "x": 0.8,
+      "y": 1.0,
+      "type": "tap",
+      "combo": 1,
+      "telegraph": 1.5
+    }
+  ]
+}

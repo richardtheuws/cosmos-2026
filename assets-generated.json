@@ -805,12 +805,30 @@
       "seed_locked": 7777,
       "user_complaint": "online versie heeft een soort stick puppet \u2014 Cosmo en enemies mogen gerust wat massaler en voller aanvoelen (Richard, 2026-05-01)",
       "params_chosen": {
-        "walk-1": {"strength": 0.45, "control_lora_strength": 1.20},
-        "walk-2": {"strength": 0.45, "control_lora_strength": 1.20},
-        "jump-up": {"strength": 0.65, "control_lora_strength": 1.25},
-        "jump-fall": {"strength": 0.65, "control_lora_strength": 1.25},
-        "cling-right": {"strength": 0.65, "control_lora_strength": 1.25},
-        "hurt": {"strength": 0.55, "control_lora_strength": 1.22}
+        "walk-1": {
+          "strength": 0.45,
+          "control_lora_strength": 1.2
+        },
+        "walk-2": {
+          "strength": 0.45,
+          "control_lora_strength": 1.2
+        },
+        "jump-up": {
+          "strength": 0.65,
+          "control_lora_strength": 1.25
+        },
+        "jump-fall": {
+          "strength": 0.65,
+          "control_lora_strength": 1.25
+        },
+        "cling-right": {
+          "strength": 0.65,
+          "control_lora_strength": 1.25
+        },
+        "hurt": {
+          "strength": 0.55,
+          "control_lora_strength": 1.22
+        }
       },
       "frames_overwritten": [
         "public/assets/sprites/v3/cosmo-walk-1.png",
@@ -822,12 +840,72 @@
       ],
       "case_study_dir": "public/assets/case-study/cosmo-rerender-v11a/",
       "acceptance_criteria_per_frame": {
-        "walk-1": {"body_mass": "PASS \u2014 full Hayao watercolor", "hayao_texture": "PASS", "rose_spots": "PASS \u2014 visible on body+head", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS (alpha-erased post-BiRefNet)", "chameleon_eyes": "PASS", "pose_120px_distinct": "PARTIAL \u2014 arms-down stance, but legs only marginally shifted from canonical idle"},
-        "walk-2": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PASS", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "PARTIAL \u2014 mirror-arm intent visible, leg-stride near-canonical"},
-        "jump-up": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL \u2014 fewer spots", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 ghosted skeleton arms visible in halo, but rendered character keeps neutral idle pose"},
-        "jump-fall": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 same as jump-up"},
-        "cling-right": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PARTIAL", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 not sideways, character still upright"},
-        "hurt": {"body_mass": "PASS", "hayao_texture": "PASS", "rose_spots": "PASS", "single_antenna_flower": "PASS", "pearl_drop_head": "PASS", "two_disc_pads": "PASS", "no_tail": "PASS", "chameleon_eyes": "PASS", "pose_120px_distinct": "FAIL \u2014 no head-tilt or knockback splay"}
+        "walk-1": {
+          "body_mass": "PASS \u2014 full Hayao watercolor",
+          "hayao_texture": "PASS",
+          "rose_spots": "PASS \u2014 visible on body+head",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS (alpha-erased post-BiRefNet)",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "PARTIAL \u2014 arms-down stance, but legs only marginally shifted from canonical idle"
+        },
+        "walk-2": {
+          "body_mass": "PASS",
+          "hayao_texture": "PASS",
+          "rose_spots": "PASS",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "PARTIAL \u2014 mirror-arm intent visible, leg-stride near-canonical"
+        },
+        "jump-up": {
+          "body_mass": "PASS",
+          "hayao_texture": "PASS",
+          "rose_spots": "PARTIAL \u2014 fewer spots",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "FAIL \u2014 ghosted skeleton arms visible in halo, but rendered character keeps neutral idle pose"
+        },
+        "jump-fall": {
+          "body_mass": "PASS",
+          "hayao_texture": "PASS",
+          "rose_spots": "PARTIAL",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "FAIL \u2014 same as jump-up"
+        },
+        "cling-right": {
+          "body_mass": "PASS",
+          "hayao_texture": "PASS",
+          "rose_spots": "PARTIAL",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "FAIL \u2014 not sideways, character still upright"
+        },
+        "hurt": {
+          "body_mass": "PASS",
+          "hayao_texture": "PASS",
+          "rose_spots": "PASS",
+          "single_antenna_flower": "PASS",
+          "pearl_drop_head": "PASS",
+          "two_disc_pads": "PASS",
+          "no_tail": "PASS",
+          "chameleon_eyes": "PASS",
+          "pose_120px_distinct": "FAIL \u2014 no head-tilt or knockback splay"
+        }
       },
       "key_learnings_sprint_11a": [
         "BODY-MASS RESTORATION SUCCEEDED: img2img with canonical-v2-cleaned at strength 0.45-0.65 + control_lora_strength 1.20-1.25 PRESERVES Hayao watercolor body, chameleon eyes, faded-rose spots, pearl-drop head, suction-cup discs across all 6 frames. Stick-puppet complaint is FIXED.",
@@ -850,6 +928,267 @@
         "Pose-distinction at 120px display: walk-1/walk-2 have minor arm-angle variation but legs and torso are near-identical to idle; jump-up/jump-fall/cling-right/hurt do NOT visually read as their named poses. Game mechanics may need to compensate via tween/rotation/scale on top of texture swap. RECOMMENDED: Cosmo.ts updateAnim() should add rotation tween for jump-fall/hurt (Z-axis spin), scale-pulse for jump-up (squash+stretch), setRotation+setFlipX for cling-right.",
         "Tail-stub remnants: BiRefNet sometimes preserves a thin vertical pixel-row at the feet from where the tail was alpha-erased. Cosmetic, invisible at 120px, no fix needed.",
         "Sprint 11A confirms Sprint 5B+7A architectural finding: Flux text-conditional + canonical img2img cannot escape canonical-pose-bias. For TRUE pose variation, either (a) train a Cosmo LoRA from the existing renders + use skeleton-only inference, (b) hand-painted sketch-to-img per pose, or (c) use a 3D rigged Cosmo via Meshy and render poses from 3D. All three are larger scope than this sprint."
+      ]
+    },
+    {
+      "sprint": "Sprint 13D \u2014 PREMIUM v1.0.0 launch assets",
+      "generated": "2026-05-02",
+      "budget_approved": "$10",
+      "actual_cost_estimate": "$3.40",
+      "strategy": "Quality > quantity. Multi-model selection per use-case. Img2img regen for character DNA preservation. Alpha-erase post-process for unbreakable Flux sample-bias.",
+      "phases_run": [
+        "p1 cosmo hero (recraft attempt + flux-pro-ultra fallback + img2img regen from canonical-v2)",
+        "p2 4 biome backgrounds parallel (flux-pro-ultra)",
+        "p3 8 cosmic bubbles parallel (flux-pro v1.1 + birefnet)",
+        "p4 6 hallucination particles parallel (flux dev + birefnet)",
+        "p5 share-card + 2 splash + 5 promo keyframes (mixed recraft/flux-pro-ultra/flux-pro)",
+        "p6 regens (cosmo img2img, slow-bloom + cathedral retry)",
+        "p7 final fixes (alpha-erase figure, alpha-erase tail, cathedral on flux-dev)"
+      ],
+      "wow_ratings": {
+        "cosmo-hero-4k": "7/10 (DNA-faithful chameleon eyes + suction-cup discs after img2img regen, small tail-stub remnant cosmetic)",
+        "biome-slow-bloom-4k": "8/10 (stunning mushroom forest, lone wanderer remnant ~3% of canvas - acceptable at game scale)",
+        "biome-inkpool-4k": "10/10 (stop-and-stare, character-free, magical cave w/ bioluminescence)",
+        "biome-cathedral-4k": "9/10 (flux-dev regen produced real Hayao watercolor, 3 cosmic particles drifting, paper-grain visible)",
+        "biome-boss-4k": "10/10 (vortex storm cathedral, sublime apocalyptic)",
+        "bubbles 1-8": "9/10 each (8/8 painterly watercolor orbs, transparent BG, distinctive palette per variant)",
+        "particles 1-6": "9/10 each (kaleido-petal especially WOW, all painterly)",
+        "card-frame-template": "7/10 (border-frame design B+, COSMOS watermark elegant, orange-field overpowers slightly)",
+        "splash-hero portrait+landscape": "6/10 (kawaii-eye + finger-hand DNA-drift, but acceptable as promo art)",
+        "promo keyframes 1-5": "6-9/10 (keyframe-3 deep-trip 9/10, keyframe-4 kaleido-burst 8/10, others 6/10 due to kawaii-drift)"
+      },
+      "regen_count": {
+        "cosmo-hero": "2 (recraft 422 fail + flux-pro-ultra 1024\u00d7768 black-output, then img2img from canonical-v2 SHIP)",
+        "slow-bloom": "3 (flux-pro-ultra v1 with figure, flux-pro-ultra v2 with 2 figures, alpha-erase, restored to v1, alpha-erase 1 figure remaining)",
+        "cathedral": "2 (flux-pro-ultra v1 too photoreal, flux-dev v2 SHIP - real watercolor)"
+      },
+      "blockers_encountered": [
+        "Recraft V3 returned HTTP 422 on response fetch (transient or unsupported style param) \u2014 fell back to flux-pro-ultra",
+        "Flux Pro v1.1 Ultra palette-collapse-to-black bug hit on Cosmo hero (pure-black output despite 'luminous bright pastel' rider)",
+        "Flux Pro v1.1 Ultra returned 1024x768 instead of requested 2048x2048 (aspect ratio interpretation)",
+        "BiRefNet over-stripped Cosmo hero raw (10KB \u2192 3KB) \u2014 hero needed img2img regen via canonical-v2 with paper-grain emphasis",
+        "Flux 'lone wanderer in alien world' sample-bias unbreakable in mushroom-forest scenes (3 attempts, 8-fold negative not enough)",
+        "Flux Pro v1.1 forces photoreal aesthetic for sky/cloud scenes \u2014 Flux Dev pliabler for stylized watercolor (cathedral lesson)",
+        "Img2img from canonical regenerates the alpha-erased tail (Sprint 11A pattern confirmed); requires post-img2img alpha-erase",
+        "Splash + promo Cosmo's cannot avoid kawaii-drift via text-only \u2014 would need img2img-from-canonical (sacrifices pose variation, defeating promo purpose)"
+      ],
+      "memory_lessons_added": [
+        "Recraft V3 occasionally returns 422 on response endpoint \u2014 always have flux-pro fallback",
+        "Flux Pro Ultra still has palette-collapse-to-black bug \u2014 anti-dark rider must be EARLY in prompt, not just middle",
+        "Flux Pro Ultra interprets 'aspect_ratio: 1:1' but defaults to 1024 base unless given explicit width/height (which then forces v1.1 endpoint)",
+        "Cathedral/sky scenes: Flux Dev > Flux Pro for watercolor DNA (Pro forces photoreal)",
+        "Alpha-erase patch sources can introduce NEW Flux sample-bias artifacts (lone wanderer was IN the patch source too) \u2014 pick patch from far away from any path/people zones",
+        "Img2img from canonical at strength=0.45 with explicit DNA prompt PRESERVES Cosmo body+head+spots correctly but ADDS kawaii eye-drift (eyelashes, doll-eyes) \u2014 unavoidable in flux/dev/image-to-image",
+        "Final tail-erase polygon must extend further down than expected (canonical-v2 tail had ~120px stub below feet)",
+        "8-fold anti-character stack still insufficient for mushroom-forest scenes \u2014 wanderer-bias is essentially unbreakable for that biome"
+      ],
+      "assets": [
+        {
+          "file": "public/assets/sprites/cosmo-hero-4k.png",
+          "model": "fal-ai/flux/dev/image-to-image",
+          "source": "cosmo-canonical-v2-cleaned.png",
+          "strength": 0.45,
+          "post_process": "BiRefNet remove-bg + PIL alpha-erase tail polygon",
+          "image_size": "1024x1024 (target was 2048 \u2014 endpoint downscaled)",
+          "wow": 7,
+          "notes": "DNA-correct head/eyes/spots/discs; small tail-stub remnant; manga-eye drift from img2img"
+        },
+        {
+          "file": "public/assets/backgrounds/biome-slow-bloom-4k.png",
+          "model": "fal-ai/flux-pro/v1.1-ultra",
+          "size": "2752x1536",
+          "post_process": "PIL alpha-erase 1 figure (lower-left wanderer)",
+          "wow": 8,
+          "notes": "Stunning mushroom forest; lone wanderer remnant ~3% of canvas (acceptable at game scale)"
+        },
+        {
+          "file": "public/assets/backgrounds/biome-inkpool-4k.png",
+          "model": "fal-ai/flux-pro/v1.1-ultra",
+          "size": "2752x1536",
+          "post_process": "none",
+          "wow": 10,
+          "notes": "Magical bioluminescent cave; character-free; first-pass SHIP"
+        },
+        {
+          "file": "public/assets/backgrounds/biome-cathedral-4k.png",
+          "model": "fal-ai/flux/dev",
+          "size": "2048x1152",
+          "post_process": "none",
+          "wow": 9,
+          "notes": "Hayao\u00d7Moebius watercolor clouds; paper-grain visible; 3 cosmic particles; flux-dev regen after flux-pro-ultra was too photoreal"
+        },
+        {
+          "file": "public/assets/backgrounds/biome-boss-4k.png",
+          "model": "fal-ai/flux-pro/v1.1-ultra",
+          "size": "2752x1536",
+          "post_process": "none",
+          "wow": 10,
+          "notes": "Apocalyptic vortex storm; saffron + pop-magenta; first-pass SHIP"
+        },
+        {
+          "file": "public/assets/bubbles/bubble-1.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "faded-rose",
+          "wow": 9,
+          "notes": "RGBA 1024\u00b2 transparent, faded-rose+saffron-glow internal swirl"
+        },
+        {
+          "file": "public/assets/bubbles/bubble-2.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "saffron-glow",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/bubbles/bubble-3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "pop-magenta",
+          "wow": 10,
+          "notes": "STANDOUT \u2014 electric energy, perfect bubble feel"
+        },
+        {
+          "file": "public/assets/bubbles/bubble-4.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "pop-cyan",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/bubbles/bubble-5.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "moss-sage",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/bubbles/bubble-6.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "mushroom-cream",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/bubbles/bubble-7.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "sky-wash",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/bubbles/bubble-8.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "ink-aubergine",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/particles/particle-1.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "kaleido-petal",
+          "wow": 10,
+          "notes": "STANDOUT \u2014 symmetric petal mandala, perfect overlay"
+        },
+        {
+          "file": "public/assets/particles/particle-2.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "fluid-blob",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/particles/particle-3.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "sparkle-burst",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/particles/particle-4.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "ink-droplet",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/particles/particle-5.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "BiRefNet remove-bg",
+          "variant": "light-flare",
+          "wow": 9
+        },
+        {
+          "file": "public/assets/particles/particle-6.png",
+          "model": "fal-ai/flux/dev",
+          "post_process": "raw (BiRefNet stripped to <15KB)",
+          "variant": "cosmic-dust",
+          "wow": 7,
+          "notes": "RGB not RGBA \u2014 particle-dust is too diffuse for BiRefNet to subject-isolate"
+        },
+        {
+          "file": "public/assets/share/card-frame-template.png",
+          "model": "fal-ai/recraft-v3",
+          "size": "1080x1920",
+          "post_process": "none",
+          "wow": 7,
+          "notes": "Border-frame B+ \u2014 orange field heavier than intended, COSMOS watermark elegant"
+        },
+        {
+          "file": "public/assets/share/splash-hero.png",
+          "model": "fal-ai/flux-pro/v1.1-ultra",
+          "size": "1080x1920 portrait",
+          "post_process": "none",
+          "wow": 6,
+          "notes": "Cosmo present in psychedelic kaleido-frame, but DNA-drift: kawaii-eyes + finger-hands instead of suction-cups + tail (text-only Flux can't render unusual anatomy \u2014 known bias)"
+        },
+        {
+          "file": "public/assets/share/splash-hero-landscape.png",
+          "model": "fal-ai/flux-pro/v1.1-ultra",
+          "size": "1920x1080 landscape",
+          "post_process": "none",
+          "wow": 6,
+          "notes": "Same DNA-drift as portrait; psychedelic vibe + kaleido swirls excellent for promo"
+        },
+        {
+          "file": "public/assets/promo/keyframe-1.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1920x1080",
+          "scene": "idle",
+          "wow": 7,
+          "notes": "Hayao watercolor BG gorgeous; Cosmo with kawaii drift"
+        },
+        {
+          "file": "public/assets/promo/keyframe-2.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1920x1080",
+          "scene": "combo-celebration",
+          "wow": 7
+        },
+        {
+          "file": "public/assets/promo/keyframe-3.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1920x1080",
+          "scene": "deep-trip",
+          "wow": 9,
+          "notes": "STANDOUT \u2014 lotus-meditation + mandala-petals + transcendent vibe even with kawaii drift"
+        },
+        {
+          "file": "public/assets/promo/keyframe-4.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1920x1080",
+          "scene": "kaleido-burst",
+          "wow": 8,
+          "notes": "Explosive radial energy; Cosmo arms-out fits the moment despite kawaii drift"
+        },
+        {
+          "file": "public/assets/promo/keyframe-5.png",
+          "model": "fal-ai/flux-pro/v1.1",
+          "size": "1920x1080",
+          "scene": "share-moment",
+          "wow": 7
+        }
       ]
     }
   ]

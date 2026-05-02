@@ -32,7 +32,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
 const publicDir = join(projectRoot, 'public');
-const distDir = join(projectRoot, 'dist');
+const distDir = process.env.DIST_DIR ?? join(projectRoot, 'dist');
 
 const ENTRY_HTMLS = new Set([
   'updates/index.html',

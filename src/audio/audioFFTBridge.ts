@@ -364,6 +364,62 @@ export class AudioFFTBridge {
     return this.hallucinationActive !== null;
   }
 
+  /**
+   * Sprint 13A — swipe-to-tempo-shift hook. Sets the playbackRate of the
+   * underlying streamed `<audio>` element when the music source is streamed.
+   * The placeholder synth has no rate to vary, so this is a no-op there.
+   */
+  setMusicRate(rate: number): void {
+    const audioEl = this.source?.audioEl;
+    if (audioEl) {
+      audioEl.playbackRate = Math.max(0.5, Math.min(2.0, rate));
+    }
+  }
+
+  /**
+   * Sprint 13B/13E — current playback position of the streamed music source,
+   * in seconds. Returns 0 when the source is the placeholder-synth or before
+   * first user gesture. Consumed by BeatmapScheduler so beat-timing follows
+   * the audio clock instead of rAF (drift-free over long sessions).
+   */
+  musicCurrentTime(): number {
+    return this.source?.audioEl?.currentTime ?? 0;
+  }
+
+  /**
+   * Sprint 13E — swap the active music track. Disposes the current source,
+   * creates a fresh streamed track, and connects it to the music sub-bus.
+   * Used by BiomeManager.onTrackSwap to crossfade between biomes (the lerp
+   * itself is on biomeIntensity uniforms; here we just swap the audio).
+   */
+  setMusicTrack(url: string): void {
+    if (!this.ctx || !this.musicGain) return;
+    this.source?.dispose();
+    this.source = createStreamedTrack(this.ctx, url);
+    this.source.output.connect(this.musicGain);
+  }
+
+  /**
+   * Sprint 13C — expose a MediaStream tap of the music+stinger mix so the
+   * ClipRecorder (`src/share/captureClip.ts`) can include audio in its
+   * 60s clip export. We branch off the analyser into a fresh
+   * `MediaStreamAudioDestinationNode`; the existing `analyser → masterGain`
+   * graph is untouched, so the live playback is not affected.
+   *
+   * Returns `null` if the bridge isn't initialised (pre-gesture / Web Audio
+   * unsupported). The returned stream stays live until `dispose()` is called.
+   */
+  captureStream(): MediaStream | null {
+    if (!this.ctx || !this.analyser) return null;
+    const dest = this.ctx.createMediaStreamDestination();
+    try {
+      this.analyser.connect(dest);
+    } catch {
+      return null;
+    }
+    return dest.stream;
+  }
+
   /** Tear down. Call on hot-reload / scene swap. */
   dispose(): void {
     this.source?.dispose();

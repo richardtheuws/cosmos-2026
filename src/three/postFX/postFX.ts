@@ -105,21 +105,29 @@ export function createPostFX(
       const mids = (f[2] + f[3] + f[4]) / 3;
       const highs = (f[5] + f[6] + f[7]) / 3;
 
+      // Per-biome scalars (PRD §5). 1.0 = full base stack, lower = damped.
+      // Defaults to 1 in createGlobalUniforms() so unattached scenes stay hot.
+      const bi = u.biomeIntensity;
+
       // Constant-trippy breathing — slow sine drives bloom + chroma in lockstep,
       // music lows boost bloom intensity by up to +0.6.
       const breath = 0.5 + 0.5 * Math.sin(u.time * 0.45);
-      bloom.intensity = 0.7 + breath * 0.45 + lows * 0.6;
-      chroma.offset.set(0.005 + breath * 0.004, 0.006 + breath * 0.004);
+      bloom.intensity = (0.7 + breath * 0.45 + lows * 0.6) * bi.bloom;
+      const chromaScale = bi.chroma;
+      chroma.offset.set(
+        (0.005 + breath * 0.004) * chromaScale,
+        (0.006 + breath * 0.004) * chromaScale,
+      );
 
       // Kaleidoscope strength: ambient ripple + on-trigger spike + mids lift.
       // Angle gains a music-driven nudge so the prism rotates with the koto pluck.
       const ambientKaleido = 0.16 + 0.08 * Math.sin(u.time * 0.7);
-      const kStrength = ambientKaleido + u.kaleidoTrigger * 0.7 + mids * 0.25;
+      const kStrength = (ambientKaleido + u.kaleidoTrigger * 0.7 + mids * 0.25) * bi.kaleido;
       kaleido.uniforms.get('strength')!.value = kStrength;
       kaleido.uniforms.get('angle')!.value = u.time * 0.12 + mids * 0.6;
 
       // Fluid amplitude — base + highs lift, so air/shimmer wobbles the world.
-      fluid.uniforms.get('amplitude')!.value = 0.022 + highs * 0.025;
+      fluid.uniforms.get('amplitude')!.value = (0.022 + highs * 0.025) * bi.fluid;
 
       // Datamosh — only on damage pulse.
       datamosh.uniforms.get('strength')!.value = u.damagePulse;

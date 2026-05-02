@@ -1,0 +1,4 @@
+{"kind": "slow_bloom_alpha_erase", "bbox": [1266, 1075, 1486, 1289], "final_bytes": 6042048}
+{"kind": "cosmo_tail_erase", "final_bytes": 402384, "image_size": [1024, 1024]}
+{"kind": "cathedral_dev_regen", "request_id": "019de77e-93fa-7940-959c-694ba554cc4d", "url": "https://v3b.fal.media/files/b/0a989024/QOSxK5YTKSPAITzfgaKaG.jpg", "final_bytes": 665053, "model": "fal-ai/flux/dev"}
+{"kind": "slow_bloom_dev_final", "request_id": "019de781-2a8c-7950-bf3f-5c8c2ed1aa47", "url": "https://v3b.fal.media/files/b/0a989035/9flsITdyH83jHo5wOBUZt.jpg", "final_bytes": 860233, "model": "fal-ai/flux/dev"}

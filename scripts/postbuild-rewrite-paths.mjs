@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const distDir = resolve(__dirname, '..', 'dist');
+const distDir = process.env.DIST_DIR ?? resolve(__dirname, '..', 'dist');
 const BASE = process.env.VITE_BASE ?? '/games/cosmos-2026/';
 
 if (!existsSync(distDir)) {

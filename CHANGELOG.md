@@ -4,6 +4,52 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [0.9.0] — 2026-05-01 — Sprint 13C: biome-cycling + share-mechanismen
+
+Tweede helft van de v2.0-rebuild. Sprint 13C bouwt het post-FX-cycling-systeem
+en de virale haakjes uit PRD §5/§7 — biome-state-machine met crossfade,
+synesthesia-piek-detector, 1080×1920 share-card capture, 60s clip-recorder met
+audio-tap, glassmorph-overlay en daily-streak counter.
+
+### Added
+
+- **`src/three/biomeManager.ts`** — 4-biome state-machine (slow-bloom →
+  inkpool → cathedral → boss). 4s linear crossfade van `biomeIntensity`
+  uniforms; track-end auto-cycle; long-hold-3s player-trigger via
+  `requestPlayerSwitch()`. Hooks voor track-swap zodat de AudioFFTBridge
+  de eigenaar blijft van `<audio>`-elementen.
+- **`src/share/peakDetector.ts`** — vuurt op (`lows > 0.7` 0.5s sustained)
+  AND (combo > 5 OR boss-biome). 30s cooldown zodat de auto-screenshot
+  zeldzaam voelt. Callback-based — geen extra deps.
+- **`src/share/captureScreen.ts`** — composiet 1080×1920 portret van de
+  Three+Phaser canvases met glassmorph card (track-naam, biome, combo,
+  taps, watermerk + URL) en optionele Cosmo-cirkel.
+- **`src/share/captureClip.ts`** — `ClipRecorder` met `MediaRecorder`
+  (vp9/opus → mp4/avc1 fallback), eigen rAF tikt offscreen-canvas op
+  30fps, audio-tap via `AudioFFTBridge.captureStream()`. 60s default,
+  manual stop ondersteund.
+- **`src/share/shareCardOverlay.ts`** — DOM-modal met preview, "Save to
+  Photos", "Copy share link", auto-dismiss na 8s. Plus `showStreakPill()`
+  voor de "Dag X in de trip"-toast.
+- **`src/share/dailyStreak.ts`** — localStorage streak counter
+  (`cosmosLastVisit`, `cosmosStreak`, `cosmosLongest`), milestones day-7
+  / day-30. Local-date YYYYMMDD, idempotent intra-session.
+- **`src/share/urlSeed.ts`** — `?seed=YYYYMMDD&combo=NN` URL-helpers met
+  FNV-1a + xorshift hash voor deterministische beatmap-shuffle.
+- **`AudioFFTBridge.captureStream()`** — `MediaStreamAudioDestinationNode`
+  tap zodat clip-recorder analyser-output kan opnemen zonder live
+  playback te verstoren.
+- **`globalUniforms.biomeIntensity`** — bloom/kaleido/fluid/chroma/parallax
+  multipliers; `postFX.ts` schaalt zijn base targets ermee.
+- **Biome-presets** uitgebreid van 1 → 4 biomes met `bpm`, `trackUrl`,
+  `chroma` en `BIOME_CYCLE_ORDER`.
+
+### Notes
+
+- BeatScene-integratie en deploy zijn voor Sprint 13D/13E.
+- iPhone Safari MediaRecorder ondersteunt mp4/avc1 vanaf iOS 14.3 — webm
+  faalt daar bewust soft (geen exception, alleen `onError`-callback).
+
 ## [0.8.0] — 2026-05-01 — Sprint 11: visual + audio overhaul
 
 Op live playtest van v0.7.3 viel direct op dat de online versie er als 1992 uit zag — Cosmo was een stick-puppet, HUD was clipart, tiles waren patroon-tegels, en muziek speelde **helemaal niet**. Sprint 11 pakt alles in één klap aan: 4 parallelle teams (Cosmo HD-rerender, HUD volledige redesign, tile-set redesign, audio-debug) en deploy.
