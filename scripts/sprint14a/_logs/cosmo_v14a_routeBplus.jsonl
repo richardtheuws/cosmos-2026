@@ -1,0 +1,15 @@
+{"attempt": "paint_eyes", "skin_top": [224, 232, 148], "skin_mid": [188, 214, 131], "skin_bot": [170, 204, 124], "left": {"cx": 410, "cy": 422, "rx": 52, "ry": 56}, "right": {"cx": 605, "cy": 422, "rx": 52, "ry": 56}}
+{"attempt": "halo", "semi": 0, "opaque": 16777216, "avg_fringe_px": 0.0}
+{"attempt": "final", "src": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/scripts/sprint14a/raw/cosmo-painted-erased-1024-4k.png", "dst": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-4k.png", "route": "B+ paint+erase+esrgan", "halo": {"semi": 0, "opaque": 16777216, "avg_fringe_px": 0.0}}
+{"attempt": "paint_eyes_v2", "left": {"cx": 410, "cy": 422, "rx": 52, "ry": 56}, "right": {"cx": 605, "cy": 422, "rx": 52, "ry": 56}}
+{"attempt": "halo", "semi": 184569, "opaque": 2895098, "avg_fringe_px": 108.47}
+{"attempt": "final", "src": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/scripts/sprint14a/raw/cosmo-painted-erased-1024-4k.png", "dst": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-4k.png", "route": "B+ paint+erase+esrgan", "halo": {"semi": 184569, "opaque": 2895098, "avg_fringe_px": 108.47}}
+{"attempt": "paint_eyes_v2", "left": {"cx": 410, "cy": 422, "rx": 52, "ry": 56}, "right": {"cx": 605, "cy": 422, "rx": 52, "ry": 56}}
+{"attempt": "halo", "semi": 46308, "opaque": 2980604, "avg_fringe_px": 26.82}
+{"attempt": "final", "src": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/scripts/sprint14a/raw/cosmo-painted-erased-1024-4k.png", "dst": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-4k.png", "route": "B+ paint+erase+esrgan", "halo": {"semi": 46308, "opaque": 2980604, "avg_fringe_px": 26.82}}
+{"attempt": "paint_eyes_v2", "left": {"cx": 410, "cy": 422, "rx": 65, "ry": 70}, "right": {"cx": 605, "cy": 422, "rx": 65, "ry": 70}}
+{"attempt": "halo", "semi": 54057, "opaque": 3111661, "avg_fringe_px": 30.64}
+{"attempt": "final", "src": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/scripts/sprint14a/raw/cosmo-painted-erased-1024-4k.png", "dst": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-4k.png", "route": "B+ paint+erase+esrgan", "halo": {"semi": 54057, "opaque": 3111661, "avg_fringe_px": 30.64}}
+{"attempt": "paint_eyes_v2", "left": {"cx": 410, "cy": 422, "rx": 70, "ry": 75}, "right": {"cx": 605, "cy": 422, "rx": 70, "ry": 75}}
+{"attempt": "halo", "semi": 41129, "opaque": 2935212, "avg_fringe_px": 24.01}
+{"attempt": "final", "src": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/scripts/sprint14a/raw/cosmo-painted-erased-1024-4k.png", "dst": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-4k.png", "route": "B+ paint+erase+esrgan", "halo": {"semi": 41129, "opaque": 2935212, "avg_fringe_px": 24.01}}

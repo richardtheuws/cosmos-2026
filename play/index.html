@@ -50,6 +50,24 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   pointer-events: none;
   gap: 0.6rem;
   flex-wrap: nowrap;
+  /* Sprint 14D — invisible-by-default. Hover/focus/tap reveals. */
+  opacity: 0.25;
+  transform: scale(0.92);
+  transform-origin: top center;
+  transition: opacity 220ms ease-out, transform 220ms ease-out;
+  will-change: opacity, transform;
+}
+.hud:hover,
+.hud:focus-within,
+.hud.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+/* AutoVJ engaged: complete blackout of the top-nav. */
+.hud.is-autovj-hidden {
+  opacity: 0 !important;
+  transform: scale(0.9) !important;
+  pointer-events: none !important;
 }
 .hud-left, .hud-right {
   display: flex;
@@ -59,6 +77,21 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   flex-wrap: wrap;
 }
 .hud-right { justify-content: flex-end; }
+/* Hover-affordance hot-zone — invisible 80px strip at top to catch mobile taps. */
+.hud-reveal-zone {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  z-index: 9;
+  pointer-events: auto;
+  background: transparent;
+  /* Tap on this zone toggles .is-revealed on the parent .hud via :has(). */
+}
+.hud-reveal-zone:hover ~ .hud,
+.hud-reveal-zone:active ~ .hud {
+  opacity: 1;
+  transform: scale(1);
+}
 
 /* Shared pill chrome — used for all three HUD elements. */
 .hud-pill {
@@ -264,7 +297,10 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   <canvas id="scene-canvas"></canvas>
   <div id="game-canvas"></div>
 
-  <div class="hud">
+  <!-- Sprint 14D — invisible top-strip; hover/touchstart reveals .hud. -->
+  <div class="hud-reveal-zone" id="hud-reveal-zone" aria-hidden="true"></div>
+
+  <div class="hud" id="hud-root">
     <div class="hud-left">
       <!-- Sprint 11B — game-info pill is injected by HudOverlay.attach() -->
     </div>
@@ -275,7 +311,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
         <a href="/updates/">Updates</a>
         <a href="/support/">Steun</a>
       </nav>
-      <span class="hud-version">v1.0.0 · Cosmos rhythm-trip</span>
+      <span class="hud-version">v1.0.1</span>
     </div>
   </div>
 

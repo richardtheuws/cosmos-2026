@@ -1,16 +1,18 @@
 /**
- * Three.js parallax background. Per level we load ONE biome — three layers
- * (far/mid/near) of the SAME scene at different parallax multipliers. No more
- * cross-biome stacking.
+ * Three.js parallax background. Sprint 14B — single 4K plane per biome.
  *
- * If a layer fails to load (e.g. asset not yet generated), the scene quietly
- * skips that layer rather than aborting — the show still goes on with whatever
- * has rendered.
+ * Earlier we composed 3-4 layered images for cheap depth; the new 4K biome
+ * images already bake in depth so we only need ONE plane that drifts gently
+ * with the camera. This kills the white-fringe blend-ghost that appeared when
+ * a transparent near-layer slid over an opaque clear-color (visible underneath
+ * the camera frame on tall screens).
+ *
+ * If the texture fails to load (e.g. asset not yet generated), the scene just
+ * keeps the ambient clear-color visible — the show still goes on.
  */
 import * as THREE from 'three';
-import { assetPath } from '../core/assetPath';
 import type { GlobalUniforms } from '../core/globalUniforms';
-import type { Biome, BiomeLayer } from '../data/biomePresets';
+import type { Biome } from '../data/biomePresets';
 import { createPostFX, type PostFX } from './postFX/postFX';
 
 interface RuntimeLayer {
@@ -22,6 +24,8 @@ export class ParallaxScene {
   scene: THREE.Scene;
   camera: THREE.OrthographicCamera;
   renderer: THREE.WebGLRenderer;
+  /** Active biome plane(s). Always 1 in the new pipeline; array kept so a
+   *  future crossfade can hold an outgoing plane while the new one fades in. */
   private layers: RuntimeLayer[] = [];
   private ambientPlane: THREE.Mesh;
   private postFX: PostFX;
@@ -55,46 +59,36 @@ export class ParallaxScene {
     this.bindResize();
   }
 
-  /** Replace all layers with the chosen biome's sky/far/mid/near images. */
+  /** Replace the active biome plane with a freshly loaded 4K background. */
   async loadBiome(biome: Biome): Promise<void> {
     this.clearLayers();
     (this.ambientPlane.material as THREE.MeshBasicMaterial).color.setHex(biome.ambient);
     this.renderer.setClearColor(biome.ambient, 1);
-    const order: BiomeLayer[] = [];
-    if (biome.sky) order.push(biome.sky);
-    order.push(biome.far, biome.mid, biome.near);
-    for (const layer of order) {
-      try {
-        await this.addLayer(layer);
-      } catch {
-        // Asset not generated yet — skip silently, the rest of the biome still composes.
-      }
+    try {
+      await this.addLayer(biome.bgUrl, biome.parallax, biome.scaleY);
+    } catch {
+      // Asset missing — clear-color still gives us the biome ambient.
     }
   }
 
-  private async addLayer(layer: BiomeLayer): Promise<void> {
-    const tex = await new THREE.TextureLoader().loadAsync(assetPath(layer.url));
+  private async addLayer(url: string, parallax: number, scaleY: number): Promise<void> {
+    const tex = await new THREE.TextureLoader().loadAsync(url);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     const aspect = tex.image.width / tex.image.height;
-    const geo = new THREE.PlaneGeometry(layer.scaleY * aspect * 2, layer.scaleY * 2);
-    const blending =
-      layer.blend === 'multiply'
-        ? THREE.MultiplyBlending
-        : layer.blend === 'additive'
-          ? THREE.AdditiveBlending
-          : THREE.NormalBlending;
+    // Plane is sized to cover the ortho viewport with a small parallax over-scan
+    // so the gentle drift never exposes the clear-color edge.
+    const overscan = 1.15;
+    const geo = new THREE.PlaneGeometry(scaleY * aspect * 2 * overscan, scaleY * 2 * overscan);
     const mat = new THREE.MeshBasicMaterial({
       map: tex,
-      transparent: true,
+      transparent: false,
       depthWrite: false,
-      blending,
-      premultipliedAlpha: layer.blend === 'multiply',
     });
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.z = layer.depth;
+    mesh.position.z = -10;
     this.scene.add(mesh);
-    this.layers.push({ mesh, parallax: layer.parallax });
+    this.layers.push({ mesh, parallax });
   }
 
   private clearLayers(): void {

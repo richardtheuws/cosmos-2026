@@ -31,7 +31,7 @@ import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -46,6 +46,9 @@ async function boot(): Promise<void> {
   input.attach();
 
   const parallax = new ParallaxScene(sceneCanvas);
+  // Sprint 14B — single 4K plane per biome. BiomeManager.start() below also
+  // calls loadBiome via onChange, but we await the first one here so the
+  // BeatScene never paints over an empty clear-color frame.
   await parallax.loadBiome(BIOMES['slow-bloom']);
 
   const phaserGame = new Phaser.Game({
@@ -103,8 +106,14 @@ async function boot(): Promise<void> {
 
   // Sprint 13E — BiomeManager wires audio + post-FX intensity. main.ts owns
   // the URL→audio swap; the manager only emits onTrackSwap with URLs.
+  // Sprint 14B — also swap the parallax background on biome change. We use
+  // onChange (fires once per arrived biome) instead of onTrackSwap (fires at
+  // crossfade-start) so the visual swap lands when audio has fully arrived.
   const biomeMgr = new BiomeManager(uniforms, {
     onTrackSwap: (nextUrl) => audioBridge.setMusicTrack(nextUrl),
+  });
+  biomeMgr.onChange((biome) => {
+    void parallax.loadBiome(biome);
   });
   biomeMgr.start();
 

@@ -1,0 +1,3 @@
+{"attempt": "b1_va_normal", "url": "https://v3b.fal.media/files/b/0a9890d8/PJk5aVmiLjZbvFS1MnwGl_6776556f170f4ad388535f317243edc7.png", "bytes": 306367, "prompt_len": 434, "seed": 7777, "guidance": 28.0, "steps": 40, "mask_generous": false}
+{"attempt": "b2_vb_generous", "url": "https://v3b.fal.media/files/b/0a9890d9/xmSOjjlGUE1Q2xLkTbACv_a07fa4f358b548b7a7f12dac7cd74a29.png", "bytes": 310004, "prompt_len": 320, "seed": 4242, "guidance": 30.0, "steps": 40, "mask_generous": true}
+{"attempt": "b3_vc_max", "url": "https://v3b.fal.media/files/b/0a9890da/rpc1_9wo_8HqBAo13gz4t_fbd2278baab640eabfcedc3ac7335366.png", "bytes": 309036, "prompt_len": 308, "seed": 9001, "guidance": 30.0, "steps": 45, "mask_generous": true}

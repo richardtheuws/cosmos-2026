@@ -4,6 +4,47 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.0.1] — 2026-05-02 — Sprint 14: complete-experience polish
+
+v1.0.0's eerste live demo had drie zichtbare gebreken: kawaii Cosmo, dubbele blended backgrounds, en HUD-clutter. Sprint 14 fixt alle drie + voegt drift-loose default mode toe (geen rhythm-druk, hypnose first).
+
+### Fixed (14A — Cosmo vol-DNA via PIL deterministic paint)
+
+Sprint 13D's hero was kawaii-drift. Flux text-only failde 8/8 op chameleon-eye criterion (kawaii bias unbreakable in training data). Doorbraak via PIL deterministic paint van zwarte spheres + saffron crescent + white catchlight direct over kawaii eyes. Tail alpha-erase (Sprint 6A pattern). ESRGAN 4× RGB-only + Lanczos alpha + threshold-tighten halo. Final 4096² RGBA: chameleon eyes ✓, no tail ✓, suction-cups ✓, antenne+flower ✓, faded-rose spots ✓. Cost $0.45.
+
+**KRITIEKE memory-leering**: canonical-v2 zelf is DNA-incorrect op eye-criterion (Sprint 6A had al kawaii pink eyes — bias propageerde 5B/7A/11A/13D). Voor permanente fix: Cosmo-LoRA fine-tune $10-15 (Sprint 15+).
+
+### Fixed (14B — Background dedup, single 4K plane per biome)
+
+`BiomeLayer` interface + `baseLayers()` factory verwijderd. `Biome` heeft nu `bgUrl: string` direct naar `biome-{slow-bloom,inkpool,cathedral,boss}-4k.png`. `parallaxScene.loadBiome()` rendert één opaque plane (transparent: false), overscan 1.15. `main.ts` wired `biomeMgr.onChange(biome → parallax.loadBiome(biome))` — parallax swapt na crossfade-end.
+
+### Added (14C — Drift-loose mode default, beat-lock opt-in)
+
+Mode-toggle ladder: URL `?mode=beat` > `B`-key > `localStorage.cosmosBeatLockMode` > **default drift-loose**. Beat-lock lazy-loadt `title-theme.json` (Sprint 13B beatmap), `BeatmapScheduler` synced op `audioBridge.musicCurrentTime()`. JSON-fail = silent fallback. Saffron-ring rond Cosmo (FFT band-0 pulsed) als visuele cue beat-mode. FFT → post-FX onaangeroerd in beide modes.
+
+### Added (14D — HUD invisible-by-default)
+
+Combo: 0 → tap 240ms fade-in / 0.6s hold / 1.2s fade-out. Version-pill: 4s intro → fade-out, pinch-zoom-out reveal 4s. Top-nav: opacity 0.25 scale 0.92 default, hover/focus reveal 1/1. AutoVJ engaged: alles forced 0. Mobile reveal: 80px `.hud-reveal-zone` hot-strip, touchstart/mousedown → 3s reveal-window.
+
+### Cost
+
+Sprint 14: $0.45 (alleen 14A asset-gen). 14B/C/D = code-only.
+
+### Open voor Sprint 15+
+
+- Cosmo-LoRA fine-tune ($10-15, permanente DNA-fix)
+- Alpha-lerp crossfade tussen biomes (visuele transitie ipv hard-swap)
+- Asset-cleanup: legacy slow-bloom-v2/, tile/enemy assets uit dist
+- Bubble-textures + hallucination-particles wiren in BeatTarget/TrippyEventDirector
+
+## [1.0.0] — 2026-05-02 — Cosmos rhythm-trip rebuild (D + C-vibe pivot)
+
+GROND-UP REBUILD. Pivot van platformer-experiment naar mobile-first hypnotische rhythm-trip. *"Geen game. Geen score. De track is de game."*
+
+5 sprints (13A-13E) parallel: foundation strip + BeatScene + CosmoRig 8-band FFT-rig + AutoVJ + 5 mobile gestures (13A); JSON-DSL beatmap-loader + onset-detector Python + 4 base-track beatmaps (13B); BiomeManager 4-state crossfade + share-stack 60s clip + screenshot peak-detector + daily-streak + friend-seed (13C); premium $1.75/$10 asset-gen — Cosmo 4K hero, 4 biome-4K backgrounds (inkpool + boss 10/10 first-pass), 8 cosmic-bubbles, 6 hallucination-particles, splash-hero (13D); deploy v1.0.0 (13E).
+
+Verwijderd: alle platformer-entities (L1Scene, Cosmo, Bomb, BreakableWall, HintGlobe, Star, Trampoline, alle enemies, HudOverlay, levelL1, oude biomes). Herzien: InputController gesture-bus, TouchOverlay simplified, audioFFTBridge.musicCurrentTime + setMusicTrack getters.
+
 ## [0.9.0] — 2026-05-01 — Sprint 13C: biome-cycling + share-mechanismen
 
 Tweede helft van de v2.0-rebuild. Sprint 13C bouwt het post-FX-cycling-systeem
