@@ -339,6 +339,10 @@ export class CosmoScene extends Phaser.Scene {
         this.obstacles.paused = true;
         // Sprint 17D — also gate trampoline interactions until BONDING ends.
         this.interactions.paused = true;
+        // Sprint 17G — keep CosmoAI's no-input timer frozen during the magic
+        // moment so the 8s companion-mode countdown does not start running
+        // before the player has even touched the screen.
+        if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = true;
       },
       hideBootOverlay: () => {
         document.getElementById('boot')?.classList.add('hidden');
@@ -396,15 +400,22 @@ export class CosmoScene extends Phaser.Scene {
         // pre-bonding states so the player can't accidentally bounce Cosmo
         // before the magic-moment onboarding completes.
         this.interactions.paused = true;
+        if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = true;
       },
       resumeObstacleSpawn: () => {
         this.obstacles.paused = false;
         this.interactions.paused = false;
+        // Sprint 17G — release the AI gate when the WALKING_FIRST_HINT phase
+        // begins so CosmoAI starts its no-input watchdog from a clean t=0.
+        if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = false;
       },
       startCosmoWalk: () => {
         // Un-pause the agent so its state-machine can advance into 'walking'
         // on its own (intro 1.2s look already consumed during BONDING wave).
         this.cosmoAgent.paused = false;
+        // Sprint 17G — AI watchdog can now begin; mirrors the agent un-pause
+        // so applyAI() and the no-input timer come online together.
+        if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = false;
       },
       showFirstHint: () => {
         if (!this.firstHint) {
@@ -445,6 +456,8 @@ export class CosmoScene extends Phaser.Scene {
         this.obstacles.paused = false;
         // Sprint 17D — return-visit player gets immediate trampoline access.
         this.interactions.paused = false;
+        // Sprint 17G — AI starts fresh on return-visit too.
+        if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = false;
         // Hide the boot-overlay since no portal-stage is showing.
         document.getElementById('boot')?.classList.add('hidden');
       },

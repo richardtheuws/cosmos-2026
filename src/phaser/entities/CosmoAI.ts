@@ -187,6 +187,11 @@ export class CosmoAI {
   noInputT = 0;
   /** True when AI is currently authoritative (≥ COMPANION_THRESHOLD_S). */
   active = false;
+  /** Sprint 17G — host-driven gate. While true the AI freezes its state-machine
+   *  and resets the no-input timer so onboarding (PORTAL_OPENING / BONDING) does
+   *  NOT count as "user is idle". CosmoScene flips this in its onboarding hooks
+   *  in lockstep with `cosmoAgent.paused` so AI + agent transitions stay aligned. */
+  paused = false;
 
   private providers: CosmoAIProviders;
   private events: CosmoAIEvents;
@@ -247,6 +252,25 @@ export class CosmoAI {
   /** Per-frame tick. Call from main loop. */
   tick(dt: number): void {
     this.t += dt;
+
+    // ── Sprint 17G — onboarding gate ──
+    // While the host says we're paused (e.g. OnboardingDirector running its
+    // 3-second magic-moment), keep the AI in a known-clean state: timers
+    // frozen, no random events, no sleep-progression. The moment paused
+    // flips back to false the AI starts from a fresh idle so the first
+    // post-onboarding state pick is clean.
+    if (this.paused) {
+      this.noInputT = 0;
+      if (this.active) {
+        this.active = false;
+        this.events.onCompanionModeChange?.(false);
+      }
+      this.clip = 'idle';
+      this.slowBreath = false;
+      this.headYawHint = 0;
+      this.spineBendHint = 0;
+      return;
+    }
 
     // ── Watchdog ──
     const motion = this.providers.motion;

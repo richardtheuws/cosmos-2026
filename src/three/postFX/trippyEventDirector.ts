@@ -4,8 +4,9 @@
  * every 8-15s, weighted-random, fires it via globalUniforms (kaleidoTrigger,
  * damagePulse, hueShift — exposed as needed).
  *
- * Anti-pattern guard: never fire two events within 4s of each other (cooldown).
- * Silence is part of the rhythm.
+ * Anti-pattern guard: never fire two events within 12s of each other (cooldown).
+ * Silence is part of the rhythm — Sprint 18 calm-pass widened cadence so events
+ * feel like surprises, not background noise.
  */
 import type { GlobalUniforms } from '../../core/globalUniforms';
 
@@ -97,7 +98,7 @@ const EVENTS: EventDef[] = [
 ];
 
 export class TrippyEventDirector {
-  private nextFireT = 6;
+  private nextFireT = 12; // was 6 — let world settle before first event
   private currentEvent: EventDef | null = null;
   private currentStartT = 0;
   private cooldownUntilT = 0;
@@ -112,7 +113,7 @@ export class TrippyEventDirector {
       const progress = elapsed / this.currentEvent.durationS;
       if (progress >= 1) {
         this.currentEvent = null;
-        this.cooldownUntilT = t + 4;
+        this.cooldownUntilT = t + 12; // was 4s — give the world room to breathe
       } else {
         this.currentEvent.apply(u, progress);
       }
@@ -121,7 +122,7 @@ export class TrippyEventDirector {
 
     if (t >= this.nextFireT && t >= this.cooldownUntilT) {
       this.fire(t);
-      this.nextFireT = t + 8 + Math.random() * 7; // 8-15s
+      this.nextFireT = t + 18 + Math.random() * 12; // 18-30s (was 8-15s)
     }
   }
 

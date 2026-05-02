@@ -206,6 +206,330 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v1.4.0</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Sprint 18: smoothness + calm-baseline pass</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>4-agent parallel pass</strong> op user-feedback &quot;interactie voelt nog niet smooth, Cosmo vervormt de hele tijd terwijl je een raar fluitje hoort&quot;. Audio + post-FX + gameplay + visual-coherence parallel gediagnosticeerd en gefixt.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Post-FX calm-pass</strong>: baseline gedempt — bloom 0.8→0.45, fluid amp 0.022→0.01, kaleido ambient 0.16→0, chroma offset gehalveerd, noise opacity 0.32→0.18. Bloom + chroma breathing sines gedecoupled zodat ze niet meer in lockstep pulsen. World ademt nu zacht, weirdness komt op event-pieken.</li>
+          <li><strong>TrippyEventDirector</strong> cadence 8-15s → 18-30s, cooldown 4s → 12s. Events voelen nu als verrassingen i.p.v. constante achtergrondruis.</li>
+        </ul>
+<h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Audio</strong>: <code>audioFFTBridge</code> placeholder synth (triangle/saw + LFO + filter sweep) verwijderd — was hoorbaar als &quot;raar fluitje&quot; wanneer de Suno-track niet startte. Vervangen door een stille buffer-source die de FFT-floor op 0 houdt zonder geluid te produceren.</li>
+          <li><strong>Gameplay smoothness (17G)</strong>: Gyro raw-input deadband — sub-deadband phone-on-table noise schrijft niet meer naar <code>rawPanX/Y</code>. In plaats daarvan decayen de raw waarden 8% per event richting 0. Elimineert zichtbare camera-jitter wanneer de telefoon stilligt zonder companion-drift te raken. (<code>src/core/motionController.ts</code>)</li>
+          <li><strong>Gameplay smoothness (17G)</strong>: <code>CosmoAI.paused</code> flag + onboarding-lockstep. OnboardingDirector hooks (<code>showAwaitTouchUI</code>, <code>pauseObstacleSpawn</code>, <code>resumeObstacleSpawn</code>, <code>startCosmoWalk</code>, <code>spawnCosmoSkipPortal</code>) flippen nu zowel <code>cosmoAgent.paused</code> als <code>cosmoAgent.ai.paused</code>. Voorkomt dat de 8s companion-mode-timer al loopt vóór de eerste gesture en dat AI random-events / sleep-progressie tijdens portaal-opening doortikken. (<code>src/phaser/entities/CosmoAI.ts</code>, <code>src/phaser/scenes/CosmoScene.ts</code>)</li>
+          <li><strong>Gameplay smoothness (17G)</strong>: <code>mixer.timeScale</code> clobber-bug. CosmoAI&#039;s slow-breath sleep-state (target 0.4×) werd elke frame overschreven door <code>CosmoAgent.update</code>&#039;s FFT-driven <code>mixer.timeScale = 1 + air * 0.1</code>. <code>applyAI</code> schrijft nu naar een nieuw <code>aiTimeScaleBase</code> veld dat <code>update()</code> vermenigvuldigt met de FFT-factor. Sleep is nu daadwerkelijk slow-breath; non-sleep states keren netjes terug naar 1.0× via een 5% lerp. (<code>src/phaser/entities/CosmoAgent.ts</code>)</li>
+        </ul>
+<h3>DOCUMENTATION</h3>
+        <ul class="update__highlights">
+          <li><strong><code>cosmoStage.ts</code></strong>: complete render-pipeline trace + invariant comment toegevoegd zodat toekomstige agents niet per ongeluk Cosmo door de post-FX composer pipen (DNA-lock breekt anders). Defensieve <code>setRenderTarget(null)</code> in <code>render()</code> toegevoegd; verifieerd dat post-FX (fluid/kaleido/chroma/bloom) Cosmo niet raakt — perceptie van &quot;Cosmo vervormt&quot; komt van chroma fringe + bloom halo van parallax-pixels rondom hem (post-fx baseline al gekalmeerd).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v1.3.0</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Sprint 17: motion-controlled world explorer + companion-mode</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>Gameplay-shift</strong>: weg van runner (&quot;ren naar rechts&quot;), naar <strong>motion-controlled world explorer + stoned-watching companion</strong>. Cosmo blijft center, wereld scrollt NIET. Camera pant binnen biome-scene op gyro/mouse. Trampolines op fixed posities zijn enige interactie. 8s no-input → companion-AI neemt over, Cosmo wandelt zelf rond, kijkt, zit, slaapt na 90s met hallucination-particles. Embrace the weirdness.</p>
+        </div>
+        <h3>ADDED (17A — COSMO HANDMADE-RIG)</h3>
+        <ul class="update__highlights">
+          <li><code>bone_root/spine/head/eye_l/eye_r/antenne/arm_l/arm_r/disc_l/disc_r</code></li>
+          <li>Distance-based weight-painting met head-zone-lock + arm-zone-lock</li>
+          <li>4 NLA clips → glTF: idle (4s loop, breath-pulse + blink), wave (1.5s arm-raise + slow eye-lock), stretch (2s arms overhead + spine arch), sit (6s squat + sniff-twitch)</li>
+          <li>Mesh hergebruikt van Sprint 16B (geen nieuwe Meshy run, voorkomt LoRA-tail-drift in 3D)</li>
+        </ul>
+<h3>ADDED (17B — DEVICEORIENTATION MOTION-CONTROL)</h3>
+        <ul class="update__highlights">
+          <li>iOS 13+ <code>requestPermission()</code> op first-touch (eenmalig)</li>
+          <li>gyro mapping: gamma → panX (-1..1, /45°), beta → panY (-1..1, neutral 45°)</li>
+          <li>Magnitude &lt; 0.04 = phone-op-tafel-noise-gate</li>
+          <li>Desktop pointermove fallback always-on</li>
+          <li><strong>Companion-drift</strong>: na 8s no-input → <code>panX=sin(t·0.21)·0.6</code>, <code>panY=sin(t·0.18)·0.4</code> (non-rationele freqs, geen sync-loop)</li>
+        </ul>
+<h3>ADDED (17C — COMPOSED WORLDS, 25 LAYERED PNGS)</h3>
+        <ul class="update__highlights">
+          <li><strong>slow-bloom</strong> (7 layers): twilight forest met giant pink mushroom + jellyfish creature. Weirdo 9/10</li>
+          <li><strong>inkpool</strong> (6): bioluminescent cave met crystal-spires. Weirdo 8/10</li>
+          <li><strong>cathedral</strong> (6): bloom-pierced temple met body-horror multi-wing angels. Weirdo 9/10</li>
+          <li><strong>boss</strong> (6): saffron-magenta storm met disembodied gaping mouths + uncanny eyes. <strong>Weirdo 10/10</strong></li>
+        </ul>
+<h3>ADDED (17E — COMPANION-AI PASSIVE VIBE)</h3>
+        <ul class="update__highlights">
+          <li>8s no-input → companion-mode (kaleido bloom-pulse 0.18)</li>
+          <li>90s no-input → sleep latch (pulse 0.45)</li>
+        </ul>
+<h3>ADDED (17F — MULTI-LAYER PARALLAX-SCENE + DECORATION PLACEMENT)</h3>
+        <ul class="update__highlights">
+          <li>Per layer: <code>mesh.position.x = baseX + motion.getPanX() <em> parallaxMultiplier </em> 1.6</code></li>
+          <li>BlendMode mapping: additive / multiply / normal</li>
+          <li>Texture cache prevents re-fetch on biome-cycle</li>
+          <li><strong>slow-bloom</strong>: upside-down-tree + eyeball-sentry deep right + floating-star</li>
+          <li><strong>inkpool</strong>: breathing-portal + melting-clock-bubble drift + eyeball-sentry</li>
+          <li><strong>cathedral</strong>: breathing-portal skybox + upside-down-tree top-hang + floating-star</li>
+          <li><strong>boss</strong>: secret-crystal hidden + mouth-pillar + eyeball-sentry</li>
+        </ul>
+<h3>OPEN VOOR SPRINT 18</h3>
+        <ul class="update__highlights">
+          <li>LoRA retrain op disc-only/no-tail dataset (huidige LoRA reactiveert tail-bias bij pose-variation)</li>
+          <li>DRACOLoader integratie → GLB 10MB → 752KB</li>
+          <li>Biome-cycling auto elke 90s via crossfade (deels ge-implementeerd, full DeepTripMode auto needs CosmoScene exposure)</li>
+          <li>ElevenLabs custom voice library uitbreiden (meer cosmo-coo + biome-specific stingers)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v1.2.0</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Sprint 16: DNA-correcte Cosmo via LoRA + 6 polish-fixes</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">v1.1.0&#039;s live demo was niet speelbaar: PIL-painted 2D-eyes werden 3D-blobs op de mesh, NL voice-over uit Hint-Globe-archief brak de vibe, mouth-pillar toonde 4 frames tegelijk, secret-crystal default zichtbaar, music stopte na track-end, onboarding skipte voor return-users. Sprint 16 fixt alles met <strong>harde quality-gate</strong>: orchestrator draait nu zelf pre-deploy live-test (browser-MCP playwright iPhone-emulation indien Docker UP, anders curl + tsc + GLTF-headless validate) — geen &quot;live verify door user&quot; meer als enige check.</p>
+        </div>
+        <h3>FIXED (16A — COSMO-LORA FINE-TUNE, EINDELIJK DNA 10/10)</h3>
+        <ul class="update__highlights">
+          <li>Endpoint: <code>fal-ai/flux-lora-fast-training</code>, 2000 steps, trigger word <code>rtcosmo</code></li>
+          <li>Re-usable LoRA URL bewaard in memory voor toekomstig hergebruik</li>
+          <li>Hero gen via <code>fal-ai/flux-lora</code> met LoRA + ESRGAN 4× → <code>cosmo-hero-lora.png</code> 4096² RGBA</li>
+          <li>DNA-checklist <strong>10/10</strong>: pearl-drop ✓, chameleon bulging eyes ✓, geen blozende wangen ✓, single antenne+flower ✓, <strong>two clean black flat suction-cup discs</strong> ✓ (organisch, geen PIL-paint workaround), faded-rose spots ✓, no tail ✓, no vinger-handen ✓, watercolor + paper-grain ✓, slight uncute ✓</li>
+          <li>Halo fringe 14.3px (Sprint 14A was 24px — verbeterd)</li>
+          <li>Cost ~$3-5 (training + 10 generation attempts + ESRGAN). Recoupt na ~10 toekomstige Cosmo-renders ($0.05 via LoRA vs $0.45 via PIL-painting)</li>
+        </ul>
+<h3>FIXED (16B — COSMO 3D REBUILD MET CLEAN LORA-INPUT)</h3>
+        <ul class="update__highlights">
+          <li>Meshy v6 image-to-3D, 2 art_style attempts (realistic vs sculpture)</li>
+          <li>Winner 16B-A realistic: 22k tris, 15137 verts, 10.08MB raw GLB</li>
+          <li><strong>3D bulging eye-spheres als geometrie</strong> (NIET 2D-blob)</li>
+          <li>Suction-cup discs als floating disc-meshes</li>
+          <li>DNA 7/8 (alle behalve &quot;watercolor texture&quot; — Meshy PBR is mild plastic, acceptabel)</li>
+          <li>Cost $0.60</li>
+        </ul>
+<h3>FIXED (16D — ELEVENLABS GIBBERISH-COO + AUDIO-LOOP HARDENED)</h3>
+        <ul class="update__highlights">
+          <li><code>cosmo-coo-1.mp3</code> (3-syllable nonsense babble)</li>
+          <li><code>cosmo-coo-2.mp3</code> (4-syllable melodic)</li>
+          <li><code>cosmo-coo-3.mp3</code> (ascending 3-tone gurgle)</li>
+          <li>0.9-1.2s elk, 128kbps stereo</li>
+          <li><code>COSMO_COO_POOL</code> random-pick in <code>CosmoScene.playGibberishCoo</code></li>
+        </ul>
+<h3>FIXED (16F — ONBOARDING FORCE-SHOW + VERSION-RESET)</h3>
+        <ul class="update__highlights">
+          <li>Nieuwe state <code>MINI_FLASH</code> (0.6s) tussen AWAIT_TOUCH en WALKING_FIRST_HINT</li>
+          <li>Priority: <code>?onboard=1</code> URL &gt; <code>opts.skipPortal</code> &gt; LS read</li>
+          <li>LS upgrade naar JSON <code>{version, completedAt}</code>. Legacy <code>&quot;true&quot;</code> string treated as old-version → reset</li>
+          <li><code>ONBOARDING_VERSION = &#039;v1.2&#039;</code> bump invalideert alle stored completions</li>
+          <li>35/35 deterministic state-machine tests pass</li>
+        </ul>
+<h3>OPEN VOOR SPRINT 17</h3>
+        <ul class="update__highlights">
+          <li>DRACOLoader integratie → swap raw GLB naar 752KB Draco asset (13× kleiner)</li>
+          <li>Per-biome obstacle-pool variations (boss-biome krijgt eigen weirdo-set)</li>
+          <li>Cosmo-LoRA pose-variation: 6 walk/jump/cling frames via LoRA + procedural skeletons</li>
+          <li>ElevenLabs custom voice library: meer cosmo-coo + biome-specific stingers</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v1.1.0</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Sprint 15: 3D Cosmo + weirdo auto-runner</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">GROND-UP gameplay-rebuild #2. Pivot van rhythm-trip naar <strong>weird auto-runner met agency</strong> — Cosmo loopt door een 3D-scene op de muziek, speler begeleidt met swipes/taps, Cosmo heeft eigen agenda (negeert input 20% v/d tijd, knipoogt zomaar, loopt achteruit). Geen game-over. WEIRDO-energy expliciet ingebakken: niet een speelervaring waarin de speler de baas is over een schattig wezen, maar één waarin een eigenaardig wezen JOU laat meelopen in zijn dag.</p>
+        </div>
+        <h3>ADDED (15A — MESHY 3D COSMO)</h3>
+        <ul class="update__highlights">
+          <li><code>public/assets/3d/cosmo.glb</code> — image-to-3D vanaf Sprint 14A canonical-v2 (de PIL-painted-eyes versie). 9/10 DNA-correct: pearl-drop ✓, chameleon-eyes met saffron crescent ✓, antenne+rose-flower ✓, faded-rose spots ✓, no tail ✓, uncanny-vibe ✓. Suction-cups partial (residual claws boven discs).</li>
+          <li>22.5k verts, 8MB raw GLB, 3 PBR maps embedded (baseColor + normal + ORM).</li>
+          <li>Cost $0.20 (van $3-5 budget).</li>
+          <li><strong>Memory-leering</strong>: Meshy auto-rig faalt deterministisch op alien anatomy (HTTP 422 op 4 parameter-varianten + 2 source-tasks). Pose-estimator is humanoid-trained. Workaround: procedural anim direct vanuit <code>cosmo-animation-spec.json</code> (idle-breath/walk/jump-up/jump-fall/cling/wave-uncanny). Skip AnimationMixer voor cleaner FFT-control.</li>
+        </ul>
+<h3>ADDED (15B — WEIRDO GAMEPLAY-STACK)</h3>
+        <ul class="update__highlights">
+          <li><code>CosmoStage</code> (Three.js sub-renderer met PerspectiveCamera + lights + camera-follow met deadzone, rendered ON TOP van parallax via <code>autoClear=false + clearDepth</code>)</li>
+          <li><code>CosmoAgent</code> (GLB wrapper + state-machine + agency-RNG; 2D billboard fallback met <code>cosmo-hero-4k.png</code> tot GLB async loadt)</li>
+          <li><code>ObstacleManager</code> (pool 12, kinds low/tall/gap, beat-loose timing op <code>audioBridge.musicCurrentTime()</code> met 1.6-2.4s drift-fallback, <code>setObstacleFactory()</code> exposed)</li>
+          <li><code>InteractionManager</code> (gestures → CosmoAgent decisions + transient platform-meshes — trampoline torus + mushroom)</li>
+          <li><code>VibeMeter</code> (Phaser Graphics ring rond geprojecteerde screen-pos, 5%/s decay, full → DeepTripMode)</li>
+          <li><code>DeepTripMode</code> (5s post-FX peak + hallucination-track + dance)</li>
+          <li><code>CosmoScene</code> (Phaser is HUD-only nu)</li>
+          <li>0.5%/frame @ 60fps = ~3.3s avg random event, 4.5s cooldown</li>
+          <li>Distributie: 25% knipoog · 30% walk-backward · 30% eigen-jump · 15% petal-spew</li>
+          <li>Action-commit: 80% op swipe, <strong>50/50</strong> op tap-jump-of-duck</li>
+          <li>Decision-delay 120-280ms random</li>
+          <li><strong>Geen &quot;voorspelbare modus&quot; toggle</strong> — per brief verboden</li>
+          <li>Failure (tall-obstacle collision tijdens niet-jumping) → forceFall 1.2s opacity-fade → respawn 1.5s 2-4 worldX vooruit, vibe -10%. Geen game-over.</li>
+        </ul>
+<h3>ADDED (15C — 8 WEIRDO OBJECTS)</h3>
+        <ul class="update__highlights">
+          <li><strong>eyeball-sentry</strong> 9/10 (chameleon-iris die volgt) — first-pass STANDOUT via Flux Pro Ultra</li>
+          <li><strong>breathing-portal</strong> 8/10 (adem-cycle saffron→magenta→cyan) — first-pass STANDOUT</li>
+          <li><strong>organic-flesh-trampoline</strong> 8/10 (ademende membraan, body-horror)</li>
+          <li><strong>mouth-pillar-sheet</strong> 8/10 (4-frame PIL-composite — single-image sheet bias unbreakable)</li>
+          <li><strong>upside-down-tree</strong> 7/10 (V4 success na 3 fails — drop noun, gebruik 3-zone shape-prompt)</li>
+          <li><strong>melting-clock-bubble</strong> 7/10 (Dali via &quot;watercolor painting&quot; lead-prefix)</li>
+          <li><strong>secret-crystal</strong> 7/10 (hidden tot post-FX kaleido &gt; 0.8)</li>
+          <li><strong>floating-star</strong> 5/10 (collectable +5 vibe-meter)</li>
+          <li>Sprite-sheet symmetry-bias unbreakable: diffusion kan GEEN sequential-animation-states in één image renderen → 4 separate calls + PIL composite is werkende patroon</li>
+          <li>Sample-bias rond bekende nouns: drop het noun, beschrijf 3 SHAPE-zones — transferable</li>
+          <li>Flux Pro Ultra forceert photo-aesthetic op organische subjects; Flux Dev pliabler voor stylized watercolor + body-horror</li>
+        </ul>
+<h3>ADDED (15D — ONBOARDING MAGIC-MOMENT)</h3>
+        <ul class="update__highlights">
+          <li><code>OnboardingDirector</code> state-machine: AWAIT_TOUCH → PORTAL_OPENING (1.5s) → COSMO_ARRIVING (1.5s) → BONDING (1.0s) → WALKING_FIRST_HINT → COMPLETE</li>
+          <li><code>NebulaPortal</code> (Phaser canvas-drawn, 6 concentric rings, ease-out-cubic radial expand, palette saffron→faded-rose→ink-aubergine, per-ring breath + lichte rotation-eccentriciteit)</li>
+          <li><code>HintGlyph</code> chevron-arrow + Cormorant-Garamond italic &quot;veeg omhoog&quot;, anchored aan closest live obstacle, 1.6Hz bob → 3Hz intensify-pulse na 5s no-input</li>
+          <li><strong>Wave-uncanny</strong> clip: te-traag, te-lang, te-gelocked. Eyes-locked-on-camera. &quot;Alsof Cosmo JOU ontdekt&quot;</li>
+          <li>Audio-stinger: bestaande <code>globe-l1-1.mp3</code> (3-syllable Hint Globe voice — kid-alien babble)</li>
+          <li>localStorage <code>cosmosOnboardingComplete</code> skip portal+arrival voor return-users</li>
+          <li>Geen text-instruction in stappen 0-2.5s</li>
+        </ul>
+<h3>ADDED (15E — WIRING + DEPLOY)</h3>
+        <ul class="update__highlights">
+          <li><code>weirdoObstacleFactory.ts</code> — vervangt canvas-primitive defaults door 15C&#039;s 8 objects als billboarded planes met THREE.TextureLoader + cache. Per kind random pool-pick zodat playthrough nooit repetitief voelt.</li>
+          <li>3 ObstacleKinds → pools: low (trampoline + star), tall (sentry + tree + mouth-pillar), gap (portal + crystal + clock-bubble)</li>
+          <li>Pre-warm bij boot zodat eerste spawn niet pop&#039;t</li>
+        </ul>
+<h3>OPEN VOOR SPRINT 16</h3>
+        <ul class="update__highlights">
+          <li><strong>Cosmo-LoRA fine-tune</strong> ($10-15) voor permanente DNA-fix in 4K renders + procedural-anim variants</li>
+          <li>Draco compress cosmo.glb (8MB → 2MB) in build-pipeline</li>
+          <li>2 extra weirdo objects: levitating-tongue-bridge + antenna-flower-rain</li>
+          <li>Per-biome obstacle-pool variations</li>
+          <li>ElevenLabs custom Cosmo gibberish-voice library (3 varianten)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v1.0.1</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Sprint 14: complete-experience polish</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">v1.0.0&#039;s eerste live demo had drie zichtbare gebreken: kawaii Cosmo, dubbele blended backgrounds, en HUD-clutter. Sprint 14 fixt alle drie + voegt drift-loose default mode toe (geen rhythm-druk, hypnose first).</p>
+        </div>
+        <h3>OPEN VOOR SPRINT 15+</h3>
+        <ul class="update__highlights">
+          <li>Cosmo-LoRA fine-tune ($10-15, permanente DNA-fix)</li>
+          <li>Alpha-lerp crossfade tussen biomes (visuele transitie ipv hard-swap)</li>
+          <li>Asset-cleanup: legacy slow-bloom-v2/, tile/enemy assets uit dist</li>
+          <li>Bubble-textures + hallucination-particles wiren in BeatTarget/TrippyEventDirector</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v1.0.0</span>
+          <span class="update__date">2026-05-02</span>
+          <h2 class="update__title">05-02 — Cosmos rhythm-trip rebuild (D + C-vibe pivot)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">GROND-UP REBUILD. Pivot van platformer-experiment naar mobile-first hypnotische rhythm-trip. <em>&quot;Geen game. Geen score. De track is de game.&quot;</em></p>
+          <p class="update__lead-line">5 sprints (13A-13E) parallel: foundation strip + BeatScene + CosmoRig 8-band FFT-rig + AutoVJ + 5 mobile gestures (13A); JSON-DSL beatmap-loader + onset-detector Python + 4 base-track beatmaps (13B); BiomeManager 4-state crossfade + share-stack 60s clip + screenshot peak-detector + daily-streak + friend-seed (13C); premium $1.75/$10 asset-gen — Cosmo 4K hero, 4 biome-4K backgrounds (inkpool + boss 10/10 first-pass), 8 cosmic-bubbles, 6 hallucination-particles, splash-hero (13D); deploy v1.0.0 (13E).</p>
+          <p class="update__lead-line">Verwijderd: alle platformer-entities (L1Scene, Cosmo, Bomb, BreakableWall, HintGlobe, Star, Trampoline, alle enemies, HudOverlay, levelL1, oude biomes). Herzien: InputController gesture-bus, TouchOverlay simplified, audioFFTBridge.musicCurrentTime + setMusicTrack getters.</p>
+        </div>
+        
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v0.9.0</span>
+          <span class="update__date">2026-05-01</span>
+          <h2 class="update__title">05-01 — Sprint 13C: biome-cycling + share-mechanismen</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Tweede helft van de v2.0-rebuild. Sprint 13C bouwt het post-FX-cycling-systeem</p>
+          <p class="update__lead-line">en de virale haakjes uit PRD §5/§7 — biome-state-machine met crossfade,</p>
+          <p class="update__lead-line">synesthesia-piek-detector, 1080×1920 share-card capture, 60s clip-recorder met</p>
+          <p class="update__lead-line">audio-tap, glassmorph-overlay en daily-streak counter.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/three/biomeManager.ts</code></strong> — 4-biome state-machine (slow-bloom → inkpool → cathedral → boss). 4s linear crossfade van <code>biomeIntensity</code> uniforms; track-end auto-cycle; long-hold-3s player-trigger via <code>requestPlayerSwitch()</code>. Hooks voor track-swap zodat de AudioFFTBridge de eigenaar blijft van <code>&lt;audio&gt;</code>-elementen.</li>
+          <li><strong><code>src/share/peakDetector.ts</code></strong> — vuurt op (<code>lows &gt; 0.7</code> 0.5s sustained) AND (combo &gt; 5 OR boss-biome). 30s cooldown zodat de auto-screenshot zeldzaam voelt. Callback-based — geen extra deps.</li>
+          <li><strong><code>src/share/captureScreen.ts</code></strong> — composiet 1080×1920 portret van de Three+Phaser canvases met glassmorph card (track-naam, biome, combo, taps, watermerk + URL) en optionele Cosmo-cirkel.</li>
+          <li><strong><code>src/share/captureClip.ts</code></strong> — <code>ClipRecorder</code> met <code>MediaRecorder</code> (vp9/opus → mp4/avc1 fallback), eigen rAF tikt offscreen-canvas op 30fps, audio-tap via <code>AudioFFTBridge.captureStream()</code>. 60s default, manual stop ondersteund.</li>
+          <li><strong><code>src/share/shareCardOverlay.ts</code></strong> — DOM-modal met preview, &quot;Save to Photos&quot;, &quot;Copy share link&quot;, auto-dismiss na 8s. Plus <code>showStreakPill()</code> voor de &quot;Dag X in de trip&quot;-toast.</li>
+          <li><strong><code>src/share/dailyStreak.ts</code></strong> — localStorage streak counter (<code>cosmosLastVisit</code>, <code>cosmosStreak</code>, <code>cosmosLongest</code>), milestones day-7 / day-30. Local-date YYYYMMDD, idempotent intra-session.</li>
+          <li><strong><code>src/share/urlSeed.ts</code></strong> — <code>?seed=YYYYMMDD&amp;combo=NN</code> URL-helpers met FNV-1a + xorshift hash voor deterministische beatmap-shuffle.</li>
+          <li><strong><code>AudioFFTBridge.captureStream()</code></strong> — <code>MediaStreamAudioDestinationNode</code> tap zodat clip-recorder analyser-output kan opnemen zonder live playback te verstoren.</li>
+          <li><strong><code>globalUniforms.biomeIntensity</code></strong> — bloom/kaleido/fluid/chroma/parallax multipliers; <code>postFX.ts</code> schaalt zijn base targets ermee.</li>
+          <li><strong>Biome-presets</strong> uitgebreid van 1 → 4 biomes met <code>bpm</code>, <code>trackUrl</code>, <code>chroma</code> en <code>BIOME_CYCLE_ORDER</code>.</li>
+        </ul>
+<h3>NOTES</h3>
+        <ul class="update__highlights">
+          <li>BeatScene-integratie en deploy zijn voor Sprint 13D/13E.</li>
+          <li>iPhone Safari MediaRecorder ondersteunt mp4/avc1 vanaf iOS 14.3 — webm faalt daar bewust soft (geen exception, alleen <code>onError</code>-callback).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v0.8.0</span>
           <span class="update__date">2026-05-01</span>
           <h2 class="update__title">05-01 — Sprint 11: visual + audio overhaul</h2>

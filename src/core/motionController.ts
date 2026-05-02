@@ -227,9 +227,15 @@ export class MotionController {
       if (magnitude > GYRO_INPUT_DEADBAND) {
         this.lastInputT = this.t;
         this.currentSource = 'gyro';
+        this.rawPanX = px;
+        this.rawPanY = py;
+      } else {
+        // Sub-deadband phone-noise → don't write raw, decay toward 0 instead.
+        // This kills the visible jitter on a phone-on-table while keeping
+        // companion-drift fully alive.
+        this.rawPanX *= 0.92;
+        this.rawPanY *= 0.92;
       }
-      this.rawPanX = px;
-      this.rawPanY = py;
     };
     w.addEventListener('deviceorientation', this.onOrientation, { passive: true });
     this.gyroAttached = true;

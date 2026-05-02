@@ -249,6 +249,12 @@ export class CosmoAgent {
   /** Smoothed AI head-yaw (rad). Lerped per-frame in applyAI(). */
   private aiHeadYaw = 0;
   private aiSpineBend = 0;
+  /** Sprint 17G — AI's contribution to mixer.timeScale (slow-breath = sleep).
+   *  Lerped here in applyAI(), then multiplied by the FFT-driven factor in
+   *  update(). Prior to 17G this field didn't exist and applyAI wrote
+   *  mixer.timeScale directly; the next update() then overwrote it from
+   *  raw FFT, killing slow-breath sleep entirely. */
+  private aiTimeScaleBase = 1;
   /** Lerp factor for AI-driven worldX/Z chase. */
   private static readonly AI_POS_LERP = 0.04;
   /** Lerp factor for AI-driven head-yaw / spine-bend. */
@@ -378,8 +384,13 @@ export class CosmoAgent {
     if (this.mixer) {
       // High-mid band makes the animation a touch snappier — gives Cosmo
       // a very subtle "feeling the music" without ruining clip phrasing.
+      // Sprint 17G — multiply (instead of overwrite) so AI's sleep-state
+      // slow-breath time-scale (lerp toward 0.4 in applyAI) is preserved
+      // across the FFT-driven adjust. Prior to 17G, applyAI's slow-breath
+      // was clobbered every frame the next CosmoAgent.update() ran.
       const air = uniforms.audioFFT[5] ?? 0;
-      this.mixer.timeScale = 1 + air * 0.1;
+      const fftFactor = 1 + air * 0.1;
+      this.mixer.timeScale = this.aiTimeScaleBase * fftFactor;
       this.mixer.update(dt);
     }
 
@@ -1001,6 +1012,9 @@ export class CosmoAgent {
       // when the user comes back.
       this.aiHeadYaw += (0 - this.aiHeadYaw) * CosmoAgent.AI_BONE_LERP;
       this.aiSpineBend += (0 - this.aiSpineBend) * CosmoAgent.AI_BONE_LERP;
+      // Sprint 17G — also decay the slow-breath base back to 1 so the mixer
+      // returns to normal speed when the user comes back from sleep.
+      this.aiTimeScaleBase += (1 - this.aiTimeScaleBase) * 0.05;
       this.applyAIBoneHints();
       return;
     }
@@ -1027,12 +1041,11 @@ export class CosmoAgent {
       // Crossfade to AI's clip suggestion. playClip is a no-op if the
       // requested clip is already current.
       this.playClip(d.clip, d.clip === 'idle' || d.clip === 'sit');
-      // Slow-breath = sleep state — quarter-speed the mixer.
-      if (this.mixer) {
-        const targetTimeScale = d.slowBreath ? 0.4 : 1;
-        // Lerp toward target so we don't jolt on enter/exit sleep.
-        this.mixer.timeScale = this.mixer.timeScale + (targetTimeScale - this.mixer.timeScale) * 0.05;
-      }
+      // Slow-breath = sleep state — quarter-speed the mixer. We write to
+      // aiTimeScaleBase (not mixer.timeScale) so update()'s FFT factor can
+      // multiply on top without overwriting the AI contribution next frame.
+      const targetTimeScale = d.slowBreath ? 0.4 : 1;
+      this.aiTimeScaleBase += (targetTimeScale - this.aiTimeScaleBase) * 0.05;
     }
 
     // Smooth AI head-yaw + spine-bend on top of the bone rest-quaternion.

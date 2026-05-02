@@ -53,17 +53,22 @@
  * the previous frame at α=0.4 to dampen flicker.
  *
  * ───────────────────────────────────────────────────────────────────────────
- * Music source — placeholder vs Suno
+ * Music source — silent fallback vs Suno
  * ───────────────────────────────────────────────────────────────────────────
  *
- * `MUSIC_TRACK = ''` → the bridge spins up `createPlaceholderSynth()` (oscillator
- * + LFO + slow filter sweep) so the FFT has *something* to chew on while Suno
- * tracks are still being commissioned.
+ * `MUSIC_TRACK = ''` → the bridge wires up `createSilentSource()` (a constant-
+ * zero buffer source) so the analyser graph stays connected and FFT bands
+ * settle on 0. Post-FX shaders accept zero-valued bands as a quiet baseline.
  *
  * Once Suno tracks land in `public/assets/audio/music/`, set
  *   MUSIC_TRACK = '/assets/audio/music/title-theme.mp3'
  * and the bridge will swap to a streamed AudioBufferSourceNode automatically —
  * one-line change, no other call-sites updated.
+ *
+ * Sprint 17 fix (2026-05-02): the previous fallback was a triangle/saw oscillator
+ * pair with LFO + filter sweep. It was audible as a "raar fluitje" whenever the
+ * streamed track failed to start (autoplay-policy reject, asset 404, etc.). The
+ * synth has been removed; silence is the new fallback. NO MELODY. NO HIGHS.
  */
 
 import type { GlobalUniforms } from '../core/globalUniforms';
@@ -75,19 +80,10 @@ import { assetPath } from '../core/assetPath';
 import { Howler } from 'howler';
 
 /**
- * Active OST track. Empty string → placeholder synth-loop (used while Suno
- * tracks are still being commissioned). When a track is rendered + saved to
- * `public/assets/audio/music/<name>.mp3`, flip the constant via `assetPath()`
- * so the URL respects Vite's `base` config (dev `/`, prod `/games/cosmos-2026/`).
- *
- * Sprint 8B status (2026-05-01): sunoapi.org credits depleted (2.0 / ~32
- * needed for 4 tracks); MUSIC_TRACK kept empty until top-up. After top-up:
- *   set -a; . ~/Documents/games/.env; set +a
- *   python3 scripts/sprint8b/generate_mvp_tracks.py
- * → writes `title-theme.mp3`, `slow-bloom-loop.mp3`, `inkpool-loop.mp3`,
- * `boss-stinger.mp3` into `public/assets/audio/music/`. Then the 1-line swap:
- *   import { assetPath } from '../core/assetPath';
- *   const MUSIC_TRACK: string = assetPath('assets/audio/music/title-theme.mp3');
+ * Active OST track. Empty string → silent fallback (FFT bands stay at 0).
+ * When a track is rendered + saved to `public/assets/audio/music/<name>.mp3`,
+ * the constant uses `assetPath()` so the URL respects Vite's `base` config
+ * (dev `/`, prod `/games/cosmos-2026/`).
  *
  * Typed `string` (not literal) so TS keeps both factory branches live.
  */
@@ -197,7 +193,7 @@ export class AudioFFTBridge {
 
     this.source = MUSIC_TRACK
       ? createStreamedTrack(this.ctx, MUSIC_TRACK)
-      : createPlaceholderSynth(this.ctx);
+      : createSilentSource(this.ctx);
     this.source.output.connect(this.musicGain);
 
     this.initialised = true;
@@ -367,7 +363,7 @@ export class AudioFFTBridge {
   /**
    * Sprint 13A — swipe-to-tempo-shift hook. Sets the playbackRate of the
    * underlying streamed `<audio>` element when the music source is streamed.
-   * The placeholder synth has no rate to vary, so this is a no-op there.
+   * The silent fallback has no rate to vary, so this is a no-op there.
    */
   setMusicRate(rate: number): void {
     const audioEl = this.source?.audioEl;
@@ -378,7 +374,7 @@ export class AudioFFTBridge {
 
   /**
    * Sprint 13B/13E — current playback position of the streamed music source,
-   * in seconds. Returns 0 when the source is the placeholder-synth or before
+   * in seconds. Returns 0 when the source is the silent fallback or before
    * first user gesture. Consumed by BeatmapScheduler so beat-timing follows
    * the audio clock instead of rAF (drift-free over long sessions).
    */
@@ -444,63 +440,31 @@ export class AudioFFTBridge {
 /* ────────────────────────────────────────────────────────────────────────── */
 
 /**
- * TODO(sprint-7): Replace the placeholder with the rendered Suno track.
- * This synth-loop exists ONLY so the FFT bridge has signal during dev.
+ * Silent fallback source. Used when `MUSIC_TRACK = ''` or before the streamed
+ * track has actually started producing samples. A 1-sample looping zero-buffer
+ * keeps the analyser graph live and gives `getByteFrequencyData()` a stable
+ * 0-floor — post-FX bands settle at 0 (no bloom pump, no kaleido jitter).
  *
- * Build: triangle osc @ 110 Hz (root D-ish) + saw sub @ 55 Hz, both routed
- * through a slowly sweeping low-pass filter, modulated by an LFO that pulses
- * the gain at ~1 Hz. Result: organic-ish low-mid breathing that exercises all
- * 8 FFT bands without sounding like a 1-kHz test sine.
+ * Why not just leave `musicGain` un-fed? Some browsers (Safari) throttle
+ * disconnected analysers; keeping a real (silent) source attached avoids the
+ * throttle without adding any audible content.
  */
-function createPlaceholderSynth(ctx: AudioContext): MusicSource {
-  const out = ctx.createGain();
-  out.gain.value = 0.18;
-
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.Q.value = 4;
-  filter.frequency.value = 800;
-
-  // Sweep filter cutoff slowly so high bands periodically light up.
-  const filterLfo = ctx.createOscillator();
-  filterLfo.type = 'sine';
-  filterLfo.frequency.value = 0.07;
-  const filterLfoGain = ctx.createGain();
-  filterLfoGain.gain.value = 1400;
-  filterLfo.connect(filterLfoGain).connect(filter.frequency);
-  filterLfo.start();
-
-  // Two oscillators — root + sub-octave saw for lows.
-  const o1 = ctx.createOscillator();
-  o1.type = 'triangle';
-  o1.frequency.value = 110;
-  const o2 = ctx.createOscillator();
-  o2.type = 'sawtooth';
-  o2.frequency.value = 55;
-
-  // Slow tremolo on the gain so band-0/1 pulse like a kick.
-  const tremolo = ctx.createOscillator();
-  tremolo.type = 'sine';
-  tremolo.frequency.value = 1.1;
-  const tremGain = ctx.createGain();
-  tremGain.gain.value = 0.12;
-  tremolo.connect(tremGain).connect(out.gain);
-  tremolo.start();
-
-  o1.connect(filter);
-  o2.connect(filter);
-  filter.connect(out);
-  o1.start();
-  o2.start();
-
+function createSilentSource(ctx: AudioContext): MusicSource {
+  const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+  // buffer is already zero-filled; explicit fill not required.
+  const node = ctx.createBufferSource();
+  node.buffer = buffer;
+  node.loop = true;
+  node.start();
   return {
-    output: out,
+    output: node,
     dispose(): void {
-      o1.stop();
-      o2.stop();
-      tremolo.stop();
-      filterLfo.stop();
-      out.disconnect();
+      try {
+        node.stop();
+      } catch {
+        /* already stopped */
+      }
+      node.disconnect();
     },
   };
 }
@@ -514,7 +478,7 @@ function createPlaceholderSynth(ctx: AudioContext): MusicSource {
  * If the `<audio>` element fires `error` (404, decode failure, …) we log a
  * single warning so the dev knows the swap is broken — but we do NOT throw,
  * because the analyser graph is already wired. The world will simply be
- * silent; flipping `MUSIC_TRACK = ''` restores the placeholder synth.
+ * silent; the silent fallback (`createSilentSource`) covers the FFT floor.
  */
 function createStreamedTrack(ctx: AudioContext, src: string): MusicSource {
   const audioEl = document.createElement('audio');
@@ -525,7 +489,7 @@ function createStreamedTrack(ctx: AudioContext, src: string): MusicSource {
   audioEl.addEventListener('error', () => {
     // eslint-disable-next-line no-console
     console.warn(
-      `[audioFFTBridge] failed to load music track: ${src} (audio.error.code=${audioEl.error?.code} msg=${audioEl.error?.message}) — set MUSIC_TRACK='' to fall back to placeholder synth.`,
+      `[audioFFTBridge] failed to load music track: ${src} (audio.error.code=${audioEl.error?.code} msg=${audioEl.error?.message}) — set MUSIC_TRACK='' to fall back to silence.`,
     );
   });
   // Best-effort autoplay — autoplay-policy will reject before user-gesture.

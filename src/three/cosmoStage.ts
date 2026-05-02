@@ -1,5 +1,5 @@
 /**
- * cosmoStage.ts — Sprint 17B
+ * cosmoStage.ts — Sprint 17B (render-pipeline trace updated Sprint 18)
  *
  * Dedicated Three.js sub-renderer for the 3D Cosmo character. Renders ON TOP of
  * the existing ParallaxScene (renderer.autoClear=false + clearDepth) so the
@@ -15,10 +15,46 @@
  *   tilting the phone or moving the mouse subtly shifts the view, and after
  *   8s of no-input the camera breathes on its own.
  *
- * Render order per frame
- *   parallax composer renders into the canvas (with post-FX)
- *   cosmoStage clears depth, renders Cosmo group on top  ← here
- *   Phaser HUD canvas paints over (vibe ring + altitude)
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║  COMPOSITING / RENDER-PIPELINE TRACE — DO NOT REORDER WITHOUT REASON     ║
+ * ╠══════════════════════════════════════════════════════════════════════════╣
+ * ║  Per-frame order (driven from main.ts CanvasManager):                    ║
+ * ║                                                                          ║
+ * ║   1. audioBridge.update()             — fresh FFT into uniforms          ║
+ * ║   2. eventDirector.update(u)          — writes ONLY to uniforms          ║
+ * ║                                          (kaleidoTrigger / damagePulse   ║
+ * ║                                          / etc). NEVER touches Cosmo     ║
+ * ║                                          materials directly.             ║
+ * ║   3. motion.tick(dt)                  — smoothed pan vector              ║
+ * ║   4. parallax.update(u, motion)                                          ║
+ * ║       ├─ shifts each parallax-layer plane                                ║
+ * ║       ├─ ticks decoration sprite-sheets                                  ║
+ * ║       ├─ postFX.update(u)                                                ║
+ * ║       └─ postFX.composer.render()  ← writes parallax.scene to CANVAS,    ║
+ * ║                                       through fluid → kaleido →          ║
+ * ║                                       datamosh → chroma → bloom →        ║
+ * ║                                       vignette → noise. The final        ║
+ * ║                                       pass blits to the default          ║
+ * ║                                       framebuffer (canvas).              ║
+ * ║   5. cosmoAI.tick(dt) + cosmoAgent.update(...)                           ║
+ * ║   6. cosmoStage.render()           ← THIS FILE.                          ║
+ * ║       ├─ renderer.autoClear = false  (preserve canvas color = post-FX'd  ║
+ * ║       │                                parallax already on screen)       ║
+ * ║       ├─ renderer.clearDepth()       (so Cosmo isn't z-occluded by the   ║
+ * ║       │                                parallax planes that wrote depth) ║
+ * ║       └─ renderer.render(scene, cam) (DIRECT renderer call — Cosmo       ║
+ * ║                                        BYPASSES the composer entirely)   ║
+ * ║   7. Phaser HUD DOM canvas paints over (vibe ring, altitude).            ║
+ * ║                                                                          ║
+ * ║  ⇒ INVARIANT: post-FX (fluid/kaleido/chroma/bloom/datamosh) NEVER        ║
+ * ║    touches Cosmo. The world warps trippy, Cosmo stays DNA-correct        ║
+ * ║    (Sprint 16A LoRA-locked silhouette). If a future change pipes         ║
+ * ║    Cosmo through composer.render() — STOP. That breaks the brand.        ║
+ * ║                                                                          ║
+ * ║  Possible perceived warping is CHROMA FRINGE + BLOOM HALO from bright    ║
+ * ║  parallax pixels behind/around Cosmo's silhouette — that's post-fx       ║
+ * ║  agent's domain (postFX.ts), not this file's.                            ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
  *
  * The stage owns
  *   - PerspectiveCamera that pans on motion within biome.cameraBounds
@@ -131,9 +167,21 @@ export class CosmoStage {
   }
 
   /** Render Cosmo on top of the parallax pass. Caller has already rendered
-   *  the parallax composer this frame. */
+   *  the parallax composer this frame.
+   *
+   *  CRITICAL: This is a DIRECT `renderer.render()` call — Cosmo intentionally
+   *  bypasses the post-FX composer so fluid/kaleido/chroma/bloom never warp
+   *  his DNA-locked silhouette (Sprint 16A LoRA brand-rule). DO NOT pipe this
+   *  through `composer.render()` or any RenderPass — Cosmo is the one thing
+   *  in the scene that must NEVER trip. See top-of-file pipeline trace.
+   */
   render(): void {
     const prevAutoClear = this.renderer.autoClear;
+    // Defensive: composer leaves the renderer's render-target unbound (=canvas
+    // default framebuffer) but in case a future post-fx change forgets, force
+    // null so we always paint Cosmo onto the visible canvas, never into a
+    // composer ping-pong target where post-FX could re-process him next frame.
+    this.renderer.setRenderTarget(null);
     this.renderer.autoClear = false;
     this.renderer.clearDepth();
     this.renderer.render(this.scene, this.camera);

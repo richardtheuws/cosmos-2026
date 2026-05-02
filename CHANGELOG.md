@@ -4,6 +4,23 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.4.0] — 2026-05-02 — Sprint 18: smoothness + calm-baseline pass
+
+**4-agent parallel pass** op user-feedback "interactie voelt nog niet smooth, Cosmo vervormt de hele tijd terwijl je een raar fluitje hoort". Audio + post-FX + gameplay + visual-coherence parallel gediagnosticeerd en gefixt.
+
+### Changed
+- **Post-FX calm-pass**: baseline gedempt — bloom 0.8→0.45, fluid amp 0.022→0.01, kaleido ambient 0.16→0, chroma offset gehalveerd, noise opacity 0.32→0.18. Bloom + chroma breathing sines gedecoupled zodat ze niet meer in lockstep pulsen. World ademt nu zacht, weirdness komt op event-pieken.
+- **TrippyEventDirector** cadence 8-15s → 18-30s, cooldown 4s → 12s. Events voelen nu als verrassingen i.p.v. constante achtergrondruis.
+
+### Fixed
+- **Audio**: `audioFFTBridge` placeholder synth (triangle/saw + LFO + filter sweep) verwijderd — was hoorbaar als "raar fluitje" wanneer de Suno-track niet startte. Vervangen door een stille buffer-source die de FFT-floor op 0 houdt zonder geluid te produceren.
+- **Gameplay smoothness (17G)**: Gyro raw-input deadband — sub-deadband phone-on-table noise schrijft niet meer naar `rawPanX/Y`. In plaats daarvan decayen de raw waarden 8% per event richting 0. Elimineert zichtbare camera-jitter wanneer de telefoon stilligt zonder companion-drift te raken. (`src/core/motionController.ts`)
+- **Gameplay smoothness (17G)**: `CosmoAI.paused` flag + onboarding-lockstep. OnboardingDirector hooks (`showAwaitTouchUI`, `pauseObstacleSpawn`, `resumeObstacleSpawn`, `startCosmoWalk`, `spawnCosmoSkipPortal`) flippen nu zowel `cosmoAgent.paused` als `cosmoAgent.ai.paused`. Voorkomt dat de 8s companion-mode-timer al loopt vóór de eerste gesture en dat AI random-events / sleep-progressie tijdens portaal-opening doortikken. (`src/phaser/entities/CosmoAI.ts`, `src/phaser/scenes/CosmoScene.ts`)
+- **Gameplay smoothness (17G)**: `mixer.timeScale` clobber-bug. CosmoAI's slow-breath sleep-state (target 0.4×) werd elke frame overschreven door `CosmoAgent.update`'s FFT-driven `mixer.timeScale = 1 + air * 0.1`. `applyAI` schrijft nu naar een nieuw `aiTimeScaleBase` veld dat `update()` vermenigvuldigt met de FFT-factor. Sleep is nu daadwerkelijk slow-breath; non-sleep states keren netjes terug naar 1.0× via een 5% lerp. (`src/phaser/entities/CosmoAgent.ts`)
+
+### Documentation
+- **`cosmoStage.ts`**: complete render-pipeline trace + invariant comment toegevoegd zodat toekomstige agents niet per ongeluk Cosmo door de post-FX composer pipen (DNA-lock breekt anders). Defensieve `setRenderTarget(null)` in `render()` toegevoegd; verifieerd dat post-FX (fluid/kaleido/chroma/bloom) Cosmo niet raakt — perceptie van "Cosmo vervormt" komt van chroma fringe + bloom halo van parallax-pixels rondom hem (post-fx baseline al gekalmeerd).
+
 ## [1.3.0] — 2026-05-02 — Sprint 17: motion-controlled world explorer + companion-mode
 
 **Gameplay-shift**: weg van runner ("ren naar rechts"), naar **motion-controlled world explorer + stoned-watching companion**. Cosmo blijft center, wereld scrollt NIET. Camera pant binnen biome-scene op gyro/mouse. Trampolines op fixed posities zijn enige interactie. 8s no-input → companion-AI neemt over, Cosmo wandelt zelf rond, kijkt, zit, slaapt na 90s met hallucination-particles. Embrace the weirdness.
