@@ -1,10 +1,12 @@
 # Cosmo's Universe
 
+![Cosmo standing in his mushroom forest](docs/showcase/hero-cosmo-in-forest.jpg)
+
 > *Your Cosmo can visit my forest. My Cosmo can visit your world.*
 
 A new form of collaborative game development — built by people who pair with Claude.
 
-**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Contracts**: [`UNIVERSE-AUTHORING.md`](./UNIVERSE-AUTHORING.md) · **Integrations & costs**: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · **Substrate version**: 2.0.0 (in flight)
+**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Contracts**: [`UNIVERSE-AUTHORING.md`](./UNIVERSE-AUTHORING.md) · **Integrations & costs**: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · **Substrate version**: 2.0.0
 
 ---
 
@@ -70,6 +72,24 @@ There's no shame in path 2 or 3. The substrate gets stronger when contributors a
 - **An open invitation** — any developer can author a new Universe and plug it into the same runtime. Cosmo travels into your Universe; characters from your Universe travel into mine. State persists. The being is the constant. The world keeps growing.
 
 This is **a new form of cooperative game development** — not "we made a game, you can mod it", but "we made a substrate, and the being who lives in it can walk through anyone's imagination". Your Universe doesn't ask permission. It just plugs in.
+
+### The forest, today
+
+![The mushroom forest — Cosmo's entry Universe](docs/showcase/the-forest.jpg)
+
+The current world is a watercolor cosmic-mushroom forest, painted in the Hayao×Moebius idiom. It is the entry-point. It will not be replaced; Cosmo will simply learn to walk farther.
+
+### Cosmo, in four expressions
+
+![Cosmo's face decals: neutral, coo, blink, wave](docs/showcase/cosmo-faces-quad.jpg)
+
+Cosmo carries four painted face-states he swaps between as he reacts: neutral, coo (small surprise / petting), blink, and wave (the slightly-too-long uncanny stare). Lip-sync and eye-track in Wave 20b will animate the iris within these decals; the painted style stays.
+
+### Inhabitants
+
+![Weirdo inhabitants: eyeball-sentry, mouth-pillar, breathing-portal, floating-star](docs/showcase/weirdo-inhabitants.jpg)
+
+Each Universe gets its own small lives. The forest has eight so far — eyeball-sentries that wink when you look at them, mouth-pillars that breathe in time with the music, breathing-portals at the edge of the world, floating stars that drift past Cosmo's ear. Your Universe will have its own.
 
 ## Why this exists
 
