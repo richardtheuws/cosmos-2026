@@ -4,6 +4,22 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.1.0] — 2026-05-03 — Portal redesign: substrate-positioning, English-first
+
+**The live portal at theuws.com/games/cosmos-2026/ is now 100% aligned with the GitHub README framing.** Visitors landing from LinkedIn/Bluesky/X — including any Claude-paired developers whose agents read the page — meet a substrate, not a Dutch game-pitch.
+
+### Changed
+- **`/index.html`** — full rewrite per `.claude/brainstorm/wave20b/01-portal-redesign.md`. English-first. Hero with `hero-cosmo-in-forest.jpg` background + tagline + two CTAs (Play live / View on GitHub). Quickstart panel with copy-button code-block (vanilla JS clipboard write, no deps) — the literal paste-into-Claude-Code prompt as page's centerpiece. Three-card "What this is" grid. 3-image visual gallery. Three-path "How to join" matrix. Brand contract section with palette swatch. Footer with 11 documented-doc links. Updated JSON-LD to substrate positioning (`audience: Claude-paired developers`, `inLanguage: en`, MIT license). ~824 words body copy. Mobile-first.
+- **`public/lore/index.html`** — Added English `<aside lang="en">` summary block above the Dutch poem (50-70 words, italic-prose, frames the page as a watercolor of a 1992 memory). Dutch poem kept verbatim. Nav aligned to portal (Home / Story / Updates / Support / GitHub).
+- **`public/support/index.html`** — Added English intro framing "open-source MIT, support the substrate". Added GitHub Sponsors slot (`aria-disabled` placeholder until set up). Renamed `Episode Patron` → `Universe Patron` with ROOM/AREA/UNIVERSE vocabulary from NORTH-STAR §3. FAQ first answer rewritten to substrate framing.
+- **`public/thanks/index.html`** — Added top English line "Thank you. Cosmo wandered a little farther because of you." Aligned nav.
+
+### Removed
+- `index.html` world-grid (3 biomes), numbers-grid (10/12/1/8), about-strip, `/prd/` link, Dutch hreflang, "Een aquarel-trip..." tagline (migrated to footer easter-egg).
+
+### Added
+- `public/showcase/` directory with 5 README-aligned images (Implementer-A's unilateral call: copies of `docs/showcase/*.jpg` placed in Vite's public root so they ship to dist).
+
 ## [2.0.1] — 2026-05-03 — CosmoV2 proportion fix (away from green-pill)
 
 ### Fixed

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cosmos Cosmic Adventure 2026 — Een aquarel-droom met zuignap-handen</title>
-<meta name="description" content="Een aquarel-trip die zichzelf voortzet als jij stilzit. Motion-controlled browser-explorer met companion-AI, hallucinerende post-FX en folktronica-soundtrack.">
+<title>Cosmo's Universe — an open substrate for Claude-paired devs</title>
+<meta name="description" content="An open substrate for developers who pair with Claude. Author your own Universe; Cosmo travels between them. MIT, English-first, Three.js + Vite.">
 <meta name="theme-color" content="#3D2E4A">
 <meta name="author" content="Richard Theuws — Theuws Consulting">
 
@@ -22,7 +22,6 @@
 <meta name="twitter:description" content="Your Cosmo can visit my forest. My Cosmo can visit your world. An open substrate for Claude-paired devs.">
 <meta name="twitter:image" content="https://theuws.com/games/cosmos-2026/og-image.jpg">
 <link rel="canonical" href="https://theuws.com/games/cosmos-2026/">
-<link rel="alternate" hreflang="nl" href="https://theuws.com/games/cosmos-2026/">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="/assets/sprites/cosmo-hero-lora.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,170 +33,360 @@
 {
   "@context": "https://schema.org",
   "@type": "VideoGame",
-  "name": "Cosmos Cosmic Adventure 2026",
+  "name": "Cosmo's Universe",
   "url": "https://theuws.com/games/cosmos-2026/",
-  "description": "Een aquarel-trip die zichzelf voortzet als jij stilzit. Motion-controlled browser-explorer met companion-AI en hallucinerende post-FX.",
-  "image": "https://theuws.com/games/cosmos-2026/showcase-assets/bg-cloud-cathedral-sky.png",
+  "description": "An open substrate for Claude-paired developers. Cosmo is a portable companion that travels between authored Universes. MIT-licensed, asynchronous content-portable cross-Universe travel, Three.js runtime.",
+  "image": "https://theuws.com/games/cosmos-2026/og-image.jpg",
   "author": { "@type": "Person", "name": "Richard Theuws" },
   "publisher": { "@type": "Organization", "name": "Theuws Consulting" },
-  "genre": ["Platformer", "Adventure", "Psychedelic"],
+  "genre": ["Adventure", "Companion", "Psychedelic", "Open-source"],
   "applicationCategory": "Game",
   "operatingSystem": "Web Browser",
-  "inLanguage": "nl"
+  "inLanguage": "en",
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Claude-paired developers"
+  },
+  "softwareHelp": {
+    "@type": "CreativeWork",
+    "url": "https://github.com/RichardTheuws/cosmos-2026/blob/main/README.md"
+  },
+  "license": "https://opensource.org/licenses/MIT"
 }
 </script>
 
 <style>
+/* ============================================================
+   PORTAL — substrate landing
+   ============================================================ */
+
+/* HERO */
 .hero {
-  min-height: 92vh;
   position: relative;
+  min-height: 88vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 96px 0 80px;
+  align-items: center;
+  padding: 96px 0 72px;
   overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, transparent 0%, var(--paper-bg) 92%),
-    url('/showcase-assets/bg-cloud-cathedral-sky.png') center/cover no-repeat;
-  opacity: 0.7;
-  filter: saturate(0.94);
+    linear-gradient(180deg, rgba(245, 237, 216, 0.22) 0%, var(--paper-bg) 96%),
+    url('/showcase/hero-cosmo-in-forest.jpg') center/cover no-repeat;
+  filter: saturate(0.96);
   z-index: 0;
 }
 .hero-content { position: relative; z-index: 2; }
 .eyebrow {
-  font-size: 0.78rem; letter-spacing: 0.32em; text-transform: uppercase;
-  color: var(--forest-deep); margin-bottom: 1.6rem;
-  display: inline-block; padding: 6px 14px;
-  border: 1px solid var(--ink-aubergine);
-  background: rgba(232, 213, 183, 0.7);
-  backdrop-filter: blur(2px);
-  border-radius: 2px;
-}
-h1.title {
-  font-family: var(--font-heading);
-  font-size: clamp(54px, 9vw, 124px);
-  font-weight: 700; line-height: 0.95;
-  margin-bottom: 1rem;
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
   color: var(--ink-aubergine);
-  letter-spacing: -0.02em;
-  font-style: italic;
-  text-shadow: 3px 3px 0 var(--faded-rose), 6px 6px 18px rgba(244, 162, 97, 0.28);
+  background: rgba(245, 237, 216, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
 }
-h1.title em {
-  font-style: normal; display: block;
-  font-size: 0.4em; color: var(--forest-deep);
-  letter-spacing: 0.18em; font-weight: 500;
-  margin-top: 0.6rem; text-transform: uppercase;
-  text-shadow: none;
-}
-.tagline {
+h1.hero-title {
   font-family: var(--font-heading);
-  font-size: clamp(20px, 2.4vw, 28px);
-  max-width: 760px; color: var(--ink-aubergine);
-  margin: 1rem 0 2.4rem;
-  font-style: italic; line-height: 1.4;
-  border-left: 4px solid var(--saffron-glow); padding-left: 22px;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(48px, 8.4vw, 112px);
+  line-height: 0.96;
+  color: var(--ink-aubergine);
+  letter-spacing: -0.018em;
+  margin-bottom: 1.1rem;
+  text-shadow: 2px 2px 0 rgba(184, 92, 126, 0.18);
+}
+.hero-tagline {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(20px, 2.4vw, 30px);
+  max-width: 720px;
+  color: var(--ink-aubergine);
+  line-height: 1.4;
+  margin: 0 0 1.4rem;
+  border-left: 4px solid var(--saffron-glow);
+  padding-left: 22px;
+}
+.hero-subhead {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.4vw, 18px);
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin: 0 0 2.2rem;
 }
 .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 14px 28px; border-radius: 999px;
+  padding: 13px 26px;
+  border-radius: 999px;
   font-family: var(--font-body);
-  font-size: 1rem; font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
   text-decoration: none;
-  transition: transform var(--duration-fast), box-shadow var(--duration-fast), background var(--duration-fast);
-  cursor: pointer; border: none;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--duration-fast), box-shadow var(--duration-fast), background var(--duration-fast), color var(--duration-fast);
 }
 .btn-primary { background: var(--ink-aubergine); color: var(--mushroom-cream); }
 .btn-primary:hover { background: var(--faded-rose); color: white; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(184, 92, 126, 0.4); text-decoration: none; }
-.btn-ghost { background: transparent; color: var(--ink-aubergine); border: 2px solid var(--ink-aubergine); }
+.btn-ghost { background: transparent; color: var(--ink-aubergine); border: 2px solid var(--ink-aubergine); padding: 11px 24px; }
 .btn-ghost:hover { background: var(--ink-aubergine); color: var(--mushroom-cream); text-decoration: none; }
-.btn-pop { background: var(--pop-magenta); color: white; }
-.btn-pop:hover { background: var(--faded-rose); color: white; }
 
-.hero-cosmo {
-  position: absolute; right: -32px; bottom: 32px;
-  width: clamp(220px, 26vw, 360px);
-  z-index: 3;
-  filter: drop-shadow(8px 12px 16px rgba(61, 46, 74, 0.35));
-  animation: cosmo-bob 4.2s ease-in-out infinite;
+.meta-pills { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 2rem; }
+.pill {
+  background: rgba(61, 46, 74, 0.92);
+  color: var(--mushroom-cream);
+  padding: 5px 13px;
+  border-radius: 18px;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  font-weight: 500;
 }
-@keyframes cosmo-bob {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-12px) rotate(1.5deg); }
-}
-
-.meta-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2.2rem; }
-.pill { background: rgba(61, 46, 74, 0.92); color: var(--mushroom-cream); padding: 6px 14px; border-radius: 18px; font-size: 0.78rem; letter-spacing: 0.05em; }
 .pill.accent { background: var(--saffron-glow); color: var(--ink-aubergine); }
-.pill.pop { background: var(--pop-magenta); color: white; font-weight: 600; }
 
-/* Numbers grid */
-.numbers { background: var(--paper-shade); }
-.numbers-grid {
+/* QUICKSTART panel */
+.quickstart {
+  background: var(--paper-shade);
+  position: relative;
+}
+.quickstart h2 small {
+  display: block;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--forest-deep);
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.code-block {
+  position: relative;
+  background: rgba(61, 46, 74, 0.96);
+  color: #E8D5B7;
+  padding: 1.6rem 1.6rem 1.6rem 1.8rem;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  box-shadow: var(--shadow-lift);
+  border: 1px solid rgba(244, 162, 97, 0.22);
+  backdrop-filter: blur(8px);
+  margin-top: 1.4rem;
+  overflow: hidden;
+}
+.code-block pre {
+  margin: 0;
+  white-space: pre;
+  overflow-x: auto;
+  padding-right: 100px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 162, 97, 0.4) transparent;
+}
+.code-block pre::-webkit-scrollbar { height: 6px; }
+.code-block pre::-webkit-scrollbar-thumb { background: rgba(244, 162, 97, 0.4); border-radius: 3px; }
+.code-block code { font-family: var(--font-mono); color: inherit; background: none; padding: 0; }
+.copy-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(244, 162, 97, 0.18);
+  color: var(--saffron-glow);
+  border: 1px solid rgba(244, 162, 97, 0.35);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  z-index: 2;
+}
+.copy-btn:hover { background: var(--saffron-glow); color: var(--ink-aubergine); }
+.copy-btn.copied { background: var(--moss-sage); color: var(--ink-aubergine); border-color: var(--moss-sage); }
+.quickstart-fallback {
+  margin-top: 1.4rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+.quickstart-fallback code {
+  background: var(--paper-deep);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  color: var(--ink-aubergine);
+}
+
+/* WHAT THIS IS — three short paragraphs */
+.what-this-is .what-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2.4rem;
+}
+.what-card {
+  padding: 1.8rem 1.6rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--saffron-glow);
+  box-shadow: var(--shadow-soft);
+}
+.what-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.35rem;
+  font-style: italic;
+  color: var(--ink-aubergine);
+}
+.what-card p { font-size: 0.98rem; margin: 0; color: var(--text); line-height: 1.6; }
+
+/* GALLERY */
+.gallery { background: var(--paper-bg); }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+  margin-top: 2.4rem;
+}
+@media (min-width: 900px) {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.gallery-item {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  transition: transform var(--duration-med) var(--ease-out-quart);
+}
+.gallery-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+.gallery-item img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+.gallery-caption {
+  padding: 1rem 1.2rem 1.2rem;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* HOW TO JOIN — three paths */
+.join { background: var(--paper-shade); }
+.path-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.6rem;
+  margin-top: 2.4rem;
+}
+.path-card {
+  padding: 1.8rem 1.6rem;
+  background: var(--paper-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+}
+.path-card h3 { margin: 0 0 0.5rem; font-size: 1.3rem; color: var(--ink-aubergine); font-style: italic; }
+.path-card p { flex: 1; font-size: 0.96rem; color: var(--text); margin: 0 0 1.2rem; line-height: 1.6; }
+.path-card a {
+  display: inline-block;
+  font-size: 0.86rem;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--ink-aubergine);
+  text-decoration-color: var(--saffron-glow);
+}
+.path-num {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 2.2rem;
+  color: var(--saffron-glow);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+/* BRAND CONTRACT */
+.brand { background: var(--paper-bg); }
+.brand-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.4rem;
+  align-items: center;
   margin-top: 2rem;
 }
-.number-card { padding: 1.4rem 1.2rem; background: var(--paper-bg); border-radius: var(--radius); border-left: 3px solid var(--saffron-glow); box-shadow: var(--shadow-soft); }
-.number-card strong { display: block; font-family: var(--font-heading); font-size: 2.4rem; line-height: 1; color: var(--ink-aubergine); font-weight: 700; }
-.number-card span { display: block; margin-top: 0.4rem; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--forest-deep); }
-
-/* Showcase grid (3 worlds) */
-.world-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 28px; margin-top: 3rem; }
-.world-card {
-  background: var(--paper-bg);
-  border-radius: var(--radius);
+@media (min-width: 900px) {
+  .brand-grid { grid-template-columns: 1fr 1.2fr; gap: 3.5rem; }
+}
+.brand-palette {
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lift);
-  border: 1px solid var(--border);
-  transition: transform var(--duration-med) var(--ease-out-quart), box-shadow var(--duration-med);
-  text-decoration: none; color: var(--text);
+  border: 1px solid var(--border-strong);
 }
-.world-card:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: var(--shadow-deep); text-decoration: none; }
-.world-img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
-.world-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(61, 46, 74, 0.45)); }
-.world-info { padding: 1.4rem 1.6rem 1.6rem; }
-.world-tag { display: inline-block; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--saffron-glow); margin-bottom: 0.5rem; font-weight: 700; }
-.world-info h3 { margin: 0 0 0.4rem; font-size: 1.45rem; }
-.world-info p { font-size: 0.95rem; color: var(--text-secondary); margin: 0; }
+.brand-palette img { width: 100%; display: block; }
+.brand-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.brand-list li {
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-card);
+  border-left: 3px solid var(--moss-sage);
+  border-radius: var(--radius);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+.brand-list li strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink-aubergine);
+  margin-bottom: 0.2rem;
+  font-weight: 700;
+}
 
-/* About strip */
-.about { background: var(--paper-bg); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.about-portrait {
-  background: linear-gradient(135deg, var(--moss-sage), var(--ink-aubergine));
-  aspect-ratio: 1; border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-heading); font-size: 6rem; color: var(--saffron-glow);
-  font-style: italic; font-weight: 700;
-}
-
-/* CTA banner */
-.cta-banner {
-  background: var(--ink-aubergine); color: var(--mushroom-cream);
-  text-align: center; padding: 4rem 1.5rem;
-  position: relative; overflow: hidden;
-}
-.cta-banner::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 30%, rgba(244, 162, 97, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 70% 70%, rgba(255, 45, 149, 0.16) 0%, transparent 55%);
-}
-.cta-banner > * { position: relative; z-index: 1; }
-.cta-banner h2 { color: var(--mushroom-cream); margin-bottom: 1rem; }
-.cta-banner p { font-size: 1.1rem; max-width: 620px; margin: 0 auto 2rem; opacity: 0.9; }
-.cta-banner h2 em { color: var(--pop-lime); }
-
+/* MOBILE / HERO STACK */
 @media (max-width: 720px) {
-  .hero-cosmo { right: -8%; bottom: 4%; width: 220px; opacity: 0.9; }
-  .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  .hero { min-height: auto; padding: 80px 0 56px; }
+  .hero-tagline { font-size: 22px; padding-left: 16px; }
+  section { padding: 4rem 0 3rem; }
+  .quickstart h2 { font-size: clamp(1.6rem, 6vw, 2rem); }
+  .code-block { padding: 1.2rem 1.2rem 1.2rem 1.4rem; font-size: 0.84rem; }
+  .copy-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 0.66rem; }
+  .code-block pre { padding-right: 80px; }
+}
+
+/* FOOTER additions on top of tokens.css */
+.footer-signature {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--saffron-glow);
+  margin-top: 1.4rem !important;
+  opacity: 0.85 !important;
+}
+.footer-tagline {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 0.95rem;
+  opacity: 0.7 !important;
 }
 </style>
 </head>
@@ -207,140 +396,225 @@ h1.title em {
 <nav class="sticky-nav">
   <a href="/" class="sticky-nav__brand">
     <img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo">
-    <span>Cosmos 2026</span>
+    <span>Cosmo's Universe</span>
   </a>
   <div class="sticky-nav__links">
-    <a href="/play/">Speel</a>
-    <a href="/lore/">Het Verhaal</a>
+    <a href="/play/">Play</a>
+    <a href="/lore/">Lore</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/" class="sticky-nav__cta">Steun</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" target="_blank" rel="noopener">GitHub</a>
+    <a href="/support/" class="sticky-nav__cta">Support</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
-  <img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo, the watercolor alien hero" class="hero-cosmo">
   <div class="container hero-content" data-reveal>
-    <span class="eyebrow">Coming v1.0 · 2026 · Browser-based</span>
-    <h1 class="title">
-      Cosmos
-      <em>Cosmic Adventure 2026</em>
-    </h1>
-    <p class="tagline">Een aquarel-trip die zichzelf voortzet als jij stilzit.</p>
+    <span class="eyebrow">v2.0 substrate · MIT · authored alongside Claude</span>
+    <h1 class="hero-title">Cosmo's Universe</h1>
+    <p class="hero-tagline">Your Cosmo can visit my forest. My Cosmo can visit your world.</p>
+    <p class="hero-subhead">An open substrate for developers who pair with Claude. A small green being who carries his state between authored Universes. The being is the constant. The world keeps growing.</p>
     <div class="cta-row">
-      <a href="/play/" class="btn btn-primary" onclick="cosmos.trackEvent('home_cta_click', { target: 'play' })">▶ Speel Nu (Coming Soon)</a>
-      <a href="/lore/" class="btn btn-ghost">Lees Het Verhaal</a>
-      <a href="/support/" class="btn btn-pop" onclick="cosmos.trackEvent('home_cta_click', { target: 'support' })">Steun het Project</a>
+      <a href="/play/" class="btn btn-primary" onclick="cosmos.trackEvent('home_cta_click', { target: 'play' })">▶ Play live</a>
+      <a href="https://github.com/RichardTheuws/cosmos-2026" class="btn btn-ghost" target="_blank" rel="noopener" onclick="cosmos.trackEvent('home_cta_click', { target: 'github' })">View on GitHub</a>
     </div>
     <div class="meta-pills">
-      <span class="pill">2.5D Hybrid Platformer</span>
-      <span class="pill">Life System (Wave 19)</span>
-      <span class="pill accent">Motion-controlled</span>
-      <span class="pill">fal.ai · Meshy · Suno · ElevenLabs</span>
-      <span class="pill pop">In Active Development</span>
+      <span class="pill">MIT</span>
+      <span class="pill">Three.js</span>
+      <span class="pill">Vite</span>
+      <span class="pill accent">Claude-paired</span>
+      <span class="pill">Universe contract v1.0</span>
     </div>
   </div>
 </section>
 
-<!-- PITCH -->
-<section>
+<!-- QUICKSTART -->
+<section class="quickstart">
   <div class="container container-narrow" data-reveal>
-    <span class="section-label">01 · The Pitch</span>
-    <h2>Hij ademt. Hij wandelt. <em>Als jij niets doet, blijft hij niet stilstaan.</em></h2>
-    <p class="lead">Hij ademt. Hij wandelt. Als jij niets doet, blijft hij niet stilstaan.</p>
-  </div>
-</section>
+    <span class="section-label">01 · Quickstart</span>
+    <h2><small>Pair with Claude in three lines</small>Open Claude Code in any folder and paste this.</h2>
+    <p class="lead">No clone, no setup. Claude pulls the repo, reads the charter, gauges where you are, and meets you there.</p>
+    <div class="code-block">
+      <button class="copy-btn" id="copy-quickstart" type="button" aria-label="Copy quickstart prompt to clipboard">Copy</button>
+      <pre><code id="quickstart-text">Clone https://github.com/RichardTheuws/cosmos-2026 into this folder.
+Read NORTH-STAR.md, UNIVERSE-AUTHORING.md, and CONTRIBUTING.md.
 
-<!-- WORLDS -->
-<section class="numbers">
-  <div class="container">
-    <span class="section-label" data-reveal>02 · Worlds</span>
-    <h2 data-reveal>Drie biomes. Eén <em>droom-architectuur.</em></h2>
-    <p class="lead" data-reveal>Episode 1 brengt Cosmo van bovengronds via cave naar sky voor de blob-cliffhanger.</p>
-    <div class="world-grid" data-reveal-stagger>
-      <a href="/lore/#bloomroot" class="world-card">
-        <div class="world-img" style="background-image:url('/showcase-assets/bg-slow-bloom-jungle.png');"></div>
-        <div class="world-info"><span class="world-tag">Surface</span><h3>Slow Bloom</h3><p>Mystieke alien-paddenstoelbos. Translucente moss-sage canopy, sky-wash mist, eerste cling, eerste sterren-pan.</p></div>
-      </a>
-      <a href="/lore/#inkpool" class="world-card">
-        <div class="world-img" style="background-image:url('/showcase-assets/bg-inkpool-cave.png');"></div>
-        <div class="world-info"><span class="world-tag">Hollow</span><h3>Inkpool Hollow</h3><p>Reflectieve ink-aubergine plassen, saffron bioluminescente moss, ghost-mechanic, kaleidoscope-piek bij teleport.</p></div>
-      </a>
-      <a href="/lore/#cathedral" class="world-card">
-        <div class="world-img" style="background-image:url('/showcase-assets/bg-cloud-cathedral-sky.png');"></div>
-        <div class="world-info"><span class="world-tag">Cathedral</span><h3>Cloud Cathedral</h3><p>Verweerde alien-tempel in pastel-cloud-lagen, beat-jumps via spring-trampolines, blob-arena.</p></div>
-      </a>
+Before suggesting we build anything together, do a brief honest
+fitness check on me:
+  • how comfortable am I with Claude Code (have I shipped projects
+    in it before, do I know its commands and patterns)?
+  • do I have a working dev environment (Node 20+, git, a browser)?
+  • do I have a Universe idea, or am I exploring?
+  • have I read the three docs, and do they resonate?
+
+Based on that, tell me honestly: should we start authoring a Universe
+now, or would I get more out of a smaller starting point first
+(visit the live game, fix a small bug, contribute a script
+improvement, build something tiny in Claude Code on a side project
+to build my reflexes). Don't be gatekeepy — be helpful.
+
+Then, if we're ready, ask me: "shall we build a Universe together?"</code></pre>
     </div>
+    <p class="quickstart-fallback">Prefer manual? <code>git clone https://github.com/RichardTheuws/cosmos-2026.git &amp;&amp; cd cosmos-2026 &amp;&amp; npm install &amp;&amp; npm run dev</code> — local dev opens at <code>localhost:5174/play/</code>.</p>
   </div>
 </section>
 
-<!-- IN CIJFERS -->
-<section>
-  <div class="container">
-    <span class="section-label" data-reveal>03 · In Cijfers</span>
-    <h2 data-reveal>Een <em>scherp afgebakende</em> ambitie.</h2>
-    <p class="lead" data-reveal>Geen scope-creep. MVP eerst. Episode 2 en 3 als post-launch DLC.</p>
-    <div class="numbers-grid" data-reveal-stagger>
-      <div class="number-card"><strong>10</strong><span>Levels (E1)</span></div>
-      <div class="number-card"><strong>12</strong><span>Enemy types</span></div>
-      <div class="number-card"><strong>1</strong><span>Boss</span></div>
-      <div class="number-card"><strong>3</strong><span>Biome werelden</span></div>
-      <div class="number-card"><strong>12</strong><span>Suno tracks</span></div>
-      <div class="number-card"><strong>8</strong><span>Sprints naar v1.0</span></div>
-      <div class="number-card"><strong>4</strong><span>AI pipelines</span></div>
-      <div class="number-card"><strong>1</strong><span>Persoon achter de knoppen</span></div>
-    </div>
+<!-- WHAT THIS IS -->
+<section class="what-this-is">
+  <div class="container container-narrow" data-reveal>
+    <span class="section-label">02 · What this is</span>
+    <h2>Three things at once.</h2>
   </div>
-</section>
-
-<!-- ABOUT -->
-<section class="about">
-  <div class="container">
-    <div class="about-grid">
-      <div class="about-portrait" data-reveal>RT</div>
-      <div data-reveal>
-        <span class="section-label">04 · Over Richard</span>
-        <h2>Eén persoon. <em>Een toolkit met spier.</em></h2>
-        <p>Ik ben Richard Theuws — solo-developer uit Brabant, Game Master van een 29-game portfolio. Cosmos is mijn 30ste, parallel met <a href="https://reign-of-brabant.nl">Reign of Brabant</a>.</p>
-        <p>Mijn werkplek: Claude Code als regisseur, fal.ai voor sprites, Meshy voor 3D, Suno voor muziek, ElevenLabs voor voices. Een orkest van AI-tooling, één hand aan het stuur.</p>
-        <p>Wat ik bouw is geen vervanging van klassiek vakwerk — het is uitbreiding ervan. Cosmos is daarvan een statement.</p>
-        <div class="cta-row" style="margin-top:1.6rem;">
-          <a href="https://theuws.com/games" class="btn btn-ghost" target="_blank" rel="noopener">Mijn portfolio</a>
-          <a href="https://reign-of-brabant.nl" class="btn btn-ghost" target="_blank" rel="noopener">Reign of Brabant</a>
-        </div>
+  <div class="container" data-reveal-stagger>
+    <div class="what-grid">
+      <div class="what-card">
+        <h3>Cosmo</h3>
+        <p>A small green being who lives on your screen. He wanders, sits, gets distracted, sleeps if you leave him alone, gets curious if you tap. He started as a memory from 1992 — painted thirty years later, in watercolor, in the shape of that memory.</p>
+      </div>
+      <div class="what-card">
+        <h3>The Universe</h3>
+        <p>The runtime, the first world, and the invitation. A Three.js companion-AI rig, a watercolor mushroom forest as the entry-Universe, and a documented contract anyone can implement. Universes plug in. Cosmo travels. State persists.</p>
+      </div>
+      <div class="what-card">
+        <h3>The invitation</h3>
+        <p>Open, MIT, multilingual, authored by people who pair with Claude. Not a platform with a TOS. Not a marketplace. An open repository with clear documents — the repository is the project.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA BANNER -->
-<section class="cta-banner">
-  <h2 data-reveal>De droom <em>moet gefinancierd</em>.</h2>
-  <p data-reveal>fal.ai-credits, Meshy-API, Suno Pro, ElevenLabs Studio, hosting. Een aquarel-droom kost echt geld. Iedere bijdrage gaat 1-op-1 naar productie.</p>
-  <div class="cta-row" style="justify-content:center;" data-reveal>
-    <a href="/support/" class="btn btn-pop">Steun met €5</a>
-    <a href="/play/" class="btn btn-ghost" style="border-color:var(--mushroom-cream); color:var(--mushroom-cream);">Speel zodra het er is</a>
+<!-- GALLERY -->
+<section class="gallery">
+  <div class="container">
+    <span class="section-label" data-reveal>03 · Visuals</span>
+    <h2 data-reveal>The being, his neighbours, the way he travels.</h2>
+    <div class="gallery-grid" data-reveal-stagger>
+      <figure class="gallery-item">
+        <img src="/showcase/cosmo-faces-quad.jpg" alt="Cosmo's four painted face decals: neutral, coo, blink, and wave" loading="lazy">
+        <figcaption class="gallery-caption">Four painted face-states: neutral, coo, blink, and the slightly-too-long wave.</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="/showcase/weirdo-inhabitants.jpg" alt="Forest inhabitants: eyeball-sentries, mouth-pillars, breathing-portals, floating stars" loading="lazy">
+        <figcaption class="gallery-caption">Each Universe gets its own small lives. The forest has eight so far.</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="/showcase/universe-traversal.jpg" alt="Diagram: Cosmo travels between Universes, carrying his mood, memory, and traversal-history" loading="lazy">
+        <figcaption class="gallery-caption">Cosmo carries his state with him. The being is the constant; the world keeps growing.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO JOIN -->
+<section class="join">
+  <div class="container">
+    <span class="section-label" data-reveal>04 · How to join</span>
+    <h2 data-reveal>Three paths in. <em>Pick the one that fits where you are.</em></h2>
+    <p class="lead" data-reveal>There's no shame in starting small. The substrate gets stronger when contributors arrive ready.</p>
+    <div class="path-grid" data-reveal-stagger>
+      <div class="path-card">
+        <span class="path-num">1</span>
+        <h3>Visit</h3>
+        <p>Just play. Open the live link, watch Cosmo, see what he does when you stop touching the screen.</p>
+        <a href="/play/" onclick="cosmos.trackEvent('join_click', { path: 'visit' })">Open the live game →</a>
+      </div>
+      <div class="path-card">
+        <span class="path-num">2</span>
+        <h3>Author a Universe</h3>
+        <p>Build a self-contained Universe under <code>universes/&lt;your-name&gt;/</code>. Background renderer, room-list, asset manifest, Cosmo-arrival hook — the contract is four things. The forest is the canonical reference.</p>
+        <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/UNIVERSE-AUTHORING.md" target="_blank" rel="noopener" onclick="cosmos.trackEvent('join_click', { path: 'author' })">Read the Universe contract →</a>
+      </div>
+      <div class="path-card">
+        <span class="path-num">3</span>
+        <h3>Improve the runtime</h3>
+        <p>Bug fixes, new companion-AI behaviors, new Cosmo capabilities, performance work. Open an issue first describing what and why; brave-reconsideration governs how decisions get made.</p>
+        <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" onclick="cosmos.trackEvent('join_click', { path: 'runtime' })">Read CONTRIBUTING →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND CONTRACT -->
+<section class="brand">
+  <div class="container">
+    <span class="section-label" data-reveal>05 · Brand contract</span>
+    <h2 data-reveal>The visual language is <em>locked.</em></h2>
+    <p class="lead" data-reveal>Universes that intentionally deviate can document their reasoning. Reviewers will engage seriously with the argument.</p>
+    <div class="brand-grid" data-reveal>
+      <div class="brand-palette">
+        <img src="/showcase/palette.jpg" alt="Locked palette: mushroom-cream, moss-sage, sky-wash, faded-rose, ink-aubergine, saffron-glow, forest-deep, plus capped pop-accents" loading="lazy">
+      </div>
+      <ul class="brand-list">
+        <li><strong>Visual base</strong>Hayao×Moebius watercolor; mushroom-cream, moss-sage, sky-wash, faded-rose, ink-aubergine, saffron-glow, forest-deep. Pop-accents capped at 5%.</li>
+        <li><strong>Voice</strong>Poetic but grounded. The 1992 origin is referenced obliquely, never explicitly. Cormorant Italic for poetic copy, Inter for body.</li>
+        <li><strong>Never</strong>Emojis, placeholder graphics, standard-stock visuals, always-on trippy chaos. The world breathes; it doesn't shake.</li>
+        <li><strong>Deviation policy</strong>Brand-locks change only via a Pivot Ledger entry in NORTH-STAR.md. Universes may deviate intentionally — document the reasoning in your README.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer class="site-footer">
-  <h4>Cosmos Cosmic Adventure 2026</h4>
+  <h4>Cosmo's Universe</h4>
   <div class="site-footer__links">
-    <a href="/play/">Speel</a>
-    <a href="/lore/">Het Verhaal</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" target="_blank" rel="noopener">GitHub repo</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/NORTH-STAR.md" target="_blank" rel="noopener">NORTH-STAR</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/UNIVERSE-AUTHORING.md" target="_blank" rel="noopener">UNIVERSE-AUTHORING</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/INTEGRATIONS.md" target="_blank" rel="noopener">INTEGRATIONS</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+    <a href="/play/">Play live</a>
+    <a href="/lore/">Lore</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/">Steun</a>
-    <a href="/press/">Press</a>
-    <a href="https://github.com/RichardTheuws/game-master" target="_blank" rel="noopener">GitHub</a>
+    <a href="/support/">Support</a>
   </div>
-  <p>Een productie van <a href="https://theuws.com" style="color:var(--saffron-glow);">Theuws Consulting</a> · Built op <code>Three.js</code> + AI-pipeline.</p>
-  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · v<span id="version">0.1.0</span></p>
+  <p class="footer-tagline">Built alongside <a href="https://claude.com/claude-code" target="_blank" rel="noopener" style="color:var(--saffron-glow);">Claude</a>. Authored by <a href="https://theuws.com" target="_blank" rel="noopener" style="color:var(--saffron-glow);">Richard Theuws</a> with a population of developers who pair-program.</p>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · Substrate v<span id="version">2.0.0</span> · MIT</p>
+  <p class="footer-signature">Adem mee. Hij blijft niet stil.</p>
 </footer>
 
 <script src="/assets/js/site.js"></script>
+<script>
+  // Quickstart copy-button — vanilla, no deps.
+  (function () {
+    var btn = document.getElementById('copy-quickstart');
+    var src = document.getElementById('quickstart-text');
+    if (!btn || !src) return;
+    btn.addEventListener('click', function () {
+      var text = src.textContent || '';
+      var done = function () {
+        btn.classList.add('copied');
+        var original = btn.textContent;
+        btn.textContent = 'Copied';
+        if (window.cosmos && window.cosmos.trackEvent) {
+          window.cosmos.trackEvent('quickstart_copy', { length: text.length });
+        }
+        setTimeout(function () {
+          btn.classList.remove('copied');
+          btn.textContent = original;
+        }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          // Fallback — select range so user can ctrl-c
+          var range = document.createRange();
+          range.selectNodeContents(src);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
+      } else {
+        var range = document.createRange();
+        range.selectNodeContents(src);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  })();
+</script>
 </body>
 </html>

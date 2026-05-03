@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Steun · Cosmos Cosmic Adventure 2026</title>
-<meta name="description" content="Steun de productie van Cosmos Cosmic Adventure 2026. fal.ai-credits, Meshy-API, Suno Pro, ElevenLabs — een aquarel-droom kost echt geld.">
+<title>Support · Cosmo's Universe</title>
+<meta name="description" content="Cosmo's Universe is open-source MIT. If you'd like to support the substrate beyond contributing code, here's how. Steun de productie — fal.ai, Meshy, Suno, ElevenLabs.">
 <meta name="theme-color" content="#3D2E4A">
-<meta property="og:title" content="Steun · Cosmos Cosmic Adventure 2026">
-<meta property="og:description" content="Iedere bijdrage gaat 1-op-1 naar productie van een aquarel-droom met zuignap-handen.">
+<meta property="og:title" content="Support · Cosmo's Universe">
+<meta property="og:description" content="Open-source MIT. Support the substrate — GitHub Sponsors, iDEAL, PayPal, or directly by mail.">
 <meta property="og:image" content="/showcase-assets/bg-slow-bloom-jungle.png">
 <meta property="og:url" content="https://theuws.com/games/cosmos-2026/support/">
 <link rel="canonical" href="https://theuws.com/games/cosmos-2026/support/">
@@ -28,6 +28,22 @@
 .support-hero p { font-size: 1.15rem; max-width: 620px; margin: 0 auto; color: var(--text); }
 
 .support-section { max-width: 880px; margin: 0 auto; padding: 4rem 1.5rem; }
+
+.support-en-intro {
+  max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 1rem;
+  font-family: var(--font-heading); font-style: italic;
+  font-size: 1.15rem; line-height: 1.7; color: var(--text-secondary);
+  text-align: center;
+}
+.support-en-intro::before {
+  content: 'In English'; display: block;
+  font-family: var(--font-mono); font-style: normal;
+  font-size: 0.72rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--saffron-glow); margin-bottom: 1rem;
+}
+.support-en-intro p { margin-bottom: 0.9rem; }
+.support-en-intro a { color: var(--ink-aubergine); border-bottom: 1px dashed var(--saffron-glow); text-decoration: none; }
+.support-en-intro a:hover { color: var(--faded-rose); border-bottom-color: var(--faded-rose); }
 
 /* Stardust counter */
 .stardust {
@@ -75,6 +91,8 @@
 .method-btn.primary:hover { background: var(--faded-rose); border-color: var(--faded-rose); color: white; }
 .method-btn small { font-size: 0.72rem; opacity: 0.7; font-weight: 400; }
 .method-btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.method-btn.sponsors { background: linear-gradient(135deg, var(--paper-bg), var(--mushroom-cream)); border-color: var(--saffron-glow); }
+.method-btn.sponsors:hover { border-color: var(--ink-aubergine); }
 
 .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
 .tier {
@@ -131,21 +149,26 @@
 </head>
 <body class="paper-grain">
 
-<nav class="sticky-nav">
-  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmos 2026</span></a>
+<nav class="sticky-nav portal-nav">
+  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmo's Universe</span></a>
   <div class="sticky-nav__links">
-    <a href="/play/">Speel</a>
-    <a href="/lore/">Het Verhaal</a>
+    <a href="/">Home</a>
+    <a href="/lore/">Story</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/" class="active sticky-nav__cta">Steun</a>
+    <a href="/support/" class="active sticky-nav__cta">Support</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">GitHub</a>
   </div>
 </nav>
 
 <header class="support-hero">
   <h1>Steun de droom.</h1>
-  <p>Iedere euro gaat 1-op-1 naar fal.ai-credits, Meshy-API, Suno Pro, ElevenLabs Studio en hosting. Een aquarel-droom met zuignap-handen kost echt geld.</p>
+  <p>Een aquarel-substraat met zuignap-handen. Open-source MIT. Iedere bijdrage gaat 1-op-1 naar fal.ai-credits, Meshy-API, Suno Pro, ElevenLabs en hosting.</p>
 </header>
+
+<aside class="support-en-intro" lang="en">
+  <p>Cosmo's Universe is open-source MIT. The most valuable way to support the substrate is to <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">contribute code</a> or <a href="/lore/">visit the Forest</a> and bring a Universe of your own.</p>
+  <p>If you'd like to support beyond that — keeping fal.ai, Meshy, Suno and ElevenLabs running while the substrate grows — the options below work. Choose what fits.</p>
+</aside>
 
 <section class="support-section">
   <div class="stardust">
@@ -161,24 +184,25 @@
     </div>
     <div class="stardust-amount" id="stardust-amount">€10,00</div>
     <div class="method-row">
+      <a class="method-btn sponsors" href="#" id="method-sponsors" aria-disabled="true" onclick="cosmos.trackEvent('donate_click', { method: 'github_sponsors' }); return false;">GitHub Sponsors <small>(coming soon)</small></a>
       <a class="method-btn primary" href="#" id="method-ideal" aria-disabled="true" onclick="cosmos.trackEvent('donate_click', { method: 'ideal', amount: window.cosmos.amount }); return false;">iDEAL <small>(Mollie · binnenkort)</small></a>
       <a class="method-btn" href="#" id="method-card" aria-disabled="true" onclick="cosmos.trackEvent('donate_click', { method: 'card' }); return false;">Creditcard <small>(binnenkort)</small></a>
       <a class="method-btn" href="#" id="method-paypal" aria-disabled="true" onclick="cosmos.trackEvent('donate_click', { method: 'paypal' }); return false;">PayPal <small>(binnenkort)</small></a>
       <a class="method-btn" href="mailto:richard@theuws.com?subject=Cosmos%202026%20%E2%80%94%20Donatie&body=Ik%20wil%20%E2%82%AC...%20doneren%20aan%20Cosmos%20Cosmic%20Adventure%202026" id="method-email">Per e-mail <small>(direct)</small></a>
     </div>
-    <p class="notice"><strong>v0.1.0 status</strong> — Mollie-checkout staat klaar in de codebase, payment-link wordt geactiveerd in Sprint 5. Tot die tijd: e-mail werkt direct, of wacht op de officiële kickoff.</p>
+    <p class="notice"><strong>v2.0 status</strong> — GitHub Sponsors wordt opgezet, Mollie-checkout staat klaar in de codebase, payment-link wordt geactiveerd in een latere sprint. Tot die tijd: e-mail werkt direct.</p>
   </div>
 </section>
 
 <section class="support-section">
   <span class="section-label">Tiers</span>
   <h2>Vier <em>milestones.</em> Vier soorten dank.</h2>
-  <p class="lead">Geen abonnementen, geen recurring. Eén-malige donaties met zichtbare beloning in-game.</p>
+  <p class="lead">Geen abonnementen, geen recurring. Eén-malige donaties met zichtbare beloning.</p>
   <div class="tier-grid">
     <div class="tier">
       <span class="price">€5</span>
       <h3>Star Spotter</h3>
-      <ul><li>Naam in credits-screen</li><li>v1.0 release-bedankje per e-mail</li><li>Onze eeuwige dankbaarheid</li></ul>
+      <ul><li>Naam in credits</li><li>Bedankje per e-mail</li><li>Onze eeuwige dankbaarheid</li></ul>
     </div>
     <div class="tier">
       <span class="price">€25</span>
@@ -192,8 +216,8 @@
     </div>
     <div class="tier">
       <span class="price">€500+</span>
-      <h3>Episode Patron</h3>
-      <ul><li>Alles van Hallucination Patron</li><li>Sponsor van een complete biome — credits in biome-intro</li><li>Direct overleg over feature/easter-egg</li><li>Limited print van een achtergrond</li></ul>
+      <h3>Universe Patron</h3>
+      <ul><li>Alles van Hallucination Patron</li><li>Sponsor van een complete Room of Area in de eerste Universe</li><li>Direct overleg over feature/easter-egg</li><li>Limited print van een achtergrond</li></ul>
     </div>
   </div>
 </section>
@@ -204,7 +228,7 @@
   <div class="where-grid">
     <div class="where"><strong>fal.ai credits</strong><span>Sprite + background generatie</span></div>
     <div class="where"><strong>Meshy v6 Studio</strong><span>3D parallax props</span></div>
-    <div class="where"><strong>Suno Pro</strong><span>12-track soundtrack</span></div>
+    <div class="where"><strong>Suno Pro</strong><span>Soundtrack</span></div>
     <div class="where"><strong>ElevenLabs</strong><span>Companion-voices + SFX</span></div>
     <div class="where"><strong>Domain & hosting</strong><span>theuws.com/games/cosmos-2026</span></div>
     <div class="where"><strong>Tools & APIs</strong><span>Claude Code · Cursor · vite-cloud</span></div>
@@ -216,28 +240,28 @@
     <span class="section-label">FAQ</span>
     <h2>Veelgestelde vragen</h2>
     <div class="faq-grid">
-      <details><summary>Is dit een echte game of een tech-demo?</summary><p>Echte game. 10 levels, 12 enemies, 1 boss, eigen soundtrack, save-systeem. Sprint 1 is fundament; Sprint 8 is launch op <code>theuws.com/games/cosmos-2026</code>.</p></details>
-      <details><summary>Komt er een Steam/native versie?</summary><p>Niet in v1.0. Browser-first. Bij positief signaal en vraag overwegen we een native Electron-build, maar dat is post-launch.</p></details>
-      <details><summary>Mag ik suggesties doen voor biomes of events?</summary><p>Ja — vanaf de Hallucination Patron-tier krijg je een directe lijn. Daaronder: Vibe Sponsor (€25) is de gegamificeerde vorm — jouw vibe in een Suno-track of particle-set.</p></details>
-      <details><summary>Wat als jullie het project stoppen?</summary><p>Dat doen we niet zomaar. Mocht het gebeuren: alle code en assets worden open-source op GitHub, en restituties gaan naar tier-donors die nog niet hebben gekregen wat beloofd was.</p></details>
+      <details><summary>Is dit een echte game of een tech-demo?</summary><p>Allebei en geen van beide. Het is een open substraat — een runtime + de eerste Universe (een mushroom-forest waar Cosmo woont). Speel het, of fork het en bouw je eigen Universe. Beide tellen.</p></details>
+      <details><summary>Komt er een Steam/native versie?</summary><p>Niet in v2.0. Browser-first, want het substraat moet overal kunnen draaien. Native versies zijn een latere overweging.</p></details>
+      <details><summary>Mag ik suggesties doen voor biomes of events?</summary><p>Ja — vanaf de Hallucination Patron-tier krijg je een directe lijn. Of beter nog: <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">author je eigen Universe</a>. Het substraat staat daarvoor open.</p></details>
+      <details><summary>Wat als jullie het project stoppen?</summary><p>Code en assets zijn al MIT op GitHub. Het stopt niet écht — het wordt alleen niet meer door ons doorontwikkeld. Restituties gaan naar tier-donors die nog niet hebben gekregen wat beloofd was.</p></details>
       <details><summary>Is dit een drugsspel?</summary><p>Nee. Het is een rustig wezen dat zichzelf vermaakt; jij kijkt mee. De hallucinatie-laag is een visueel idioom (aquarel-pieken op stille momenten), niet een onderwerp.</p></details>
-      <details><summary>Kan ik in crypto doneren?</summary><p>Niet in v1.0. We focussen op iDEAL/CC/PayPal voor de target-audience. Als er vraag naar is voegen we BTC/ETH toe in een latere sprint.</p></details>
-      <details><summary>Hoe weet ik dat mijn naam in de credits komt?</summary><p>Bij Mollie-checkout vul je je naam in (of "anoniem"). We sturen een bevestiging na donatie en credits worden zichtbaar op de updates-pagina én in-game vanaf v1.0.</p></details>
+      <details><summary>Kan ik in crypto doneren?</summary><p>Niet in v2.0. We focussen op GitHub Sponsors, iDEAL, CC en PayPal. Bij vraag overwegen we het later.</p></details>
+      <details><summary>Hoe weet ik dat mijn naam in de credits komt?</summary><p>Bij checkout vul je je naam in (of "anoniem"). We sturen een bevestiging na donatie en credits worden zichtbaar op de updates-pagina én in-game.</p></details>
     </div>
   </div>
 </section>
 
 <footer class="site-footer">
-  <h4>Cosmos Cosmic Adventure 2026</h4>
+  <h4>Cosmo's Universe</h4>
   <div class="site-footer__links">
     <a href="/">Home</a>
-    <a href="/play/">Speel</a>
-    <a href="/lore/">Het Verhaal</a>
+    <a href="/lore/">Story</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
+    <a href="/support/">Support</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">GitHub</a>
   </div>
   <p>Donaties zijn éénmalig en niet aftrekbaar. Theuws Consulting · KvK volgt bij activering Mollie-account.</p>
-  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting</p>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · MIT</p>
 </footer>
 
 <script>

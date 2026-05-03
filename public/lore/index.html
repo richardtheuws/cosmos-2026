@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Het Verhaal · Cosmos Cosmic Adventure 2026</title>
-<meta name="description" content="Een wezentje uit een herinnering, opnieuw geschilderd in zijn eigen droom. Het verhaal achter Cosmos 2026.">
+<title>Story · Cosmo's Universe</title>
+<meta name="description" content="The origin story of Cosmo — a small being from a memory, painted thirty years later in watercolor. Een wezentje uit een herinnering, opnieuw geschilderd in zijn eigen droom.">
 <meta name="theme-color" content="#3D2E4A">
-<meta property="og:title" content="Het Verhaal · Cosmos Cosmic Adventure 2026">
-<meta property="og:description" content="Een wezentje uit een herinnering, opnieuw geschilderd in zijn eigen droom.">
+<meta property="og:title" content="Story · Cosmo's Universe">
+<meta property="og:description" content="A small being from a memory, painted thirty years later in watercolor.">
 <meta property="og:image" content="/showcase-assets/bg-inkpool-cave.png">
 <meta property="og:url" content="https://theuws.com/games/cosmos-2026/lore/">
 <link rel="canonical" href="https://theuws.com/games/cosmos-2026/lore/">
@@ -36,6 +36,20 @@
   margin: 2rem 0;
 }
 
+.lore-en-summary {
+  max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 1rem;
+  font-family: var(--font-heading); font-style: italic;
+  font-size: 1.15rem; line-height: 1.7; color: var(--text-secondary);
+  text-align: center;
+}
+.lore-en-summary::before {
+  content: 'In English'; display: block;
+  font-family: var(--font-mono); font-style: normal;
+  font-size: 0.72rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--saffron-glow); margin-bottom: 1rem;
+}
+.lore-en-summary p { margin-bottom: 0.9rem; }
+
 .biome { padding: 4rem 0; border-top: 1px solid var(--border); }
 .biome-img { aspect-ratio: 16/9; border-radius: var(--radius-lg); background-size: cover; background-position: center; margin-bottom: 1.4rem; box-shadow: var(--shadow-lift); }
 .biome-meta { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; font-family: var(--font-mono); }
@@ -51,14 +65,14 @@
 </head>
 <body class="paper-grain">
 
-<nav class="sticky-nav">
-  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmos 2026</span></a>
+<nav class="sticky-nav portal-nav">
+  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmo's Universe</span></a>
   <div class="sticky-nav__links">
-    <a href="/play/">Speel</a>
-    <a href="/lore/" class="active">Het Verhaal</a>
+    <a href="/">Home</a>
+    <a href="/lore/" class="active">Story</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/" class="sticky-nav__cta">Steun</a>
+    <a href="/support/">Support</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">GitHub</a>
   </div>
 </nav>
 
@@ -66,6 +80,11 @@
   <h1>Een wezentje uit een herinnering, <em>opnieuw geschilderd in zijn eigen droom.</em></h1>
   <p>Adem mee. Hij wandelt vanzelf.</p>
 </header>
+
+<aside class="lore-en-summary" lang="en">
+  <p>This page is Cosmo's origin — a watercolor painting of a memory from a night in 1992 that doesn't need naming. A small green being someone glimpsed and never quite stopped seeing.</p>
+  <p>The poem below is the original Dutch. It is more honest in its first language. An English reader can follow the shape of it; the wavelength carries.</p>
+</aside>
 
 <section class="lore-section">
   <span class="section-label">Het Begin</span>
@@ -117,15 +136,15 @@
 </section>
 
 <footer class="site-footer">
-  <h4>Cosmos Cosmic Adventure 2026</h4>
+  <h4>Cosmo's Universe</h4>
   <div class="site-footer__links">
     <a href="/">Home</a>
-    <a href="/play/">Speel</a>
+    <a href="/lore/">Story</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/">Steun</a>
+    <a href="/support/">Support</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">GitHub</a>
   </div>
-  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting</p>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · MIT</p>
 </footer>
 
 <script src="/assets/js/site.js"></script>

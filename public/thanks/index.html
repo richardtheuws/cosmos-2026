@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bedankt · Cosmos Cosmic Adventure 2026</title>
-<meta name="description" content="Bedankt voor je donatie aan Cosmos Cosmic Adventure 2026.">
+<title>Thank you · Cosmo's Universe</title>
+<meta name="description" content="Thank you. Cosmo wandered a little farther because of you.">
 <meta name="theme-color" content="#3D2E4A">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/assets/sprites/cosmo-hero-lora.png" type="image/png">
@@ -28,6 +28,11 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 }
 .thanks h1 em { color: var(--faded-rose); }
 .thanks p { font-size: 1.15rem; max-width: 580px; margin: 0 auto 0.8rem; color: var(--text); line-height: 1.65; }
+.thanks .en-line {
+  font-family: var(--font-heading); font-style: italic;
+  font-size: 1.05rem; color: var(--text-secondary);
+  max-width: 520px; margin: 0 auto 1.6rem;
+}
 .thanks .cosmo-bouncer {
   width: 200px; aspect-ratio: 1;
   background: url('/assets/sprites/cosmo-hero-lora.png') center/contain no-repeat;
@@ -49,22 +54,23 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 </head>
 <body class="paper-grain">
 
-<nav class="sticky-nav">
-  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmos 2026</span></a>
+<nav class="sticky-nav portal-nav">
+  <a href="/" class="sticky-nav__brand"><img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo"><span>Cosmo's Universe</span></a>
   <div class="sticky-nav__links">
-    <a href="/play/">Speel</a>
-    <a href="/lore/">Het Verhaal</a>
+    <a href="/">Home</a>
+    <a href="/lore/">Story</a>
     <a href="/updates/">Updates</a>
-    <a href="/prd/">PRD</a>
-    <a href="/support/" class="sticky-nav__cta">Steun</a>
+    <a href="/support/">Support</a>
+    <a href="https://github.com/RichardTheuws/cosmos-2026" rel="noopener">GitHub</a>
   </div>
 </nav>
 
 <main class="thanks">
   <div class="cosmo-bouncer" aria-hidden="true"></div>
+  <p class="en-line" lang="en">Thank you. Cosmo wandered a little farther because of you.</p>
   <h1>Dat is <em>échte stardust</em>.</h1>
-  <p>Je donatie is binnen. Bedankt — letterlijk uit de aquarel-grond zelf.</p>
-  <p>Je krijgt binnen 24 uur een bevestigingsmail met je tier-beloning. Je naam komt in de credits, en als je een Vibe of Hallucination hebt gesponsord, mailen we je voor de specifics.</p>
+  <p>Je bijdrage is binnen. Bedankt — letterlijk uit de aquarel-grond zelf.</p>
+  <p>Je krijgt binnen 24 uur een bevestigingsmail. Je naam komt in de credits, en als je een Vibe of Hallucination hebt gesponsord, mailen we je voor de specifics.</p>
   <div class="cta-row">
     <a href="/updates/" class="btn btn-primary">Volg de Updates</a>
     <a href="/" class="btn btn-ghost">Terug naar Home</a>
@@ -72,8 +78,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 </main>
 
 <footer class="site-footer">
-  <h4>Cosmos Cosmic Adventure 2026</h4>
-  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting</p>
+  <h4>Cosmo's Universe</h4>
+  <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · MIT</p>
 </footer>
 
 <script src="/assets/js/site.js"></script>
