@@ -134,6 +134,8 @@ If your Universe README is in your language, leave a 100-word summary in English
 
 ## Brand contract
 
+![Locked palette: mushroom-cream, moss-sage, sky-wash, faded-rose, ink-aubergine, saffron-glow, forest-deep, plus pop-accents](docs/showcase/palette.jpg)
+
 Non-negotiable without a Pivot Ledger entry:
 
 - **Visual base**: Hayao×Moebius watercolor; mushroom-cream / moss-sage / sky-wash / faded-rose / ink-aubergine / saffron-glow / forest-deep palette; pop-accents capped at 5%.
