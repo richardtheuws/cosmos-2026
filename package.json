@@ -1,7 +1,13 @@
 {
   "name": "cosmos-cosmic-adventure-2026",
   "version": "1.5.2",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RichardTheuws/cosmos-2026.git"
+  },
+  "homepage": "https://theuws.com/games/cosmos-2026/play/",
   "type": "module",
   "description": "Cosmos Cosmic Adventure 2026 — mobile-first hypnotische rhythm-trip. Geen game. Geen score. De track is de game.",
   "scripts": {

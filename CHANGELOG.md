@@ -4,6 +4,11 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [Unreleased]
+
+### Added (Wave 20a)
+- **Cosmo v2 decal asset set** in `public/assets/3d/v2/` — 4 painted face decals (`cosmo-face-neutral.png`, `cosmo-face-coo.png`, `cosmo-face-blink.png`, `cosmo-face-wave.png`, all 512×512 RGBA), 1 tile-friendly body skin (`cosmo-body-skin.png` 512×512 RGB, mirror-blended from `cosmo-hero-lora.png` torso), 1 suction-cup disc (`cosmo-disc-suction.png` 256×256 RGBA). Faces generated via Flux Dev + LoRA `rtcosmo` + BiRefNet remove-bg pass; disc via Recraft V3 + BiRefNet; body-skin and blink-eyelids via deterministic Pillow paint (LoRA's bulging-eye DNA refused to close eyes across 3 retry seeds). Total $0.265 of $1.00 budget. Generation pipeline lives in `scripts/wave20a/`. Report: `.claude/brainstorm/wave20/02-decal-gen-report.md`.
+
 ## [1.5.2] — 2026-05-03 — Wave 19a hotfix #2: invert weight-redistribution
 
 ### Fixed

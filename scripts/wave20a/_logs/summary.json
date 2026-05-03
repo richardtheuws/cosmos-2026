@@ -1,0 +1,12 @@
+{
+  "total_cost_usd": 0.265,
+  "results": {
+    "cosmo-body-skin.png": true,
+    "cosmo-face-neutral.png": true,
+    "cosmo-face-coo.png": true,
+    "cosmo-face-blink.png": true,
+    "cosmo-face-wave.png": true,
+    "cosmo-disc-suction.png": true
+  },
+  "budget_cap": 1.0
+}

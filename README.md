@@ -1,105 +1,134 @@
-# Cosmos Cosmic Adventure 2026
+# Cosmo's Universe
 
-> **Een aquarel-droom met zuignap-handen.**
-> 2.5D browser-platformer remake van Cosmo's Cosmic Adventure (Apogee, 1992) als psychedelische Ghibli-Tenniel-Moebius beleving met hallucinaire breekpieken.
+> *Your Cosmo can visit my forest. My Cosmo can visit your world.*
 
-**Status**: v0.1.0 · Sprint 1/8 · In active development
-**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/) (vanaf v1.0)
-**Repo**: [github.com/RichardTheuws/cosmos-2026](https://github.com/RichardTheuws/cosmos-2026)
+A new form of collaborative game development — built by people who pair with Claude.
 
----
-
-## TL;DR
-
-- **Gameplay**: 2D platformer met suction-cup wallcling (signature mechanic), 3 HP base, save-anywhere zonder mid-checkpoints, star-collectibles met bonus-room thresholds.
-- **Visuele stijl**: Cosmic Watercolor — Ghibli × Moebius × Tenniel-Alice. Hallucinatie-pieken (kaleidoscope op power-ups, fluo-pop op collectibles, datamosh op damage).
-- **Tech**: Three.js (3D parallax + post-FX) + Phaser 4 (2D gameplay) **dual-canvas**. WebGPU production. TSL shaders. Vite multi-entry build.
-- **Audio**: 12 Suno tracks (folktronica + ambient-koto, eigen-DNA — geen Tush-cover). ElevenLabs Hint Globe voices. Tone.js GrainPlayer voor procedural morphs op DMT-peaks.
-- **Scope v1.0**: 1 episode (10 levels), 12 enemy-types + 1 boss. Episodes 2 & 3 als post-launch DLC.
+**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Substrate version**: 2.0.0 (in flight)
 
 ---
 
-## Project structuur
+## Quickstart — pair with Claude in three lines
+
+Open [Claude Code](https://claude.com/claude-code) in any folder and paste this:
 
 ```
-.
-├── index.html              # Homepage
-├── play/index.html         # Game launcher
-├── prd/index.html          # PRD showcase (v1.0 spec)
-├── public/
-│   ├── updates/            # Auto-generated changelog page
-│   ├── lore/               # Het Verhaal
-│   ├── support/            # Donation page (stardust counter)
-│   ├── press/              # Press kit
-│   ├── thanks/             # Post-donation
-│   ├── showcase-assets/    # fal.ai generated key art (tracked)
-│   └── assets/
-│       ├── css/tokens.css  # Locked design tokens
-│       └── js/site.js      # Reveal-on-scroll + tracking stub
-├── src/                    # Game engine (Three.js + Phaser dual-canvas)
-│   ├── core/               # Shared globalUniforms, canvas manager
-│   ├── three/              # 3D parallax + TSL shaders + cinematics
-│   ├── phaser/             # 2D scenes, entities, systems
-│   ├── audio/              # Howler + Tone.js bridge
-│   └── data/               # Levels, enemies, hint lines
-├── scripts/
-│   └── changelog-to-html.mjs   # Auto-rendert /updates/ uit CHANGELOG.md
-├── research/               # Recon + visie-documenten (5 files)
-├── .claude/plans/PRD-v1.0.md
-├── CHANGELOG.md            # Bron-van-waarheid voor /updates/
-└── VERSION
+Clone https://github.com/RichardTheuws/cosmos-2026 into this folder.
+Read NORTH-STAR.md and UNIVERSE-AUTHORING.md.
+Then ask me: "shall we build a Universe together?"
 ```
 
----
+That's it. Claude will pull the repo, read the charter, and meet you where you are.
 
-## Development
+If you'd rather start manually:
 
 ```bash
-npm install
-npm run dev          # Vite dev server op localhost:5173
-npm run build        # tsc + vite build → dist/
-npm run preview      # Preview production build
-npm run typecheck    # TypeScript check zonder emit
-npm run updates:build  # Regenereer /updates/ uit CHANGELOG.md
+git clone https://github.com/RichardTheuws/cosmos-2026.git
+cd cosmos-2026
+npm install && npm run dev
 ```
 
-Voor elke nieuwe sprint:
-1. Werk de feature af.
-2. Update `CHANGELOG.md` met een nieuwe `## [x.y.z] — datum — Sprint N: titel` sectie.
-3. Run `npm run updates:build` (gebeurt ook automatisch in `npm run build`).
-4. Bump `VERSION`.
-5. Commit + push.
+The local dev server opens at `http://localhost:5174/play/`.
 
 ---
 
-## Locked Decisions
+## What this is
 
-Zie `.claude/plans/PRD-v1.0.md` voor de volledige spec. Kort:
+**Cosmo** is a small green being who lives on your screen. He has his own life — he wanders, he sits, he gets distracted, he sleeps if you leave him alone, he gets curious if you tap. He started as a memory from 1992; he became a watercolor painted in the shape of that memory.
 
-- **Visual**: B-hybride (Cosmic Watercolor + kaleidoscope/fluo-pop/datamosh)
-- **Architecture**: Dual-canvas (Three.js root + Phaser 4 overlay)
-- **Scope v1.0**: MVP — Episode 1 (10 levels)
-- **Title theme**: eigen-DNA (geen Tush-cover)
-- **Enemy roster**: 12 types + 1 boss (4 buffer)
-- **Frozen RoB easter egg**: geparkeerd voor E2 (DLC-fase)
-- **Site-laag**: vanilla HTML/CSS/JS multi-entry Vite (RoB-blueprint)
+**Cosmo's Universe** is the substrate he lives in. Three things at once:
 
----
+- **A runtime** — Cosmo's rig, his companion-AI, his life-system, room-loading, and the traversal between worlds.
+- **A first world** — a watercolor mushroom forest. The entry-Universe. More tomorrow.
+- **An open invitation** — any developer can author a new Universe and plug it into the same runtime. Cosmo travels into your Universe; characters from your Universe travel into mine. State persists. The being is the constant. The world keeps growing.
 
-## AI Pipeline
+This is **a new form of cooperative game development** — not "we made a game, you can mod it", but "we made a substrate, and the being who lives in it can walk through anyone's imagination". Your Universe doesn't ask permission. It just plugs in.
 
-| Tool | Use |
-|------|-----|
-| **fal.ai** (Flux Dev/Pro) | Sprites + backgrounds + logo's |
-| **Meshy v6 + Blender** | 3D parallax-props + creature-models |
-| **Suno** | OST (12 tracks in D-minor) |
-| **ElevenLabs** | Hint Globe voices + SFX |
-| **Claude Code** | Orchestrator (deze repo!) |
+## Why this exists
 
----
+Pair-programming with Claude is no longer rare. There is now a real population of developers who build small, weird, well-crafted things in close collaboration with an AI companion. This project is a meeting place for that population — a shared anchor, a shared character, a shared bar.
+
+We are deliberately ambitious about what this can become. A substrate that hosts dozens of authored Universes, all visitable by the same being, each carrying the signature of whoever made it. A network of small worlds with one wandering observer. Something that could not have been made by one person, and could not have been organized by a committee — but can be authored, in parallel, by a hundred people each pairing with Claude on their own corner of the imagination.
+
+Whether one or one hundred Universes ship, the substrate is the same. Whether your Universe lives for one weekend or one decade, Cosmo can visit it. That is the entire ambition.
+
+## How to join
+
+There are three levels of contribution. Pick the one that fits where you are.
+
+### 1 · Visit
+Just play. Open the live link, watch Cosmo, see what he does when you stop touching the screen.
+
+### 2 · Author a Universe
+You build a self-contained Universe under `universes/<your-name>/` that satisfies the [Universe contract](./UNIVERSE-AUTHORING.md). The contract requires four things:
+
+1. A **background renderer** (Three.js scene module or composition-spec.json)
+2. A **room-list + traversal graph** (which Rooms exist in your Universe, how they connect)
+3. An **asset manifest** (everything your Universe needs to run, with URLs)
+4. A **Cosmo-arrival hook** (how Cosmo enters your Universe — portal, fade, drift, surprise)
+
+That's it. Open a PR titled `universe: <your-name>`. Reviewers engage on brand-fit, contract-correctness, and posture-alignment. The mushroom-forest in `universes/forest/` is the canonical reference.
+
+### 3 · Improve the runtime
+Bug fixes, new companion-AI behaviors, new Cosmo capabilities, performance work. Open an issue first describing what and why. The brave-reconsideration principle (NORTH-STAR §4) governs how decisions get made — read that before proposing architectural changes.
+
+## All languages welcome
+
+Code and docs in this repo are in English so the substrate is maximally accessible. **Pull requests, issues, and Universe authoring may be in any language.** Reviewers and contributors are encouraged to converse in whatever language fits the moment. If a Universe's in-world copy is in your native language, that is a feature, not a friction — Cosmo travels through *your* world, not a translated one.
+
+If your Universe README is in your language, leave a 100-word summary in English at the top so other contributors can find their bearings. That is the only language requirement. Everything else is up to you.
+
+## What we are not
+
+- **Not a platform with TOS.** No content moderation policy. PR review enforces brand-fit; Universes that don't compose are forked, not policed.
+- **Not a marketplace.** Universes aren't monetized through us. Authors are free to monetize their own Universes if they wish.
+- **Not a framework with a marketing site.** It's an open repository with clear documents. The repository *is* the project.
+- **Not a committee.** Decisions are authored, then challenged via PR. The Pivot Ledger in `NORTH-STAR.md` records what changed and why.
+
+## Brand contract
+
+Non-negotiable without a Pivot Ledger entry:
+
+- **Visual base**: Hayao×Moebius watercolor; mushroom-cream / moss-sage / sky-wash / faded-rose / ink-aubergine / saffron-glow / forest-deep palette; pop-accents capped at 5%.
+- **Voice**: poetic but grounded. The 1992 origin is referenced obliquely, never explicitly.
+- **Never**: emojis, placeholder graphics, standard-stock visuals, always-on trippy chaos.
+
+Universes that intentionally deviate from the brand can document the deviation in their own README. Reviewers will engage seriously with the argument.
+
+## P2P — what it means here
+
+The first version of cross-Universe travel is **asynchronous + content-portable**: every Universe is a static deployable, and Cosmo carries his state with him as he travels (mood, memory, traversal history). No realtime peer-to-peer is required for v1.
+
+True realtime P2P — your Cosmo and my Cosmo together in the same Room — is a future possibility, not a near-term commitment. The substrate is designed so it isn't blocked by adding it later (state model is serializable; rooms can host multiple Cosmo instances).
+
+## Tech
+
+Three.js (3D scene, primitive-skeleton rig, post-FX) + Phaser 4 (HUD overlay, scene management) on a dual-canvas. Vite multi-entry build. fal.ai + Suno + ElevenLabs for asset generation. Authored alongside [Claude](https://claude.com/claude-code) as the development companion.
+
+## Repository
+
+```
+cosmos-cosmic-adventure-2026/
+├── NORTH-STAR.md              ← project charter; read first, always
+├── CONTRIBUTING.md            ← how to work on this project
+├── UNIVERSE-AUTHORING.md      ← how to author a new Universe (the contract)
+├── src/                       ← Cosmo runtime (rig, AI, life-system)
+│   ├── three/cosmoV2.ts       ← Cosmo rig (primitive skeleton + decals)
+│   ├── phaser/entities/       ← AI, agent, onboarding
+│   └── ...
+├── universes/                 ← Universes live here (mono-repo, PRs add new ones)
+│   └── forest/                ← canonical entry Universe
+└── public/assets/             ← shared character + brand assets
+```
 
 ## License
 
-(c) 2026 Richard Theuws — Theuws Consulting. All rights reserved.
+[MIT](./LICENSE). Code and Cosmo's painted assets alike. We ask, but do not legally require, that derivative Cosmos remain visually consistent with the 1992 DNA documented in `NORTH-STAR.md`. Authoring an entirely different character for your Universe is also great — that's what Universes are for.
 
-Cosmo is a homage to Apogee's *Cosmo's Cosmic Adventure* (1992). No claim is made on the original IP.
+## Credits
+
+- **Author**: [Richard Theuws](https://theuws.com)
+- **Development companion**: [Claude](https://claude.ai/code)
+- **Origin**: a night in a year that doesn't need naming
+
+> *Adem mee. Hij blijft niet stil.*
