@@ -4,6 +4,11 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.5.1] — 2026-05-03 — Wave 19a hotfix: rig-fallback (frame-copy quaternion)
+
+### Fixed
+- **Eye-spheres geplaatst op chin-level na reparent**: live UAT v1.5.0 toonde dat `bone_head.attach(eye_l/_r)` de eye-bones fysiek verplaatste naar verkeerde positie omdat de inverse-bind matrices tegen `cosmo_armature` waren gebakken (open Q #2 uit `01-rig-diagnosis.md` bevestigd). Resultaat: zwarte druppels onder gezicht. **Fix**: `USE_REPARENT = false` in `CosmoAgent.fixSkinWeights()` activeert de frame-copy fallback — eye-bones blijven op armature-space rest-pose, hun quaternion wordt elke frame gekopieerd van `bone_head` in `applyAIBoneHints()`. Weight-bleed (1519 verts → head-slot zeroed) blijft actief.
+
 ## [1.5.0] — 2026-05-03 — Wave 19a: rig fix + lore-pivot (no more Apogee-spoof)
 
 ### Fixed

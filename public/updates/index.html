@@ -206,6 +206,25 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v1.5.1</span>
+          <span class="update__date">2026-05-03</span>
+          <h2 class="update__title">05-03 — Wave 19a hotfix: rig-fallback (frame-copy quaternion)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Eye-spheres geplaatst op chin-level na reparent</strong>: live UAT v1.5.0 toonde dat <code>bone_head.attach(eye_l/_r)</code> de eye-bones fysiek verplaatste naar verkeerde positie omdat de inverse-bind matrices tegen <code>cosmo_armature</code> waren gebakken (open Q #2 uit <code>01-rig-diagnosis.md</code> bevestigd). Resultaat: zwarte druppels onder gezicht. <strong>Fix</strong>: <code>USE_REPARENT = false</code> in <code>CosmoAgent.fixSkinWeights()</code> activeert de frame-copy fallback — eye-bones blijven op armature-space rest-pose, hun quaternion wordt elke frame gekopieerd van <code>bone_head</code> in <code>applyAIBoneHints()</code>. Weight-bleed (1519 verts → head-slot zeroed) blijft actief.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v1.5.0</span>
           <span class="update__date">2026-05-03</span>
           <h2 class="update__title">05-03 — Wave 19a: rig fix + lore-pivot (no more Apogee-spoof)</h2>

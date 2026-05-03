@@ -1162,7 +1162,12 @@ export class CosmoAgent {
     // pupils visibly slide off the face after attach(). The fallback
     // branch (frame-copy quaternion) lives in `applyAIBoneHints()` via
     // the `eyeFrameCopyEnabled` flag this helper sets.
-    const USE_REPARENT = true;
+    // Flipped to false 2026-05-03 after live UAT: reparent path produced
+    // misplaced eye-spheres at chin level (IBMs were baked against
+    // cosmo_armature, not bone_head — open Q #2 confirmed). Frame-copy
+    // fallback keeps eye-bones at their original armature-space rest-pose
+    // and copies head's quaternion onto them every frame in applyAIBoneHints.
+    const USE_REPARENT = false;
 
     // 1) Locate the SkinnedMesh + its skeleton.
     let skinnedMesh: THREE.SkinnedMesh | null = null;
