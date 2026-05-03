@@ -206,6 +206,36 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v1.5.0</span>
+          <span class="update__date">2026-05-03</span>
+          <h2 class="update__title">05-03 — Wave 19a: rig fix + lore-pivot (no more Apogee-spoof)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Cosmo&#039;s &quot;melting alien eyes&quot; tijdens head-pan</strong>: weight-bleed tussen <code>bone_head</code> en <code>bone_eye_l/_r</code> op <strong>1 519 face/eye verts</strong> (near-50/50 split, gediagnosticeerd in <code>.claude/brainstorm/wave19/01-rig-diagnosis.md</code>) zorgde voor face-shell shearing wanneer <code>applyMotion</code> + <code>applyAIBoneHints</code> de head-bone yaw&#039;den. De eye-bones zaten bovendien als siblings van <code>bone_root</code> direct onder <code>cosmo_armature</code>, dus head-rotatie propageerde niet naar de ogen. <strong>Fix in <code>CosmoAgent.fixSkinWeights()</code></strong> (post-load helper, GLB asset NIET aangepast): walks <code>geometry.attributes.skinWeight</code> + <code>skinIndex</code>, zero&#039;t de <code>bone_head</code>-slot weight op alle bleed-verts (<code>headW &gt; 0.1 &amp;&amp; eyeLW + eyeRW &gt; 0.3</code>), renormaliseert de overgebleven 3 weights naar sum=1, en reparent <code>bone_eye_l/_r</code> onder <code>bone_head</code> via <code>bone_head.attach()</code>. Frame-copy quaternion fallback (<code>USE_REPARENT = false</code>) ligt klaar voor het geval IBM&#039;s tegen <code>cosmo_armature</code> zijn gebakken (open Q #2 uit diagnosis). Debug yaw-sweep beschikbaar via <code>window.__debugRigYawSweep()</code> in devtools voor visuele QA. (<code>src/phaser/entities/CosmoAgent.ts</code>)</li>
+        </ul>
+<h3>CHANGED (LORE)</h3>
+        <ul class="update__highlights">
+          <li><strong>Marketing-pages herframed</strong> rond Wave 19 Life System + companion-realiteit. Hero-tagline → &quot;Een aquarel-trip die zichzelf voortzet als jij stilzit.&quot; Pitch-paragraaf vervangen door &quot;Hij ademt. Hij wandelt. Als jij niets doet, blijft hij niet stilstaan.&quot;</li>
+          <li><strong><code>index.html</code></strong>: JSON-LD <code>description</code> + <code>alternateName</code> opgeschoond. Meta-pills &quot;10 Levels — MVP&quot; en &quot;Three.js + Phaser 4&quot; → &quot;Life System (Wave 19)&quot; en &quot;Motion-controlled&quot;. World-grid <code>L1-L10</code> tags weg. Footer Apogee-credit en &quot;Phaser 4&quot; weg (Three.js-only).</li>
+          <li><strong><code>public/lore/index.html</code></strong>: Funplex / Zonk / komeet / motorklep-plot vervangen door 146-woorden backstory snippet (Cormorant-italic). Biome-secties stripped van level-tags en Apogee-mechanics (Hint Globes, scooter, cheeseburger, blob-fight). Cast-grid (Brumberry/Hopper/Eye Plant/Blob) vervangen door Companion-grid (Cosmo / hallucination-particles / trampolines).</li>
+          <li><strong><code>public/press/index.html</code></strong>: complete press-kit vervangen door noindex meta-refresh redirect → <code>/lore/</code>.</li>
+          <li><strong><code>public/support/index.html</code></strong>: tier &quot;Hint Globe Sponsor&quot; → &quot;Vibe Sponsor&quot; (Suno-track of biome-particle-set sponsor). Tier &quot;Bonus Room Builder&quot; → &quot;Hallucination Patron&quot; (seasonal hallucination-event-pack). FAQ-item Apogee/3D Realms → &quot;Is dit een drugsspel?&quot; met eerlijk antwoord. ElevenLabs-where regel &quot;Hint Globe voices&quot; → &quot;Companion-voices&quot;.</li>
+          <li><strong><code>public/thanks/index.html</code></strong>: &quot;uit de grond van Zonk&#039;s mushroom-cream stronken&quot; → &quot;uit de aquarel-grond zelf&quot;. Tier-namen in bevestigings-tekst aangepast.</li>
+          <li><strong>Logo/favicon swap</strong>: alle pagina&#039;s wijzen nu naar <code>/assets/sprites/cosmo-hero-lora.png</code> (Sprint 16A canonical, post-LoRA DNA-correct) i.p.v. <code>cosmo-hero-cleaned.png</code>.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v1.4.0</span>
           <span class="update__date">2026-05-02</span>
           <h2 class="update__title">05-02 — Sprint 18: smoothness + calm-baseline pass</h2>

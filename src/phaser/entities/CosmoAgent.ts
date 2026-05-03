@@ -260,6 +260,15 @@ export class CosmoAgent {
   /** Lerp factor for AI-driven head-yaw / spine-bend. */
   private static readonly AI_BONE_LERP = 0.08;
 
+  // ── Wave 19 — eye-melt fix fallback path ─────────────────────────────────
+  /** When true, fixSkinWeights() decided NOT to reparent the eye-bones (IBM
+   *  caveat). Each frame we copy bone_head's quaternion onto bone_eye_l/_r
+   *  inside applyAIBoneHints() so they yaw/pitch with the head. Default OFF —
+   *  reparent is the cleaner path; this is only a fallback. */
+  private eyeFrameCopyEnabled = false;
+  private eyeBoneL: THREE.Object3D | null = null;
+  private eyeBoneR: THREE.Object3D | null = null;
+
   constructor(parentGroup: THREE.Group, events: CosmoAgentEvents = {}) {
     this.parentGroup = parentGroup;
     this.events = events;
@@ -304,6 +313,16 @@ export class CosmoAgent {
       this.cacheBodyMaterials();
       // Sprint 17E — resolve spine-bone for AI sniff bend-forward hint.
       this.resolveSpineBone();
+      // Wave 19 — fix the eye-melting weight-bleed (1519 face/eye verts at
+      // 50/50 head+eye weight). Reparents eye-bones under bone_head so they
+      // inherit yaw/pitch instead of sitting siblings under cosmo_armature.
+      this.fixSkinWeights();
+      // Wave 19 — expose a debug yaw-sweep on window so visual QA can verify
+      // the fix without booting the input pipeline. Call from devtools:
+      //   __debugRigYawSweep()
+      // This sweeps head-yaw 0 → +0.7 → -0.7 → 0 over 3s.
+      (globalThis as unknown as { __debugRigYawSweep?: () => void }).__debugRigYawSweep =
+        () => this.debugRigYawSweep();
     } catch (err) {
       // GLB missing / decode-fail — stay on 2D fallback. Quiet warn so dev
       // sees it, ship-mode users never notice.
@@ -1078,6 +1097,15 @@ export class CosmoAgent {
       // spine in idle/sit/wave/stretch — losing clip-spine-pose is acceptable.
       this.spineBone.quaternion.copy(this.spineRestQuat).multiply(bendQ);
     }
+
+    // Wave 19 fallback path — only active when fixSkinWeights() opted out of
+    // the reparent (IBM problem). Mirrors bone_head's world-space rotation
+    // onto bone_eye_l/_r so the eyes follow head yaw/pitch even though they
+    // remained siblings under cosmo_armature.
+    if (this.eyeFrameCopyEnabled && this.headBone && this.eyeBoneL && this.eyeBoneR) {
+      this.eyeBoneL.quaternion.copy(this.headBone.quaternion);
+      this.eyeBoneR.quaternion.copy(this.headBone.quaternion);
+    }
   }
 
   /** Walk the GLB scene-graph for a spine-bone (cosmo-rig-spec.json names it
@@ -1097,6 +1125,218 @@ export class CosmoAgent {
       this.spineBone = found;
       this.spineRestQuat = (found as THREE.Object3D).quaternion.clone();
     }
+  }
+
+  // ── Wave 19 — eye-melt rig fix ───────────────────────────────────────────
+  /**
+   * Wave 19 fix for Cosmo's "melting alien eyes" — diagnosed in
+   * `.claude/brainstorm/wave19/01-rig-diagnosis.md`. The GLB ships with two
+   * structural defects in the rig that combine to shear the face shell on
+   * head-yaw/pitch:
+   *
+   *   1. **Weight bleed**: 1 519 face/eye verts carry near-50/50 weights to
+   *      `bone_head` AND `bone_eye_l`/`bone_eye_r`. When applyMotion +
+   *      applyAIBoneHints rotate `bone_head` while the eye-bones stay at
+   *      rest, linear-blend skinning averages a rotated head matrix with an
+   *      identity eye matrix → those verts move at half-yaw → black pupils
+   *      stretch/drip downward. Fix: zero the head-slot weight on each
+   *      bleed-vert, renormalise the remaining 3 weights to sum=1.
+   *   2. **Bad parenting**: `bone_eye_l/_r` sit as siblings of `bone_root`
+   *      directly under `cosmo_armature`, so they don't inherit head
+   *      rotation. Fix: `bone_head.attach(bone_eye_l/_r)` — Three.js's
+   *      `attach()` recomputes local transform from world, preserving
+   *      rest-pose visually while making the eyes follow head rotations.
+   *
+   * IBM caveat (open Q #2 from the diagnosis): if the GLB inverseBindMatrices
+   * for the eye-bones were baked against `cosmo_armature` (sibling parent)
+   * rather than `bone_head`, `attach()` may displace the rest-pupils. If
+   * that happens visually, flip `USE_REPARENT` to false below — the agent
+   * then falls back to a frame-by-frame quaternion copy from head→eyes
+   * (handled at the end of applyAIBoneHints once the flag-state is read).
+   *
+   * Pure post-load runtime fix; the GLB asset is never modified.
+   */
+  private fixSkinWeights(): void {
+    if (this.fallback2D) return;
+    // Cleaner reparent path is the default. Flip to false ONLY if the
+    // pupils visibly slide off the face after attach(). The fallback
+    // branch (frame-copy quaternion) lives in `applyAIBoneHints()` via
+    // the `eyeFrameCopyEnabled` flag this helper sets.
+    const USE_REPARENT = true;
+
+    // 1) Locate the SkinnedMesh + its skeleton.
+    let skinnedMesh: THREE.SkinnedMesh | null = null;
+    this.root.traverse((child) => {
+      if (skinnedMesh) return;
+      if ((child as THREE.SkinnedMesh).isSkinnedMesh) {
+        skinnedMesh = child as THREE.SkinnedMesh;
+      }
+    });
+    if (!skinnedMesh) {
+      // eslint-disable-next-line no-console
+      console.warn('[cosmo-agent] fixSkinWeights: no SkinnedMesh found — skipping rig fix');
+      return;
+    }
+    // Cast through unknown so TS treats the local as the narrow type
+    // even though it was assigned via a callback closure.
+    const mesh = skinnedMesh as unknown as THREE.SkinnedMesh;
+    const skeleton = mesh.skeleton;
+    if (!skeleton) {
+      // eslint-disable-next-line no-console
+      console.warn('[cosmo-agent] fixSkinWeights: SkinnedMesh has no skeleton — skipping');
+      return;
+    }
+
+    // 2) Resolve bone indices by name. mesh.skeleton.bones is the joint
+    //    array Three.js uses to interpret skinIndex slots.
+    const bones = skeleton.bones;
+    const headIdx = bones.findIndex((b) => b.name === 'bone_head');
+    const eyeLIdx = bones.findIndex((b) => b.name === 'bone_eye_l');
+    const eyeRIdx = bones.findIndex((b) => b.name === 'bone_eye_r');
+    if (headIdx < 0 || eyeLIdx < 0 || eyeRIdx < 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[cosmo-agent] fixSkinWeights: missing expected bones',
+        { headIdx, eyeLIdx, eyeRIdx, names: bones.map((b) => b.name) },
+      );
+      return;
+    }
+
+    // 3) Walk geometry.attributes.skinWeight + skinIndex (4 entries / vert).
+    const geom = mesh.geometry;
+    const skinWeightAttr = geom.attributes.skinWeight as THREE.BufferAttribute;
+    const skinIndexAttr = geom.attributes.skinIndex as THREE.BufferAttribute;
+    if (!skinWeightAttr || !skinIndexAttr) {
+      // eslint-disable-next-line no-console
+      console.warn('[cosmo-agent] fixSkinWeights: skin attributes missing on geometry');
+      return;
+    }
+    const weights = skinWeightAttr.array as Float32Array;
+    const indices = skinIndexAttr.array as Uint16Array | Uint8Array;
+    const vertCount = skinWeightAttr.count;
+
+    let modified = 0;
+    for (let v = 0; v < vertCount; v++) {
+      const o = v * 4;
+      const i0 = indices[o];
+      const i1 = indices[o + 1];
+      const i2 = indices[o + 2];
+      const i3 = indices[o + 3];
+      const w0 = weights[o];
+      const w1 = weights[o + 1];
+      const w2 = weights[o + 2];
+      const w3 = weights[o + 3];
+
+      // Find the head + eye slot weights for this vertex.
+      let headSlot = -1;
+      let headW = 0;
+      let eyeLW = 0;
+      let eyeRW = 0;
+      const slots = [i0, i1, i2, i3];
+      const ws = [w0, w1, w2, w3];
+      for (let s = 0; s < 4; s++) {
+        const idx = slots[s];
+        const w = ws[s];
+        if (idx === headIdx) {
+          headSlot = s;
+          headW = w;
+        } else if (idx === eyeLIdx) {
+          eyeLW = w;
+        } else if (idx === eyeRIdx) {
+          eyeRW = w;
+        }
+      }
+
+      // Bleed criterion (matches the diagnosis): vertex has meaningful weight
+      // to bone_head AND meaningful weight to either eye-bone.
+      if (headSlot < 0 || headW <= 0.1 || eyeLW + eyeRW <= 0.3) continue;
+
+      // Zero the head-slot's weight, renormalise the remaining 3.
+      weights[o + headSlot] = 0;
+      const remaining = ws[0] + ws[1] + ws[2] + ws[3] - headW;
+      if (remaining > 1e-6) {
+        const inv = 1 / remaining;
+        weights[o] = (slots[0] === headIdx ? 0 : ws[0]) * inv;
+        weights[o + 1] = (slots[1] === headIdx ? 0 : ws[1]) * inv;
+        weights[o + 2] = (slots[2] === headIdx ? 0 : ws[2]) * inv;
+        weights[o + 3] = (slots[3] === headIdx ? 0 : ws[3]) * inv;
+      } else {
+        // Degenerate — sum was effectively 0. Fall back to [1,0,0,0] with
+        // weight on whichever eye-slot is already on this vertex.
+        const eyeSlot = slots.findIndex((s) => s === eyeLIdx || s === eyeRIdx);
+        const target = eyeSlot >= 0 ? eyeSlot : 0;
+        weights[o] = target === 0 ? 1 : 0;
+        weights[o + 1] = target === 1 ? 1 : 0;
+        weights[o + 2] = target === 2 ? 1 : 0;
+        weights[o + 3] = target === 3 ? 1 : 0;
+      }
+      modified++;
+    }
+
+    skinWeightAttr.needsUpdate = true;
+
+    // Sanity check — diagnosis predicted ~1519 verts. Warn loudly if the
+    // count is way off (asset re-baked? bone-name drift?).
+    // eslint-disable-next-line no-console
+    console.info(`[cosmo-agent] fixSkinWeights: zeroed bone_head bleed on ${modified} verts (expected ~1519)`);
+    if (modified === 0 || modified > 3000) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[cosmo-agent] fixSkinWeights: vertex count ${modified} is outside the expected ~1519 — rig may have changed`,
+      );
+    }
+
+    // 4) Reparent eye-bones under bone_head so head-yaw/pitch propagates.
+    //    Three.js attach() recomputes local transform from world matrices,
+    //    preserving the rest-pose pupil position visually.
+    if (USE_REPARENT) {
+      const headBone = bones[headIdx];
+      const eyeL = bones[eyeLIdx];
+      const eyeR = bones[eyeRIdx];
+      // Ensure world matrices are current before attach() reads them.
+      headBone.updateMatrixWorld(true);
+      eyeL.updateMatrixWorld(true);
+      eyeR.updateMatrixWorld(true);
+      headBone.attach(eyeL);
+      headBone.attach(eyeR);
+    } else {
+      // Fallback path: don't reparent; instead each frame copy
+      // bone_head.quaternion → eye-bones inside applyAIBoneHints. We mark
+      // this on the instance so the per-frame code can read it.
+      this.eyeFrameCopyEnabled = true;
+      this.eyeBoneL = bones[eyeLIdx];
+      this.eyeBoneR = bones[eyeRIdx];
+    }
+  }
+
+  /** Wave 19 debug helper — sweep head-yaw 0 → +0.7 → -0.7 → 0 over ~3s so
+   *  the user can visually verify the eye-melt fix. Exposed on the window
+   *  global as `__debugRigYawSweep()` once the GLB has loaded. */
+  debugRigYawSweep(): void {
+    if (!this.headBone || !this.headRestQuat) {
+      // eslint-disable-next-line no-console
+      console.warn('[cosmo-agent] debugRigYawSweep: head-bone not resolved yet');
+      return;
+    }
+    const startMs = performance.now();
+    const durationMs = 3000;
+    const tick = (): void => {
+      const t = (performance.now() - startMs) / durationMs;
+      if (t >= 1) {
+        // Restore — let applyMotion / applyAI take back over next frame.
+        return;
+      }
+      // Triangle wave: 0 → +0.7 → 0 → -0.7 → 0 across the 3 s window.
+      let yaw: number;
+      if (t < 0.25) yaw = (t / 0.25) * 0.7;
+      else if (t < 0.5) yaw = 0.7 - ((t - 0.25) / 0.25) * 0.7;
+      else if (t < 0.75) yaw = -((t - 0.5) / 0.25) * 0.7;
+      else yaw = -0.7 + ((t - 0.75) / 0.25) * 0.7;
+      const yawQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+      this.headBone!.quaternion.copy(this.headRestQuat!).multiply(yawQ);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }
 
   destroy(): void {

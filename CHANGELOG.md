@@ -4,6 +4,20 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.5.0] — 2026-05-03 — Wave 19a: rig fix + lore-pivot (no more Apogee-spoof)
+
+### Fixed
+- **Cosmo's "melting alien eyes" tijdens head-pan**: weight-bleed tussen `bone_head` en `bone_eye_l/_r` op **1 519 face/eye verts** (near-50/50 split, gediagnosticeerd in `.claude/brainstorm/wave19/01-rig-diagnosis.md`) zorgde voor face-shell shearing wanneer `applyMotion` + `applyAIBoneHints` de head-bone yaw'den. De eye-bones zaten bovendien als siblings van `bone_root` direct onder `cosmo_armature`, dus head-rotatie propageerde niet naar de ogen. **Fix in `CosmoAgent.fixSkinWeights()`** (post-load helper, GLB asset NIET aangepast): walks `geometry.attributes.skinWeight` + `skinIndex`, zero't de `bone_head`-slot weight op alle bleed-verts (`headW > 0.1 && eyeLW + eyeRW > 0.3`), renormaliseert de overgebleven 3 weights naar sum=1, en reparent `bone_eye_l/_r` onder `bone_head` via `bone_head.attach()`. Frame-copy quaternion fallback (`USE_REPARENT = false`) ligt klaar voor het geval IBM's tegen `cosmo_armature` zijn gebakken (open Q #2 uit diagnosis). Debug yaw-sweep beschikbaar via `window.__debugRigYawSweep()` in devtools voor visuele QA. (`src/phaser/entities/CosmoAgent.ts`)
+
+### Changed (lore)
+- **Marketing-pages herframed** rond Wave 19 Life System + companion-realiteit. Hero-tagline → "Een aquarel-trip die zichzelf voortzet als jij stilzit." Pitch-paragraaf vervangen door "Hij ademt. Hij wandelt. Als jij niets doet, blijft hij niet stilstaan."
+- **`index.html`**: JSON-LD `description` + `alternateName` opgeschoond. Meta-pills "10 Levels — MVP" en "Three.js + Phaser 4" → "Life System (Wave 19)" en "Motion-controlled". World-grid `L1-L10` tags weg. Footer Apogee-credit en "Phaser 4" weg (Three.js-only).
+- **`public/lore/index.html`**: Funplex / Zonk / komeet / motorklep-plot vervangen door 146-woorden backstory snippet (Cormorant-italic). Biome-secties stripped van level-tags en Apogee-mechanics (Hint Globes, scooter, cheeseburger, blob-fight). Cast-grid (Brumberry/Hopper/Eye Plant/Blob) vervangen door Companion-grid (Cosmo / hallucination-particles / trampolines).
+- **`public/press/index.html`**: complete press-kit vervangen door noindex meta-refresh redirect → `/lore/`.
+- **`public/support/index.html`**: tier "Hint Globe Sponsor" → "Vibe Sponsor" (Suno-track of biome-particle-set sponsor). Tier "Bonus Room Builder" → "Hallucination Patron" (seasonal hallucination-event-pack). FAQ-item Apogee/3D Realms → "Is dit een drugsspel?" met eerlijk antwoord. ElevenLabs-where regel "Hint Globe voices" → "Companion-voices".
+- **`public/thanks/index.html`**: "uit de grond van Zonk's mushroom-cream stronken" → "uit de aquarel-grond zelf". Tier-namen in bevestigings-tekst aangepast.
+- **Logo/favicon swap**: alle pagina's wijzen nu naar `/assets/sprites/cosmo-hero-lora.png` (Sprint 16A canonical, post-LoRA DNA-correct) i.p.v. `cosmo-hero-cleaned.png`.
+
 ## [1.4.0] — 2026-05-02 — Sprint 18: smoothness + calm-baseline pass
 
 **4-agent parallel pass** op user-feedback "interactie voelt nog niet smooth, Cosmo vervormt de hele tijd terwijl je een raar fluitje hoort". Audio + post-FX + gameplay + visual-coherence parallel gediagnosticeerd en gefixt.

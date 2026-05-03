@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cosmos Cosmic Adventure 2026 — Een aquarel-droom met zuignap-handen</title>
-<meta name="description" content="2.5D browser-platformer met hallucinerende post-FX. Ghibli-Moebius aquarel-werelden, suction-cup wallcling, eigen folktronica-soundtrack. Een Tenniel-droom met Cosmo-DNA.">
+<meta name="description" content="Een aquarel-trip die zichzelf voortzet als jij stilzit. Motion-controlled browser-explorer met companion-AI, hallucinerende post-FX en folktronica-soundtrack.">
 <meta name="theme-color" content="#3D2E4A">
 <meta name="author" content="Richard Theuws — Theuws Consulting">
 
@@ -24,7 +24,7 @@
 <link rel="canonical" href="https://theuws.com/games/cosmos-2026/">
 <link rel="alternate" hreflang="nl" href="https://theuws.com/games/cosmos-2026/">
 <meta name="robots" content="index, follow">
-<link rel="icon" href="/showcase-assets/cosmo-hero-cleaned.png" type="image/png">
+<link rel="icon" href="/assets/sprites/cosmo-hero-lora.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -35,9 +35,8 @@
   "@context": "https://schema.org",
   "@type": "VideoGame",
   "name": "Cosmos Cosmic Adventure 2026",
-  "alternateName": "Cosmos 2026",
   "url": "https://theuws.com/games/cosmos-2026/",
-  "description": "2.5D browser-based psychedelische platformer-remake van Cosmo's Cosmic Adventure (Apogee, 1992).",
+  "description": "Een aquarel-trip die zichzelf voortzet als jij stilzit. Motion-controlled browser-explorer met companion-AI en hallucinerende post-FX.",
   "image": "https://theuws.com/games/cosmos-2026/showcase-assets/bg-cloud-cathedral-sky.png",
   "author": { "@type": "Person", "name": "Richard Theuws" },
   "publisher": { "@type": "Organization", "name": "Theuws Consulting" },
@@ -207,7 +206,7 @@ h1.title em {
 <!-- STICKY NAV -->
 <nav class="sticky-nav">
   <a href="/" class="sticky-nav__brand">
-    <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo">
+    <img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo">
     <span>Cosmos 2026</span>
   </a>
   <div class="sticky-nav__links">
@@ -222,14 +221,14 @@ h1.title em {
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
-  <img src="/showcase-assets/cosmo-hero-cleaned.png" alt="Cosmo, the watercolor alien hero" class="hero-cosmo">
+  <img src="/assets/sprites/cosmo-hero-lora.png" alt="Cosmo, the watercolor alien hero" class="hero-cosmo">
   <div class="container hero-content" data-reveal>
     <span class="eyebrow">Coming v1.0 · 2026 · Browser-based</span>
     <h1 class="title">
       Cosmos
       <em>Cosmic Adventure 2026</em>
     </h1>
-    <p class="tagline">Een aquarel-droom met zuignap-handen. Cosmo's Cosmic Adventure herboren als Tenniel-illustratie die in fractal-tunnels openbarst zodra je een Dewdrop oppakt.</p>
+    <p class="tagline">Een aquarel-trip die zichzelf voortzet als jij stilzit.</p>
     <div class="cta-row">
       <a href="/play/" class="btn btn-primary" onclick="cosmos.trackEvent('home_cta_click', { target: 'play' })">▶ Speel Nu (Coming Soon)</a>
       <a href="/lore/" class="btn btn-ghost">Lees Het Verhaal</a>
@@ -237,8 +236,8 @@ h1.title em {
     </div>
     <div class="meta-pills">
       <span class="pill">2.5D Hybrid Platformer</span>
-      <span class="pill">10 Levels — MVP</span>
-      <span class="pill accent">Three.js + Phaser 4</span>
+      <span class="pill">Life System (Wave 19)</span>
+      <span class="pill accent">Motion-controlled</span>
       <span class="pill">fal.ai · Meshy · Suno · ElevenLabs</span>
       <span class="pill pop">In Active Development</span>
     </div>
@@ -249,9 +248,8 @@ h1.title em {
 <section>
   <div class="container container-narrow" data-reveal>
     <span class="section-label">01 · The Pitch</span>
-    <h2>Eén alien jongetje. Tien werelden. <em>Nul checkpoints.</em></h2>
-    <p class="lead">Cosmo zoekt zijn ouders op planeet Zonk. Zijn familie viel uit de lucht onderweg naar The Funplex. Hij heeft drie hartjes, twee zuignap-handen, en geen idee waar hij is.</p>
-    <p class="lead">Het 2D-gameplayplane blijft strak en eerlijk. De 3D-parallax + post-FX laag breekt en bloeit eromheen. We bouwen geen constante DMT-aanval — we bouwen een aquarel-Ghibli-droom die <em>kantelt</em> op power-ups, boss-intro's, damage-momenten en bonus-warps. De spanning zit in de breuk tussen rust en hallucinatie.</p>
+    <h2>Hij ademt. Hij wandelt. <em>Als jij niets doet, blijft hij niet stilstaan.</em></h2>
+    <p class="lead">Hij ademt. Hij wandelt. Als jij niets doet, blijft hij niet stilstaan.</p>
   </div>
 </section>
 
@@ -264,15 +262,15 @@ h1.title em {
     <div class="world-grid" data-reveal-stagger>
       <a href="/lore/#bloomroot" class="world-card">
         <div class="world-img" style="background-image:url('/showcase-assets/bg-slow-bloom-jungle.png');"></div>
-        <div class="world-info"><span class="world-tag">L1 · L2 · L3 — Surface</span><h3>Slow Bloom</h3><p>Mystieke alien-paddenstoelbos. Translucente moss-sage canopy, sky-wash mist, eerste cling, eerste sterren-pan.</p></div>
+        <div class="world-info"><span class="world-tag">Surface</span><h3>Slow Bloom</h3><p>Mystieke alien-paddenstoelbos. Translucente moss-sage canopy, sky-wash mist, eerste cling, eerste sterren-pan.</p></div>
       </a>
       <a href="/lore/#inkpool" class="world-card">
         <div class="world-img" style="background-image:url('/showcase-assets/bg-inkpool-cave.png');"></div>
-        <div class="world-info"><span class="world-tag">L4 · L5 · L6 — Hollow</span><h3>Inkpool Hollow</h3><p>Reflectieve ink-aubergine plassen, saffron bioluminescente moss, ghost-mechanic, kaleidoscope-piek bij teleport.</p></div>
+        <div class="world-info"><span class="world-tag">Hollow</span><h3>Inkpool Hollow</h3><p>Reflectieve ink-aubergine plassen, saffron bioluminescente moss, ghost-mechanic, kaleidoscope-piek bij teleport.</p></div>
       </a>
       <a href="/lore/#cathedral" class="world-card">
         <div class="world-img" style="background-image:url('/showcase-assets/bg-cloud-cathedral-sky.png');"></div>
-        <div class="world-info"><span class="world-tag">L7 · L8 · L9 · L10 — Cathedral</span><h3>Cloud Cathedral</h3><p>Verweerde alien-tempel in pastel-cloud-lagen, beat-jumps via spring-trampolines, blob-arena.</p></div>
+        <div class="world-info"><span class="world-tag">Cathedral</span><h3>Cloud Cathedral</h3><p>Verweerde alien-tempel in pastel-cloud-lagen, beat-jumps via spring-trampolines, blob-arena.</p></div>
       </a>
     </div>
   </div>
@@ -339,8 +337,7 @@ h1.title em {
     <a href="/press/">Press</a>
     <a href="https://github.com/RichardTheuws/game-master" target="_blank" rel="noopener">GitHub</a>
   </div>
-  <p>Een productie van <a href="https://theuws.com" style="color:var(--saffron-glow);">Theuws Consulting</a> · Built op <code>Three.js</code> + <code>Phaser 4</code> + AI-pipeline.</p>
-  <p>Cosmo is een hommage aan Apogee's <em>Cosmo's Cosmic Adventure</em> uit 1992.</p>
+  <p>Een productie van <a href="https://theuws.com" style="color:var(--saffron-glow);">Theuws Consulting</a> · Built op <code>Three.js</code> + AI-pipeline.</p>
   <p class="site-footer__copyright">© <span data-current-year>2026</span> Theuws Consulting · v<span id="version">0.1.0</span></p>
 </footer>
 
