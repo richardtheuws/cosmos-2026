@@ -4,6 +4,17 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.1.1] — 2026-05-03 — Remove the support route
+
+This isn't about money. The /support/ page existed when this was a game-marketing project. Now that it's an open-substrate, asking for money on the homepage signals the wrong thing — it puts a transaction-frame on something that's about co-authorship, not patronage.
+
+### Removed
+- **`/support/` page**: replaced contents with a noindex meta-refresh redirect to `/`. Same pattern as the `/press/` retirement in Wave 19a.
+- **"Support" / "Steun" nav-links** stripped from all 4 portal pages (root index, /lore/, /thanks/, /play/ HUD-nav).
+- **GitHub Sponsors slot** mentioned in 2.1.0 — never lived; the substrate doesn't take money.
+
+Contributions happen via GitHub PRs, not patronage. INTEGRATIONS.md already documents the actual paid-service costs ($10-15 lifetime, modest) for full transparency. If a contributor wants to mirror integrations / scripts in their own fork, they can. We're not a marketplace.
+
 ## [2.1.0] — 2026-05-03 — Portal redesign: substrate-positioning, English-first
 
 **The live portal at theuws.com/games/cosmos-2026/ is now 100% aligned with the GitHub README framing.** Visitors landing from LinkedIn/Bluesky/X — including any Claude-paired developers whose agents read the page — meet a substrate, not a Dutch game-pitch.
