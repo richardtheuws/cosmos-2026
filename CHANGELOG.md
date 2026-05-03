@@ -4,6 +4,11 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.0.1] — 2026-05-03 — CosmoV2 proportion fix (away from green-pill)
+
+### Fixed
+- **CosmoV2 proportions**: live UAT showed Cosmo as a tall green capsule pill with disproportionately small head and discs floating behind the body. Tuned `cosmoV2.ts` geometry constants — body capsule 0.45/0.9 → 0.30/0.45 (shorter + thinner), head sphere 0.5 → 0.55 with Y-squash 0.92 → 0.85 (more pearl-drop), head.position.y 1.15 → 1.05 (overlaps body-top to hide collar seam), antenna shaft thicker (0.022 → 0.025) + longer (0.25 → 0.28), antenna bulb 0.07 → 0.10 with smoother segs + brighter emissive, discs 0.18 → 0.22 repositioned to (-0.55, 0.55, 0.35) and (0.55, 0.55, 0.35) so they read as hand-tip pads in front of the body silhouette, face decal 0.85×0.55 → 0.95×0.65 + slight z-bump to fit larger head. Pure parameter tuning — no architectural change.
+
 ## [2.0.0] — 2026-05-03 — Wave 20a: Cosmo v2 hybrid rebuild + open substrate
 
 **Major milestone**: the project pivots from "a game" to **a substrate** that any Claude-paired developer can plug a Universe into. *Your Cosmo can visit my forest. My Cosmo can visit your world.* See `NORTH-STAR.md` for the full charter.

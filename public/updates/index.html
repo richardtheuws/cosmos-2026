@@ -206,6 +206,25 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.0.1</span>
+          <span class="update__date">2026-05-03</span>
+          <h2 class="update__title">05-03 — CosmoV2 proportion fix (away from green-pill)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>CosmoV2 proportions</strong>: live UAT showed Cosmo as a tall green capsule pill with disproportionately small head and discs floating behind the body. Tuned <code>cosmoV2.ts</code> geometry constants — body capsule 0.45/0.9 → 0.30/0.45 (shorter + thinner), head sphere 0.5 → 0.55 with Y-squash 0.92 → 0.85 (more pearl-drop), head.position.y 1.15 → 1.05 (overlaps body-top to hide collar seam), antenna shaft thicker (0.022 → 0.025) + longer (0.25 → 0.28), antenna bulb 0.07 → 0.10 with smoother segs + brighter emissive, discs 0.18 → 0.22 repositioned to (-0.55, 0.55, 0.35) and (0.55, 0.55, 0.35) so they read as hand-tip pads in front of the body silhouette, face decal 0.85×0.55 → 0.95×0.65 + slight z-bump to fit larger head. Pure parameter tuning — no architectural change.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.0.0</span>
           <span class="update__date">2026-05-03</span>
           <h2 class="update__title">05-03 — Wave 20a: Cosmo v2 hybrid rebuild + open substrate</h2>

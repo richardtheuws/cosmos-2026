@@ -90,45 +90,49 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
   body.name = 'cosmoV2_body';
   root.add(body);
 
-  const bodyGeo = new THREE.CapsuleGeometry(0.45, 0.9, 8, 16);
+  // Wave 20a fix (proportions): kid-alien proportions instead of green-pill.
+  // Body shorter + thinner so head reads dominant. Head bigger + more
+  // pearl-drop Y-squash. Head sits with overlap on body-top to hide collar
+  // seam. All values tuned by visual reference (cosmo-preview.png + LoRA hero).
+  const bodyGeo = new THREE.CapsuleGeometry(0.30, 0.45, 8, 16);
   const bodyMesh = new THREE.Mesh(bodyGeo, skinMaterial);
-  bodyMesh.position.y = 0.45;
+  bodyMesh.position.y = 0.40;
   body.add(bodyMesh);
 
   // ── Head ───────────────────────────────────────────────────────────────
   const head = new THREE.Object3D();
   head.name = 'cosmoV2_head';
-  head.position.y = 1.15;
+  head.position.y = 1.05; // ~0.2 overlap into body top so no visible collar seam
   body.add(head);
 
-  const headGeo = new THREE.SphereGeometry(0.5, 24, 18);
+  const headGeo = new THREE.SphereGeometry(0.55, 24, 18);
   const headMesh = new THREE.Mesh(headGeo, skinMaterial);
-  headMesh.scale.set(1.0, 0.92, 1.0);
+  headMesh.scale.set(1.0, 0.85, 1.0); // pearl-drop: more vertical squash
   head.add(headMesh);
 
   // ── Antenna ────────────────────────────────────────────────────────────
   const antennaBase = new THREE.Object3D();
   antennaBase.name = 'cosmoV2_antennaBase';
-  antennaBase.position.set(0, 0.46, 0);
+  antennaBase.position.set(0, 0.47, 0); // top of squashed head (0.55 * 0.85 ≈ 0.47)
   head.add(antennaBase);
 
-  const antennaShaftGeo = new THREE.CylinderGeometry(0.018, 0.022, 0.25, 8);
+  const antennaShaftGeo = new THREE.CylinderGeometry(0.020, 0.025, 0.28, 8);
   const antennaShaftMat = new THREE.MeshBasicMaterial({ color: 0x6f8060 });
   const antennaShaft = new THREE.Mesh(antennaShaftGeo, antennaShaftMat);
-  antennaShaft.position.y = 0.125;
+  antennaShaft.position.y = 0.14;
   antennaBase.add(antennaShaft);
 
   const antennaTip = new THREE.Object3D();
   antennaTip.name = 'cosmoV2_antennaTip';
-  antennaTip.position.y = 0.27;
+  antennaTip.position.y = 0.30;
   antennaBase.add(antennaTip);
 
-  const bulbGeo = new THREE.SphereGeometry(0.07, 12, 10);
+  const bulbGeo = new THREE.SphereGeometry(0.10, 16, 12); // bigger + smoother
   const bulbMat = new THREE.MeshStandardMaterial({
     color: 0xc25a4a,
     emissive: 0x5c1a14,
-    emissiveIntensity: 0.25,
-    roughness: 0.6,
+    emissiveIntensity: 0.30,
+    roughness: 0.55,
   });
   const bulb = new THREE.Mesh(bulbGeo, bulbMat);
   antennaTip.add(bulb);
@@ -153,10 +157,14 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
     depthWrite: false,
   });
 
-  const faceGeo = new THREE.PlaneGeometry(0.85, 0.55);
+  // Face plane scaled to fit the bigger head; positioned slightly forward
+  // (just past the +Z hemisphere of the head sphere) so it reads as ON the
+  // face. Wave 20b will replace this with curved billboard geometry for
+  // better silhouette read at side-angles.
+  const faceGeo = new THREE.PlaneGeometry(0.95, 0.65);
   const faceDecal = new THREE.Mesh(faceGeo, faceMaterial);
   faceDecal.name = 'cosmoV2_faceDecal';
-  faceDecal.position.set(0, 0.04, 0.46);
+  faceDecal.position.set(0, 0.0, 0.50);
   head.add(faceDecal);
 
   let currentFaceState: FaceState = 'neutral';
@@ -171,11 +179,16 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
     roughness: 0.9,
     metalness: 0.0,
   });
-  const discGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.04, 24);
+  // Free-floating suction-cup discs — bigger now, repositioned further out
+  // and forward of the body silhouette so they read as hand-tip discs, not
+  // little buttons hiding behind the back. The disc-face points at the
+  // camera (+Z) by rotating the cylinder so its flat top is the visible
+  // pad surface.
+  const discGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.04, 24);
 
   const discL = new THREE.Object3D();
   discL.name = 'cosmoV2_discL';
-  discL.position.set(-0.7, 0.6, 0.1);
+  discL.position.set(-0.55, 0.55, 0.35); // out + forward
   const discLMesh = new THREE.Mesh(discGeo, discMaterial);
   discLMesh.rotation.x = Math.PI / 2;
   discL.add(discLMesh);
@@ -183,7 +196,7 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
 
   const discR = new THREE.Object3D();
   discR.name = 'cosmoV2_discR';
-  discR.position.set(0.7, 0.6, 0.1);
+  discR.position.set(0.55, 0.55, 0.35); // mirror
   const discRMesh = new THREE.Mesh(discGeo, discMaterial);
   discRMesh.rotation.x = Math.PI / 2;
   discR.add(discRMesh);
