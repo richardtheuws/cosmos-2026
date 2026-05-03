@@ -1252,42 +1252,79 @@ export class CosmoAgent {
         }
       }
 
-      // Bleed criterion (matches the diagnosis): vertex has meaningful weight
-      // to bone_head AND meaningful weight to either eye-bone.
-      if (headSlot < 0 || headW <= 0.1 || eyeLW + eyeRW <= 0.3) continue;
+      // Trigger criterion: any vertex with non-trivial weight on either
+      // eye-bone gets that weight redirected to bone_head. The eye-bones in
+      // the shipped GLB sit at armature origin (0,0,0) — NOT at face level —
+      // so any verts they influence get pulled to ground when head moves.
+      // Solution: route all eye-bone influence to the head-bone, which is
+      // positioned at the face. Face-shell + eye-shell verts then move
+      // rigidly with head. Eye-bones become decorative (no weights left).
+      const eyeWeightTotal = eyeLW + eyeRW;
+      if (eyeWeightTotal <= 0.05) continue;
 
-      // Zero the head-slot's weight, renormalise the remaining 3.
-      weights[o + headSlot] = 0;
-      const remaining = ws[0] + ws[1] + ws[2] + ws[3] - headW;
-      if (remaining > 1e-6) {
-        const inv = 1 / remaining;
-        weights[o] = (slots[0] === headIdx ? 0 : ws[0]) * inv;
-        weights[o + 1] = (slots[1] === headIdx ? 0 : ws[1]) * inv;
-        weights[o + 2] = (slots[2] === headIdx ? 0 : ws[2]) * inv;
-        weights[o + 3] = (slots[3] === headIdx ? 0 : ws[3]) * inv;
-      } else {
-        // Degenerate — sum was effectively 0. Fall back to [1,0,0,0] with
-        // weight on whichever eye-slot is already on this vertex.
-        const eyeSlot = slots.findIndex((s) => s === eyeLIdx || s === eyeRIdx);
-        const target = eyeSlot >= 0 ? eyeSlot : 0;
-        weights[o] = target === 0 ? 1 : 0;
-        weights[o + 1] = target === 1 ? 1 : 0;
-        weights[o + 2] = target === 2 ? 1 : 0;
-        weights[o + 3] = target === 3 ? 1 : 0;
+      // Zero both eye slots, dump their weight onto the head-slot. If this
+      // vertex has no head-slot yet, claim an empty slot (one with weight 0)
+      // and put bone_head there. If all 4 slots are occupied non-trivially,
+      // fall back to overwriting the smallest-weight non-eye slot.
+      let targetSlot = headSlot;
+      if (targetSlot < 0) {
+        // Find an empty slot (weight ~0) to convert into a head-slot.
+        for (let s = 0; s < 4; s++) {
+          if (ws[s] < 1e-6) {
+            targetSlot = s;
+            indices[o + s] = headIdx;
+            break;
+          }
+        }
+      }
+      if (targetSlot < 0) {
+        // All 4 slots non-empty; pick the smallest non-eye slot.
+        let smallestS = -1;
+        let smallestW = Infinity;
+        for (let s = 0; s < 4; s++) {
+          if (slots[s] === eyeLIdx || slots[s] === eyeRIdx) continue;
+          if (ws[s] < smallestW) {
+            smallestW = ws[s];
+            smallestS = s;
+          }
+        }
+        if (smallestS >= 0) {
+          targetSlot = smallestS;
+          indices[o + smallestS] = headIdx;
+        }
+      }
+
+      // Apply: zero eye slots, write all eye-weight + existing head-weight
+      // onto the target slot, leave non-eye non-head slots untouched.
+      for (let s = 0; s < 4; s++) {
+        if (slots[s] === eyeLIdx || slots[s] === eyeRIdx) {
+          weights[o + s] = 0;
+        }
+      }
+      if (targetSlot >= 0) {
+        weights[o + targetSlot] = headW + eyeWeightTotal;
+      }
+      // Renormalise the 4 weights to sum to 1.
+      const sum = weights[o] + weights[o + 1] + weights[o + 2] + weights[o + 3];
+      if (sum > 1e-6) {
+        const inv = 1 / sum;
+        weights[o] *= inv;
+        weights[o + 1] *= inv;
+        weights[o + 2] *= inv;
+        weights[o + 3] *= inv;
       }
       modified++;
     }
 
     skinWeightAttr.needsUpdate = true;
+    skinIndexAttr.needsUpdate = true;
 
-    // Sanity check — diagnosis predicted ~1519 verts. Warn loudly if the
-    // count is way off (asset re-baked? bone-name drift?).
     // eslint-disable-next-line no-console
-    console.info(`[cosmo-agent] fixSkinWeights: zeroed bone_head bleed on ${modified} verts (expected ~1519)`);
+    console.info(`[cosmo-agent] fixSkinWeights: redirected eye-bone weights to bone_head on ${modified} verts (expected ~1621 = 1519 bleed + 102 clean eye-shell)`);
     if (modified === 0 || modified > 3000) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[cosmo-agent] fixSkinWeights: vertex count ${modified} is outside the expected ~1519 — rig may have changed`,
+        `[cosmo-agent] fixSkinWeights: vertex count ${modified} is outside the expected ~1621 — rig may have changed`,
       );
     }
 
@@ -1304,14 +1341,11 @@ export class CosmoAgent {
       eyeR.updateMatrixWorld(true);
       headBone.attach(eyeL);
       headBone.attach(eyeR);
-    } else {
-      // Fallback path: don't reparent; instead each frame copy
-      // bone_head.quaternion → eye-bones inside applyAIBoneHints. We mark
-      // this on the instance so the per-frame code can read it.
-      this.eyeFrameCopyEnabled = true;
-      this.eyeBoneL = bones[eyeLIdx];
-      this.eyeBoneR = bones[eyeRIdx];
     }
+    // No frame-copy needed: eye-bones now have zero weight on every vertex
+    // (their entire influence was redirected to bone_head above), so they
+    // can stay decorative at armature origin without affecting the mesh.
+    this.eyeFrameCopyEnabled = false;
   }
 
   /** Wave 19 debug helper — sweep head-yaw 0 → +0.7 → -0.7 → 0 over ~3s so

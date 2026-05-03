@@ -206,6 +206,25 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v1.5.2</span>
+          <span class="update__date">2026-05-03</span>
+          <h2 class="update__title">05-03 — Wave 19a hotfix #2: invert weight-redistribution</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Cosmo&#039;s gezicht/ogen verdween na v1.5.0/v1.5.1</strong>: het oorspronkelijke <code>fixSkinWeights()</code> zero&#039;de de <code>bone_head</code>-slot weight en gaf alle weight aan <code>bone_eye_l/_r</code> — maar die eye-bones zitten op armature origin (0,0,0), NIET op gezichtshoogte. Resultaat: face-shell verts werden naar origin getrokken, zwart gat in gezicht + zwarte discs op kin/grond-niveau (zichtbaar in user-screenshot v1.5.1). <strong>Inversie</strong>: zero NU de eye-bone slots, redirect alle eye-weight naar <code>bone_head</code> (die wél op gezichtshoogte zit). Face-shell volgt rigide het hoofd. Eye-bones zijn na deze redirect decoratief (geen weight meer op enige vert). <code>eyeFrameCopyEnabled</code> flag uitgezet (overbodig). Verwacht ~1621 verts gemodificeerd (1519 bleed + 102 clean eye-shell).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v1.5.1</span>
           <span class="update__date">2026-05-03</span>
           <h2 class="update__title">05-03 — Wave 19a hotfix: rig-fallback (frame-copy quaternion)</h2>

@@ -4,6 +4,11 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [1.5.2] — 2026-05-03 — Wave 19a hotfix #2: invert weight-redistribution
+
+### Fixed
+- **Cosmo's gezicht/ogen verdween na v1.5.0/v1.5.1**: het oorspronkelijke `fixSkinWeights()` zero'de de `bone_head`-slot weight en gaf alle weight aan `bone_eye_l/_r` — maar die eye-bones zitten op armature origin (0,0,0), NIET op gezichtshoogte. Resultaat: face-shell verts werden naar origin getrokken, zwart gat in gezicht + zwarte discs op kin/grond-niveau (zichtbaar in user-screenshot v1.5.1). **Inversie**: zero NU de eye-bone slots, redirect alle eye-weight naar `bone_head` (die wél op gezichtshoogte zit). Face-shell volgt rigide het hoofd. Eye-bones zijn na deze redirect decoratief (geen weight meer op enige vert). `eyeFrameCopyEnabled` flag uitgezet (overbodig). Verwacht ~1621 verts gemodificeerd (1519 bleed + 102 clean eye-shell).
+
 ## [1.5.1] — 2026-05-03 — Wave 19a hotfix: rig-fallback (frame-copy quaternion)
 
 ### Fixed
