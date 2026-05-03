@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "name": "forest",
+  "displayName": "The Mushroom Forest",
+  "displayNameEn": "The Mushroom Forest — Cosmo's entry Universe",
+  "author": "Richard Theuws",
+  "license": "MIT",
+  "summaryEn": "A watercolor cosmic-mushroom forest, painted in the Hayao×Moebius idiom. The entry Universe — where every Cosmo's journey begins. Slow-bloom mushrooms drip nectar from the canopy; soft-pastel cosmic horizon; a single trampoline (Wave 20b) where Cosmo loves to jump.",
+  "assets": [
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-slow-bloom-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/objects/eyeball-sentry.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/mouth-pillar-sheet.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/breathing-portal.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/floating-star.png", "preload": false }
+  ],
+  "brandDeviation": null
+}

@@ -1,12 +1,20 @@
 # Cosmo's Universe
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Substrate version](https://img.shields.io/badge/substrate-v2.0.0-c25a4a)](./CHANGELOG.md)
+[![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-7C5CFF)](https://claude.com/claude-code)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-90A579.svg)](./CONTRIBUTING.md)
+[![Universe Contract](https://img.shields.io/badge/universe-contract%20v1.0-E5A23E)](./UNIVERSE-AUTHORING.md)
+
 ![Cosmo standing in his mushroom forest](docs/showcase/hero-cosmo-in-forest.jpg)
 
 > *Your Cosmo can visit my forest. My Cosmo can visit your world.*
 
 A new form of collaborative game development — built by people who pair with Claude.
 
-**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Contracts**: [`UNIVERSE-AUTHORING.md`](./UNIVERSE-AUTHORING.md) · **Integrations & costs**: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · **Substrate version**: 2.0.0
+[**▶ Play live**](https://theuws.com/games/cosmos-2026/play/) · [**Charter**](./NORTH-STAR.md) · [**Universe contract**](./UNIVERSE-AUTHORING.md) · [**Integrations & costs**](./INTEGRATIONS.md) · [**Contributing**](./CONTRIBUTING.md)
+
+![Cosmo turning his head — a small loop](docs/showcase/cosmo-alive.gif)
 
 ---
 
@@ -90,6 +98,12 @@ Cosmo carries four painted face-states he swaps between as he reacts: neutral, c
 ![Weirdo inhabitants: eyeball-sentry, mouth-pillar, breathing-portal, floating-star](docs/showcase/weirdo-inhabitants.jpg)
 
 Each Universe gets its own small lives. The forest has eight so far — eyeball-sentries that wink when you look at them, mouth-pillars that breathe in time with the music, breathing-portals at the edge of the world, floating stars that drift past Cosmo's ear. Your Universe will have its own.
+
+### How travel works
+
+![Cosmo travels between Universes — diagram](docs/showcase/universe-traversal.jpg)
+
+Cosmo carries his state with him. When he leaves the forest and arrives in your Universe, his mood, memory, and traversal-history come along. The being is the constant; the world keeps growing.
 
 ## Why this exists
 
