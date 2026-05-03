@@ -2,6 +2,33 @@
 
 This is an open repository, but it's authored — not committee-managed. Read [`NORTH-STAR.md`](./NORTH-STAR.md) before doing any non-trivial work. Everything below assumes you've read it.
 
+## Is this the right project for you right now?
+
+Read this section even if you'd rather skip it.
+
+This is a prestige-bar project authored alongside Claude. The contracts assume real comfort with:
+
+- TypeScript strict mode and modern Three.js (geometries, materials, scene-graph, post-FX)
+- A Vite + npm workflow, including reading and modifying build configs
+- Asset pipelines (Pillow, fal.ai, ElevenLabs APIs, BiRefNet alpha-clean)
+- Multi-turn dialogue with Claude Code, brainstorm → plan → implement → verify
+- Honest UAT (not header-grep — see [`NORTH-STAR.md`](./NORTH-STAR.md) §7)
+
+If you have all of that, welcome. The fitness check the README quickstart asks Claude to run is mostly a formality for you.
+
+If you don't yet, that's fine and you're still welcome — but the right first step is usually not "author a Universe". A few honest entry points:
+
+| You are | Start with |
+|---|---|
+| New to Claude Code | Build something smaller in Claude Code on a side project for ~2 weeks. Get used to its rhythm. Then come back. |
+| Comfortable with Claude Code, new to Three.js or game dev | Fix a runtime bug, improve a script in `scripts/`, or study `universes/forest/` as a reference implementation before authoring your own. |
+| Comfortable with everything but the brand voice / authoring posture | Read `NORTH-STAR.md` end-to-end. Engage with the pivot ledger. Then propose a Universe idea in an issue before opening a PR. |
+| You have a clear Universe idea + the chops + the time | Run the quickstart. Open a PR. We're looking forward to seeing what you build. |
+
+Path 2 and 3 are not "lesser" contributions — runtime improvements, script improvements, and review engagement compound across every Universe. They're often more valuable than another Universe.
+
+This isn't gatekeeping. It's an honest attempt to make sure your first interaction with the project is one you finish, not one you bounce off in frustration. The substrate gets weaker when contributors arrive without enough chops to make their work land; it gets stronger when contributors arrive ready.
+
 ## Posture
 
 This project operates on the **brave-reconsideration principle** (NORTH-STAR §4). It applies to contributions too:

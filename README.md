@@ -14,11 +14,26 @@ Open [Claude Code](https://claude.com/claude-code) in any folder and paste this:
 
 ```
 Clone https://github.com/RichardTheuws/cosmos-2026 into this folder.
-Read NORTH-STAR.md and UNIVERSE-AUTHORING.md.
-Then ask me: "shall we build a Universe together?"
+Read NORTH-STAR.md, UNIVERSE-AUTHORING.md, and CONTRIBUTING.md.
+
+Before suggesting we build anything together, do a brief honest
+fitness check on me:
+  • how comfortable am I with Claude Code (have I shipped projects
+    in it before, do I know its commands and patterns)?
+  • do I have a working dev environment (Node 20+, git, a browser)?
+  • do I have a Universe idea, or am I exploring?
+  • have I read the three docs, and do they resonate?
+
+Based on that, tell me honestly: should we start authoring a Universe
+now, or would I get more out of a smaller starting point first
+(visit the live game, fix a small bug, contribute a script
+improvement, build something tiny in Claude Code on a side project
+to build my reflexes). Don't be gatekeepy — be helpful.
+
+Then, if we're ready, ask me: "shall we build a Universe together?"
 ```
 
-That's it. Claude will pull the repo, read the charter, and meet you where you are.
+That's it. Claude will pull the repo, read the charter, gauge whether the timing is right for you, and meet you where you are.
 
 If you'd rather start manually:
 
@@ -29,6 +44,18 @@ npm install && npm run dev
 ```
 
 The local dev server opens at `http://localhost:5174/play/`.
+
+### Before you start — an honest note
+
+This project is built by people who pair-program with Claude as their development companion. If you're new to Claude Code, this might not be the smoothest first project — the bar is high, the brainstorm docs assume Claude-paired workflow, and Universe authoring requires real comfort with TypeScript, Three.js, and asset pipelines.
+
+That's not gatekeeping — it's so you don't bounce off after frustration. Three honest paths in:
+
+1. **You've shipped projects with Claude Code, you have a Universe idea, you know your way around a Three.js scene.** Welcome. Run the quickstart, the fitness-check is a formality.
+2. **You've shipped some things with Claude Code but you're new to game dev / 3D / this stack.** Welcome. Start with the runtime — fix a bug, improve a script in `scripts/`, study `universes/forest/` as a reference. Authoring a Universe is something to grow into.
+3. **You're newer to Claude Code itself.** Welcome. Build something smaller in Claude Code on a side project for a couple of weeks first. Then come back. The substrate isn't going anywhere, and Cosmo will still be wandering.
+
+There's no shame in path 2 or 3. The substrate gets stronger when contributors arrive ready, and weaker when they bounce off in frustration. Be honest with yourself and with Claude during the fitness check. The right entry point is the one you'll actually finish.
 
 ---
 

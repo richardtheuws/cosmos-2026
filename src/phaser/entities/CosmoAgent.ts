@@ -1,5 +1,28 @@
 /**
- * CosmoAgent — Sprint 15B + Sprint 17B refactor
+ * CosmoAgent — Wave 20a (2026-05-03) — CosmoV2 cutover
+ *
+ * Wraps the CosmoV2 hybrid rig (primitive skeleton + painted decals, see
+ * `../../three/cosmoV2.ts`) inside the same state-machine that previously
+ * drove the broken Meshy GLB. The PUBLIC API is unchanged — `update()`,
+ * `applyMotion()`, `applyAI()`, `attachAI()`, all the state/world fields.
+ * What changed: synchronous build (no async GLB loader), no SkinnedMesh,
+ * no AnimationMixer, no skin-weight patching. Cosmo is built from
+ * `THREE.Object3D` transform-only nodes carrying primitive geometries —
+ * 360° head rotation without a single shear vertex.
+ *
+ * Wave 20a deliverable: visible Cosmo, 360° rotation wired to motion,
+ * scale wired to root.scale (driven externally for trip-scale).
+ * Wave 20b deliverable: CosmoAnimDirector for procedural idle-breath /
+ * blink / walk / jump-arc / climb. Until then, Cosmo is a still being
+ * who turns his head.
+ *
+ * The original docstring (Sprint 15B + 17B) is preserved below for
+ * historical reference. The `playClip` / mixer references in it apply
+ * to the v1 GLB rig; in v2 they're no-ops and lip-sync happens via
+ * `v2Rig.setFaceState()`.
+ *
+ * ──────────────────────────────────────────────────────────────────
+ * CosmoAgent — Sprint 15B + Sprint 17B refactor (historical)
  *
  * Wraps the 3D Cosmo (cosmo.glb from Sprint 15A) inside a state-machine with
  * RANDOM AGENCY. This is the WEIRDO-brief enforcer: Cosmo is not a remote-
@@ -59,6 +82,9 @@ import type { GlobalUniforms } from '../../core/globalUniforms';
 import type { MotionController } from '../../core/motionController';
 import { assetPath } from '../../core/assetPath';
 import type { CosmoAI, AIDirective } from './CosmoAI';
+// Wave 20a — CosmoV2 hybrid rig. Imported but not yet wired (cutover in progress).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { buildCosmoV2, type CosmoV2Rig, type FaceState } from '../../three/cosmoV2';
 
 // ─── Sprint 17B head-track tunables ──────────────────────────────────────────
 /** Max head-yaw sweep (rad). Maps motion.panX in [-1..1] → [-MAX..MAX]. */
