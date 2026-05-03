@@ -14,8 +14,6 @@ A new form of collaborative game development — built by people who pair with C
 
 [**▶ Play live**](https://theuws.com/games/cosmos-2026/play/) · [**Charter**](./NORTH-STAR.md) · [**Universe contract**](./UNIVERSE-AUTHORING.md) · [**Integrations & costs**](./INTEGRATIONS.md) · [**Contributing**](./CONTRIBUTING.md)
 
-![Cosmo turning his head — a small loop](docs/showcase/cosmo-alive.gif)
-
 ---
 
 ## Quickstart — pair with Claude in three lines
