@@ -206,6 +206,54 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.0.0</span>
+          <span class="update__date">2026-05-03</span>
+          <h2 class="update__title">05-03 — Wave 20a: Cosmo v2 hybrid rebuild + open substrate</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>Major milestone</strong>: the project pivots from &quot;a game&quot; to <strong>a substrate</strong> that any Claude-paired developer can plug a Universe into. <em>Your Cosmo can visit my forest. My Cosmo can visit your world.</em> See <code>NORTH-STAR.md</code> for the full charter.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/three/cosmoV2.ts</code></strong> — primitive-skeleton rig (capsule body + sphere head + antenna + face-decal + free-floating discs) replacing the broken Meshy-imported GLB. 360° rotation, scale, jump-arc, climb all wired. ~270 LOC.</li>
+          <li><strong><code>NORTH-STAR.md</code></strong> — project charter (vision, brave-reconsideration principle, pivot ledger, working method). Living document; read first.</li>
+          <li><strong><code>UNIVERSE-AUTHORING.md</code></strong> — technical contract for external Universe authors (4 required artifacts: background renderer, room-list+traversal graph, asset manifest, Cosmo-arrival hook).</li>
+          <li><strong><code>CONTRIBUTING.md</code></strong> — fitness-check + 4 honest entry-paths for new contributors.</li>
+          <li><strong><code>INTEGRATIONS.md</code></strong> — full transparency on every paid service, current pricing, per-sprint costs, reusable scripts.</li>
+          <li><strong><code>LICENSE</code></strong> — MIT.</li>
+          <li><strong><code>README.md</code></strong> — rewritten in English with paste-in-Claude-Code quickstart, multilingual welcome, three contribution paths.</li>
+          <li><strong>Cosmo v2 decal asset set</strong> in <code>public/assets/3d/v2/</code> — 4 painted face decals (<code>cosmo-face-neutral.png</code>, <code>cosmo-face-coo.png</code>, <code>cosmo-face-blink.png</code>, <code>cosmo-face-wave.png</code>, all 512×512 RGBA), 1 tile-friendly body skin (<code>cosmo-body-skin.png</code> 512×512 RGB, mirror-blended from <code>cosmo-hero-lora.png</code> torso), 1 suction-cup disc (<code>cosmo-disc-suction.png</code> 256×256 RGBA). Faces generated via Flux Dev + LoRA <code>rtcosmo</code> + BiRefNet remove-bg pass; disc via Recraft V3 + BiRefNet; body-skin and blink-eyelids via deterministic Pillow paint (LoRA&#039;s bulging-eye DNA refused to close eyes across 3 retry seeds). Total $0.265 of $1.00 budget. Generation pipeline lives in <code>scripts/wave20a/</code>. Report: <code>.claude/brainstorm/wave20/02-decal-gen-report.md</code>.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/phaser/entities/CosmoAgent.ts</code></strong> — <code>kickOffGLBLoad()</code> → synchronous <code>buildCosmoV2()</code> build in constructor. <code>headBone</code>/<code>antennaBone</code>/<code>spineBone</code> now point directly at v2Rig nodes (no traversal). Cutover hard.</li>
+          <li><strong><code>package.json</code></strong> — <code>private: false</code>, <code>license: MIT</code>, repository + homepage fields added.</li>
+        </ul>
+<h3>REMOVED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>fixSkinWeights()</code></strong>, <strong><code>makeFallbackRoot()</code></strong>, <strong><code>disposeFallback()</code></strong>, <strong><code>resolveHeadBone()</code></strong>, <strong><code>resolveAntennaBone()</code></strong>, <strong><code>cacheBodyMaterials()</code></strong>, <strong><code>resolveSpineBone()</code></strong>, <strong><code>debugRigYawSweep()</code></strong> — all GLB-rig-specific helpers retired with the cutover. ~250 LOC removed.</li>
+          <li><strong><code>THREE.AnimationMixer</code> + GLB clip wiring</strong> — <code>playClip()</code> calls remain but are no-ops until Wave 20b&#039;s <code>CosmoAnimDirector</code> lands.</li>
+          <li><strong>GLTFLoader import + <code>assetPath</code> import</strong> — no longer needed in CosmoAgent.</li>
+        </ul>
+<h3>KNOWN LIMITATIONS (WAVE 20B WILL FIX)</h3>
+        <ul class="update__highlights">
+          <li>No procedural idle-breath / blink / walk yet — Cosmo is a still being who turns his head.</li>
+          <li>Pet-affect saffron-blush tint disabled (was tied to traversed body materials; v2&#039;s shared <code>skinMaterial</code> needs a different approach).</li>
+          <li>Trampoline jump-arc, climb-state, lip-sync via face-state swap are scaffolded in cosmoV2.ts but not yet wired through CosmoAgent.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v1.5.2</span>
           <span class="update__date">2026-05-03</span>
           <h2 class="update__title">05-03 — Wave 19a hotfix #2: invert weight-redistribution</h2>

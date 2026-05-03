@@ -76,14 +76,10 @@
  *   walking = no anim-clip needed). Asset-files NEVER required at boot.
  */
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import type { MotionController } from '../../core/motionController';
-import { assetPath } from '../../core/assetPath';
 import type { CosmoAI, AIDirective } from './CosmoAI';
-// Wave 20a — CosmoV2 hybrid rig. Imported but not yet wired (cutover in progress).
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// Wave 20a — CosmoV2 hybrid rig. Replaces the Sprint 15A GLB skeleton.
 import { buildCosmoV2, type CosmoV2Rig, type FaceState } from '../../three/cosmoV2';
 
 // ─── Sprint 17B head-track tunables ──────────────────────────────────────────
@@ -94,7 +90,6 @@ const HEAD_PITCH_MAX = 0.2;
 /** Lerp factor — head smoothing on top of MotionController smoothing. */
 const HEAD_LERP = 0.18;
 /** Common bone-name patterns we treat as the head for head-track. */
-const HEAD_BONE_NAMES = ['head', 'Head', 'HEAD', 'mixamorigHead', 'Bip01_Head', 'head_bone'];
 
 // ─── Tunables ────────────────────────────────────────────────────────────────
 /** World-units / second. Tuned so 60s of idle walking covers ~12 obstacles. */
@@ -133,7 +128,6 @@ const PET_AFFECT_DURATION_S = 0.8;
 /** Heart-emote: peak antenne yaw deviation during pet (rad ≈ ±20°). */
 const PET_ANTENNA_TILT_RAD = 0.35;
 /** Bone-name patterns we treat as "antenne" for the pet heart-emote. */
-const ANTENNA_BONE_NAMES = ['antenne', 'antenna', 'antennae', 'Antenne', 'Antenna', 'antenne_bone'];
 /** Probability of a hallucination-overlay firing on a successful trampoline-bounce. */
 const BOUNCE_HALLUCINATION_CHANCE = 0.3;
 /** Kaleido-trigger spike applied on every bounce. */
@@ -295,98 +289,45 @@ export class CosmoAgent {
   private eyeBoneL: THREE.Object3D | null = null;
   private eyeBoneR: THREE.Object3D | null = null;
 
+  /** Wave 20a — CosmoV2 hybrid rig (primitive skeleton + painted decals).
+   *  Built synchronously in the constructor; replaces the async GLB-loader
+   *  path of Sprint 15A. Always non-null after construction. */
+  private v2Rig: CosmoV2Rig;
+
   constructor(parentGroup: THREE.Group, events: CosmoAgentEvents = {}) {
     this.parentGroup = parentGroup;
     this.events = events;
-    this.root = this.makeFallbackRoot();
+
+    // Wave 20a cutover — synchronous build, no async loader, no fallback path.
+    // The v2 rig is primitive geometry + decal textures; if the decal PNGs
+    // are missing the textures show as untinted material (still visible),
+    // never as a placeholder.
+    this.v2Rig = buildCosmoV2({ scale: 1.1 });
+    this.root = this.v2Rig.root;
     this.parentGroup.add(this.root);
+    this.root.position.set(this.worldX, this.worldY, this.worldZ);
+
+    // Bone-handles point at v2 nodes — head/antenna/spine resolution is now
+    // build-time (no traversal needed). The v1 GLB methods (resolveHeadBone,
+    // etc.) are retained as no-ops below for any historical callers.
+    this.headBone = this.v2Rig.head;
+    this.headRestQuat = this.v2Rig.head.quaternion.clone();
+    this.antennaBone = this.v2Rig.antennaBase;
+    this.antennaRestQuat = this.v2Rig.antennaBase.quaternion.clone();
+    this.spineBone = this.v2Rig.body;
+    this.spineRestQuat = this.v2Rig.body.quaternion.clone();
+
     // Magic moment: 1.2s of looking before he starts walking.
     this.state = 'idle';
     this.introCompleteAt = LOOKING_DURATION_S;
-    this.kickOffGLBLoad();
+    this.fallback2D = false;
+    this.loading = false;
   }
 
-  /** Async-load the GLB. On failure, keeps the 2D fallback we already added. */
-  private async kickOffGLBLoad(): Promise<void> {
-    const url = assetPath('assets/3d/cosmo.glb');
-    try {
-      const loader = new GLTFLoader();
-      const gltf: GLTF = await loader.loadAsync(url);
-      // Replace the fallback plane with the loaded scene.
-      this.parentGroup.remove(this.root);
-      this.disposeFallback(this.root);
-      this.root = gltf.scene;
-      this.parentGroup.add(this.root);
-      this.root.position.set(this.worldX, this.worldY, this.worldZ);
-      // Normalise scale — GLBs vary; we want Cosmo at ~30-40% screen height.
-      // PerspectiveCamera FOV 35, distance 6 → 1 world unit ≈ ~30% portrait.
-      this.root.scale.setScalar(1.1);
-
-      this.mixer = new THREE.AnimationMixer(this.root);
-      for (const clip of gltf.animations) {
-        this.clips.set(clip.name.toLowerCase(), clip);
-      }
-      this.fallback2D = false;
-      this.loading = false;
-      this.playClip('idle', true);
-      // Sprint 17B — try to find a head-bone for head-track. Falls back
-      // gracefully (headBone stays null) if the rig uses an unfamiliar
-      // naming scheme, in which case applyMotion is a no-op.
-      this.resolveHeadBone();
-      // Sprint 17D — resolve antenne-bone for pet heart-emote + cache body
-      // MeshStandardMaterials for saffron-blush tint during petAffect().
-      this.resolveAntennaBone();
-      this.cacheBodyMaterials();
-      // Sprint 17E — resolve spine-bone for AI sniff bend-forward hint.
-      this.resolveSpineBone();
-      // Wave 19 — fix the eye-melting weight-bleed (1519 face/eye verts at
-      // 50/50 head+eye weight). Reparents eye-bones under bone_head so they
-      // inherit yaw/pitch instead of sitting siblings under cosmo_armature.
-      this.fixSkinWeights();
-      // Wave 19 — expose a debug yaw-sweep on window so visual QA can verify
-      // the fix without booting the input pipeline. Call from devtools:
-      //   __debugRigYawSweep()
-      // This sweeps head-yaw 0 → +0.7 → -0.7 → 0 over 3s.
-      (globalThis as unknown as { __debugRigYawSweep?: () => void }).__debugRigYawSweep =
-        () => this.debugRigYawSweep();
-    } catch (err) {
-      // GLB missing / decode-fail — stay on 2D fallback. Quiet warn so dev
-      // sees it, ship-mode users never notice.
-      // eslint-disable-next-line no-console
-      console.warn('[cosmo-agent] cosmo.glb missing or failed to load — using 2D fallback', err);
-      this.fallback2D = true;
-      this.loading = false;
-    }
-  }
-
-  /** Build the 2D-fallback Object3D — a billboarded plane with the hero PNG. */
-  private makeFallbackRoot(): THREE.Object3D {
-    const group = new THREE.Group();
-    const tex = new THREE.TextureLoader().load(assetPath('assets/sprites/cosmo-hero-4k.png'));
-    tex.colorSpace = THREE.SRGBColorSpace;
-    const mat = new THREE.MeshBasicMaterial({
-      map: tex,
-      transparent: true,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-    });
-    // Plane sized ~1.5 world-units tall, matching the GLB target.
-    const geo = new THREE.PlaneGeometry(1.0, 1.5);
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.y = 0.75; // origin at feet
-    group.add(mesh);
-    this.fallback2D = true;
-    return group;
-  }
-
-  private disposeFallback(o: THREE.Object3D): void {
-    o.traverse((child) => {
-      const mesh = child as THREE.Mesh;
-      if (mesh.geometry) mesh.geometry.dispose();
-      const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
-      if (Array.isArray(m)) m.forEach((mat) => mat.dispose());
-      else m?.dispose();
-    });
+  /** Wave 20a — face-state shortcut. Forwarded to v2Rig.setFaceState().
+   *  Replaces the v1 playClip-based lip-sync. */
+  setFaceState(state: FaceState): void {
+    this.v2Rig.setFaceState(state);
   }
 
   /** Per-frame tick. */
@@ -878,73 +819,11 @@ export class CosmoAgent {
     this.currentClipName = name;
   }
 
-  // ── Sprint 17B — head-track ──────────────────────────────────────────────
-
-  /** Walk the GLB scene-graph looking for a head-bone (or any bone whose
-   *  lowercased name contains "head"). Caches it + its rest-quaternion so
-   *  applyMotion can additively rotate it on top of clip animation. */
-  private resolveHeadBone(): void {
-    if (this.fallback2D) return;
-    let found: THREE.Object3D | null = null;
-    this.root.traverse((child) => {
-      if (found) return;
-      if (HEAD_BONE_NAMES.includes(child.name)) {
-        found = child;
-      } else if (child.name && child.name.toLowerCase().includes('head')) {
-        found = child;
-      }
-    });
-    if (found) {
-      this.headBone = found;
-      this.headRestQuat = (found as THREE.Object3D).quaternion.clone();
-    } else {
-      this.headBone = null;
-      this.headRestQuat = null;
-    }
-  }
-
-  // ── Sprint 17D — antenne-bone + body-materials resolution ───────────────
-
-  /** Walk the GLB scene-graph for an antenne-bone (Sprint 17A rig labels it
-   *  `antenne` per cosmo-rig-spec.json; we tolerate variants). Caches its
-   *  rest-quat so applyPetAffect can additively rotate it. */
-  private resolveAntennaBone(): void {
-    if (this.fallback2D) return;
-    let found: THREE.Object3D | null = null;
-    this.root.traverse((child) => {
-      if (found) return;
-      if (ANTENNA_BONE_NAMES.includes(child.name)) {
-        found = child;
-      } else if (child.name && child.name.toLowerCase().includes('antenn')) {
-        found = child;
-      }
-    });
-    if (found) {
-      this.antennaBone = found;
-      this.antennaRestQuat = (found as THREE.Object3D).quaternion.clone();
-    } else {
-      this.antennaBone = null;
-      this.antennaRestQuat = null;
-    }
-  }
-
-  /** Cache MeshStandardMaterial refs on the body — used by pet-affect to
-   *  apply a saffron blush via emissive without traversing every frame. */
-  private cacheBodyMaterials(): void {
-    if (this.fallback2D) return;
-    this.bodyMaterials = [];
-    this.root.traverse((child) => {
-      const mesh = child as THREE.Mesh;
-      if (!mesh.isMesh) return;
-      const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
-      const list = Array.isArray(m) ? m : m ? [m] : [];
-      for (const mat of list) {
-        if ((mat as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-          this.bodyMaterials.push(mat as THREE.MeshStandardMaterial);
-        }
-      }
-    });
-  }
+  // ── Wave 20a — head/antenna/spine bones are now direct refs to v2Rig
+  //    nodes (set at construction). The v1 GLB resolve* helpers are removed
+  //    because their traversal was specific to the old hand-rigged GLB; v2's
+  //    skeleton has named handles available immediately. Pet-affect's body-
+  //    material tinting uses v2Rig's shared skinMaterial directly (Wave 20b).
 
   /** Stash original emissive colour/intensity per material so clearPetAffect
    *  can restore them. Stored on the material itself via userData so we don't
@@ -1134,279 +1013,13 @@ export class CosmoAgent {
     }
   }
 
-  /** Walk the GLB scene-graph for a spine-bone (cosmo-rig-spec.json names it
-   *  `bone_spine`). Falls back to any bone whose name contains "spine". */
-  private resolveSpineBone(): void {
-    if (this.fallback2D) return;
-    let found: THREE.Object3D | null = null;
-    this.root.traverse((child) => {
-      if (found) return;
-      if (child.name === 'bone_spine' || child.name === 'spine' || child.name === 'Spine') {
-        found = child;
-      } else if (child.name && child.name.toLowerCase().includes('spine')) {
-        found = child;
-      }
-    });
-    if (found) {
-      this.spineBone = found;
-      this.spineRestQuat = (found as THREE.Object3D).quaternion.clone();
-    }
-  }
+  // (Wave 20a — resolveSpineBone removed. v2Rig.body is the spine-equivalent,
+  //  set in the constructor.)
 
-  // ── Wave 19 — eye-melt rig fix ───────────────────────────────────────────
-  /**
-   * Wave 19 fix for Cosmo's "melting alien eyes" — diagnosed in
-   * `.claude/brainstorm/wave19/01-rig-diagnosis.md`. The GLB ships with two
-   * structural defects in the rig that combine to shear the face shell on
-   * head-yaw/pitch:
-   *
-   *   1. **Weight bleed**: 1 519 face/eye verts carry near-50/50 weights to
-   *      `bone_head` AND `bone_eye_l`/`bone_eye_r`. When applyMotion +
-   *      applyAIBoneHints rotate `bone_head` while the eye-bones stay at
-   *      rest, linear-blend skinning averages a rotated head matrix with an
-   *      identity eye matrix → those verts move at half-yaw → black pupils
-   *      stretch/drip downward. Fix: zero the head-slot weight on each
-   *      bleed-vert, renormalise the remaining 3 weights to sum=1.
-   *   2. **Bad parenting**: `bone_eye_l/_r` sit as siblings of `bone_root`
-   *      directly under `cosmo_armature`, so they don't inherit head
-   *      rotation. Fix: `bone_head.attach(bone_eye_l/_r)` — Three.js's
-   *      `attach()` recomputes local transform from world, preserving
-   *      rest-pose visually while making the eyes follow head rotations.
-   *
-   * IBM caveat (open Q #2 from the diagnosis): if the GLB inverseBindMatrices
-   * for the eye-bones were baked against `cosmo_armature` (sibling parent)
-   * rather than `bone_head`, `attach()` may displace the rest-pupils. If
-   * that happens visually, flip `USE_REPARENT` to false below — the agent
-   * then falls back to a frame-by-frame quaternion copy from head→eyes
-   * (handled at the end of applyAIBoneHints once the flag-state is read).
-   *
-   * Pure post-load runtime fix; the GLB asset is never modified.
-   */
-  private fixSkinWeights(): void {
-    if (this.fallback2D) return;
-    // Cleaner reparent path is the default. Flip to false ONLY if the
-    // pupils visibly slide off the face after attach(). The fallback
-    // branch (frame-copy quaternion) lives in `applyAIBoneHints()` via
-    // the `eyeFrameCopyEnabled` flag this helper sets.
-    // Flipped to false 2026-05-03 after live UAT: reparent path produced
-    // misplaced eye-spheres at chin level (IBMs were baked against
-    // cosmo_armature, not bone_head — open Q #2 confirmed). Frame-copy
-    // fallback keeps eye-bones at their original armature-space rest-pose
-    // and copies head's quaternion onto them every frame in applyAIBoneHints.
-    const USE_REPARENT = false;
-
-    // 1) Locate the SkinnedMesh + its skeleton.
-    let skinnedMesh: THREE.SkinnedMesh | null = null;
-    this.root.traverse((child) => {
-      if (skinnedMesh) return;
-      if ((child as THREE.SkinnedMesh).isSkinnedMesh) {
-        skinnedMesh = child as THREE.SkinnedMesh;
-      }
-    });
-    if (!skinnedMesh) {
-      // eslint-disable-next-line no-console
-      console.warn('[cosmo-agent] fixSkinWeights: no SkinnedMesh found — skipping rig fix');
-      return;
-    }
-    // Cast through unknown so TS treats the local as the narrow type
-    // even though it was assigned via a callback closure.
-    const mesh = skinnedMesh as unknown as THREE.SkinnedMesh;
-    const skeleton = mesh.skeleton;
-    if (!skeleton) {
-      // eslint-disable-next-line no-console
-      console.warn('[cosmo-agent] fixSkinWeights: SkinnedMesh has no skeleton — skipping');
-      return;
-    }
-
-    // 2) Resolve bone indices by name. mesh.skeleton.bones is the joint
-    //    array Three.js uses to interpret skinIndex slots.
-    const bones = skeleton.bones;
-    const headIdx = bones.findIndex((b) => b.name === 'bone_head');
-    const eyeLIdx = bones.findIndex((b) => b.name === 'bone_eye_l');
-    const eyeRIdx = bones.findIndex((b) => b.name === 'bone_eye_r');
-    if (headIdx < 0 || eyeLIdx < 0 || eyeRIdx < 0) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        '[cosmo-agent] fixSkinWeights: missing expected bones',
-        { headIdx, eyeLIdx, eyeRIdx, names: bones.map((b) => b.name) },
-      );
-      return;
-    }
-
-    // 3) Walk geometry.attributes.skinWeight + skinIndex (4 entries / vert).
-    const geom = mesh.geometry;
-    const skinWeightAttr = geom.attributes.skinWeight as THREE.BufferAttribute;
-    const skinIndexAttr = geom.attributes.skinIndex as THREE.BufferAttribute;
-    if (!skinWeightAttr || !skinIndexAttr) {
-      // eslint-disable-next-line no-console
-      console.warn('[cosmo-agent] fixSkinWeights: skin attributes missing on geometry');
-      return;
-    }
-    const weights = skinWeightAttr.array as Float32Array;
-    const indices = skinIndexAttr.array as Uint16Array | Uint8Array;
-    const vertCount = skinWeightAttr.count;
-
-    let modified = 0;
-    for (let v = 0; v < vertCount; v++) {
-      const o = v * 4;
-      const i0 = indices[o];
-      const i1 = indices[o + 1];
-      const i2 = indices[o + 2];
-      const i3 = indices[o + 3];
-      const w0 = weights[o];
-      const w1 = weights[o + 1];
-      const w2 = weights[o + 2];
-      const w3 = weights[o + 3];
-
-      // Find the head + eye slot weights for this vertex.
-      let headSlot = -1;
-      let headW = 0;
-      let eyeLW = 0;
-      let eyeRW = 0;
-      const slots = [i0, i1, i2, i3];
-      const ws = [w0, w1, w2, w3];
-      for (let s = 0; s < 4; s++) {
-        const idx = slots[s];
-        const w = ws[s];
-        if (idx === headIdx) {
-          headSlot = s;
-          headW = w;
-        } else if (idx === eyeLIdx) {
-          eyeLW = w;
-        } else if (idx === eyeRIdx) {
-          eyeRW = w;
-        }
-      }
-
-      // Trigger criterion: any vertex with non-trivial weight on either
-      // eye-bone gets that weight redirected to bone_head. The eye-bones in
-      // the shipped GLB sit at armature origin (0,0,0) — NOT at face level —
-      // so any verts they influence get pulled to ground when head moves.
-      // Solution: route all eye-bone influence to the head-bone, which is
-      // positioned at the face. Face-shell + eye-shell verts then move
-      // rigidly with head. Eye-bones become decorative (no weights left).
-      const eyeWeightTotal = eyeLW + eyeRW;
-      if (eyeWeightTotal <= 0.05) continue;
-
-      // Zero both eye slots, dump their weight onto the head-slot. If this
-      // vertex has no head-slot yet, claim an empty slot (one with weight 0)
-      // and put bone_head there. If all 4 slots are occupied non-trivially,
-      // fall back to overwriting the smallest-weight non-eye slot.
-      let targetSlot = headSlot;
-      if (targetSlot < 0) {
-        // Find an empty slot (weight ~0) to convert into a head-slot.
-        for (let s = 0; s < 4; s++) {
-          if (ws[s] < 1e-6) {
-            targetSlot = s;
-            indices[o + s] = headIdx;
-            break;
-          }
-        }
-      }
-      if (targetSlot < 0) {
-        // All 4 slots non-empty; pick the smallest non-eye slot.
-        let smallestS = -1;
-        let smallestW = Infinity;
-        for (let s = 0; s < 4; s++) {
-          if (slots[s] === eyeLIdx || slots[s] === eyeRIdx) continue;
-          if (ws[s] < smallestW) {
-            smallestW = ws[s];
-            smallestS = s;
-          }
-        }
-        if (smallestS >= 0) {
-          targetSlot = smallestS;
-          indices[o + smallestS] = headIdx;
-        }
-      }
-
-      // Apply: zero eye slots, write all eye-weight + existing head-weight
-      // onto the target slot, leave non-eye non-head slots untouched.
-      for (let s = 0; s < 4; s++) {
-        if (slots[s] === eyeLIdx || slots[s] === eyeRIdx) {
-          weights[o + s] = 0;
-        }
-      }
-      if (targetSlot >= 0) {
-        weights[o + targetSlot] = headW + eyeWeightTotal;
-      }
-      // Renormalise the 4 weights to sum to 1.
-      const sum = weights[o] + weights[o + 1] + weights[o + 2] + weights[o + 3];
-      if (sum > 1e-6) {
-        const inv = 1 / sum;
-        weights[o] *= inv;
-        weights[o + 1] *= inv;
-        weights[o + 2] *= inv;
-        weights[o + 3] *= inv;
-      }
-      modified++;
-    }
-
-    skinWeightAttr.needsUpdate = true;
-    skinIndexAttr.needsUpdate = true;
-
-    // eslint-disable-next-line no-console
-    console.info(`[cosmo-agent] fixSkinWeights: redirected eye-bone weights to bone_head on ${modified} verts (expected ~1621 = 1519 bleed + 102 clean eye-shell)`);
-    if (modified === 0 || modified > 3000) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[cosmo-agent] fixSkinWeights: vertex count ${modified} is outside the expected ~1621 — rig may have changed`,
-      );
-    }
-
-    // 4) Reparent eye-bones under bone_head so head-yaw/pitch propagates.
-    //    Three.js attach() recomputes local transform from world matrices,
-    //    preserving the rest-pose pupil position visually.
-    if (USE_REPARENT) {
-      const headBone = bones[headIdx];
-      const eyeL = bones[eyeLIdx];
-      const eyeR = bones[eyeRIdx];
-      // Ensure world matrices are current before attach() reads them.
-      headBone.updateMatrixWorld(true);
-      eyeL.updateMatrixWorld(true);
-      eyeR.updateMatrixWorld(true);
-      headBone.attach(eyeL);
-      headBone.attach(eyeR);
-    }
-    // No frame-copy needed: eye-bones now have zero weight on every vertex
-    // (their entire influence was redirected to bone_head above), so they
-    // can stay decorative at armature origin without affecting the mesh.
-    this.eyeFrameCopyEnabled = false;
-  }
-
-  /** Wave 19 debug helper — sweep head-yaw 0 → +0.7 → -0.7 → 0 over ~3s so
-   *  the user can visually verify the eye-melt fix. Exposed on the window
-   *  global as `__debugRigYawSweep()` once the GLB has loaded. */
-  debugRigYawSweep(): void {
-    if (!this.headBone || !this.headRestQuat) {
-      // eslint-disable-next-line no-console
-      console.warn('[cosmo-agent] debugRigYawSweep: head-bone not resolved yet');
-      return;
-    }
-    const startMs = performance.now();
-    const durationMs = 3000;
-    const tick = (): void => {
-      const t = (performance.now() - startMs) / durationMs;
-      if (t >= 1) {
-        // Restore — let applyMotion / applyAI take back over next frame.
-        return;
-      }
-      // Triangle wave: 0 → +0.7 → 0 → -0.7 → 0 across the 3 s window.
-      let yaw: number;
-      if (t < 0.25) yaw = (t / 0.25) * 0.7;
-      else if (t < 0.5) yaw = 0.7 - ((t - 0.25) / 0.25) * 0.7;
-      else if (t < 0.75) yaw = -((t - 0.5) / 0.25) * 0.7;
-      else yaw = -0.7 + ((t - 0.75) / 0.25) * 0.7;
-      const yawQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-      this.headBone!.quaternion.copy(this.headRestQuat!).multiply(yawQ);
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
 
   destroy(): void {
     if (this.root.parent) this.root.parent.remove(this.root);
-    if (this.fallback2D) this.disposeFallback(this.root);
+    this.v2Rig.dispose();
     this.mixer = null;
     this.clips.clear();
     this.pendingActions = [];
