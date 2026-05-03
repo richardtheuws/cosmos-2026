@@ -22,6 +22,8 @@ Contributors who don't share that posture will find PR review frustrating. Contr
 | **Performance improvement** | Yes | With benchmarks before/after. |
 | **New companion-AI behavior** | Yes if it fits the life-system spec | See `.claude/brainstorm/wave19/02-life-system.md`. |
 | **New Cosmo capability (move, scale, etc.)** | Discuss first | Capabilities affect every Universe — must compose. |
+| **Cheaper/better integration alternative** | Yes, please | See [`INTEGRATIONS.md`](./INTEGRATIONS.md) for the substitution bar (equal or better quality, equal or lower cost, ≥1 Universe author validated). |
+| **Asset-gen pipeline improvements** | Yes, please | Scripts in `scripts/` are first-class shared infrastructure. Smarter prompts, cheaper-model cascading, automated DNA validation, faster batch — all welcome. |
 | **Brand-style deviation** | Document why first | Then we engage the argument. |
 | **Refactor for refactor's sake** | No | Refactor when adding a feature requires it. Not before. |
 

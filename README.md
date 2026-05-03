@@ -4,7 +4,7 @@
 
 A new form of collaborative game development — built by people who pair with Claude.
 
-**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Substrate version**: 2.0.0 (in flight)
+**Live**: [theuws.com/games/cosmos-2026](https://theuws.com/games/cosmos-2026/play/) · **Charter**: [`NORTH-STAR.md`](./NORTH-STAR.md) · **Contracts**: [`UNIVERSE-AUTHORING.md`](./UNIVERSE-AUTHORING.md) · **Integrations & costs**: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · **Substrate version**: 2.0.0 (in flight)
 
 ---
 
@@ -104,6 +104,8 @@ True realtime P2P — your Cosmo and my Cosmo together in the same Room — is a
 ## Tech
 
 Three.js (3D scene, primitive-skeleton rig, post-FX) + Phaser 4 (HUD overlay, scene management) on a dual-canvas. Vite multi-entry build. fal.ai + Suno + ElevenLabs for asset generation. Authored alongside [Claude](https://claude.com/claude-code) as the development companion.
+
+Full transparency on every paid service, current pricing, per-sprint costs, and reusable asset-gen scripts is in [`INTEGRATIONS.md`](./INTEGRATIONS.md). Forks are encouraged to **improve and replace** these integrations — the asset-gen pipelines are first-class artifacts of this project, not internal tooling. Improvements upstream and benefit every Universe author.
 
 ## Repository
 

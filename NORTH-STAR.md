@@ -113,6 +113,9 @@ True realtime P2P (your Cosmo and my Cosmo in the same Room at the same time) is
 - Not a marketplace. Universes are not monetized through us.
 - Not a "framework" with a marketing site. It's an open repository with clear documents.
 
+### Radical integration transparency
+Every paid service this project uses is documented in [`INTEGRATIONS.md`](./INTEGRATIONS.md): what it does, what it costs, where the API key lives, and what alternatives exist. The asset-generation pipelines in `scripts/` are **first-class shared infrastructure**, not internal tooling. Forks are explicitly invited to improve and replace integrations, and to upstream those improvements so every contributor benefits. The forks aren't competing — they're each carving out their own corner of the imagination on shared infrastructure that gets better when any one of them improves it.
+
 ## 4. The principle of brave reconsideration
 
 This is the operating principle of this project:
