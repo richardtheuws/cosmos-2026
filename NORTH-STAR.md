@@ -116,6 +116,13 @@ True realtime P2P (your Cosmo and my Cosmo in the same Room at the same time) is
 ### Radical integration transparency
 Every paid service this project uses is documented in [`INTEGRATIONS.md`](./INTEGRATIONS.md): what it does, what it costs, where the API key lives, and what alternatives exist. The asset-generation pipelines in `scripts/` are **first-class shared infrastructure**, not internal tooling. Forks are explicitly invited to improve and replace integrations, and to upstream those improvements so every contributor benefits. The forks aren't competing — they're each carving out their own corner of the imagination on shared infrastructure that gets better when any one of them improves it.
 
+### Collective agent evolution
+The Claude-paired workflow that builds this project also produces tooling: **agents, skills, brainstorm patterns, asset-gen scripts**. These live in `.claude/agents/`, `.claude/skills/`, `.claude/brainstorm/`, and `scripts/`. They are **shared development infrastructure** on the same footing as the runtime code: improvements upstream via PR, every contributor's Claude pair-programming workflow gets sharper with every merge.
+
+The arrangement starts mono-repo (everything in this single repository) for the same reason the Universes start mono-repo: simplicity wins until it doesn't. If agents/skills mature into something genuinely portable across non-Cosmos projects, we'll extract them into a sibling repo (`cosmos-2026-agents` or similar) at that moment — the brave-reconsideration principle (§4) governs the split. Until then, the easiest path is: fork, improve `.claude/`, upstream what's general.
+
+See [`AGENTS.md`](./AGENTS.md) for the contribution pattern.
+
 ## 4. The principle of brave reconsideration
 
 This is the operating principle of this project:
@@ -154,6 +161,9 @@ We are no longer in proof-of-concept mode. This is **a prestige project**. That 
 ## 6. Pivot Ledger
 
 Every accepted pivot gets a one-paragraph entry. Newest first.
+
+### 2026-05-03 — Collective agent evolution (shared `.claude/` infrastructure)
+Recognised mid-Wave-20a wrap-up that the Claude-paired workflow producing this project is *itself* generative: every contributor sharpens their dev-agents, skills, brainstorm patterns, and asset-gen scripts in the process of building. We commit to treating `.claude/agents/`, `.claude/skills/`, `.claude/brainstorm/`, and `scripts/` as **shared development infrastructure on the same footing as the runtime code**. PR-improvements compound. Mono-repo for now (agents alongside Universes); extract to sibling repo (`cosmos-2026-agents`-style) only if/when portability beyond cosmos-2026 becomes a real demand. See `AGENTS.md`.
 
 ### 2026-05-03 — Public substrate for Claude-dev collaboration
 Project promoted from "Richard's game" to **a substrate any Claude-dev can plug a Universe into**. Cosmo + companion-AI + room-runtime are shared dependencies; Universes are external authored modules satisfying a documented contract. The pitch is one sentence: *your Cosmo can visit my forest, my Cosmo can visit your world*. P2P scope for v1 is **asynchronous + content-portable** (state travels with Cosmo, Universes are static deployables) — true realtime co-presence is reserved as a future possibility but not a near-term commitment. Repository becomes GitHub-public-first: README rewrite, CONTRIBUTING.md, UNIVERSE-AUTHORING.md, Universe contract spec, issue templates. We are not a platform; we enforce brand contract via PR review, not policy.

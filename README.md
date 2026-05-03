@@ -12,7 +12,7 @@
 
 A new form of collaborative game development — built by people who pair with Claude.
 
-[**▶ Play live**](https://theuws.com/games/cosmos-2026/play/) · [**Charter**](./NORTH-STAR.md) · [**Universe contract**](./UNIVERSE-AUTHORING.md) · [**Integrations & costs**](./INTEGRATIONS.md) · [**Contributing**](./CONTRIBUTING.md)
+[**▶ Play live**](https://theuws.com/games/cosmos-2026/play/) · [**Charter**](./NORTH-STAR.md) · [**Universe contract**](./UNIVERSE-AUTHORING.md) · [**Agents & shared infra**](./AGENTS.md) · [**Integrations & costs**](./INTEGRATIONS.md) · [**Contributing**](./CONTRIBUTING.md)
 
 ---
 

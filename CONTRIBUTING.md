@@ -51,6 +51,7 @@ Contributors who don't share that posture will find PR review frustrating. Contr
 | **New Cosmo capability (move, scale, etc.)** | Discuss first | Capabilities affect every Universe — must compose. |
 | **Cheaper/better integration alternative** | Yes, please | See [`INTEGRATIONS.md`](./INTEGRATIONS.md) for the substitution bar (equal or better quality, equal or lower cost, ≥1 Universe author validated). |
 | **Asset-gen pipeline improvements** | Yes, please | Scripts in `scripts/` are first-class shared infrastructure. Smarter prompts, cheaper-model cascading, automated DNA validation, faster batch — all welcome. |
+| **Agent / skill / brainstorm-template improvements** | Yes, please | `.claude/agents/`, `.claude/skills/`, `.claude/brainstorm/` are shared dev infrastructure. See [`AGENTS.md`](./AGENTS.md) for the contribution pattern — every Claude-paired contributor's workflow gets sharper when these compound. |
 | **Brand-style deviation** | Document why first | Then we engage the argument. |
 | **Refactor for refactor's sake** | No | Refactor when adding a feature requires it. Not before. |
 
