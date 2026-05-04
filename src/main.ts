@@ -41,8 +41,16 @@ import { isTouchDevice } from './core/deviceDetect';
 import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
+import { SubstrateLoader } from './substrate/SubstrateLoader';
 
-const VERSION = '2.1.1';
+const VERSION = '2.2.0';
+
+/** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
+ *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
+ *  direct path verbatim. Both ship in the same bundle until cutover (phase 4). */
+const useSubstrate =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('substrate') === 'v2';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;
@@ -98,8 +106,10 @@ async function boot(): Promise<void> {
     getKaleidoTrigger: () => uniforms.kaleidoTrigger,
     getBpm: () => biomeMgr?.current()?.bpm ?? 92,
   });
-  // Initial paint with spec-driven multi-layer load. Falls back to the
-  // 14B single-plane bgUrl if the spec fetch fails.
+  // Initial paint with spec-driven multi-layer load. In substrate mode the
+  // SubstrateLoader.boot() will swap to the room's biome (typically the same
+  // slow-bloom for the reference forest), so the initial paint is harmless.
+  // Falls back to the 14B single-plane bgUrl if the spec fetch fails.
   await parallax.loadBiome(BIOMES['slow-bloom']);
 
   // Sprint 15B — Three.js sub-renderer for 3D Cosmo + obstacles. Renders ON
@@ -281,7 +291,41 @@ async function boot(): Promise<void> {
     // composition-spec (or falls back to defaults).
     void loadTrampolineSpotsForBiome(biome.id);
   });
-  biomeMgr.start();
+  // Wave 21 — only start the auto-cycling biome manager on the legacy path.
+  // The substrate owns biome selection per Room and uses BiomeManager only
+  // for `startMoodCrossfade` during transitions.
+  if (!useSubstrate) {
+    biomeMgr.start();
+  }
+
+  // Wave 21 — substrate boot. Executed only with `?substrate=v2`. Loads the
+  // resolved Universe + Area + Room via the new contract, then drives the
+  // parallax through DefaultBackground (the same shared instance the legacy
+  // path uses, so we keep one renderer per canvas).
+  let substrateLoader: SubstrateLoader | null = null;
+  if (useSubstrate) {
+    substrateLoader = new SubstrateLoader({
+      canvas: sceneCanvas,
+      renderer: parallax.renderer,
+      cosmoStage,
+      cosmoAgent,
+      audioBridge,
+      motion,
+      globalUniforms: uniforms,
+      biomeMgr,
+      parallax,
+    });
+    try {
+      await substrateLoader.boot();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[substrate] boot failed — falling back to legacy biome cycle', err);
+      // Recover: start the legacy biome manager so the user still sees Cosmo
+      // in a working scene rather than a blank canvas.
+      biomeMgr.start();
+      substrateLoader = null;
+    }
+  }
 
   // Per-frame ticks. Order matters: audio first (so FFT is fresh for the
   // event-director and Cosmo's mixer), then post-FX-driving systems, then
@@ -295,7 +339,16 @@ async function boot(): Promise<void> {
   manager.register((u) => {
     motion.tick(u.delta);
   });
-  manager.register((u) => parallax.update(u, motion));
+  // Wave 21 — under substrate, the loader's tick fans into the active
+  // RoomHost which calls parallax.update via DefaultBackground. Under legacy,
+  // parallax.update fires directly. We register exactly ONE of the two so
+  // parallax never paints twice per frame.
+  if (substrateLoader) {
+    const loader = substrateLoader;
+    manager.register((u) => loader.tick(u.delta, u));
+  } else {
+    manager.register((u) => parallax.update(u, motion));
+  }
   manager.register((u) => {
     const dt = u.delta;
     // Sprint 17E — AI ticks BEFORE the agent so its directive is fresh by
@@ -313,6 +366,11 @@ async function boot(): Promise<void> {
     // Sprint 17E — apply AI directive on top of clip-driven pose. No-op when
     // the user is active (companion-mode inactive); decays cleanly otherwise.
     cosmoAgent.applyAI(cosmoAI);
+    // Wave 21 — procedural anim director (idle-breath/blink/head-track/
+    // antenna-bob/walk/jump-arc/climb). Layers ON TOP of motion + AI pose
+    // outputs. Always runs (even when companion-mode active — it reads the
+    // motion source through the controller and chooses focusPoint accordingly).
+    cosmoAgent.tickAnimDirector(dt, motion);
     cosmoStage.render();
   });
   manager.register((_u) => biomeMgr?.update(1 / 60));

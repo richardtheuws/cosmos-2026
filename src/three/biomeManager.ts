@@ -47,7 +47,12 @@ export const PLAYER_SWITCH_HOLD_S = 3.0;
 type State =
   | { kind: 'idle' }
   | { kind: 'active'; biome: Biome }
-  | { kind: 'crossfade'; from: Biome; to: Biome; t: number };
+  | { kind: 'crossfade'; from: Biome; to: Biome; t: number }
+  /** Wave 21 — substrate Room↔Room crossfade. Same lerp machinery as the
+   *  biome-cycle crossfade but operates on arbitrary mood-curves instead of
+   *  registered biomes, with a per-call duration and a resolve handle so the
+   *  caller awaits completion. */
+  | { kind: 'mood-crossfade'; from: BiomePostFXCurve; to: BiomePostFXCurve; t: number; durationS: number; resolve: () => void };
 
 type Listener = (biome: Biome) => void;
 
@@ -162,7 +167,52 @@ export class BiomeManager {
         this.state = { kind: 'active', biome: arrived };
         this.emitChange(arrived);
       }
+    } else if (this.state.kind === 'mood-crossfade') {
+      this.state.t = Math.min(1, this.state.t + dt / Math.max(0.01, this.state.durationS));
+      const k = this.state.t;
+      bi.bloom = lerp(this.state.from.bloom, this.state.to.bloom, k);
+      bi.kaleido = lerp(this.state.from.kaleido, this.state.to.kaleido, k);
+      bi.fluid = lerp(this.state.from.fluid, this.state.to.fluid, k);
+      bi.chroma = lerp(this.state.from.chroma, this.state.to.chroma, k);
+      bi.parallaxAlpha = 1;
+      if (k >= 1) {
+        const resolve = this.state.resolve;
+        // Return to active state on the previously-active biome (or stay
+        // idle if we were idle when the mood-crossfade fired).
+        const prev = this.lastEmitted ? BIOMES[this.lastEmitted] : null;
+        this.state = prev ? { kind: 'active', biome: prev } : { kind: 'idle' };
+        resolve();
+      }
     }
+  }
+
+  /**
+   * Wave 21 — substrate Room↔Room mood crossfade.
+   *
+   * Crossfades `globalUniforms.biomeIntensity` from `from` to `to` over
+   * `durationS`, independent of the registered BIOMES. Used by the
+   * BiomeBlendTransition driver. Resolves when t ≥ 1.
+   *
+   * If a biome-cycle crossfade is in flight, the mood-crossfade is rejected
+   * (the cycle takes priority — biome cycling is a higher-tier event). In
+   * normal substrate operation the cycle is paused, so this is rare.
+   */
+  startMoodCrossfade(from: BiomePostFXCurve, to: BiomePostFXCurve, durationS: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (this.state.kind === 'crossfade') {
+        // Biome-cycle has priority; resolve immediately so the caller doesn't hang.
+        resolve();
+        return;
+      }
+      this.state = {
+        kind: 'mood-crossfade',
+        from: { ...from },
+        to: { ...to },
+        t: 0,
+        durationS,
+        resolve,
+      };
+    });
   }
 
   /* ── private ──────────────────────────────────────────────────────────── */

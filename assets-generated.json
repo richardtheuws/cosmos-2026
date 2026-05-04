@@ -1939,6 +1939,96 @@
         "raw_originals": "scripts/sprint17c/raw/biome-{id}/layer-{N}_*-raw.png"
       },
       "wiring_pending_17B_main_ts": "BiomeManager needs compositionSpec: BiomeCompositionSpec field with layers[] from each biome's composition-spec.json. Three.js parallaxScene must load N planes per biome and apply MotionController-driven camera pan effective-X to layer.position.x with parallax_multiplier scaling. See composition-spec.json parallax_notes for implementation details."
+    },
+    {
+      "sprint": "Wave 21 \u2014 Cosmo v2-FINAL decals (hero-crop pivot)",
+      "generated": "2026-05-04",
+      "strategy": "Deterministic crop from Sprint 16A LoRA-locked hero (cosmo-hero-lora.png 4096\u00b2 10/10 DNA). Pivoted away from Flux-LoRA-organ-prompt after 3-attempt observation that LoRA at scale 1.0 summons full character even with isolation prompts.",
+      "pipeline": "PIL crop \u2192 soft-elliptical alpha mask \u2192 1024\u00b2 resize. Body-skin uses 4-quadrant tile-blend.",
+      "cost_usd": 0.0,
+      "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+      "lora_trigger": "rtcosmo (used to generate the source hero in Sprint 16A \u2014 not regenerated in Wave 21)",
+      "dna_score_avg": 9.2,
+      "assets": [
+        {
+          "file": "public/assets/cosmo/decals/v2-final/eyes-l.png",
+          "role": "viewer-LEFT eye decal (Cosmo's anatomical right) \u2014 chameleon-bulging dark sphere",
+          "crop_box_in_hero_4k": [
+            1466,
+            1404,
+            1866,
+            1804
+          ],
+          "mask": "soft-elliptical alpha, softness=35",
+          "dna_score": 9.5,
+          "notes": "Saffron-cream catchlight upper-left, moss-sage halo, watercolor brushstrokes, ink-aubergine outline. Inherits 10/10 from Sprint 16A hero."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/eyes-r.png",
+          "role": "viewer-RIGHT eye decal (Cosmo's anatomical left)",
+          "crop_box_in_hero_4k": [
+            2290,
+            1318,
+            2690,
+            1718
+          ],
+          "mask": "soft-elliptical alpha, softness=35",
+          "dna_score": 9.0,
+          "notes": "Catchlight upper-left (matches hero \u2014 sun from same direction across both eyes)."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/mouth-neutral.png",
+          "role": "neutral mouth with overbite hint, slightly uncanny",
+          "crop_box_in_hero_4k": [
+            1880,
+            1770,
+            2280,
+            2040
+          ],
+          "mask": "soft-elliptical alpha, softness=22",
+          "dna_score": 9.0,
+          "notes": "Small ink-aubergine smile-line + tiny upper-teeth peek (overbite). Not cute, not threatening."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/body-skin.png",
+          "role": "body-skin tile (moss-sage watercolor + faded-rose spots)",
+          "crop_box_in_hero_4k": [
+            1700,
+            2300,
+            2400,
+            3000
+          ],
+          "mask": "4-quadrant offset tile-blend with radial mask (no alpha)",
+          "dna_score": 9.0,
+          "notes": "Wraps body capsule. 3 visible faded-rose spots, watercolor wash. Center-seam from tile-blend visible at close inspection but not at body-capsule render scale."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/disc-suction.png",
+          "role": "free-floating suction-cup disc (viewer-right disc from hero)",
+          "crop_box_in_hero_4k": [
+            2700,
+            1700,
+            3450,
+            2280
+          ],
+          "mask": "soft-elliptical alpha, softness=30",
+          "dna_score": 9.5,
+          "notes": "Side-view of painted UFO-style disc with ink-aubergine outline. Used 4\u00d7 on hand+foot tips."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/antenna-flower.png",
+          "role": "antenna flower-bulb (faded-rose painted)",
+          "crop_box_in_hero_4k": [
+            1700,
+            350,
+            1960,
+            610
+          ],
+          "mask": "soft-elliptical alpha, softness=22",
+          "dna_score": 9.5,
+          "notes": "Single rose-bulb (matches 1992-DNA per cosmo_lora_v16a.md memory). Not a multi-petal flower \u2014 bulb-form is correct."
+        }
+      ]
     }
   ]
 }

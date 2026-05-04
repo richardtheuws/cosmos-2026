@@ -1,0 +1,21 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/areas-1.0.json",
+  "version": "1.0",
+  "entryArea": "the-mushroom-stand",
+  "areas": [
+    {
+      "id": "the-mushroom-stand",
+      "displayName": "De paddenstoelenstand",
+      "displayNameEn": "The Mushroom Stand",
+      "description": "The slow-bloom heart of the forest. Mushroom-cream sky, moss-sage ground, three rooms threaded by drifting nectar-spore trails.",
+      "moodOverrides": null,
+      "pathExperience": {
+        "kind": "mushroom-path",
+        "duration": 2.4,
+        "ambient": "#F5EDD8",
+        "description": "Walking under a canopy that breathes; spore-motes drift at hip height; the next room fades in through the leaves."
+      },
+      "rooms": ["clearing", "deep-grove", "the-hollow"]
+    }
+  ]
+}

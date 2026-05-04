@@ -206,6 +206,51 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.0</span>
+          <span class="update__date">2026-05-04</span>
+          <h2 class="update__title">05-04 — Substrate v2: Universe→Area→Room running infrastructure</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>Wave 21 — the substrate is alive.</strong> What was a Universe→Room contract sketch is now a running Universe→Area→Room runtime. The forest is fully implemented as the canonical reference. Cosmo is on his finished decals (DNA-locked from the Sprint 16A canonical hero) with a 7-anim procedural director (idle-breath / blink / head-track / antenna-bob / walk / jump-arc / climb).</p>
+          <p class="update__lead-line">The substrate ships <strong>behind a feature-flag</strong> (<code>?substrate=v2</code>) so this release is non-breaking — <code>/play/</code> continues serving the legacy path verbatim. Cutover to substrate-as-default is reserved for a follow-up release after live UAT.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/substrate/</code></strong> (1,895 LOC, 21 files) — <code>SubstrateLoader</code> → <code>UniverseHost</code> → <code>AreaHost</code> → <code>RoomHost</code> runtime per the brainstorm <code>wave21/01-substrate-architecture.md</code> design. Three transition tiers: Room↔Room biome-blend (reuses BiomeManager via new <code>startMoodCrossfade()</code> API), Area↔Area gradient-cut shader, Universe↔Universe portal (reuses NebulaPortal). Five default drivers (Background/Arrival/Inhabitants/Interactables/Audio) so a JSON-only Universe ships a working experience without writing <code>behavior.ts</code>. Hand-rolled validators with dev=lenient / prod=strict split.</li>
+          <li><strong><code>AREA-AUTHORING.md</code></strong> + <strong><code>ROOM-AUTHORING.md</code></strong> — new authoring docs alongside the rewritten <code>UNIVERSE-AUTHORING.md</code>. Each tier ships with a paste-in-Claude-Code quickstart appendix.</li>
+          <li><strong><code>universes/forest/areas.json</code></strong> + <strong><code>behavior.ts</code></strong> (590 LOC) — the forest goes from skeleton to fully working reference. All five optional <code>UniverseBehavior</code> exports implemented: <code>background</code> (extracts ParallaxScene), <code>arrival</code> (saffron portal, hue 0.62), <code>inhabitants</code> (eyeball-sentry, mouth-pillar, breathing-portal, floating-star), <code>interactables</code> (the trampoline, in clearing only, primary delight loop), <code>transitions.roomToRoom</code> (mushroom-path).</li>
+          <li><strong><code>src/three/cosmoAnimDirector.ts</code></strong> (446 LOC, 7 procedural anims) — wired through <code>CosmoAgent.tickAnimDirector()</code> and called per-frame in <code>main.ts</code>. Layers on top of state-machine + <code>applyAI</code> output. Runs in both legacy and substrate paths so Cosmo behaves identically regardless of which boot fired.</li>
+          <li><strong><code>public/assets/cosmo/decals/v2-final/</code></strong> — six finished Cosmo decals (eyes-l, eyes-r, mouth-neutral, body-skin, disc-suction, antenna-flower). DNA-locked via deterministic PIL crop from the Sprint 16A canonical hero (<code>cosmo-hero-lora.png</code>, 10/10 DNA). Eye-region smear from v1.5.2-era is gone. Total fal.ai cost for the decal sprint: $0.30.</li>
+          <li><strong><code>NORTH-STAR.md</code> §6 pivot ledger</strong> entry 2026-05-04 documenting the Area-layer surfacing, hybrid contract, layered transitions, and feature-flag rollout decisions.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>UNIVERSE-AUTHORING.md</code></strong> — rewritten for hybrid contract (JSON spine + optional <code>behavior.ts</code>) and Area layer. Backwards-compatible: existing universes load (missing <code>area</code> field on rooms falls back to <code>manifest.defaultArea</code>).</li>
+          <li><strong><code>universes/forest/manifest.json</code></strong> v1.0 → v1.1 — adds <code>behaviorModule: true</code>, <code>defaultArea: &quot;the-mushroom-stand&quot;</code>, <code>post.preset</code> + <code>intensityCurve</code>. Asset paths kept as <code>../../public/...</code> via PreloadManager allowlist (migration to <code>universes/forest/assets/</code> is Wave 22).</li>
+          <li><strong><code>universes/forest/rooms.json</code></strong> v1.0 → v1.1 — adds <code>area</code> field per room, <code>cameraBounds</code>, <code>biomeKey: &quot;slow-bloom&quot;</code>.</li>
+          <li><strong><code>src/three/biomeManager.ts</code></strong> — additive: <code>startMoodCrossfade(from, to, durationS): Promise&lt;void&gt;</code> API for substrate-driven crossfades that don&#039;t need to be in the BIOMES registry. Existing API untouched.</li>
+          <li><strong><code>src/three/parallaxScene.ts</code></strong> — adds <code>destroy()</code> for substrate-tier disposal.</li>
+          <li><strong><code>src/three/cosmoV2.ts</code></strong> — split decal planes (eyeDecalL/R + mouthDecal independent for blink animations), new <code>v2-final</code> decal paths. Re-exports <code>CosmoState</code> for substrate import-path normalisation.</li>
+          <li><strong><code>src/main.ts</code></strong> — <code>?substrate=v2</code> URL flag branches into <code>SubstrateLoader.boot()</code>. Default branch (no flag) keeps the existing ParallaxScene-direct boot verbatim, including <code>cosmoAgent.tickAnimDirector(dt, motion)</code> in the per-frame loop.</li>
+        </ul>
+<h3>NOTES</h3>
+        <ul class="update__highlights">
+          <li><strong>Visual UAT pending</strong>: programmatic UAT (TSC clean, <code>npm run build</code> clean, dev-server curl smoke tests on all three manifest endpoints, bundle marker inspection) all green. Browser-based visual verification is on the live <code>/play/?substrate=v2</code> URL after this deploy lands.</li>
+          <li><strong>Cutover deferred</strong>: legacy <code>/play/</code> and substrate <code>/play/?substrate=v2</code> coexist. Cutover (delete legacy branch, substrate becomes default) lands in a follow-up release once live UAT confirms parity.</li>
+          <li><strong>Wave 22</strong> scope: first non-forest Universe to prove the substrate from outside, plus optional polish (spore-mote transition overlay, asset-path migration to per-universe <code>assets/</code> dirs, <code>InhabitantHandle.anchor</code> field for proximity-AI).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.1.1</span>
           <span class="update__date">2026-05-03</span>
           <h2 class="update__title">05-03 — Remove the support route</h2>

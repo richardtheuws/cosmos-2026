@@ -129,6 +129,8 @@ export class ParallaxScene {
   /** Cached per-asset texture so re-loading the same biome twice doesn't
    *  re-fetch the PNGs. Cleared only on destroy(). */
   private texCache = new Map<string, THREE.Texture>();
+  /** Wave 21 — kept so destroy() can detach the resize handler. */
+  private resizeListener: (() => void) | null = null;
 
   constructor(canvas: HTMLCanvasElement, hooks: ParallaxSceneHooks = {}) {
     this.scene = new THREE.Scene();
@@ -461,7 +463,31 @@ export class ParallaxScene {
       this.camera.updateProjectionMatrix();
     };
     onResize();
+    this.resizeListener = onResize;
     window.addEventListener('resize', onResize, { passive: true });
+  }
+
+  /** Wave 21 — dispose every owned THREE resource and detach the resize
+   *  listener. Called by `DefaultBackground.dispose()` when the substrate
+   *  swaps room background. The renderer + canvas are NOT owned by the scene
+   *  (they're shared with cosmoStage in the live boot path) so we leave them
+   *  intact. */
+  destroy(): void {
+    this.clearLayers();
+    this.clearDecorations();
+    if (this.ambientPlane) {
+      const m = this.ambientPlane.material;
+      if (Array.isArray(m)) m.forEach((mm) => mm.dispose());
+      else m.dispose();
+      this.ambientPlane.geometry.dispose();
+      this.scene.remove(this.ambientPlane);
+    }
+    for (const tex of this.texCache.values()) tex.dispose();
+    this.texCache.clear();
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+      this.resizeListener = null;
+    }
   }
 }
 

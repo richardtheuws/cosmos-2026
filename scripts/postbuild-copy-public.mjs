@@ -102,6 +102,27 @@ if (!existsSync(distDir)) {
 
 walk(publicDir);
 
+// Wave 21 — copy universes/<name>/{manifest,areas,rooms}.json into dist so
+// the substrate loader can fetch them in production. behavior.ts is bundled
+// by Vite via import.meta.glob; only the JSON spine needs static copying.
+// README.md is shipped too so the live deploy can serve the author docs.
+const universesDir = join(projectRoot, 'universes');
+let universeFiles = 0;
+if (existsSync(universesDir)) {
+  for (const universe of readdirSync(universesDir)) {
+    const uDir = join(universesDir, universe);
+    if (!statSync(uDir).isDirectory()) continue;
+    for (const f of ['manifest.json', 'areas.json', 'rooms.json', 'README.md']) {
+      const src = join(uDir, f);
+      if (!existsSync(src)) continue;
+      const dest = join(distDir, 'universes', universe, f);
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(src, dest);
+      universeFiles++;
+    }
+  }
+}
+
 // Sentinel verification — fail loudly if any critical file is missing.
 const missingSentinels = SENTINEL_FILES.filter((rel) => !existsSync(join(distDir, rel)));
 if (missingSentinels.length > 0) {
@@ -113,5 +134,5 @@ if (missingSentinels.length > 0) {
 
 console.log(
   `[copy-public] DONE — ${fresh} fresh, ${overwritten} verified/overwritten ` +
-    `(${SENTINEL_FILES.length} sentinels OK)`,
+    `(${SENTINEL_FILES.length} sentinels OK, ${universeFiles} universe spine files)`,
 );

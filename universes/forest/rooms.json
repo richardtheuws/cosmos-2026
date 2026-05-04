@@ -1,12 +1,17 @@
 {
-  "version": "1.0",
+  "$schema": "https://cosmos-2026.dev/schemas/rooms-1.1.json",
+  "version": "1.1",
   "entryRoom": "clearing",
   "rooms": [
     {
       "id": "clearing",
+      "area": "the-mushroom-stand",
       "displayName": "The Clearing",
+      "displayNameEn": "The Clearing",
       "description": "A soft mushroom-cream open space where Cosmo arrives. The trampoline lives here.",
       "anchor": { "x": 0, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.6, "panRangeY": 0.6 },
+      "biomeKey": "slow-bloom",
       "exits": [
         { "to": "deep-grove", "via": "left-mushroom-path", "distance": 12 },
         { "to": "the-hollow", "via": "down-burrow", "distance": 8 }
@@ -14,18 +19,26 @@
     },
     {
       "id": "deep-grove",
+      "area": "the-mushroom-stand",
       "displayName": "Deep Grove",
+      "displayNameEn": "Deep Grove",
       "description": "Tall slow-bloom mushrooms drip nectar from the canopy. A breathing-portal stands at the far edge.",
       "anchor": { "x": -12, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.4, "panRangeY": 0.5 },
+      "biomeKey": "slow-bloom",
       "exits": [
         { "to": "clearing", "via": "right-mushroom-path", "distance": 12 }
       ]
     },
     {
       "id": "the-hollow",
+      "area": "the-mushroom-stand",
       "displayName": "The Hollow",
+      "displayNameEn": "The Hollow",
       "description": "A small burrow under the ground. Mouth-pillars breathe in time with whatever music plays.",
       "anchor": { "x": 0, "y": -3, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.2, "panRangeY": 0.4 },
+      "biomeKey": "slow-bloom",
       "exits": [
         { "to": "clearing", "via": "up-out", "distance": 8 }
       ]

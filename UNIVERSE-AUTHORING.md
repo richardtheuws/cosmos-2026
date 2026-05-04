@@ -1,195 +1,262 @@
 # Universe Authoring
 
-Read [`NORTH-STAR.md`](./NORTH-STAR.md) first. This document is the technical contract; NORTH-STAR is the *why*.
+A **Universe** is a self-contained module that Cosmo can travel into.
 
-A **Universe** is a self-contained module that Cosmo can travel into. It lives at `universes/<your-name>/` in this monorepo and satisfies the four-part contract below. If your module satisfies the contract, the substrate will load it, render it, walk Cosmo into it, and let him carry his state back out.
+Read [`NORTH-STAR.md`](./NORTH-STAR.md) first — it is the *why*. This document is the **technical contract**: the JSON shapes, the optional TypeScript escape-hatch, the URL grammar, and the defaults that make a JSON-only Universe playable. Everything here implements [`.claude/brainstorm/wave21/01-substrate-architecture.md`](./.claude/brainstorm/wave21/01-substrate-architecture.md), which is the source of truth for the substrate.
+
+## The hierarchy you are joining
+
+```
+Universe                   ← top-level container (you are here)
+└── Area                   ← cluster of Rooms with a coherent mood
+    └── Room               ← a single screen, fully alive
+```
+
+A **Universe** holds one or more Areas. An **Area** holds one or more Rooms connected by a path-experience (the path itself is content, not a loading screen). A **Room** is the focused scene Cosmo inhabits right now — Sims-dense, packed with little things to notice.
+
+When you author a Universe you also author its Areas and Rooms. The schemas for those tiers live in two companion docs you should read in order: [`AREA-AUTHORING.md`](./AREA-AUTHORING.md), then [`ROOM-AUTHORING.md`](./ROOM-AUTHORING.md). Together the three files form a tree.
 
 ## The four required artifacts
 
-Every Universe MUST provide these four. They are loaded by the substrate at `?universe=<your-name>` URL, in order, on entry.
+Every Universe ships these four files. They live at `universes/<your-name>/` and are loaded in this order at boot.
 
-### 1 · Background renderer
-
-**File**: `universes/<name>/background.ts` exporting a default function.
-
-```ts
-import * as THREE from 'three';
-
-export interface BackgroundCtx {
-  scene: THREE.Scene;            // the substrate's shared Three.js scene
-  camera: THREE.PerspectiveCamera;
-  globalUniforms: GlobalUniforms; // shared time + audioFFT + post-FX uniforms
-  assetPath: (rel: string) => string; // resolves URLs relative to your universe folder
-}
-
-export interface BackgroundHandle {
-  update(dt: number): void;       // called every frame after the substrate's tick
-  dispose(): void;                // release all THREE objects the universe owns
-}
-
-export default function buildBackground(ctx: BackgroundCtx): BackgroundHandle {
-  // ... build PlaneGeometry parallax layers, particle systems, lights, etc.
-  // Return an update + dispose pair the substrate can drive.
-}
-```
-
-You can ship a Three.js scene module (full programmatic control) **or** a static `composition-spec.json` if your Universe is a layered parallax rendering. The substrate will detect which form you've shipped.
-
-### 2 · Room-list + traversal graph
-
-**File**: `universes/<name>/rooms.json` — a static manifest the substrate reads at load.
+### 1 · `manifest.json` — Universe metadata + asset preload list
 
 ```json
 {
+  "$schema": "https://cosmos-2026.dev/schemas/manifest-1.1.json",
+  "version": "1.1",
+  "name": "your-universe",
+  "displayName": "Jouw Universum",
+  "displayNameEn": "Your Universe — one-line English summary, ≤100 chars",
+  "summaryEn": "Two sentences. What this Universe is, why it wants to exist.",
+  "author": "Your Name",
+  "license": "MIT",
+  "behaviorModule": false,
+  "defaultArea": "entry",
+  "brandDeviation": null,
+  "assets": [
+    { "type": "image", "path": "assets/backgrounds/entry/sky.png", "preload": true },
+    { "type": "audio", "path": "assets/ambient.mp3", "preload": false }
+  ],
+  "post": {
+    "preset": "calm-baseline",
+    "intensityCurve": { "bloom": 1.0, "kaleido": 0.85, "fluid": 0.9, "chroma": 1.0 }
+  }
+}
+```
+
+- **`version`** — schema version. Unknown majors fail loudly; minors are forward-compatible.
+- **`name`** — the slug. Must equal the folder name. It is what appears in `?universe=<name>`.
+- **`displayName`** / **`displayNameEn`** — any language for the first; English ≤100 chars for the second so non-native readers can navigate.
+- **`summaryEn`** — two sentences. Used in PR review and any future Universe index.
+- **`author`** / **`license`** — required. MIT is the project default; nothing stops you from picking something else, but reviewers will ask why.
+- **`behaviorModule`** — `true` if you ship a `behavior.ts` (see below), `false` for JSON-only Universes. The substrate uses this hint to skip a 404-probe in production.
+- **`defaultArea`** — the area id loaded when the URL omits `&area=`. Must reference an entry in `areas.json`.
+- **`brandDeviation`** — `null` for Universes that follow the brand contract; otherwise a short rationale reviewers will engage with.
+- **`assets[]`** — declarative preload list. Paths are universe-folder-relative; `../` is stripped for safety. `preload: true` resolves before arrival; `preload: false` is lazy.
+- **`post.preset`** — one of `"calm-baseline" | "deep-trip" | "neutral"`. Drives the post-FX biome curve while inside this Universe. Defaults to `"calm-baseline"`.
+- **`post.intensityCurve`** — multipliers on the post-FX stack. Optional.
+
+### 2 · `areas.json` — the Area tier
+
+Required. Even a single-Area Universe declares it explicitly. Full schema and design guidance live in [`AREA-AUTHORING.md`](./AREA-AUTHORING.md). The minimum shape:
+
+```json
+{
+  "$schema": "https://cosmos-2026.dev/schemas/areas-1.0.json",
   "version": "1.0",
-  "entryRoom": "clearing",
-  "rooms": [
+  "entryArea": "entry",
+  "areas": [
     {
-      "id": "clearing",
-      "displayName": "The Clearing",
-      "anchor": { "x": 0, "y": 0, "z": 0 },
-      "exits": [
-        { "to": "deep-grove", "via": "left-path", "distance": 12 },
-        { "to": "the-hollow", "via": "down-burrow", "distance": 8 }
-      ]
-    },
-    {
-      "id": "deep-grove",
-      "displayName": "Deep Grove",
-      "anchor": { "x": -12, "y": 0, "z": 0 },
-      "exits": [
-        { "to": "clearing", "via": "right-path", "distance": 12 }
-      ]
+      "id": "entry",
+      "displayName": "Entry",
+      "displayNameEn": "Entry",
+      "description": "One-to-three sentences describing the mood and what makes this Area distinct.",
+      "moodOverrides": null,
+      "pathExperience": {
+        "kind": "fade",
+        "duration": 1.6,
+        "ambient": "#F5EDD8",
+        "description": "Default fade-through path between Rooms in this Area."
+      },
+      "rooms": ["start"]
     }
   ]
 }
 ```
 
-Rooms are nodes; exits are edges. The substrate handles transitions; your Universe just declares the graph.
+`entryArea` is the area used when the URL omits `&area=`. It should equal `manifest.defaultArea`; if they disagree the manifest wins.
 
-### 3 · Asset manifest
+### 3 · `rooms.json` — the Room tier
 
-**File**: `universes/<name>/manifest.json`.
+Required. The room-graph is flat at the Universe level so the substrate can do `getRoom(id)` without traversing Areas. Full schema and design guidance live in [`ROOM-AUTHORING.md`](./ROOM-AUTHORING.md). The minimum shape:
 
 ```json
 {
-  "version": "1.0",
-  "name": "your-universe-name",
-  "displayName": "Your Universe (in any language)",
-  "displayNameEn": "Your Universe (English summary, ~100 chars)",
-  "author": "Your Name",
-  "license": "MIT",
-  "summaryEn": "A two-sentence English summary so other contributors can find their bearings.",
-  "assets": [
-    { "type": "image",  "path": "assets/sky.png",         "preload": true },
-    { "type": "image",  "path": "assets/mushroom-near.png", "preload": true },
-    { "type": "audio",  "path": "assets/ambient.mp3",     "preload": false },
-    { "type": "shader", "path": "shaders/fluid.frag",     "preload": true }
-  ],
-  "brandDeviation": null
+  "$schema": "https://cosmos-2026.dev/schemas/rooms-1.1.json",
+  "version": "1.1",
+  "entryRoom": "start",
+  "rooms": [
+    {
+      "id": "start",
+      "area": "entry",
+      "displayName": "Start",
+      "displayNameEn": "Start",
+      "description": "Where Cosmo arrives. One sentence describing what's in the room.",
+      "anchor": { "x": 0, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.6, "panRangeY": 0.6 },
+      "biomeKey": null,
+      "exits": []
+    }
+  ]
 }
 ```
 
-`preload: true` means the substrate fetches it before Cosmo arrives. `preload: false` is lazy-loaded on first use.
+The new `area` field is what Wave 21 added. Existing Wave-20a `rooms.json` files without `area` keep loading — the substrate treats missing `area` as belonging to `manifest.defaultArea`. New Universes declare `area` explicitly.
 
-`brandDeviation` is `null` for Universes that follow the brand contract; otherwise it's a short string explaining the intentional deviation (reviewers will engage with the argument).
+### 4 · `README.md` — author's notes
 
-### 4 · Cosmo-arrival hook
+Required. Multilingual welcome, a "why this Universe exists" paragraph, and (recommended) a "how to copy this" snippet. The forest's README is the working pattern; do not duplicate its words, write your own.
 
-**File**: `universes/<name>/arrival.ts` exporting a default function.
+## The hybrid contract: JSON-only or +behavior.ts
+
+The substrate ships a **declarative spine** (the four files above) and an **optional TypeScript escape-hatch** (`behavior.ts`). This split is the Wave 21 §2.3 locked decision.
+
+**The floor**: a JSON-only Universe with `manifest.json` + `areas.json` + `rooms.json` + `README.md` + at least one composition-spec.json + its PNG layers ships a working experience. The substrate fills in default behaviors:
+
+- **Background**: composition-spec parallax wrapped by `DefaultBackground`.
+- **Arrival**: 1.4s portal, hue derived from `manifest.post.preset`.
+- **Inhabitants**: empty (a Room with no inhabitants is valid; the world still breathes).
+- **Interactables**: empty (your reviewers will ask about delight-loops at PR time, but the substrate doesn't enforce).
+- **Transitions**: biome-blend (Room↔Room) / gradient-cut (Area↔Area) / portal (Universe↔Universe).
+- **Audio**: silence, unless `manifest.assets[]` declares an audio entry with `preload: true`, in which case it loops at 0.45 volume.
+
+Confidently more than a wallpaper. Defaults are documented in full in [`.claude/brainstorm/wave21/01-substrate-architecture.md`](./.claude/brainstorm/wave21/01-substrate-architecture.md) §7.
+
+**The escape hatch**: ship a `behavior.ts` that exports any subset of `{ background, arrival, inhabitants, interactables, audio, transitions }`. Each export is independently optional. Want a custom background but the default arrival, default inhabitants, and default transitions? Write a 30-line `behavior.ts` exporting only `background`.
 
 ```ts
-export interface ArrivalCtx {
-  cosmo: CosmoV2Rig;              // the rig the substrate hands you, fully owned
-  state: CosmoState;               // mood, memory, traversal-history (serializable)
+import type * as THREE from 'three';
+import type { GlobalUniforms } from '../../src/core/globalUniforms';
+import type { CosmoV2Rig, CosmoState } from '../../src/three/cosmoV2';
+
+export interface SubstrateCtx {
   scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   globalUniforms: GlobalUniforms;
+  assetPath: (rel: string) => string;
+  universe: { id: string; name: string; displayName: string };
+  area: { id: string; displayName: string; mood: ResolvedMood };
+  room: { id: string; displayName: string; anchor: { x: number; y: number; z: number } };
 }
 
+export interface ResolvedMood {
+  ambient: string;
+  primary: string;
+  post: { bloom: number; kaleido: number; fluid: number; chroma: number };
+}
+
+export interface BackgroundHandle { update(dt: number, u: GlobalUniforms): void; dispose(): void; }
 export type ArrivalAnimation =
-  | { kind: 'portal',  duration: number, hue?: number }
-  | { kind: 'fade',    duration: number, color?: string }
-  | { kind: 'drift',   from: { x: number; z: number }, duration: number }
-  | { kind: 'custom',  run: (dt: number) => boolean }; // returns true when complete
+  | { kind: 'portal'; duration: number; hue?: number }
+  | { kind: 'fade'; duration: number; color?: string }
+  | { kind: 'drift'; from: { x: number; z: number }; duration: number }
+  | { kind: 'custom'; run: (dt: number) => boolean };
+export interface ArrivalCtx extends SubstrateCtx { cosmo: CosmoV2Rig; state: CosmoState; }
+export interface InhabitantHandle { id: string; update(dt: number, u: GlobalUniforms): void; dispose(): void; }
+export interface InteractableHandle {
+  id: string;
+  anchor: { x: number; y: number; z: number };
+  range: number;
+  update(dt: number, u: GlobalUniforms): void;
+  onUse(cosmo: CosmoV2Rig): void;
+  dispose(): void;
+}
+export interface AudioHandle { enter(): void; exit(fadeMs: number): void; update(dt: number): void; dispose(): void; }
+export interface TransitionDriver { run(dt: number): Promise<void>; dispose(): void; }
+export interface TransitionCtx extends SubstrateCtx { fromMood: ResolvedMood; toMood: ResolvedMood; }
 
-export default function onCosmoArrival(ctx: ArrivalCtx): ArrivalAnimation {
-  // Compose how Cosmo enters your Universe. The substrate plays it,
-  // then hands control to the companion-AI.
-  return { kind: 'portal', duration: 1.4, hue: 0.62 };
+export interface UniverseBehavior {
+  background?: (ctx: SubstrateCtx) => BackgroundHandle;
+  arrival?: (ctx: ArrivalCtx) => ArrivalAnimation;
+  inhabitants?: (ctx: SubstrateCtx) => InhabitantHandle[];
+  interactables?: (ctx: SubstrateCtx) => InteractableHandle[];
+  audio?: (ctx: SubstrateCtx) => AudioHandle;
+  transitions?: {
+    roomToRoom?: (ctx: TransitionCtx, fromRoomId: string, toRoomId: string) => TransitionDriver;
+    areaToArea?: (ctx: TransitionCtx, fromAreaId: string, toAreaId: string) => TransitionDriver;
+    universeToUniverse?: (ctx: TransitionCtx, fromUniverseId: string, toUniverseId: string) => TransitionDriver;
+  };
 }
 ```
 
-The substrate gives you full access to the rig during arrival so you can do anything from "fade-in" to "Cosmo falls through a hole and lands on a flower". After your animation completes, the substrate resumes the standard companion-AI / motion / life-system loop.
+The substrate detects which exports exist with `typeof mod[key] === 'function'`. Anything missing falls back to the default driver.
 
-## Optional artifacts
+## URL grammar
 
-These are not required, but the substrate will use them if present.
-
-| File | Effect |
+| URL | Resolves to |
 |---|---|
-| `inhabitants.ts` | Small lives that share Cosmo's space. Same shape as `weirdoObstacleFactory.ts` in the runtime. |
-| `interactables.ts` | Things Cosmo can walk to + use. Trampolines, fruits, doors. |
-| `audio.ts` | Music bed + SFX overrides for this Universe. |
-| `transitions.ts` | Custom Room-to-Room path animations (the "psychedelic path" between Rooms in your Area). |
-| `README.md` | Author's notes. Multilingual welcome. |
+| `/play/?substrate=v2` | Default Universe (`forest`), its `defaultArea`, that Area's `entryRoom`. |
+| `/play/?substrate=v2&universe=<u>` | Universe `<u>`, its `defaultArea`, that Area's `entryRoom`. |
+| `/play/?substrate=v2&universe=<u>&area=<a>` | Area `<a>`, the `entryRoom` if it belongs to `<a>`, else first listed room of `<a>`. |
+| `/play/?substrate=v2&universe=<u>&area=<a>&room=<r>` | Full triple. Validated left-to-right. |
 
-## Cosmo's portable state
+After Wave 21 cutover, `?substrate=v2` is dropped — substrate becomes the default and the flag becomes a no-op for one release.
 
-Cosmo carries this with him into your Universe (read-only or mutate-then-return):
+**Invalid-id fallback**: resolution is left-to-right with logged warnings, never silent errors. An invalid universe falls back to `forest`. An invalid area falls back to the universe's `defaultArea`. An invalid room falls back to the area's `entryRoom`. Each fallback updates `history.replaceState` so the URL shown to the user reflects what actually loaded — share-links self-heal.
 
-```ts
-export interface CosmoState {
-  mood: 'calm' | 'curious' | 'spiked' | 'glitch' | 'cosmic';
-  energy: number;             // 0..1, decays with time, refills on rest
-  memory: string[];           // append-only log of "things that mattered" — your universe may add to this
-  traversalHistory: string[]; // ordered list of universe-ids he's visited this session
-  inventory: InventoryItem[]; // optional Universe-specific items he can carry between worlds
-}
-```
+**Cosmo state survives URL changes**. Mood, energy, memory, inventory, and traversal-history live in `localStorage["cosmos.state.v1"]` and persist across rooms, areas, universes, and full reloads. The URL specifies *where*; localStorage carries *who Cosmo is when he gets there*.
 
-The substrate persists this in `localStorage` between sessions (and in a future revision: a portable signed token, so Cosmo's state can move between domains).
+## Asset preloading
 
-## How the substrate loads your Universe
+`manifest.assets[]` is the declarative preload list. `preload: true` resolves before arrival completes; `preload: false` is lazy-loaded on first use. For Wave 21 the substrate runs all `preload: true` assets at Universe-load (eager) — see architect doc §7.1 / open question §8.4 for the future Room-scoped lazy variant.
 
-```
-GET /play/?universe=<your-name>
-  → substrate fetches /universes/<your-name>/manifest.json
-  → substrate preloads all assets where preload: true
-  → substrate loads /universes/<your-name>/background.ts → calls buildBackground(ctx)
-  → substrate loads /universes/<your-name>/rooms.json → registers traversal graph
-  → substrate loads /universes/<your-name>/arrival.ts → calls onCosmoArrival(ctx)
-  → substrate plays the arrival animation, then hands control to companion-AI
-```
+Paths are universe-folder-relative. The substrate sandboxes `assetPath()` so attempts to escape the folder (`../../something`) are normalised away.
 
-If any required artifact is missing or invalid, the substrate logs a clear error and falls back to the entry Universe (`forest`).
+## Brand fit + `brandDeviation`
 
-## Reference Universe
+Universes are expected to fit the brand contract by default: Hayao×Moebius watercolor, the locked palette (mushroom-cream / moss-sage / sky-wash / faded-rose / ink-aubergine / saffron-glow / forest-deep), pop-accents ≤5%, no emojis, no placeholders. NORTH-STAR §3 has the full visual contract — re-read it before opening a PR.
 
-[`universes/forest/`](./universes/forest/) is the canonical reference implementation. Read its four files to see the contract in practice. Your Universe doesn't have to look anything like the forest — it just has to satisfy the same four contracts.
+If your Universe intentionally deviates, set `manifest.brandDeviation` to a short rationale and document it in your README. Reviewers will engage with the argument carefully (per [`CONTRIBUTING.md`](./CONTRIBUTING.md)). The substrate does not block you on deviation; it asks you to justify it.
 
-## Brand fit
+Areas can tweak mood within a Universe (via `moodOverrides`), but `brandDeviation` is **universe-level only**. See [`AREA-AUTHORING.md`](./AREA-AUTHORING.md) for the inheritance rules.
 
-Universes are expected to fit the brand contract (Hayao×Moebius watercolor, the locked palette, no emojis, no placeholders) by default. If you intentionally deviate, set `manifest.json::brandDeviation` to a short rationale and document it in your Universe README. Reviewers will read it carefully.
-
-The substrate will not block your PR for brand deviation. Reviewers will engage with the argument and either land it, request a softening, or invite you to fork the substrate entirely if your vision is far enough that it deserves its own anchor.
-
-## How to test your Universe locally
+## Test your Universe locally
 
 ```bash
 cd cosmos-cosmic-adventure-2026
 npm install
 npm run dev
-# Open http://localhost:5174/play/?universe=<your-name>
+# Then open:
+# http://localhost:5174/play/?substrate=v2&universe=<your-name>
 ```
 
-The substrate live-reloads `universes/<your-name>/` on file change.
+The substrate hot-reloads `universes/<your-name>/` on file change. Editing `behavior.ts` swaps drivers in place; editing JSON re-enters the affected scope. Cosmo's position is preserved across reloads in dev.
 
-## How to submit
+## Submit a PR
 
-1. Branch off `main`, build under `universes/<your-name>/`.
-2. Run `bash scripts/sync-check.sh` and `npm run build` clean.
-3. Open a PR titled `universe: <your-name>`.
-4. The PR description should answer: what is your Universe, why does it want to exist, what experience does Cosmo have inside it.
-5. Reviewers engage on the four-part contract, brand-fit, and posture.
+The submission flow is in [`CONTRIBUTING.md`](./CONTRIBUTING.md). The short form: branch off `main`, build under `universes/<your-name>/`, run `npm run build` and `bash scripts/sync-check.sh` clean, open a PR titled `universe: <your-name>`. Reviewers engage on contract-correctness, brand-fit, and posture-alignment.
 
-Welcome.
+## Reference Universe
+
+[`universes/forest/`](./universes/forest/) is the working example. It ships all four required artifacts plus a `behavior.ts` that demonstrates every optional export. Read its files side-by-side with this document; copy the patterns; do not copy the words. Your Universe is yours.
+
+---
+
+## Appendix — Paste-in-Claude-Code quickstart
+
+Open Claude Code in this repository, paste the block below, and let Claude scaffold a new Universe.
+
+````markdown
+You are helping me create a new Cosmo Universe. Read NORTH-STAR.md and UNIVERSE-AUTHORING.md first.
+
+Then create universes/<NAME>/ with:
+- manifest.json with name="<NAME>", displayName="...", author="...", license="MIT", behaviorModule=false, defaultArea="entry", brandDeviation=null
+- areas.json with one area "entry" containing rooms ["start"]
+- rooms.json with one room "start" with anchor {0,0,0}, area "entry"
+- assets/backgrounds/start/composition-spec.json — minimal 3-layer parallax
+- README.md describing what the universe wants to be
+
+After scaffolding, remind me to: (1) generate parallax assets via fal.ai or my own pipeline, (2) test with `npm run dev` + ?substrate=v2&universe=<NAME>, (3) read AREA-AUTHORING.md before adding more Areas, ROOM-AUTHORING.md before designing Rooms.
+````

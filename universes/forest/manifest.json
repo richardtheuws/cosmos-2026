@@ -1,17 +1,25 @@
 {
-  "version": "1.0",
+  "$schema": "https://cosmos-2026.dev/schemas/manifest-1.1.json",
+  "version": "1.1",
   "name": "forest",
   "displayName": "The Mushroom Forest",
   "displayNameEn": "The Mushroom Forest — Cosmo's entry Universe",
+  "summaryEn": "A watercolor cosmic-mushroom forest in the Hayao×Moebius idiom. The entry Universe — slow-bloom mushrooms drip nectar from the canopy; soft-pastel cosmic horizon; a single trampoline (the canonical delight-loop) where Cosmo loves to jump.",
   "author": "Richard Theuws",
   "license": "MIT",
-  "summaryEn": "A watercolor cosmic-mushroom forest, painted in the Hayao×Moebius idiom. The entry Universe — where every Cosmo's journey begins. Slow-bloom mushrooms drip nectar from the canopy; soft-pastel cosmic horizon; a single trampoline (Wave 20b) where Cosmo loves to jump.",
+  "behaviorModule": true,
+  "defaultArea": "the-mushroom-stand",
+  "brandDeviation": null,
   "assets": [
     { "type": "image", "path": "../../public/assets/backgrounds/biome-slow-bloom-4k.png", "preload": true },
     { "type": "image", "path": "../../public/assets/objects/eyeball-sentry.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/mouth-pillar-sheet.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/breathing-portal.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/floating-star.png", "preload": false }
+    { "type": "image", "path": "../../public/assets/objects/floating-star.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/organic-flesh-trampoline.png", "preload": false }
   ],
-  "brandDeviation": null
+  "post": {
+    "preset": "calm-baseline",
+    "intensityCurve": { "bloom": 1.0, "kaleido": 0.85, "fluid": 0.9, "chroma": 1.0 }
+  }
 }

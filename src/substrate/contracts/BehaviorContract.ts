@@ -1,0 +1,223 @@
+/**
+ * BehaviorContract — Wave 21 substrate.
+ *
+ * The TypeScript contract every Universe `behavior.ts` is type-checked against.
+ * Mirrors `.claude/brainstorm/wave21/01-substrate-architecture.md` §1.4 with
+ * runtime-wirer extensions identified during phase-2 review:
+ *
+ *   - SubstrateCtx exposes canvas, audioBridge, motion, renderer (punch-list #6).
+ *     The architect's pure-THREE context worked for the doc but reference-forest
+ *     surfaced that ParallaxScene needs the canvas, AudioFFTBridge powers the
+ *     mouth-pillar audio-clock, MotionController feeds parallax pan, and
+ *     drivers may want a renderer reference for off-screen passes.
+ *   - InhabitantHandle gains an OPTIONAL `anchor` field (punch-list #2). The
+ *     substrate may use it for proximity-AI or transition-ordering hints; if
+ *     absent everything falls back to the previous behavior. Backwards-compat.
+ *   - CosmoState (punch-list #5) is re-exported from CosmoAgent here so authors
+ *     can `import type { CosmoState } from '...'` without reaching into Phaser.
+ */
+import type * as THREE from 'three';
+import type { GlobalUniforms } from '../../core/globalUniforms';
+import type { CosmoV2Rig } from '../../three/cosmoV2';
+import type { AudioFFTBridge } from '../../audio/audioFFTBridge';
+import type { MotionController } from '../../core/motionController';
+
+export type { CosmoState } from '../../phaser/entities/CosmoAgent';
+
+/* ── Shared context ─────────────────────────────────────────────────────── */
+
+export interface SubstrateCtx {
+  scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  globalUniforms: GlobalUniforms;
+  /** Resolves a path relative to this universe's folder. Sandboxed —
+   *  attempts to escape (`../`) are normalized away (with the explicit
+   *  `../../public/...` allowlist for the legacy reference forest, see
+   *  PreloadManager). */
+  assetPath: (rel: string) => string;
+  /** Universe metadata, parsed from manifest.json. */
+  universe: { id: string; name: string; displayName: string };
+  /** Active Area metadata (post mood-override merge). */
+  area: { id: string; displayName: string; mood: ResolvedMood };
+  /** Active Room metadata. */
+  room: { id: string; displayName: string; anchor: { x: number; y: number; z: number } };
+  /** The canvas the parallax renderer paints to. Drivers needing a canvas
+   *  reference (ParallaxScene constructor) read it from here. Punch-list #6. */
+  canvas: HTMLCanvasElement;
+  /** Audio FFT bridge — drives mouth-pillar sprite-sheet cycling and any
+   *  audio-reactive inhabitant. `audioBridge.audioFFT` is the read surface
+   *  (mirrored into `globalUniforms.audioFFT` per frame). Punch-list #6/#8. */
+  audioBridge: AudioFFTBridge;
+  /** Motion source for camera-pan derivation + head-track focus. Drivers
+   *  consume it to compute parallax shift or proximity-AI cues. */
+  motion: MotionController;
+  /** Three.js renderer the universe shares with the parallax stack. Drivers
+   *  performing custom render-target work read it from here. */
+  renderer: THREE.WebGLRenderer;
+}
+
+export interface ResolvedMood {
+  ambient: string;
+  primary: string;
+  post: { bloom: number; kaleido: number; fluid: number; chroma: number };
+}
+
+/* ── Driver interfaces ──────────────────────────────────────────────────── */
+
+export interface BackgroundHandle {
+  update(dt: number, u: GlobalUniforms): void;
+  dispose(): void;
+}
+
+export type ArrivalAnimation =
+  | { kind: 'portal'; duration: number; hue?: number }
+  | { kind: 'fade'; duration: number; color?: string }
+  | { kind: 'drift'; from: { x: number; z: number }; duration: number }
+  | { kind: 'custom'; run: (dt: number) => boolean };
+
+export interface ArrivalCtx extends SubstrateCtx {
+  cosmo: CosmoV2Rig;
+  state: import('../../phaser/entities/CosmoAgent').CosmoState;
+}
+
+export interface InhabitantHandle {
+  id: string;
+  /** OPTIONAL world-space anchor. The substrate may use it for proximity-AI
+   *  hints or culling; absent values disable those features. Punch-list #2. */
+  anchor?: { x: number; y: number; z: number };
+  update(dt: number, u: GlobalUniforms): void;
+  dispose(): void;
+}
+
+export interface InteractableHandle {
+  id: string;
+  /** World-space position Cosmo can walk to. */
+  anchor: { x: number; y: number; z: number };
+  /** Range in world-units within which Cosmo's AI may target this. */
+  range: number;
+  update(dt: number, u: GlobalUniforms): void;
+  /** Called by InteractionManager when Cosmo reaches the anchor. */
+  onUse(cosmo: CosmoV2Rig): void;
+  dispose(): void;
+}
+
+export interface AudioHandle {
+  enter(): void;
+  exit(fadeMs: number): void;
+  update(dt: number): void;
+  dispose(): void;
+}
+
+export interface TransitionDriver {
+  run(dt: number): Promise<void>;
+  dispose(): void;
+}
+
+export interface TransitionCtx extends SubstrateCtx {
+  fromMood: ResolvedMood;
+  toMood: ResolvedMood;
+}
+
+/* ── Optional exports (each independently optional) ─────────────────────── */
+
+export interface UniverseBehavior {
+  background?: (ctx: SubstrateCtx) => BackgroundHandle;
+  arrival?: (ctx: ArrivalCtx) => ArrivalAnimation;
+  inhabitants?: (ctx: SubstrateCtx) => InhabitantHandle[];
+  interactables?: (ctx: SubstrateCtx) => InteractableHandle[];
+  audio?: (ctx: SubstrateCtx) => AudioHandle;
+  transitions?: {
+    roomToRoom?: (ctx: TransitionCtx, fromRoomId: string, toRoomId: string) => TransitionDriver;
+    areaToArea?: (ctx: TransitionCtx, fromAreaId: string, toAreaId: string) => TransitionDriver;
+    universeToUniverse?: (
+      ctx: TransitionCtx,
+      fromUniverseId: string,
+      toUniverseId: string,
+    ) => TransitionDriver;
+  };
+}
+
+/* ── Manifest / schema runtime types ────────────────────────────────────── */
+
+export interface PostFXIntensity {
+  bloom: number;
+  kaleido: number;
+  fluid: number;
+  chroma: number;
+}
+
+export type PostPreset = 'calm-baseline' | 'deep-trip' | 'neutral';
+
+export interface AssetEntry {
+  type: 'image' | 'audio' | 'shader' | string;
+  path: string;
+  preload: boolean;
+}
+
+export interface Manifest {
+  version: string;
+  name: string;
+  displayName: string;
+  displayNameEn?: string;
+  summaryEn?: string;
+  author: string;
+  license: string;
+  behaviorModule?: boolean;
+  defaultArea: string;
+  brandDeviation: string | null;
+  assets: AssetEntry[];
+  post: { preset: PostPreset; intensityCurve?: PostFXIntensity };
+}
+
+export interface PathExperience {
+  kind: 'mushroom-path' | 'burrow-down' | 'drift' | 'fade' | string;
+  duration: number;
+  ambient: string;
+  description?: string;
+}
+
+export interface AreaMoodOverrides {
+  ambient?: string;
+  primary?: string;
+  post?: Partial<PostFXIntensity>;
+}
+
+export interface AreaSpec {
+  id: string;
+  displayName: string;
+  displayNameEn?: string;
+  description?: string;
+  moodOverrides: AreaMoodOverrides | null;
+  pathExperience: PathExperience;
+  rooms: string[];
+}
+
+export interface AreasManifest {
+  version: string;
+  entryArea: string;
+  areas: AreaSpec[];
+}
+
+export interface RoomExit {
+  to: string;
+  via: string;
+  distance: number;
+}
+
+export interface RoomSpec {
+  id: string;
+  area?: string;
+  displayName: string;
+  displayNameEn?: string;
+  description?: string;
+  anchor: { x: number; y: number; z: number };
+  cameraBounds?: { panRangeX: number; panRangeY: number };
+  biomeKey?: string | null;
+  exits?: RoomExit[];
+}
+
+export interface RoomsManifest {
+  version: string;
+  entryRoom: string;
+  rooms: RoomSpec[];
+}

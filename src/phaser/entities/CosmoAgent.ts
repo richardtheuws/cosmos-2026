@@ -81,6 +81,10 @@ import type { MotionController } from '../../core/motionController';
 import type { CosmoAI, AIDirective } from './CosmoAI';
 // Wave 20a — CosmoV2 hybrid rig. Replaces the Sprint 15A GLB skeleton.
 import { buildCosmoV2, type CosmoV2Rig, type FaceState } from '../../three/cosmoV2';
+// Wave 21 — procedural anim director (idle-breath/blink/head-track/antenna-bob/
+// walk/jump-arc/climb). Layers on top of the state-machine and applyMotion/AI
+// outputs each frame.
+import { CosmoAnimDirector, type AnimCtx } from '../../three/cosmoAnimDirector';
 
 // ─── Sprint 17B head-track tunables ──────────────────────────────────────────
 /** Max head-yaw sweep (rad). Maps motion.panX in [-1..1] → [-MAX..MAX]. */
@@ -294,6 +298,24 @@ export class CosmoAgent {
    *  path of Sprint 15A. Always non-null after construction. */
   private v2Rig: CosmoV2Rig;
 
+  /** Wave 21 — procedural anim director. Ticks after applyMotion + applyAI
+   *  each frame so its 7 life-sign animations layer on top of state-machine
+   *  output. Constructed alongside v2Rig.
+   *  See `src/three/cosmoAnimDirector.ts` for the full animation set. */
+  private animDirector: CosmoAnimDirector;
+  /** Cached scratch vector for the director's velocity ctx — avoids per-frame
+   *  allocation. */
+  private animVelocity = new THREE.Vector3();
+  /** Last-frame world position for finite-difference velocity estimation. */
+  private lastWorldX = 0;
+  private lastWorldY = 0;
+  private lastWorldZ = 0;
+  /** Cached scratch vector for focusPoint (mouse/gyro projection result). */
+  private animFocusPoint = new THREE.Vector3();
+  /** True while director should treat Cosmo as climbing — Wave 21 plumbing
+   *  for the eventual climb state. Default false. */
+  private animClimbing = false;
+
   constructor(parentGroup: THREE.Group, events: CosmoAgentEvents = {}) {
     this.parentGroup = parentGroup;
     this.events = events;
@@ -322,6 +344,15 @@ export class CosmoAgent {
     this.introCompleteAt = LOOKING_DURATION_S;
     this.fallback2D = false;
     this.loading = false;
+
+    // Wave 21 — anim director picks up the rig refs and the split eye-decals
+    // (when their textures load asynchronously). The director starts ticking
+    // immediately; idle-breath/blink/antenna-bob run from frame 1.
+    this.animDirector = new CosmoAnimDirector(this.v2Rig);
+    this.animDirector.setEyeDecals(this.v2Rig.eyeDecalL, this.v2Rig.eyeDecalR);
+    this.lastWorldX = this.worldX;
+    this.lastWorldY = this.worldY;
+    this.lastWorldZ = this.worldZ;
   }
 
   /** Wave 20a — face-state shortcut. Forwarded to v2Rig.setFaceState().
@@ -1016,9 +1047,83 @@ export class CosmoAgent {
   // (Wave 20a — resolveSpineBone removed. v2Rig.body is the spine-equivalent,
   //  set in the constructor.)
 
+  /**
+   * Wave 21 — tick the procedural CosmoAnimDirector.
+   *
+   * Called from main.ts AFTER applyMotion + applyAI so the director's idle
+   * animations (breath/blink/antenna-bob/walk-bob/jump-arc) layer on top of
+   * the clip-driven and motion/AI-driven poses for this frame.
+   *
+   * Inputs:
+   *  - `dt` is in seconds (same delta as update()).
+   *  - `motion` is the MotionController. The director needs a focusPoint;
+   *    we project the smoothed pan vector into world-space at Cosmo's depth
+   *    so head-track stays grounded with what the camera sees.
+   *  - `cameraDistanceFromCosmo` is the world-space depth from the camera
+   *    to Cosmo. Used to scale the focusPoint distance so head-track aims
+   *    at a reasonable spot in front of him, not at infinity.
+   *
+   * Velocity is finite-differenced from worldX/Y/Z this-frame vs last-frame.
+   * That's the right input for walk-bob (state-machine writes worldX/Z) and
+   * jump-arc (state-machine writes worldY parabola).
+   *
+   * The director is stateless about the agent's discrete state — we pass it
+   * `isJumping` as a boolean derived from `this.state === 'jumping'`, and
+   * `isClimbing` from the (currently unused) `animClimbing` flag.
+   */
+  tickAnimDirector(dt: number, motion: MotionController): void {
+    if (this.paused) return;
+    // Finite-difference velocity from worldX/Y/Z deltas this frame.
+    const inv = dt > 1e-6 ? 1 / dt : 0;
+    this.animVelocity.set(
+      (this.worldX - this.lastWorldX) * inv,
+      (this.worldY - this.lastWorldY) * inv,
+      (this.worldZ - this.lastWorldZ) * inv,
+    );
+    this.lastWorldX = this.worldX;
+    this.lastWorldY = this.worldY;
+    this.lastWorldZ = this.worldZ;
+
+    // Build a focus point. When MotionController has a real source (gyro/
+    // pointer/companion-drift), pan-X/Y in [-1..1] map to a world-space
+    // direction Cosmo "looks toward". We anchor the focal distance at 4
+    // world-units forward + 1 world-unit per pan-magnitude side-step. That
+    // gives a clean head-track without owl-rotation.
+    const source = motion.getSource();
+    const hasFocus = source !== 'none';
+    let focusPoint: THREE.Vector3 | null = null;
+    if (hasFocus) {
+      const px = motion.getPanX();
+      const py = motion.getPanY();
+      // World-space focal point: Cosmo's head pos + side-stepped & lifted
+      // by the smoothed pan. Z=+4 puts it in front of him toward the camera.
+      this.animFocusPoint.set(
+        this.worldX + px * 1.5,
+        this.worldY + 1.0 - py * 0.6,
+        this.worldZ + 4,
+      );
+      focusPoint = this.animFocusPoint;
+    }
+
+    const ctx: AnimCtx = {
+      velocity: this.animVelocity,
+      focusPoint,
+      isJumping: this.state === 'jumping',
+      isClimbing: this.animClimbing,
+    };
+    this.animDirector.tick(dt, ctx);
+  }
+
+  /** Wave 21 — flag setter for climb mode (no state-machine entry yet).
+   *  When true the director runs the climb pose (90° body rotation + disc
+   *  hand-walk). Wave 22+ will tie this to a real wall-cling state. */
+  setClimbing(climbing: boolean): void {
+    this.animClimbing = climbing;
+  }
 
   destroy(): void {
     if (this.root.parent) this.root.parent.remove(this.root);
+    this.animDirector.dispose();
     this.v2Rig.dispose();
     this.mixer = null;
     this.clips.clear();

@@ -1,0 +1,86 @@
+{
+  "wave": 21,
+  "pipeline": "hero-crop",
+  "generated": "2026-05-04 10:49:28",
+  "source_hero": "/Users/richardtheuws/Documents/games/cosmos-cosmic-adventure-2026/public/assets/sprites/cosmo-hero-lora.png",
+  "source_hero_dna_score": "10/10 (Sprint 16A LoRA-locked canonical)",
+  "cost_usd": 0.0,
+  "results": {
+    "eyes-l.png": {
+      "mode": "rgba",
+      "box": [
+        1466,
+        1404,
+        1866,
+        1804
+      ],
+      "out_size": 1024,
+      "file_kb": 558.6,
+      "opaque_fraction": 0.783,
+      "fully_transparent_fraction": 0.047
+    },
+    "eyes-r.png": {
+      "mode": "rgba",
+      "box": [
+        2290,
+        1318,
+        2690,
+        1718
+      ],
+      "out_size": 1024,
+      "file_kb": 671.2,
+      "opaque_fraction": 0.783,
+      "fully_transparent_fraction": 0.05
+    },
+    "mouth-neutral.png": {
+      "mode": "rgba",
+      "box": [
+        1880,
+        1770,
+        2280,
+        2040
+      ],
+      "out_size": 1024,
+      "file_kb": 731.0,
+      "opaque_fraction": 0.744,
+      "fully_transparent_fraction": 0.097
+    },
+    "body-skin.png": {
+      "mode": "tile",
+      "box": [
+        1700,
+        2300,
+        2400,
+        3000
+      ],
+      "out_size": 1024,
+      "file_kb": 578.6
+    },
+    "disc-suction.png": {
+      "mode": "rgba",
+      "box": [
+        2700,
+        1700,
+        3450,
+        2280
+      ],
+      "out_size": 1024,
+      "file_kb": 385.5,
+      "opaque_fraction": 0.337,
+      "fully_transparent_fraction": 0.66
+    },
+    "antenna-flower.png": {
+      "mode": "rgba",
+      "box": [
+        1700,
+        350,
+        1960,
+        610
+      ],
+      "out_size": 1024,
+      "file_kb": 301.7,
+      "opaque_fraction": 0.351,
+      "fully_transparent_fraction": 0.64
+    }
+  }
+}
