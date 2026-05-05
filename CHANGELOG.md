@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.4] — 2026-05-05 — Wave 21.2.2: dual-ParallaxScene removed + self-UAT pipeline
+
+Live UAT after v2.2.3 (this time done by me with Playwright, not surfaced to Richard) showed the substrate path STILL had rectangle artifacts even with per-room filter + renderOrder + alphaTest fixes applied. Diagnosis: `universes/forest/behavior.ts::background` constructed a *second* ParallaxScene against the same canvas main.ts already painted to. Two parallax instances rendering decoration spots over each other produced the visible rectangle stack.
+
+### Fixed
+- `ForestBackground` is now a documented no-op. The substrate `behavior.background` does NOT construct its own ParallaxScene; main.ts's existing instance paints the world for both the legacy and substrate paths. The contract extension where SubstrateCtx exposes the single shared parallax (so universes can hook into rather than duplicate it) is deferred to Wave 22.
+- Self-UAT pipeline: Playwright script at `/tmp/uat-cosmos.mjs` (using reign-of-brabant's existing playwright install + cached browsers) loads each URL, taps to skip the OnboardingDirector boot-overlay, waits 6s for arrival animation, screenshots. Memory written: `feedback_visual_uat_required.md` — programmatic UAT proves bytes arrived, never proves bytes paint correctly. Take the screenshot myself before claiming ship.
+
 ## [2.2.3] — 2026-05-05 — Wave 21.2 finish: per-room inhabitants + render-order
 
 Live UAT of v2.2.2 showed legacy `/play/` rendering Cosmo correctly (the canonical 1992-DNA hero painting), but `/play/?substrate=v2` showed a stack of mushroom-rectangles obscuring Cosmo entirely. Two compounding bugs in `universes/forest/behavior.ts` and `cosmoV2.ts`:

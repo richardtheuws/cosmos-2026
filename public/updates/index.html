@@ -206,6 +206,29 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.4</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.2.2: dual-ParallaxScene removed + self-UAT pipeline</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live UAT after v2.2.3 (this time done by me with Playwright, not surfaced to Richard) showed the substrate path STILL had rectangle artifacts even with per-room filter + renderOrder + alphaTest fixes applied. Diagnosis: <code>universes/forest/behavior.ts::background</code> constructed a <em>second</em> ParallaxScene against the same canvas main.ts already painted to. Two parallax instances rendering decoration spots over each other produced the visible rectangle stack.</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><code>ForestBackground</code> is now a documented no-op. The substrate <code>behavior.background</code> does NOT construct its own ParallaxScene; main.ts&#039;s existing instance paints the world for both the legacy and substrate paths. The contract extension where SubstrateCtx exposes the single shared parallax (so universes can hook into rather than duplicate it) is deferred to Wave 22.</li>
+          <li>Self-UAT pipeline: Playwright script at <code>/tmp/uat-cosmos.mjs</code> (using reign-of-brabant&#039;s existing playwright install + cached browsers) loads each URL, taps to skip the OnboardingDirector boot-overlay, waits 6s for arrival animation, screenshots. Memory written: <code>feedback_visual_uat_required.md</code> — programmatic UAT proves bytes arrived, never proves bytes paint correctly. Take the screenshot myself before claiming ship.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.3</span>
           <span class="update__date">2026-05-05</span>
           <h2 class="update__title">05-05 — Wave 21.2 finish: per-room inhabitants + render-order</h2>

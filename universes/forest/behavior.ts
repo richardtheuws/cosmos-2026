@@ -128,70 +128,25 @@ interface UniverseBehavior {
 
 /* ── background ───────────────────────────────────────────────────────────────
  *
- * Extracts the parallax-construction logic from `src/main.ts` so the forest's
- * background lives behind the Universe contract instead of inline in main.
- * The handle owns its own ParallaxScene instance — it is constructed on
- * RoomHost.enter() and disposed on RoomHost.exit().
+ * Wave 21.2.1 (2026-05-05): no-op background.
  *
- * NOTE for runtime-wirer: ParallaxScene needs the canvas element + a couple of
- * hooks (audioNow, getKaleidoTrigger, getBpm) that today live in main.ts.
- * The architect's SubstrateCtx (§1.4) does not yet expose those. For the
- * Wave-21 reference build we wire the hooks via globalUniforms (kaleidoTrigger
- * is already there) and accept a default BPM. When the substrate matures,
- * extend SubstrateCtx with `{ canvas, audioBridge, bpmProvider }` and
- * thread those through.
+ * `src/main.ts` already constructs a ParallaxScene at boot (it owns the WebGL
+ * renderer that CosmoStage sub-renders into). When `behavior.background` ALSO
+ * constructed its own ParallaxScene against the same canvas, both ran every
+ * frame and painted overlapping decoration spots → live UAT 2026-05-05 showed
+ * stacked rectangle artifacts. Per NORTH-STAR §4 brave-reconsideration: the
+ * substrate-owns-the-background plan needs a SubstrateCtx that exposes the
+ * single existing parallax instance instead of letting universes build their
+ * own. That contract extension is a Wave 22 item.
  *
- * Also: ParallaxScene's `update(u, motion?)` falls back to `cameraX/viewportW`
- * pan derivation when `motion` is omitted (Sprint 14B legacy path). We rely on
- * that fallback here so the contract remains motion-free.
+ * Until then the forest's `background` is a documented no-op: main.ts's
+ * ParallaxScene paints the world; this handle does nothing per-frame.
  */
 class ForestBackground implements BackgroundHandle {
-  private parallax: ParallaxScene | null = null;
-  private ready = false;
-
-  constructor(private ctx: SubstrateCtx) {
-    // ParallaxScene needs a canvas element. The substrate's existing scene
-    // already has a renderer, but the architect contract intentionally hides
-    // canvas access — we use the renderer's domElement as a soft probe.
-    // If ctx.scene exposes a renderer reference via parent traversal we use it;
-    // otherwise we late-bind on first update via the scene userData hook.
-    void this.boot();
-  }
-
-  /** Async constructor body — composition-spec fetch + decoration build. */
-  private async boot(): Promise<void> {
-    const canvas = resolveCanvas(this.ctx);
-    if (!canvas) {
-      console.warn('[forest/background] no canvas in SubstrateCtx — runtime-wirer must thread one through');
-      return;
-    }
-    this.parallax = new ParallaxScene(canvas, {
-      audioNow: () => 0, // runtime-wirer: thread real audioBridge.musicCurrentTime here
-      getKaleidoTrigger: () => this.ctx.globalUniforms.kaleidoTrigger,
-      getBpm: () => 86, // slow-bloom BPM; runtime-wirer can swap to a live provider
-    });
-    try {
-      await this.parallax.loadBiome(BIOMES['slow-bloom']);
-      this.ready = true;
-    } catch (err) {
-      console.warn('[forest/background] biome load failed', err);
-    }
-  }
-
-  update(_dt: number, u: GlobalUniforms): void {
-    if (!this.ready || !this.parallax) return;
-    // motion omitted intentionally — ParallaxScene falls back to cameraX-derived pan.
-    this.parallax.update(u);
-  }
-
-  dispose(): void {
-    // ParallaxScene has no destroy() in the current source; we null the ref
-    // and trust THREE's GC + the renderer-shared scene to be cleared by the
-    // host on universe-swap. Runtime-wirer should add a proper destroy()
-    // method to ParallaxScene when integrating substrate.
-    this.parallax = null;
-    this.ready = false;
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(_ctx: SubstrateCtx) {}
+  update(_dt: number, _u: GlobalUniforms): void {}
+  dispose(): void {}
 }
 
 /** Heuristic — resolve a canvas from the substrate context. The architect's
