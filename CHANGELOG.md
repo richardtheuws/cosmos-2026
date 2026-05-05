@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.6] — 2026-05-05 — Wave 21.2.4: mouth-pillar retired, the-hollow goes quiet
+
+Self-UAT of v2.2.5 the-hollow showed the mouth-pillar still flickered as 4-5 cycling rectangles — even with clean alpha. Diagnosis: Sprint 15C built `mouth-pillar-sheet.png` as 4 *separately-painted* frames composited horizontally (per `weirdo_objects_v15c.md`: "diffusion can not render sequential-states in one image"). The frames are four different illustrations, not animation-coherent poses of one character. Cycling them creates a stack of non-coherent shapes regardless of how clean the alpha is.
+
+Per NORTH-STAR §4 brave-reconsideration: three patches on the asset (alpha-cut, alphaTest tuning, render-order) didn't fix the underlying construction. Retire. The-hollow becomes intentionally quiet — Cosmo + parallax forest.
+
+### Removed
+- `mouth-pillar` entry from `FOREST_INHABITANTS` in `universes/forest/behavior.ts`. The PNG stays on disk for a future single-pose remake.
+
 ## [2.2.5] — 2026-05-05 — Wave 21.2.3: Dutch strings retired + mouth-pillar alpha-cut
 
 Self-UAT of v2.2.4 the-hollow room showed three remaining issues: mouth-pillar inhabitant rendered with a grey rectangle bg (Sprint 15C asset never had clean BiRefNet alpha), and two Dutch strings still appeared on screen — the HintGlyph "veeg omhoog" and the dailyStreak pill "Dag X in de trip". `/play/` is English-canonical per the v2.2.1 chrome-strip; these were oversights.

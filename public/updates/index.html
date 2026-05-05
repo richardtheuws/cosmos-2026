@@ -206,6 +206,29 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.6</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.2.4: mouth-pillar retired, the-hollow goes quiet</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Self-UAT of v2.2.5 the-hollow showed the mouth-pillar still flickered as 4-5 cycling rectangles — even with clean alpha. Diagnosis: Sprint 15C built <code>mouth-pillar-sheet.png</code> as 4 <em>separately-painted</em> frames composited horizontally (per <code>weirdo_objects_v15c.md</code>: &quot;diffusion can not render sequential-states in one image&quot;). The frames are four different illustrations, not animation-coherent poses of one character. Cycling them creates a stack of non-coherent shapes regardless of how clean the alpha is.</p>
+          <p class="update__lead-line">Per NORTH-STAR §4 brave-reconsideration: three patches on the asset (alpha-cut, alphaTest tuning, render-order) didn&#039;t fix the underlying construction. Retire. The-hollow becomes intentionally quiet — Cosmo + parallax forest.</p>
+        </div>
+        <h3>REMOVED</h3>
+        <ul class="update__highlights">
+          <li><code>mouth-pillar</code> entry from <code>FOREST_INHABITANTS</code> in <code>universes/forest/behavior.ts</code>. The PNG stays on disk for a future single-pose remake.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.5</span>
           <span class="update__date">2026-05-05</span>
           <h2 class="update__title">05-05 — Wave 21.2.3: Dutch strings retired + mouth-pillar alpha-cut</h2>

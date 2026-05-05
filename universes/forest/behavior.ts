@@ -239,18 +239,15 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
     bobAmplitude: 0.04,
     bobFreq: 0.4,
   },
-  // The Hollow — mouth-pillar (sprite-sheet animation tied to globalUniforms.audioFFT).
-  {
-    id: 'mouth-pillar',
-    room: 'the-hollow',
-    textureRel: 'assets/objects/mouth-pillar-sheet.png',
-    width: 0.7,
-    height: 1.5,
-    anchor: { x: -1.5, y: 0.0, z: -2.6 },
-    yOffset: 0.75,
-    bobAmplitude: 0.0, // mouth-pillar uses sprite-sheet cycling instead of bob
-    bobFreq: 0.0,
-  },
+  // Wave 21.2.4 (2026-05-05): mouth-pillar inhabitant retired. Sprint 15C
+  // built mouth-pillar-sheet.png as 4 separately-painted frames composited
+  // horizontally. Even with clean BiRefNet alpha (Wave 21.2.3), cycling
+  // through them produces a flickering stack of non-coherent rectangles —
+  // the four frames are different illustrations, not animation-coherent
+  // poses of one character. Per NORTH-STAR §4: stop patching, retire. The
+  // hollow is intentionally quiet for now (Cosmo + parallax). A single-pose
+  // mouth-pillar painting can land in a future wave when there's budget for
+  // a coherent regen.
 ];
 
 class ForestInhabitant implements InhabitantHandle {
