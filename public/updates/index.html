@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.3</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.2 finish: per-room inhabitants + render-order</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live UAT of v2.2.2 showed legacy <code>/play/</code> rendering Cosmo correctly (the canonical 1992-DNA hero painting), but <code>/play/?substrate=v2</code> showed a stack of mushroom-rectangles obscuring Cosmo entirely. Two compounding bugs in <code>universes/forest/behavior.ts</code> and <code>cosmoV2.ts</code>:</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Per-room inhabitant filter</strong>: <code>forestInhabitants(ctx)</code> previously spawned all 4 inhabitants (eyeball-sentry, floating-star, breathing-portal, mouth-pillar) regardless of which room was active. Their fixed anchors stacked them all in front of the camera. Added <code>room: &#039;clearing&#039; | &#039;deep-grove&#039; | &#039;the-hollow&#039;</code> to <code>InhabitantSpec</code>, filter on <code>ctx.room.id</code> before instantiating. Now only the inhabitants belonging to the active room render.</li>
+          <li><strong>Cosmo render-order</strong>: with <code>depthWrite: false</code> on Cosmo&#039;s billboard plane AND on inhabitant planes, draw-order won over Z. Inhabitants drew after Cosmo and painted over him. Set <code>cosmo.plane.renderOrder = 100</code> so Cosmo always draws last, on top of everything.</li>
+          <li><strong>Inhabitant alphaTest 0.05 → 0.5</strong>: Sprint 15C weirdo-object PNGs have soft-edge dark borders that registered as visible-but-translucent rectangles instead of being culled. Tighter alphaTest cleans the silhouettes.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.2</span>
           <span class="update__date">2026-05-05</span>
           <h2 class="update__title">05-05 — Wave 21.2: skeleton-rig retired, Cosmo becomes a hero-PNG billboard</h2>

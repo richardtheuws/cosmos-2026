@@ -235,6 +235,10 @@ function forestArrival(_ctx: ArrivalCtx): ArrivalAnimation {
  */
 interface InhabitantSpec {
   id: string;
+  /** Which room this inhabitant lives in. Substrate spawns only the inhabitants
+   *  whose room matches the active room — preventing all 4 from stacking in the
+   *  same scene at once (Wave 21.2 finish). */
+  room: 'clearing' | 'deep-grove' | 'the-hollow';
   textureRel: string;
   width: number;
   height: number;
@@ -248,6 +252,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   // The Clearing — eyeball-sentry watches the trampoline + floating-star sparkles overhead.
   {
     id: 'eyeball-sentry',
+    room: 'clearing',
     textureRel: 'assets/objects/eyeball-sentry.png',
     width: 0.7,
     height: 0.7,
@@ -258,6 +263,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   },
   {
     id: 'floating-star',
+    room: 'clearing',
     textureRel: 'assets/objects/floating-star.png',
     width: 0.5,
     height: 0.5,
@@ -269,6 +275,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   // Deep Grove — breathing-portal at the far edge.
   {
     id: 'breathing-portal',
+    room: 'deep-grove',
     textureRel: 'assets/objects/breathing-portal.png',
     width: 1.0,
     height: 1.0,
@@ -280,6 +287,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   // The Hollow — mouth-pillar (sprite-sheet animation tied to globalUniforms.audioFFT).
   {
     id: 'mouth-pillar',
+    room: 'the-hollow',
     textureRel: 'assets/objects/mouth-pillar-sheet.png',
     width: 0.7,
     height: 1.5,
@@ -328,7 +336,8 @@ class ForestInhabitant implements InhabitantHandle {
         transparent: true,
         side: THREE.DoubleSide,
         depthWrite: false,
-        alphaTest: 0.05,
+        // Wave 21.2 finish — same bump as the non-mouth-pillar branch.
+        alphaTest: 0.5,
       });
       // Frame-cycler — driven by globalUniforms FFT energy (rough proxy for
       // audio-clock; the original weirdoObstacleFactory uses the audio bridge
@@ -349,7 +358,10 @@ class ForestInhabitant implements InhabitantHandle {
         transparent: true,
         side: THREE.DoubleSide,
         depthWrite: false,
-        alphaTest: 0.05,
+        // Wave 21.2 finish — bumped from 0.05 → 0.5 so half-transparent
+        // dark borders of Sprint 15C inhabitant assets get culled out
+        // entirely (live UAT 2026-05-05 showed visible dark rectangles).
+        alphaTest: 0.5,
       });
     }
 
@@ -393,7 +405,13 @@ class ForestInhabitant implements InhabitantHandle {
 }
 
 function forestInhabitants(ctx: SubstrateCtx): InhabitantHandle[] {
-  return FOREST_INHABITANTS.map((spec) => new ForestInhabitant(ctx.scene, spec));
+  // Wave 21.2 finish — only spawn inhabitants for the active room. Without
+  // this filter all 4 spawned in every room and stacked visually (live UAT
+  // 2026-05-05 showed this as 4 painted-rectangle planes overlapping Cosmo).
+  const activeRoom = ctx.room.id;
+  return FOREST_INHABITANTS.filter((spec) => spec.room === activeRoom).map(
+    (spec) => new ForestInhabitant(ctx.scene, spec),
+  );
 }
 
 /* ── interactables ────────────────────────────────────────────────────────────

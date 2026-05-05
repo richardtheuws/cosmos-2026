@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.3] — 2026-05-05 — Wave 21.2 finish: per-room inhabitants + render-order
+
+Live UAT of v2.2.2 showed legacy `/play/` rendering Cosmo correctly (the canonical 1992-DNA hero painting), but `/play/?substrate=v2` showed a stack of mushroom-rectangles obscuring Cosmo entirely. Two compounding bugs in `universes/forest/behavior.ts` and `cosmoV2.ts`:
+
+### Fixed
+- **Per-room inhabitant filter**: `forestInhabitants(ctx)` previously spawned all 4 inhabitants (eyeball-sentry, floating-star, breathing-portal, mouth-pillar) regardless of which room was active. Their fixed anchors stacked them all in front of the camera. Added `room: 'clearing' | 'deep-grove' | 'the-hollow'` to `InhabitantSpec`, filter on `ctx.room.id` before instantiating. Now only the inhabitants belonging to the active room render.
+- **Cosmo render-order**: with `depthWrite: false` on Cosmo's billboard plane AND on inhabitant planes, draw-order won over Z. Inhabitants drew after Cosmo and painted over him. Set `cosmo.plane.renderOrder = 100` so Cosmo always draws last, on top of everything.
+- **Inhabitant alphaTest 0.05 → 0.5**: Sprint 15C weirdo-object PNGs have soft-edge dark borders that registered as visible-but-translucent rectangles instead of being culled. Tighter alphaTest cleans the silhouettes.
+
 ## [2.2.2] — 2026-05-05 — Wave 21.2: skeleton-rig retired, Cosmo becomes a hero-PNG billboard
 
 **Live UAT of v2.2.1 showed the third decal-attempt also failed.** The regenerated decals were rendered as full-frame paintings with the mushroom-scene baked in, then stacked as rectangles + black ovoids on the capsule. Three attempts did not converge: PIL crops, fal.ai LoRA regen, alpha-isolation tuning — all defeated by the diffusion-model bias toward painting-the-context. NORTH-STAR §4: stop patching, reconsider the system.

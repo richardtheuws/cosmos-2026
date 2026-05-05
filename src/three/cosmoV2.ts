@@ -102,6 +102,11 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
   const plane = new THREE.Mesh(geometry, material);
   plane.name = 'cosmoV2_billboard';
   plane.position.set(0, PLANE_Y, 0);
+  // Wave 21.2 finish — Cosmo always renders LAST, on top of every other plane
+  // in the scene (forest inhabitants default to renderOrder=0). Without this,
+  // depthWrite:false on every alpha-cut plane meant draw-order won, and the
+  // inhabitants painted over Cosmo on substrate path. (Live UAT 2026-05-05.)
+  plane.renderOrder = 100;
   root.add(plane);
 
   // Scratch — Y-locked lookAt target. The plane faces the camera in XZ, but
