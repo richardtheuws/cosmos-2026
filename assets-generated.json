@@ -2029,6 +2029,92 @@
           "notes": "Single rose-bulb (matches 1992-DNA per cosmo_lora_v16a.md memory). Not a multi-petal flower \u2014 bulb-form is correct."
         }
       ]
+    },
+    {
+      "sprint": "Wave 21.1 \u2014 Cosmo decal regen (LoRA-isolation breakthrough)",
+      "generated": "2026-05-05",
+      "context": "Live UAT of v2.2.0 showed Wave 21 PIL-crop pivot failed visually (green pill, bat-wing discs, brown antenna ball). NORTH-STAR \u00a76 pivot ledger entry 2026-05-05.",
+      "strategy_band": "A+B+C (negative-prompt + LoRA-scale-tune + anatomical-study-sheet framing) \u2014 solved the LoRA whole-character bleed gotcha that triggered Wave 21's shortcut. Strategy E (component-isolation post-crop) used on mouth/antenna/body-skin to extract the painted organ.",
+      "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+      "lora_trigger": "rtcosmo",
+      "model_default": "fal-ai/flux-lora",
+      "post_processing": "fal-ai/birefnet (General Use Heavy) + fal-ai/esrgan 4\u00d7 + PIL alpha-merge (Sprint 14A pattern)",
+      "image_size": {
+        "width": 1024,
+        "height": 1024,
+        "upscaled": "4096x4096"
+      },
+      "total_cost_usd": 5.11,
+      "attempts_per_decal": 8,
+      "assets": [
+        {
+          "file": "public/assets/cosmo/decals/v2-final/eyes-l.png",
+          "attempt": "a7",
+          "seed": 80107,
+          "lora_scale": 0.65,
+          "dna_score": 9.7,
+          "notes": "Big spherical chameleon-bulge, deep ink-black iris, saffron-crescent catchlight upper-left, faded-rose spots visible in skin halo. Watercolor brushwork on edges. Best of 8 \u2014 strategy A+B+C broke through the LoRA whole-character bleed at scale 0.65."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/eyes-r.png",
+          "method": "PIL horizontal mirror of eyes-l.png",
+          "dna_score": 9.7,
+          "notes": "Mirrored from eyes-l \u2014 saved one full attempt cycle (~$0.84) and guarantees catchlight-direction symmetry vs LoRA generating mirror-eye fresh."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/mouth-neutral.png",
+          "attempt": "a5 (component-isolated)",
+          "seed": 80305,
+          "lora_scale": 0.6,
+          "dna_score": 9.5,
+          "notes": "LoRA wanted to render whole face/head; a5 (out of 8) had isolated mouth + small floating-nose artifact. PIL component-detection isolated the largest connected component (the lips) and removed the floating-nose. Painted moss-sage lips with slight overbite (top teeth visible), painterly watercolor finish, ink-aubergine outline. Strategy E (component-isolation), not crop-from-finished-character."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/body-skin.png",
+          "attempt": "b4 (color-anchored regen, content-cropped)",
+          "seed": 80454,
+          "lora_scale": 0.45,
+          "dna_score": 9.5,
+          "notes": "CRITICAL \u2014 first batch (a-series, scale=0.50) painted GREEN spots on green wash. b-series with explicit \"PINK FADED-ROSE SPOTS\" anchor + \"no green spots\" negative + scale=0.45 broke through. b4 has 6+ visible rose-pink spots on moss-sage watercolor wash, painted brushwork. Cropped to 5/95-percentile bbox to remove white margins (RepeatWrapping on capsule would tile white-seams)."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/disc-suction.png",
+          "attempt": "a1",
+          "seed": 80501,
+          "lora_scale": 0.55,
+          "dna_score": 9.5,
+          "notes": "Top-down matte-black suction-cup pad with concentric ring grooves and central nub. Painterly material, clean isolation, no bat-wing artifact (Wave 21 PIL-crop side-effect retired)."
+        },
+        {
+          "file": "public/assets/cosmo/decals/v2-final/antenna-flower.png",
+          "attempt": "b8 (color-anchored regen)",
+          "seed": 80658,
+          "lora_scale": 0.6,
+          "dna_score": 9.5,
+          "notes": "CRITICAL \u2014 first batch (a-series) painted SAFFRON-yellow flowers; sampled hero-bulb showed actual color is faded-rose-terracotta #bc665c. b-series with explicit \"faded-rose terracotta-pink\" anchor produced rose-pink pear-shaped bulb in painted watercolor. b8 reads as a single bell-bulb form with green stem-tip (sits at antennaTip in rig)."
+        }
+      ],
+      "lessons": {
+        "lora_isolation_strategies": [
+          "Strategy A: 6-fold negative-prompt suppression (no full character / body silhouette / multiple body parts) suppresses ~30% of whole-character bleed at scale 1.0 but is INSUFFICIENT alone.",
+          "Strategy B: LoRA scale 0.45-0.65 (NOT 1.0) prevents the LoRA DNA-cluster from summoning the full character. Below 0.40 the DNA features (rose-spots, watercolor brushwork) drop too far.",
+          "Strategy C: prompt prefix \"isolated single [organ] anatomical study sheet\" + \"no other body parts\" worked for eyes (high contrast organ) but NOT for mouth (LoRA still summoned full face).",
+          "Strategy E: post-generate PIL component-isolation. When the LoRA painted an isolated organ + small floating artifacts, scipy.ndimage.label() finds connected components, keep the largest (the organ), drop the rest. This is NOT the Wave 21 PIL-crop-from-finished-character pivot \u2014 it operates on a generation that DID paint the organ, just with extra junk.",
+          "Color anchoring beats LoRA color memory: when DNA dictates a specific color (faded-rose, not saffron), explicit color words in prompt + negative for the wrong color + low LoRA scale break through the LoRA color bias."
+        ],
+        "decal_specific": {
+          "eyes": "High-contrast organ. Strategy A+B+C alone gets 9.5+ at scale 0.65. Mirror eyes-l \u2192 eyes-r saves one full sprint cycle.",
+          "mouth": "LoRA wants full face. Strategy A+B+C generates with junk. Use component-isolation post-pass.",
+          "body-skin": "COLOR is the failure mode, not isolation. Default LoRA paints green-on-green (background bias). Explicit \"PINK FADED-ROSE SPOTS\" anchor + low scale 0.45 + content-crop to remove margin needed.",
+          "disc-suction": "Cleanest organ. Strategy A+B+C at scale 0.55 produces top-down painted-pad first try.",
+          "antenna-flower": "COLOR + SHAPE both need anchoring. LoRA defaults to multi-petal flowers in saffron-yellow; hero is single rose-pink bulb. Explicit color + \"single round bell-bulb\" + negative for \"multi-petal\" needed."
+        },
+        "do_not": [
+          "Do NOT use LoRA scale 1.0 for organ-decals \u2014 guaranteed whole-character bleed (Wave 21 finisher proved 3/3, this regen confirmed at all scales > 0.80).",
+          "Do NOT crop from a finished character painting \u2014 that was Wave 21's pivot, retired in NORTH-STAR \u00a76 (2026-05-05). Crop ONLY from generations where the LoRA was prompted to paint THIS organ.",
+          "Do NOT trust the DNA-spec text without sampling the hero-image colors \u2014 text said \"saffron-glow flower bulb\" but actual hero pixel is #bc665c rose-pink. Always sample hero before color-anchoring."
+        ]
+      }
     }
   ]
 }

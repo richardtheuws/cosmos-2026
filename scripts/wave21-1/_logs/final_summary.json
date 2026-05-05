@@ -1,0 +1,68 @@
+{
+  "wave": "21.1",
+  "generated": "2026-05-05 09:56:39",
+  "pivot_retired": "Wave 21 PIL-crop from cosmo-hero-lora.png (NORTH-STAR \u00a76 2026-05-05)",
+  "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+  "lora_trigger": "rtcosmo",
+  "strategy_band": "A (negative-prompt) + B (LoRA scale 0.45-0.65) + C (anatomical-study-sheet) + E (component-isolation post-pass for mouth)",
+  "total_cost_usd": 5.11,
+  "attempts": "~56 fal.ai calls (8 per decal \u00d7 6 decals + extras for color-anchor regen)",
+  "shipped": {
+    "eyes-l.png": {
+      "attempt": "a7",
+      "seed": 80107,
+      "lora_scale": 0.65,
+      "dna_score": 9.7,
+      "strategy": "A+B+C"
+    },
+    "eyes-r.png": {
+      "method": "PIL horizontal mirror of eyes-l",
+      "dna_score": 9.7
+    },
+    "mouth-neutral.png": {
+      "attempt": "a5+component-isolation",
+      "seed": 80305,
+      "lora_scale": 0.6,
+      "dna_score": 9.5,
+      "strategy": "A+B+C+E"
+    },
+    "body-skin.png": {
+      "attempt": "b4+content-crop",
+      "seed": 80454,
+      "lora_scale": 0.45,
+      "dna_score": 9.5,
+      "strategy": "A+B+C + color-anchor regen + 5/95-percentile crop"
+    },
+    "disc-suction.png": {
+      "attempt": "a1",
+      "seed": 80501,
+      "lora_scale": 0.55,
+      "dna_score": 9.5,
+      "strategy": "A+B+C"
+    },
+    "antenna-flower.png": {
+      "attempt": "b8+content-frame",
+      "seed": 80658,
+      "lora_scale": 0.6,
+      "dna_score": 9.5,
+      "strategy": "A+B+C + color-anchor regen for rose-pink (not saffron)"
+    }
+  },
+  "rig_paths_match": {
+    "cosmoV2.ts loads from": "assets/cosmo/decals/v2-final/{eyes-l,eyes-r,mouth-neutral,body-skin,disc-suction,antenna-flower}.png",
+    "all_6_files_exist_at_those_paths": true,
+    "no_rig_edit_needed": true
+  },
+  "memory_updates": [
+    "cosmos memory: cosmo_decals_wave21_1.md (NEW)",
+    "cosmos memory: cosmo_decals_wave21.md \u2014 added \"RETIRED 2026-05-05\" preamble",
+    "cosmos memory: cosmo_lora_v16a.md \u2014 added Wave 21.1 organ-decal strategy stack",
+    "cosmos memory: INDEX.md \u2014 added pointer to wave21_1 + retired-pointer on wave21",
+    "project asset-generated.json \u2014 appended Wave 21.1 sprint entry",
+    "project brainstorm: .claude/brainstorm/wave21-1/02-cosmo-decal-regen.md (NEW, full sprint doc)"
+  ],
+  "memory_update_blocked": {
+    "file": "/Users/richardtheuws/Documents/games/.claude/agents/memory/asset-generator.md",
+    "reason": "Edit and Bash-append both denied by sandbox permission policy. Surface to orchestrator/Richard if cross-game asset-gen agent needs the LoRA-isolation strategy stack \u2014 text is captured in cosmo_decals_wave21_1.md and the brainstorm doc."
+  }
+}

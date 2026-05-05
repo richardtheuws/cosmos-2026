@@ -15,7 +15,9 @@ EXIT_CODE=0
 
 VERSION=$(cat VERSION | tr -d '[:space:]')
 PKG_VERSION=$(node -p "require('./package.json').version")
-HUD_VERSION=$(grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+[^"]*' play/index.html | head -1 | sed 's/v//')
+# Wave 21.1 — HUD-pill retired (play/ is full-viewport, no chrome). VERSION
+# coherence now checks src/main.ts's VERSION const instead.
+MAIN_VERSION=$(grep -oE "VERSION\s*=\s*'[0-9]+\.[0-9]+\.[0-9]+'" src/main.ts | head -1 | grep -oE "[0-9]+\.[0-9]+\.[0-9]+")
 
 echo "🛰️  Cosmos Tracker — sync-check.sh"
 echo "================================="
@@ -28,10 +30,10 @@ else
   EXIT_CODE=1
 fi
 
-if [[ "$HUD_VERSION" == "$VERSION"* ]]; then
-  echo -e "${GREEN}✓${NC} play/index.html HUD-pill mentions v$VERSION"
+if [ "$MAIN_VERSION" = "$VERSION" ]; then
+  echo -e "${GREEN}✓${NC} src/main.ts VERSION const matches v$VERSION"
 else
-  echo -e "${YELLOW}!${NC} play/index.html HUD-pill version ($HUD_VERSION) doesn't start with $VERSION"
+  echo -e "${YELLOW}!${NC} src/main.ts VERSION ($MAIN_VERSION) ≠ $VERSION"
   EXIT_CODE=1
 fi
 

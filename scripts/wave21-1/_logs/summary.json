@@ -1,0 +1,134 @@
+{
+  "wave": "21.1",
+  "generated": "2026-05-05 09:41:44",
+  "total_cost_usd": 0.8,
+  "soft_cap_warn": 40.0,
+  "lora_url": "https://v3b.fal.media/files/b/0a98931e/10m_xs8iJYAfgyWc7fVbr_pytorch_lora_weights.safetensors",
+  "lora_trigger": "rtcosmo",
+  "strategy_band": "A+B+C (negative-prompt + LoRA-scale + anatomical-study-sheet)",
+  "results": {
+    "body-skin.png": true
+  },
+  "manifest": [
+    {
+      "decal": "body-skin.png",
+      "attempt": 1,
+      "seed": 80401,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 6613.2,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 5915
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a1_s80401.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f62d/3PrJQlqYBQx3eFOP57ZRW_655f387afb304bc7baa9a936353dd845.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 2,
+      "seed": 80402,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 10287.7,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 5217
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a2_s80402.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f632/jIddLCCmrbR1dfkvXVajX_3a3bdaa771034177891ca1585e18e274.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 3,
+      "seed": 80403,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 7769.7,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 7426
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a3_s80403.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f637/4qYyLjCNQ7basX8IGhB9K_ad8bcf35344545508c92b87b570d7ecb.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 4,
+      "seed": 80404,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 8100.1,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 5028
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a4_s80404.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f63e/6-cIprGih3rO542OVVGuY_609ade9d024d411c9d64f70933dadd2e.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 5,
+      "seed": 80405,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 8623.2,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 6839
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a5_s80405.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f643/y8WuzX-E-AiXwz4FOHmLx_046b79f86ca945a9a75d5b7e2443a682.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 6,
+      "seed": 80406,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 10218.8,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 5445
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a6_s80406.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f648/iMLtlMPsT41lzUMYDNJsZ_07d9a8da37bb4d43a195f86f39cfa36b.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 7,
+      "seed": 80407,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 7304.1,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 5798
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a7_s80407.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f64c/u5NA-j7qvpkK9IFF8z8UA_0460f96b23b24be1aa9c3bd34297bceb.jpg"
+    },
+    {
+      "decal": "body-skin.png",
+      "attempt": 8,
+      "seed": 80408,
+      "lora_scale": 0.5,
+      "gate_pass": true,
+      "metrics": {
+        "size_kb": 7364.3,
+        "dims": "4096x4096",
+        "alpha_samples_opaque": 256,
+        "color_variance": 6148
+      },
+      "candidate_path": "scripts/wave21-1/_logs/cand_body-skin_a8_s80408.png",
+      "gen_url": "https://v3b.fal.media/files/b/0a98f650/pA6jOWp5tp8GwTXJpNvrY_250683848163481cb5cc4e6038680449.jpg"
+    }
+  ]
+}

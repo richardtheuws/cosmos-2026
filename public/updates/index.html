@@ -206,6 +206,36 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.1</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.1: real Cosmo decals + /play/ chrome stripped</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>Live UAT of v2.2.0 surfaced two failures programmatic UAT can&#039;t see.</strong> The on-screen Cosmo was a green pill — the deterministic PIL-crop decal-pivot from Wave 21 (a budget-saver that took $0.30 instead of $8-15) produced flat-color regions, not painted decals. And <code>/play/</code> still wore Dutch marketing-chrome (Home / Het Verhaal / Updates) plus a version-pill plus a <code>0m</code> altitude counter, with the canvas pinched into a center column with black bars on the sides. NORTH-STAR §3 says the world breathes; chrome was breathing around it. Wave 21.1 retires both.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>All 6 Cosmo decals regenerated</strong> via fal.ai Flux Pro + RTcosmo LoRA (Sprint 16A trained) at scale 0.45-0.65, with anatomical-study-sheet framing and 6-fold negative-prompt suppression to defeat the LoRA&#039;s whole-character bleed. Per-decal scores: eyes-l 9.7 / eyes-r 9.7 (PIL mirror) / mouth-neutral 9.5 / body-skin 9.5 / disc-suction 9.5 / antenna-flower 9.5. Total cost $5.11. <strong>The DNA-spec was wrong about saffron-yellow antenna</strong> — actual hero pixel is rose-pink #bc665c; the regen color-anchored from the hero, not the spec, and the antenna now reads rose-pink as in the canonical 1992-DNA painting.</li>
+          <li><strong><code>/play/</code> chrome fully stripped</strong> — <code>&lt;nav class=&quot;hud-nav&quot;&gt;</code> deleted (Dutch nav was an artifact of the marketing era), <code>&lt;span class=&quot;hud-version&quot;&gt;</code> deleted, <code>lang=&quot;nl&quot;</code> → <code>lang=&quot;en&quot;</code>, title rewrite to <code>Cosmo&#039;s Universe — play</code>, all Dutch UI copy translated, ~50 LOC of <code>.hud-nav</code> / <code>.hud-version</code> CSS removed including responsive breakpoints. Defensive <code>width: 100vw; height: 100vh</code> on play-shell + canvases to eliminate the black-bar pinch.</li>
+          <li><strong>JS-injected chrome killed at source</strong> — <code>CosmoScene.buildHUD()</code> retired (it injected the <code>0m</code> altitude counter and a 4-second cosmos-version-pill flash on boot via direct DOM <code>appendChild</code>). Both gone. The play surface is now full-viewport game; close the tab to leave.</li>
+        </ul>
+<h3>NOTES</h3>
+        <ul class="update__highlights">
+          <li><strong>Crop-shortcut retired</strong> per NORTH-STAR §6 pivot ledger 2026-05-05. Sunk cost is not an argument; the LoRA whole-character bleed is solvable, not avoidable. Strategy stack documented in <code>cosmo_decals_wave21_1.md</code> for future LoRA-organ-decal sprints.</li>
+          <li><strong>The visual-UAT gap</strong> — Wave 21 shipped programmatic-UAT-green and was visually wrong. Programmatic UAT proves bytes arrived; it cannot prove bytes paint correctly. Future visible deliverables end on real visual UAT.</li>
+          <li>Substrate behind <code>?substrate=v2</code> flag still — cutover to default deferred until visual UAT of v2.2.1 confirms the painted Cosmo + clean canvas land.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.0</span>
           <span class="update__date">2026-05-04</span>
           <h2 class="update__title">05-04 — Substrate v2: Universe→Area→Room running infrastructure</h2>

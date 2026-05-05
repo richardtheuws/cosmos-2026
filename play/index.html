@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Speel · Cosmos Cosmic Adventure 2026</title>
-<meta name="description" content="Cosmos · mobile-first hypnotische rhythm-trip. Cosmo woont hier — raak hem aan op het beat.">
+<title>Cosmo's Universe — play</title>
+<meta name="description" content="A psychedelic companion in an ever-growing world.">
 <meta name="theme-color" content="#3D2E4A">
 <meta property="og:title" content="Cosmo's Universe — play">
 <meta property="og:description" content="A psychedelic companion in an ever-growing world. Built as an open substrate for Claude-paired developers.">
@@ -22,43 +22,64 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <style>
-html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
-.play-shell { position: fixed; inset: 0; }
+/* ============================================================
+   Wave 21.1 — chrome-stripped /play/. Full-viewport, edge-to-edge
+   game canvas. No nav, no version pill, no altitude counter.
+   Close the tab to leave; there is no menu.
+   ============================================================ */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--ink-aubergine);
+}
+.play-shell {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
 #scene-canvas {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   display: block;
 }
 #game-canvas {
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 1;
 }
-#game-canvas canvas { display: block; }
-/* ============================================================
-   SPRINT 11B — Cosmic Cathedral HUD pills
-   - Top-left:   game-info pill (label · hearts · bomb · star · state)
-   - Top-right:  nav pill (Home / Verhaal / Updates / Steun) + version
-   - Bottom:     controls-hint pill, auto-hide na 8s
-   Glassmorph: rgba(20,16,26,0.55) + backdrop-blur(20px)
-              + 1px stroke faded-rose 0.3 alpha + radius 18px.
-   ============================================================ */
+#game-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ===== HUD root — kept ONLY as an injection point for HudOverlay
+   (game-info pill in the top-left, attached by HudOverlay.attach()).
+   Wave 21.1 stripped the nav pill, version pill, and altitude counter.
+   The reveal-zone + opacity-on-hover pattern stays so the in-game
+   info pill is invisible-by-default and reveals on cursor approach. ===== */
 .hud {
-  position: fixed; top: 0; left: 0; right: 0;
-  display: flex; justify-content: space-between; align-items: flex-start;
+  position: fixed; top: 0; left: 0;
+  display: flex;
   padding: 14px 18px;
   padding-top: max(14px, env(safe-area-inset-top, 0px));
   padding-left: max(18px, env(safe-area-inset-left, 0px));
-  padding-right: max(18px, env(safe-area-inset-right, 0px));
   z-index: 10;
   font-family: var(--font-body);
   pointer-events: none;
-  gap: 0.6rem;
-  flex-wrap: nowrap;
-  /* Sprint 14D — invisible-by-default. Hover/focus/tap reveals. */
   opacity: 0.25;
   transform: scale(0.92);
-  transform-origin: top center;
+  transform-origin: top left;
   transition: opacity 220ms ease-out, transform 220ms ease-out;
   will-change: opacity, transform;
 }
@@ -68,21 +89,18 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   opacity: 1;
   transform: scale(1);
 }
-/* AutoVJ engaged: complete blackout of the top-nav. */
 .hud.is-autovj-hidden {
   opacity: 0 !important;
   transform: scale(0.9) !important;
   pointer-events: none !important;
 }
-.hud-left, .hud-right {
+.hud-left {
   display: flex;
   gap: 0.6rem;
   align-items: center;
   pointer-events: auto;
   flex-wrap: wrap;
 }
-.hud-right { justify-content: flex-end; }
-/* Hover-affordance hot-zone — invisible 80px strip at top to catch mobile taps. */
 .hud-reveal-zone {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -90,7 +108,6 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   z-index: 9;
   pointer-events: auto;
   background: transparent;
-  /* Tap on this zone toggles .is-revealed on the parent .hud via :has(). */
 }
 .hud-reveal-zone:hover ~ .hud,
 .hud-reveal-zone:active ~ .hud {
@@ -98,7 +115,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   transform: scale(1);
 }
 
-/* Shared pill chrome — used for all three HUD elements. */
+/* Shared pill chrome — used by the game-info pill that HudOverlay injects. */
 .hud-pill {
   display: inline-flex;
   align-items: center;
@@ -113,8 +130,6 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   box-shadow: 0 6px 18px rgba(20, 16, 26, 0.18);
   pointer-events: auto;
 }
-
-/* ===== Top-left: game-info pill ===== */
 .hud-pill--gameinfo .hud-pill__label {
   font-family: var(--font-heading);
   font-style: italic;
@@ -124,10 +139,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   letter-spacing: 0.01em;
   margin-right: 0.25rem;
 }
-.hud-pill--gameinfo .hud-pill__hearts {
-  display: inline-block;
-  vertical-align: middle;
-}
+.hud-pill--gameinfo .hud-pill__hearts,
 .hud-pill--gameinfo .hud-pill__icon {
   display: inline-block;
   vertical-align: middle;
@@ -149,48 +161,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   letter-spacing: 0.06em;
 }
 
-/* ===== Top-right: nav pill ===== */
-.hud-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(20, 16, 26, 0.55);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(244, 162, 97, 0.3);
-  border-radius: 18px;
-  padding: 6px 8px;
-  pointer-events: auto;
-}
-.hud-nav a {
-  color: var(--mushroom-cream);
-  font-size: 14px;
-  font-family: var(--font-body);
-  letter-spacing: 0.04em;
-  padding: 6px 12px;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: background-color 220ms var(--ease-out-expo),
-              color 220ms var(--ease-out-expo);
-}
-.hud-nav a:hover {
-  background: var(--saffron-glow);
-  color: var(--ink-aubergine);
-  text-decoration: none;
-}
-.hud-version {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  background: var(--ink-aubergine);
-  color: var(--mushroom-cream);
-  padding: 5px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(244, 162, 97, 0.18);
-  white-space: nowrap;
-}
-
-/* ===== Bottom-center: controls hint pill ===== */
+/* ===== Bottom-center: controls hint pill (auto-hide after 8s, motion-controls intro) ===== */
 .hud-pill--controls {
   position: fixed;
   left: 50%;
@@ -228,32 +199,26 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   font-size: 11px;
 }
 
-/* Tablet (<1024px): pills slightly tighter */
 @media (max-width: 1023px) {
   .hud-pill { padding: 9px 12px; gap: 0.45rem; }
   .hud-pill--gameinfo .hud-pill__label { font-size: 16px; }
   .hud-pill--gameinfo .hud-pill__count { font-size: 13px; }
-  .hud-nav a { font-size: 13px; padding: 5px 10px; }
-  .hud-version { font-size: 11px; padding: 4px 8px; }
 }
 
-/* Mobile (<600px): compactere pills, hide controls hint (touch overlay heeft eigen guidance) */
 @media (max-width: 600px) {
   .hud { padding: 10px 10px; padding-top: max(10px, env(safe-area-inset-top, 0px)); }
   .hud-pill { padding: 8px 10px; gap: 0.35rem; border-radius: 14px; }
   .hud-pill--gameinfo .hud-pill__label { font-size: 14px; }
   .hud-pill--gameinfo .hud-pill__count { font-size: 12px; }
   .hud-pill--gameinfo .hud-pill__state { display: none; }
-  .hud-nav { padding: 4px 6px; border-radius: 14px; }
-  .hud-nav a { font-size: 12px; padding: 4px 8px; border-radius: 10px; }
-  .hud-version { font-size: 10px; padding: 3px 6px; letter-spacing: 0.06em; }
   .hud-pill--controls { display: none !important; }
 }
+
 /* Mobile-only disclaimer pill, dismissible. */
 .mobile-disclaimer {
   position: fixed;
   left: 50%; transform: translateX(-50%);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 124px); /* sits above the touch overlay */
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 124px);
   z-index: 20;
   display: none;
   align-items: center;
@@ -281,6 +246,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   font-weight: 600;
 }
 .mobile-disclaimer.is-visible { display: inline-flex; }
+
 .boot-overlay {
   position: fixed; inset: 0;
   display: flex; flex-direction: column;
@@ -309,8 +275,6 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   max-width: 320px;
   line-height: 1.45;
 }
-/* Sprint 15D — "tik om te ontwaken" pulses with breath; mic-icon canvas lives
-   above it. Both hidden until 0.6s after page-paint so the title reads first. */
 .boot-overlay .await-touch {
   display: none;
   flex-direction: column;
@@ -344,45 +308,34 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
   <canvas id="scene-canvas"></canvas>
   <div id="game-canvas"></div>
 
-  <!-- Sprint 14D — invisible top-strip; hover/touchstart reveals .hud. -->
+  <!-- invisible top-strip; hover/touchstart reveals .hud (game-info pill only). -->
   <div class="hud-reveal-zone" id="hud-reveal-zone" aria-hidden="true"></div>
 
   <div class="hud" id="hud-root">
     <div class="hud-left">
-      <!-- Sprint 11B — game-info pill is injected by HudOverlay.attach() -->
-    </div>
-    <div class="hud-right">
-      <nav class="hud-nav" aria-label="Navigatie">
-        <a href="/">&larr; Home</a>
-        <a href="/lore/">Het Verhaal</a>
-        <a href="/updates/">Updates</a>
-        
-      </nav>
-      <span class="hud-version">v2.2.0 · substrate</span>
+      <!-- game-info pill is injected by HudOverlay.attach() -->
     </div>
   </div>
 
   <div class="boot-overlay" id="boot">
-    <div class="title">Cosmos ontwaakt&hellip;</div>
-    <!-- Sprint 15D — await-touch sub-block. Hidden until JS adds .is-awaiting
-         on the boot element ~0.6s after page-paint, so the italic title fades
-         in first and only THEN the "tik om te ontwaken" prompt appears. -->
+    <div class="title">Cosmo awakening&hellip;</div>
+    <!-- await-touch is shown ~0.6s after page-paint via JS adding .is-awaiting -->
     <div class="await-touch" id="boot-await">
       <canvas class="mic-icon" id="boot-mic" width="28" height="28" aria-hidden="true"></canvas>
-      <div class="sub breath">tik om te ontwaken</div>
+      <div class="sub breath">tap to wake him</div>
     </div>
   </div>
 
   <div class="mobile-disclaimer" id="mobile-disclaimer" role="status">
-    <span>Best on desktop · touch-controls actief</span>
-    <button type="button" id="mobile-disclaimer-close" aria-label="Sluiten">×</button>
+    <span>Best on desktop · touch-controls active</span>
+    <button type="button" id="mobile-disclaimer-close" aria-label="Close">×</button>
   </div>
 </div>
 
 <script type="module">
-  // Sprint 15D — boot is now driven by OnboardingDirector. We:
+  // OnboardingDirector drives boot. We:
   //   1. paint a tiny canvas-drawn mic-icon (no emoji, no SVG asset)
-  //   2. at 0.6s reveal the "tik om te ontwaken" block (CSS animation handles fade)
+  //   2. at 0.6s reveal the "tap to wake him" block (CSS animation handles fade)
   //   3. NEVER auto-hide the overlay here — OnboardingDirector calls
   //      hideBootOverlay() exactly when the first-touch lands.
   function paintMicIcon(canvas) {
@@ -399,7 +352,6 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
     ctx.fillStyle = 'rgba(244, 162, 97, 0.18)';
     ctx.lineWidth = 1.6;
     ctx.lineCap = 'round';
-    // mic body: rounded-rect 10..18 wide, 6..18 tall, radius 4
     const bx = 10, by = 6, bw = 8, bh = 12, br = 4;
     ctx.beginPath();
     ctx.moveTo(bx + br, by);
@@ -425,8 +377,6 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
     ctx.stroke();
   }
   paintMicIcon(document.getElementById('boot-mic'));
-  // Reveal "tik om te ontwaken" 0.6s after paint, matching the brief's
-  // checkpoint. The title's own 600ms fade-in happens via CSS keyframe.
   window.setTimeout(() => {
     document.getElementById('boot')?.classList.add('is-awaiting');
   }, 600);
@@ -437,7 +387,7 @@ html, body { height: 100%; overflow: hidden; background: var(--ink-aubergine); }
       boot.innerHTML = `
         <div class="title" style="color:#FF2D95;">Boot error</div>
         <div class="sub" style="max-width:600px;text-align:center;padding:1rem;">${String(err).replace(/</g, '&lt;')}</div>
-        <a href="/" style="margin-top:2rem;color:var(--saffron-glow);">&larr; Terug naar home</a>
+        <a href="/" style="margin-top:2rem;color:var(--saffron-glow);">&larr; Back home</a>
       `;
     }
   });

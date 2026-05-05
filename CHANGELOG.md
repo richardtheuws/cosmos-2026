@@ -4,6 +4,20 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.1] — 2026-05-05 — Wave 21.1: real Cosmo decals + /play/ chrome stripped
+
+**Live UAT of v2.2.0 surfaced two failures programmatic UAT can't see.** The on-screen Cosmo was a green pill — the deterministic PIL-crop decal-pivot from Wave 21 (a budget-saver that took $0.30 instead of $8-15) produced flat-color regions, not painted decals. And `/play/` still wore Dutch marketing-chrome (Home / Het Verhaal / Updates) plus a version-pill plus a `0m` altitude counter, with the canvas pinched into a center column with black bars on the sides. NORTH-STAR §3 says the world breathes; chrome was breathing around it. Wave 21.1 retires both.
+
+### Changed
+- **All 6 Cosmo decals regenerated** via fal.ai Flux Pro + RTcosmo LoRA (Sprint 16A trained) at scale 0.45-0.65, with anatomical-study-sheet framing and 6-fold negative-prompt suppression to defeat the LoRA's whole-character bleed. Per-decal scores: eyes-l 9.7 / eyes-r 9.7 (PIL mirror) / mouth-neutral 9.5 / body-skin 9.5 / disc-suction 9.5 / antenna-flower 9.5. Total cost $5.11. **The DNA-spec was wrong about saffron-yellow antenna** — actual hero pixel is rose-pink #bc665c; the regen color-anchored from the hero, not the spec, and the antenna now reads rose-pink as in the canonical 1992-DNA painting.
+- **`/play/` chrome fully stripped** — `<nav class="hud-nav">` deleted (Dutch nav was an artifact of the marketing era), `<span class="hud-version">` deleted, `lang="nl"` → `lang="en"`, title rewrite to `Cosmo's Universe — play`, all Dutch UI copy translated, ~50 LOC of `.hud-nav` / `.hud-version` CSS removed including responsive breakpoints. Defensive `width: 100vw; height: 100vh` on play-shell + canvases to eliminate the black-bar pinch.
+- **JS-injected chrome killed at source** — `CosmoScene.buildHUD()` retired (it injected the `0m` altitude counter and a 4-second cosmos-version-pill flash on boot via direct DOM `appendChild`). Both gone. The play surface is now full-viewport game; close the tab to leave.
+
+### Notes
+- **Crop-shortcut retired** per NORTH-STAR §6 pivot ledger 2026-05-05. Sunk cost is not an argument; the LoRA whole-character bleed is solvable, not avoidable. Strategy stack documented in `cosmo_decals_wave21_1.md` for future LoRA-organ-decal sprints.
+- **The visual-UAT gap** — Wave 21 shipped programmatic-UAT-green and was visually wrong. Programmatic UAT proves bytes arrived; it cannot prove bytes paint correctly. Future visible deliverables end on real visual UAT.
+- Substrate behind `?substrate=v2` flag still — cutover to default deferred until visual UAT of v2.2.1 confirms the painted Cosmo + clean canvas land.
+
 ## [2.2.0] — 2026-05-04 — Substrate v2: Universe→Area→Room running infrastructure
 
 **Wave 21 — the substrate is alive.** What was a Universe→Room contract sketch is now a running Universe→Area→Room runtime. The forest is fully implemented as the canonical reference. Cosmo is on his finished decals (DNA-locked from the Sprint 16A canonical hero) with a 7-anim procedural director (idle-breath / blink / head-track / antenna-bob / walk / jump-arc / climb).

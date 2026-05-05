@@ -78,14 +78,8 @@ export class CosmoScene extends Phaser.Scene {
   private deepTrip!: DeepTripMode;
   private trampolineSpots!: TrampolineSpots;
   private agentEventShim!: SceneInitData['agentEventShim'];
-  private version = '0.0.0';
 
   private vibeMeter!: VibeMeter;
-
-  // HUD DOM
-  private versionPillEl: HTMLDivElement | null = null;
-  private altitudeEl: HTMLDivElement | null = null;
-  private hudBootT = 0;
 
   // ── Sprint 15D — onboarding magic-moment ─────────────────────────────────
   private onboarding: OnboardingDirector | null = null;
@@ -114,7 +108,6 @@ export class CosmoScene extends Phaser.Scene {
     this.obstacles = data.obstacles;
     this.trampolineSpots = data.trampolineSpots;
     this.agentEventShim = data.agentEventShim;
-    this.version = data.version;
   }
 
   create(): void {
@@ -169,8 +162,9 @@ export class CosmoScene extends Phaser.Scene {
       // no extra work needed here. Hook reserved for future polish.
     };
 
-    this.buildHUD();
-    this.hudBootT = this.uniforms.time;
+    // Wave 21.1 — buildHUD() retired. /play/ is the canonical full-viewport game
+    // surface; no version-pill, no altitude-counter, no chrome of any kind.
+    // Close the tab to leave; there is no menu.
 
     // Sprint 15D — magic-moment onboarding. State-machine drives boot-overlay
     // fade, NebulaPortal expand, Cosmo arrival-tween, wave-uncanny + audio
@@ -228,87 +222,18 @@ export class CosmoScene extends Phaser.Scene {
     this.uniforms.cosmoX = screen.x;
     this.uniforms.cosmoY = screen.y;
 
-    // HUD updates.
-    this.updateAltitude();
-    this.updateVersionPill(tNow);
+    // Wave 21.1 — HUD updates retired (no altitude-counter, no version-pill).
   }
 
   // ── HUD ───────────────────────────────────────────────────────────────────
-
-  private buildHUD(): void {
-    const root = document.body;
-
-    // Version pill — visible 4s on boot, then hidden.
-    const pill = document.createElement('div');
-    pill.className = 'cosmos-version-pill';
-    pill.textContent = `v${this.version}`;
-    Object.assign(pill.style, {
-      position: 'fixed',
-      top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
-      right: 'calc(env(safe-area-inset-right, 0px) + 10px)',
-      padding: '4px 10px',
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: '11px',
-      color: 'rgba(245, 237, 216, 0.85)',
-      background: 'rgba(61, 46, 74, 0.55)',
-      borderRadius: '999px',
-      letterSpacing: '0.04em',
-      pointerEvents: 'none',
-      zIndex: '100',
-      opacity: '0',
-      transition: 'opacity 800ms ease-out',
-      backdropFilter: 'blur(4px)',
-    } satisfies Partial<CSSStyleDeclaration>);
-    root.appendChild(pill);
-    this.versionPillEl = pill;
-
-    // Altitude counter (small, top-left). Cosmo's worldX since spawn = "altitude".
-    const altitude = document.createElement('div');
-    altitude.className = 'cosmos-altitude';
-    altitude.textContent = '0m';
-    Object.assign(altitude.style, {
-      position: 'fixed',
-      top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
-      left: 'calc(env(safe-area-inset-left, 0px) + 12px)',
-      padding: '4px 10px',
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: '11px',
-      color: 'rgba(244, 162, 97, 0.85)',
-      background: 'rgba(61, 46, 74, 0.45)',
-      borderRadius: '999px',
-      letterSpacing: '0.06em',
-      pointerEvents: 'none',
-      zIndex: '100',
-      opacity: '0.65',
-      backdropFilter: 'blur(4px)',
-    } satisfies Partial<CSSStyleDeclaration>);
-    root.appendChild(altitude);
-    this.altitudeEl = altitude;
-  }
-
-  private updateAltitude(): void {
-    if (!this.altitudeEl) return;
-    // Use Cosmo's worldX as a proxy "distance" — formatted as metres.
-    const m = Math.max(0, Math.floor(this.cosmoAgent.worldX * 8));
-    this.altitudeEl.textContent = `${m}m`;
-  }
-
-  private updateVersionPill(tNow: number): void {
-    if (!this.versionPillEl) return;
-    const since = tNow - this.hudBootT;
-    const visible = since >= 0 && since <= 4;
-    this.versionPillEl.style.opacity = visible ? '1' : '0';
-  }
+  // Wave 21.1 — buildHUD/updateAltitude/updateVersionPill retired. The play
+  // surface is the canonical full-viewport game; no chrome of any kind.
 
   private cleanup(): void {
     this.offOnboardingGesture?.();
     this.offOnboardingGesture = null;
     this.interactions.detach();
     this.vibeMeter?.destroy();
-    this.versionPillEl?.remove();
-    this.altitudeEl?.remove();
-    this.versionPillEl = null;
-    this.altitudeEl = null;
     // Sprint 15D — onboarding teardown.
     this.nebulaPortal?.dispose();
     this.nebulaPortal = null;
