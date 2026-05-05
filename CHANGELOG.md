@@ -4,6 +4,25 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.2] — 2026-05-05 — Wave 21.2: skeleton-rig retired, Cosmo becomes a hero-PNG billboard
+
+**Live UAT of v2.2.1 showed the third decal-attempt also failed.** The regenerated decals were rendered as full-frame paintings with the mushroom-scene baked in, then stacked as rectangles + black ovoids on the capsule. Three attempts did not converge: PIL crops, fal.ai LoRA regen, alpha-isolation tuning — all defeated by the diffusion-model bias toward painting-the-context. NORTH-STAR §4: stop patching, reconsider the system.
+
+The system is the **decal-on-capsule paradigm**. It's retired. The canonical `cosmo-hero-lora.png` (Sprint 16A, 10/10 DNA, already shipped) becomes Cosmo's geometry directly — a single textured plane that billboards toward camera with Y-axis locked vertical.
+
+### Changed
+- **`src/three/cosmoV2.ts`**: 374 → 133 LOC (−64%). Capsule body, sphere head, headBone, 4 disc-arms, 6 v2-final decal-planes, FaceState compositing — all retired. Replaced with one `THREE.Mesh + PlaneGeometry(1.2, 1.8)` carrying `assets/sprites/cosmo-hero-lora.png` as `MeshBasicMaterial({ map, transparent: true, alphaTest: 0.1, depthWrite: false, side: DoubleSide })`. Plane offset y=0.9 (matches old eye-line). New `rig.update(camera)` does Y-locked lookAt: `plane.lookAt(camera.x, plane.y+root.y, camera.z)` — billboards toward camera in XZ, never rolls.
+- **`src/three/cosmoAnimDirector.ts`**: 446 → 224 LOC (−50%). Retired blink, head-track, antenna-bob (all needed bones). Surviving anims: idle-breath (root.scale.y pulse 0.4 Hz ±2%), walk-sway (plane.rotation.z ±0.03 rad — replaces disc oscillation), jump-arc (3-phase root.position.y + scale.y squash-stretch), climb (root.rotation.z = π/2). `AnimCtx` gains `camera: THREE.Camera` so the director can call `rig.update(camera)` at end of each tick.
+- **`src/phaser/entities/CosmoAgent.ts`**: bone fields nulled, `FaceState` import + setFaceState removed, `tickAnimDirector(dt, motion)` → `tickAnimDirector(dt, motion, camera)`. Pet-affect kept as graceful event-hook no-op (host-side particle spew via onPet still works).
+- **`src/main.ts`**: tickAnimDirector call (line ~373) now passes `cosmoStage.camera`. Cosmo-finisher's call placement preserved.
+
+### Notes
+- **The hero PNG is the canonical Cosmo.** It already exists, is already shipped, is already 10/10 DNA. We were trying to *recreate* it as 6 fragments instead of just *using* it. Brave reconsideration: sometimes the answer was already there.
+- The 6 v2-final decals stay on disk at `public/assets/cosmo/decals/v2-final/` for rollback safety; no longer loaded by the rig. Cleanup is a Wave 22 hygiene step.
+- **Lost capabilities**: head-track-toward-mouse, antenna-bob spring, blink. These needed bones we no longer have. Recovery options for future waves: (a) UV-parallax for a faint "Cosmo-looks-at-you" effect, (b) eyelid-overlay-plane that fades for blink, (c) pure 3D rebuild via Meshy v6 with proper UV-mapping for texture projection. None of these blocks shipping today.
+- **CosmoAI's head-yaw / spine-bend directives** are accepted by `applyAI()` but no longer rendered (no surface). The API stays compatible; the visual effect is a future wave's job.
+- **Substrate `behavior.ts` contracts**: `CosmoV2Rig` shape is mostly additive (root preserved); third-party authors who referenced dropped fields like `cosmo.head` need a CONTRIBUTING sweep eventually. Not blocking — substrate boots fine.
+
 ## [2.2.1] — 2026-05-05 — Wave 21.1: real Cosmo decals + /play/ chrome stripped
 
 **Live UAT of v2.2.0 surfaced two failures programmatic UAT can't see.** The on-screen Cosmo was a green pill — the deterministic PIL-crop decal-pivot from Wave 21 (a budget-saver that took $0.30 instead of $8-15) produced flat-color regions, not painted decals. And `/play/` still wore Dutch marketing-chrome (Home / Het Verhaal / Updates) plus a version-pill plus a `0m` altitude counter, with the canvas pinched into a center column with black bars on the sides. NORTH-STAR §3 says the world breathes; chrome was breathing around it. Wave 21.1 retires both.

@@ -1,14 +1,21 @@
 /**
- * CosmoAgent — Wave 20a (2026-05-03) — CosmoV2 cutover
+ * CosmoAgent — Wave 21.2 (2026-05-05) — billboard-Cosmo cutover
  *
- * Wraps the CosmoV2 hybrid rig (primitive skeleton + painted decals, see
- * `../../three/cosmoV2.ts`) inside the same state-machine that previously
- * drove the broken Meshy GLB. The PUBLIC API is unchanged — `update()`,
- * `applyMotion()`, `applyAI()`, `attachAI()`, all the state/world fields.
- * What changed: synchronous build (no async GLB loader), no SkinnedMesh,
- * no AnimationMixer, no skin-weight patching. Cosmo is built from
- * `THREE.Object3D` transform-only nodes carrying primitive geometries —
- * 360° head rotation without a single shear vertex.
+ * Wraps the CosmoV2 billboard rig (a single textured plane carrying
+ * `cosmo-hero-lora.png`, see `../../three/cosmoV2.ts`) inside the same state-
+ * machine. The PUBLIC API is unchanged — `update()`, `applyMotion()`,
+ * `applyAI()`, `attachAI()`, `tickAnimDirector()` all keep their signatures.
+ *
+ * What changed in 21.2:
+ *  - The rig has no bones. headBone / antennaBone / spineBone fields are gone;
+ *    applyMotion and applyAI become near-no-ops on the rig (they still update
+ *    internal smoothed-yaw state for the API contract, but nothing applies it
+ *    to the painted plane — no surface to apply it to).
+ *  - `setFaceState()` is gone (no face-decal compositing).
+ *  - The pet-affect saffron blush is gone (no MeshStandardMaterial).
+ *  - `tickAnimDirector(dt, motion, camera)` now takes a camera so the director
+ *    can call rig.update(camera) for the billboard lookAt at the end of its
+ *    tick.
  *
  * Wave 20a deliverable: visible Cosmo, 360° rotation wired to motion,
  * scale wired to root.scale (driven externally for trip-scale).
@@ -79,11 +86,10 @@ import * as THREE from 'three';
 import type { GlobalUniforms } from '../../core/globalUniforms';
 import type { MotionController } from '../../core/motionController';
 import type { CosmoAI, AIDirective } from './CosmoAI';
-// Wave 20a — CosmoV2 hybrid rig. Replaces the Sprint 15A GLB skeleton.
-import { buildCosmoV2, type CosmoV2Rig, type FaceState } from '../../three/cosmoV2';
-// Wave 21 — procedural anim director (idle-breath/blink/head-track/antenna-bob/
-// walk/jump-arc/climb). Layers on top of the state-machine and applyMotion/AI
-// outputs each frame.
+// Wave 21.2 — CosmoV2 billboard rig. Single textured plane carrying the hero PNG.
+import { buildCosmoV2, type CosmoV2Rig } from '../../three/cosmoV2';
+// Wave 21.2 — anim director, billboard variant. 4 surviving anims:
+// idle-breath / walk-sway / jump-arc / climb. Calls rig.update(camera) at end.
 import { CosmoAnimDirector, type AnimCtx } from '../../three/cosmoAnimDirector';
 
 // ─── Sprint 17B head-track tunables ──────────────────────────────────────────
@@ -320,24 +326,23 @@ export class CosmoAgent {
     this.parentGroup = parentGroup;
     this.events = events;
 
-    // Wave 20a cutover — synchronous build, no async loader, no fallback path.
-    // The v2 rig is primitive geometry + decal textures; if the decal PNGs
-    // are missing the textures show as untinted material (still visible),
-    // never as a placeholder.
+    // Wave 21.2 — synchronous build of the billboard rig. The plane materials
+    // are constructed immediately; the hero texture loads async but the plane
+    // is already in the scene-graph by the time the first frame renders.
     this.v2Rig = buildCosmoV2({ scale: 1.1 });
     this.root = this.v2Rig.root;
     this.parentGroup.add(this.root);
     this.root.position.set(this.worldX, this.worldY, this.worldZ);
 
-    // Bone-handles point at v2 nodes — head/antenna/spine resolution is now
-    // build-time (no traversal needed). The v1 GLB methods (resolveHeadBone,
-    // etc.) are retained as no-ops below for any historical callers.
-    this.headBone = this.v2Rig.head;
-    this.headRestQuat = this.v2Rig.head.quaternion.clone();
-    this.antennaBone = this.v2Rig.antennaBase;
-    this.antennaRestQuat = this.v2Rig.antennaBase.quaternion.clone();
-    this.spineBone = this.v2Rig.body;
-    this.spineRestQuat = this.v2Rig.body.quaternion.clone();
+    // 21.2 — bone-handles are gone. headBone / antennaBone / spineBone stay as
+    // null on the agent; applyMotion / applyAI smooth their internal yaw state
+    // for the API contract but the billboard plane has nothing to rotate.
+    this.headBone = null;
+    this.headRestQuat = null;
+    this.antennaBone = null;
+    this.antennaRestQuat = null;
+    this.spineBone = null;
+    this.spineRestQuat = null;
 
     // Magic moment: 1.2s of looking before he starts walking.
     this.state = 'idle';
@@ -345,20 +350,13 @@ export class CosmoAgent {
     this.fallback2D = false;
     this.loading = false;
 
-    // Wave 21 — anim director picks up the rig refs and the split eye-decals
-    // (when their textures load asynchronously). The director starts ticking
-    // immediately; idle-breath/blink/antenna-bob run from frame 1.
+    // Wave 21.2 — anim director with reduced anim-set (idle-breath / walk-
+    // sway / jump-arc / climb). Director calls rig.update(camera) at end of
+    // each tick to billboard the plane.
     this.animDirector = new CosmoAnimDirector(this.v2Rig);
-    this.animDirector.setEyeDecals(this.v2Rig.eyeDecalL, this.v2Rig.eyeDecalR);
     this.lastWorldX = this.worldX;
     this.lastWorldY = this.worldY;
     this.lastWorldZ = this.worldZ;
-  }
-
-  /** Wave 20a — face-state shortcut. Forwarded to v2Rig.setFaceState().
-   *  Replaces the v1 playClip-based lip-sync. */
-  setFaceState(state: FaceState): void {
-    this.v2Rig.setFaceState(state);
   }
 
   /** Per-frame tick. */
@@ -1048,30 +1046,27 @@ export class CosmoAgent {
   //  set in the constructor.)
 
   /**
-   * Wave 21 — tick the procedural CosmoAnimDirector.
+   * Wave 21.2 — tick the procedural CosmoAnimDirector (billboard variant).
    *
-   * Called from main.ts AFTER applyMotion + applyAI so the director's idle
-   * animations (breath/blink/antenna-bob/walk-bob/jump-arc) layer on top of
-   * the clip-driven and motion/AI-driven poses for this frame.
+   * Called from main.ts AFTER applyMotion + applyAI so the director's anims
+   * (idle-breath / walk-sway / jump-arc / climb) layer on top of the
+   * state-machine + motion/AI-driven world-position writes for this frame.
+   * The director also calls `rig.update(camera)` at the end of its tick so
+   * the billboard plane faces the camera with the just-written transforms.
    *
    * Inputs:
    *  - `dt` is in seconds (same delta as update()).
-   *  - `motion` is the MotionController. The director needs a focusPoint;
-   *    we project the smoothed pan vector into world-space at Cosmo's depth
-   *    so head-track stays grounded with what the camera sees.
-   *  - `cameraDistanceFromCosmo` is the world-space depth from the camera
-   *    to Cosmo. Used to scale the focusPoint distance so head-track aims
-   *    at a reasonable spot in front of him, not at infinity.
+   *  - `motion` is the MotionController. Used for legacy focusPoint
+   *    derivation; the billboard director ignores focusPoint, but the
+   *    AnimCtx field stays for API stability and future re-introduction
+   *    of UV-parallax head-track.
+   *  - `camera` is the Three.js camera the rig should billboard toward.
+   *    Forwarded into AnimCtx and consumed by `rig.update(camera)`.
    *
-   * Velocity is finite-differenced from worldX/Y/Z this-frame vs last-frame.
-   * That's the right input for walk-bob (state-machine writes worldX/Z) and
-   * jump-arc (state-machine writes worldY parabola).
-   *
-   * The director is stateless about the agent's discrete state — we pass it
-   * `isJumping` as a boolean derived from `this.state === 'jumping'`, and
-   * `isClimbing` from the (currently unused) `animClimbing` flag.
+   * Velocity is finite-differenced from worldX/Y/Z this-frame vs last-frame
+   * (drives walk-sway gating + jump-arc context).
    */
-  tickAnimDirector(dt: number, motion: MotionController): void {
+  tickAnimDirector(dt: number, motion: MotionController, camera: THREE.Camera): void {
     if (this.paused) return;
     // Finite-difference velocity from worldX/Y/Z deltas this frame.
     const inv = dt > 1e-6 ? 1 / dt : 0;
@@ -1084,19 +1079,15 @@ export class CosmoAgent {
     this.lastWorldY = this.worldY;
     this.lastWorldZ = this.worldZ;
 
-    // Build a focus point. When MotionController has a real source (gyro/
-    // pointer/companion-drift), pan-X/Y in [-1..1] map to a world-space
-    // direction Cosmo "looks toward". We anchor the focal distance at 4
-    // world-units forward + 1 world-unit per pan-magnitude side-step. That
-    // gives a clean head-track without owl-rotation.
+    // 21.2 — focusPoint is preserved in the ctx but the billboard director
+    // ignores it. Keep the derivation for callers that read AnimCtx in tests
+    // or for the eventual UV-parallax head-track re-introduction.
     const source = motion.getSource();
     const hasFocus = source !== 'none';
     let focusPoint: THREE.Vector3 | null = null;
     if (hasFocus) {
       const px = motion.getPanX();
       const py = motion.getPanY();
-      // World-space focal point: Cosmo's head pos + side-stepped & lifted
-      // by the smoothed pan. Z=+4 puts it in front of him toward the camera.
       this.animFocusPoint.set(
         this.worldX + px * 1.5,
         this.worldY + 1.0 - py * 0.6,
@@ -1110,6 +1101,7 @@ export class CosmoAgent {
       focusPoint,
       isJumping: this.state === 'jumping',
       isClimbing: this.animClimbing,
+      camera,
     };
     this.animDirector.tick(dt, ctx);
   }

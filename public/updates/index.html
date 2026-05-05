@@ -206,6 +206,40 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.2</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.2: skeleton-rig retired, Cosmo becomes a hero-PNG billboard</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line"><strong>Live UAT of v2.2.1 showed the third decal-attempt also failed.</strong> The regenerated decals were rendered as full-frame paintings with the mushroom-scene baked in, then stacked as rectangles + black ovoids on the capsule. Three attempts did not converge: PIL crops, fal.ai LoRA regen, alpha-isolation tuning — all defeated by the diffusion-model bias toward painting-the-context. NORTH-STAR §4: stop patching, reconsider the system.</p>
+          <p class="update__lead-line">The system is the <strong>decal-on-capsule paradigm</strong>. It&#039;s retired. The canonical <code>cosmo-hero-lora.png</code> (Sprint 16A, 10/10 DNA, already shipped) becomes Cosmo&#039;s geometry directly — a single textured plane that billboards toward camera with Y-axis locked vertical.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>src/three/cosmoV2.ts</code></strong>: 374 → 133 LOC (−64%). Capsule body, sphere head, headBone, 4 disc-arms, 6 v2-final decal-planes, FaceState compositing — all retired. Replaced with one <code>THREE.Mesh + PlaneGeometry(1.2, 1.8)</code> carrying <code>assets/sprites/cosmo-hero-lora.png</code> as <code>MeshBasicMaterial({ map, transparent: true, alphaTest: 0.1, depthWrite: false, side: DoubleSide })</code>. Plane offset y=0.9 (matches old eye-line). New <code>rig.update(camera)</code> does Y-locked lookAt: <code>plane.lookAt(camera.x, plane.y+root.y, camera.z)</code> — billboards toward camera in XZ, never rolls.</li>
+          <li><strong><code>src/three/cosmoAnimDirector.ts</code></strong>: 446 → 224 LOC (−50%). Retired blink, head-track, antenna-bob (all needed bones). Surviving anims: idle-breath (root.scale.y pulse 0.4 Hz ±2%), walk-sway (plane.rotation.z ±0.03 rad — replaces disc oscillation), jump-arc (3-phase root.position.y + scale.y squash-stretch), climb (root.rotation.z = π/2). <code>AnimCtx</code> gains <code>camera: THREE.Camera</code> so the director can call <code>rig.update(camera)</code> at end of each tick.</li>
+          <li><strong><code>src/phaser/entities/CosmoAgent.ts</code></strong>: bone fields nulled, <code>FaceState</code> import + setFaceState removed, <code>tickAnimDirector(dt, motion)</code> → <code>tickAnimDirector(dt, motion, camera)</code>. Pet-affect kept as graceful event-hook no-op (host-side particle spew via onPet still works).</li>
+          <li><strong><code>src/main.ts</code></strong>: tickAnimDirector call (line ~373) now passes <code>cosmoStage.camera</code>. Cosmo-finisher&#039;s call placement preserved.</li>
+        </ul>
+<h3>NOTES</h3>
+        <ul class="update__highlights">
+          <li><strong>The hero PNG is the canonical Cosmo.</strong> It already exists, is already shipped, is already 10/10 DNA. We were trying to <em>recreate</em> it as 6 fragments instead of just <em>using</em> it. Brave reconsideration: sometimes the answer was already there.</li>
+          <li>The 6 v2-final decals stay on disk at <code>public/assets/cosmo/decals/v2-final/</code> for rollback safety; no longer loaded by the rig. Cleanup is a Wave 22 hygiene step.</li>
+          <li><strong>Lost capabilities</strong>: head-track-toward-mouse, antenna-bob spring, blink. These needed bones we no longer have. Recovery options for future waves: (a) UV-parallax for a faint &quot;Cosmo-looks-at-you&quot; effect, (b) eyelid-overlay-plane that fades for blink, (c) pure 3D rebuild via Meshy v6 with proper UV-mapping for texture projection. None of these blocks shipping today.</li>
+          <li><strong>CosmoAI&#039;s head-yaw / spine-bend directives</strong> are accepted by <code>applyAI()</code> but no longer rendered (no surface). The API stays compatible; the visual effect is a future wave&#039;s job.</li>
+          <li><strong>Substrate <code>behavior.ts</code> contracts</strong>: <code>CosmoV2Rig</code> shape is mostly additive (root preserved); third-party authors who referenced dropped fields like <code>cosmo.head</code> need a CONTRIBUTING sweep eventually. Not blocking — substrate boots fine.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.1</span>
           <span class="update__date">2026-05-05</span>
           <h2 class="update__title">05-05 — Wave 21.1: real Cosmo decals + /play/ chrome stripped</h2>
