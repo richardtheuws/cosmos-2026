@@ -339,15 +339,16 @@ async function boot(): Promise<void> {
   manager.register((u) => {
     motion.tick(u.delta);
   });
-  // Wave 21 — under substrate, the loader's tick fans into the active
-  // RoomHost which calls parallax.update via DefaultBackground. Under legacy,
-  // parallax.update fires directly. We register exactly ONE of the two so
-  // parallax never paints twice per frame.
+  // Wave 21.2.2 — main.ts owns the single ParallaxScene that paints the
+  // world. Behavior.background is a no-op (forest behavior.ts ships that
+  // way; the contract extension where SubstrateCtx exposes the shared
+  // parallax is a Wave 22 item). Both paths drive the same parallax tick;
+  // the substrate loader runs ADDITIONALLY to drive inhabitants, room
+  // transitions, and arrivals.
+  manager.register((u) => parallax.update(u, motion));
   if (substrateLoader) {
     const loader = substrateLoader;
     manager.register((u) => loader.tick(u.delta, u));
-  } else {
-    manager.register((u) => parallax.update(u, motion));
   }
   manager.register((u) => {
     const dt = u.delta;
