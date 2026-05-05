@@ -344,7 +344,7 @@ export class CosmoScene extends Phaser.Scene {
       },
       showFirstHint: () => {
         if (!this.firstHint) {
-          this.firstHint = new HintGlyph(this, () => this.firstHintTarget(), 'veeg omhoog');
+          this.firstHint = new HintGlyph(this, () => this.firstHintTarget(), 'swipe up');
         }
         this.firstHint.show();
       },

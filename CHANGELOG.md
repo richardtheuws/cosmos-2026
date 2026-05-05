@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.5] — 2026-05-05 — Wave 21.2.3: Dutch strings retired + mouth-pillar alpha-cut
+
+Self-UAT of v2.2.4 the-hollow room showed three remaining issues: mouth-pillar inhabitant rendered with a grey rectangle bg (Sprint 15C asset never had clean BiRefNet alpha), and two Dutch strings still appeared on screen — the HintGlyph "veeg omhoog" and the dailyStreak pill "Dag X in de trip". `/play/` is English-canonical per the v2.2.1 chrome-strip; these were oversights.
+
+### Fixed
+- **mouth-pillar-sheet.png** alpha-cut via fal-ai/birefnet (General Use Heavy, 1024×1024). 752 KB → 470 KB, clean transparency, four pillar-with-mouth frames now read against any bg without the grey halo.
+- **HintGlyph default text**: `'veeg omhoog'` → `'swipe up'`. Same change at the CosmoScene callsite.
+- **dailyStreak pill**: `Dag X in de trip` → `Day X in the trip` in `src/share/dailyStreak.ts`.
+
 ## [2.2.4] — 2026-05-05 — Wave 21.2.2: dual-ParallaxScene removed + self-UAT pipeline
 
 Live UAT after v2.2.3 (this time done by me with Playwright, not surfaced to Richard) showed the substrate path STILL had rectangle artifacts even with per-room filter + renderOrder + alphaTest fixes applied. Diagnosis: `universes/forest/behavior.ts::background` constructed a *second* ParallaxScene against the same canvas main.ts already painted to. Two parallax instances rendering decoration spots over each other produced the visible rectangle stack.

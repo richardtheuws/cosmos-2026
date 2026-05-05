@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.5</span>
+          <span class="update__date">2026-05-05</span>
+          <h2 class="update__title">05-05 — Wave 21.2.3: Dutch strings retired + mouth-pillar alpha-cut</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Self-UAT of v2.2.4 the-hollow room showed three remaining issues: mouth-pillar inhabitant rendered with a grey rectangle bg (Sprint 15C asset never had clean BiRefNet alpha), and two Dutch strings still appeared on screen — the HintGlyph &quot;veeg omhoog&quot; and the dailyStreak pill &quot;Dag X in de trip&quot;. <code>/play/</code> is English-canonical per the v2.2.1 chrome-strip; these were oversights.</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>mouth-pillar-sheet.png</strong> alpha-cut via fal-ai/birefnet (General Use Heavy, 1024×1024). 752 KB → 470 KB, clean transparency, four pillar-with-mouth frames now read against any bg without the grey halo.</li>
+          <li><strong>HintGlyph default text</strong>: <code>&#039;veeg omhoog&#039;</code> → <code>&#039;swipe up&#039;</code>. Same change at the CosmoScene callsite.</li>
+          <li><strong>dailyStreak pill</strong>: <code>Dag X in de trip</code> → <code>Day X in the trip</code> in <code>src/share/dailyStreak.ts</code>.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.4</span>
           <span class="update__date">2026-05-05</span>
           <h2 class="update__title">05-05 — Wave 21.2.2: dual-ParallaxScene removed + self-UAT pipeline</h2>

@@ -136,7 +136,7 @@ export function recordVisit(now: Date = new Date()): StreakState {
 export function announceVisit(): StreakState {
   const state = recordVisit();
   if (state.streak >= 1) {
-    showStreakPill(`Dag ${state.streak} in de trip`, 4000);
+    showStreakPill(`Day ${state.streak} in the trip`, 4000);
   }
   return state;
 }

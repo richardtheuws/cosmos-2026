@@ -51,7 +51,7 @@ export class HintGlyph {
   private disposed = false;
   private text: string;
 
-  constructor(scene: Phaser.Scene, target: TargetProvider, text = 'veeg omhoog') {
+  constructor(scene: Phaser.Scene, target: TargetProvider, text = 'swipe up') {
     this.scene = scene;
     this.getTarget = target;
     this.text = text;
