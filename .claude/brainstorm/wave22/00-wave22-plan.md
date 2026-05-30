@@ -1,7 +1,7 @@
 # Wave 22 — Make the spine real, reachable, and proven
 
-**Status**: proposed synthesis (pending Richard's go + second-universe pick)
-**Decided direction** (2026-05-30, NORTH-STAR §6): hard cutover (delete legacy after parity), second Universe in the same wave, test+UAT gate in parallel.
+**Status**: synthesis locked (2026-05-30) — direction + second-universe pick decided; ready to implement.
+**Decided direction** (2026-05-30, NORTH-STAR §6): hard cutover (delete legacy after parity), second Universe in the same wave = **Ink-Ocean**, test+UAT gate in parallel.
 **Source**: 7-team vision-fit audit (overall 5.5/10) + the four Wave 22 brainstorm docs in this folder.
 
 ---
@@ -51,6 +51,6 @@ LEGACY DELETION   ← last, only after visual-UAT confirms parity
 
 Brand contract (watercolor + 1992-DNA); the billboard-Cosmo pivot; the 4 transform anims; the chrome-stripped `/play/` shell; the substrate architecture itself.
 
-## Open decision for Richard
+## Second Universe — DECIDED: Ink-Ocean (2026-05-30)
 
-**Which second Universe?** Brainstorm 02 scored candidates and recommends **Ink-Ocean** (forces D4 + a real cross-Universe portal round-trip, stays inside the locked Hayao×Moebius palette: ink-aubergine / sky-wash / saffron-glow + one pop-cyan accent). Alternatives: canopy/sky-Room above the forest (cheapest, but closest to forest — weakest pluggability proof), dream-Area when Cosmo sleeps (evocative, but a same-Universe Area, not a cross-Universe proof). Final pick is Richard's per §3 ("the future tells us which seed grows").
+Richard chose **Ink-Ocean** from three scored candidates (over canopy/sky-Room and dream-Area, both weaker because they are same-Universe Areas, not cross-Universe proofs). A Moebius-ink underwater Universe inside the locked Hayao×Moebius palette (ink-aubergine / sky-wash / saffron-glow + one pop-cyan accent). It is the strongest pluggability proof: it forces D4 (a non-forest background the substrate must own) and a real cross-Universe portal round-trip (`PortalTransition` + `StatePersistence`) — the literal "your Cosmo visits my world" (§3b). Design sketch in `02-traversal-and-second-universe.md`.
