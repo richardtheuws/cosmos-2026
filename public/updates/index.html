@@ -206,22 +206,27 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
-          <span class="update__version">vUnreleased</span>
-          <span class="update__date">Wave 22 planning: the deferred substrate cutover</span>
-          <h2 class="update__title">Sprint Unreleased</h2>
+          <span class="update__version">v2.2.7</span>
+          <span class="update__date">2026-05-30</span>
+          <h2 class="update__title">05-30 — Wave 22 D4+D5: substrate single-tick + first test suite</h2>
         </div>
         <div class="update__body">
           <div class="update__tags">
           <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
           </div>
         <div class="update__lead">
-          <p class="update__lead-line">7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but <strong>dead in production</strong> — <code>/play/</code> never sets <code>?substrate=v2</code> (<code>src/main.ts:51-53</code>). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe to prove pluggability, and stands up the first real test+UAT gate. No game code shipped yet — this is the planning checkpoint.</p>
+          <p class="update__lead-line">7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but <strong>dead in production</strong> — <code>/play/</code> never sets <code>?substrate=v2</code> (<code>src/main.ts:51-53</code>). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe (Ink-Ocean) to prove pluggability, and stands up the first real test+UAT gate. This release ships the first two foundations (D4 + D5); both flag-gated/internal — default <code>/play/</code> is unchanged (legacy path). The hard cutover (substrate becomes default) lands later in the sequence as a minor bump, gated by live visual UAT.</p>
         </div>
         <h3>ADDED</h3>
         <ul class="update__highlights">
           <li>NORTH-STAR §6 Pivot Ledger entry (2026-05-30 — Wave 22): hard cutover (delete legacy after parity), second Universe in-wave (Ink-Ocean), test+UAT gate parallel.</li>
           <li><code>.claude/brainstorm/wave22/</code> — synthesis plan (<code>00</code>) + four concern docs: cutover &amp; legacy-migration (<code>01</code>), traversal &amp; second-universe (<code>02</code>), delight-loop unification (<code>03</code>), test &amp; UAT gate (<code>04</code>).</li>
           <li><strong>D5 — first automated test suite</strong>: Vitest on the pure-logic substrate resolvers + schema validators (<code>ResolveURL</code>, <code>ResolveMood</code>, <code>Manifest/Areas/Rooms</code> schemas). 39 tests, runs &lt;0.2s. <code>npm test</code> now actually runs (was an <code>echo</code> stub); <code>predeploy</code> gains <code>test</code> before <code>build</code>. Test files excluded from the build&#039;s <code>tsc --noEmit</code>.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>D4 — substrate owns its background (the linchpin)</strong>: <code>SubstrateCtx</code> now exposes the single shared <code>parallax</code> instance (the contract extension v2.2.4 deferred). The forest drops its no-op <code>background</code> override and inherits <code>DefaultBackground</code>, which drives the shared parallax per-room from <code>room.biomeKey</code>. <code>main.ts</code> ticks parallax <strong>only on the legacy/recovery path</strong>; on the substrate path the per-room background driver is the sole ticker — exactly one tick per frame, making the v2.2.4 double-paint structurally impossible. Still gated behind <code>?substrate=v2</code>. _Pixel behavior (parallax pan, per-room biome paint, no flash/stack) requires live human visual UAT._</li>
         </ul>
         </div>
       </div>

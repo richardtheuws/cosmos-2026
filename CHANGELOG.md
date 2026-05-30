@@ -4,9 +4,9 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
-## [Unreleased] — Wave 22 planning: the deferred substrate cutover
+## [2.2.7] — 2026-05-30 — Wave 22 D4+D5: substrate single-tick + first test suite
 
-7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but **dead in production** — `/play/` never sets `?substrate=v2` (`src/main.ts:51-53`). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe to prove pluggability, and stands up the first real test+UAT gate. No game code shipped yet — this is the planning checkpoint.
+7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but **dead in production** — `/play/` never sets `?substrate=v2` (`src/main.ts:51-53`). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe (Ink-Ocean) to prove pluggability, and stands up the first real test+UAT gate. This release ships the first two foundations (D4 + D5); both flag-gated/internal — default `/play/` is unchanged (legacy path). The hard cutover (substrate becomes default) lands later in the sequence as a minor bump, gated by live visual UAT.
 
 ### Added
 - NORTH-STAR §6 Pivot Ledger entry (2026-05-30 — Wave 22): hard cutover (delete legacy after parity), second Universe in-wave (Ink-Ocean), test+UAT gate parallel.
