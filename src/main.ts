@@ -339,16 +339,19 @@ async function boot(): Promise<void> {
   manager.register((u) => {
     motion.tick(u.delta);
   });
-  // Wave 21.2.2 — main.ts owns the single ParallaxScene that paints the
-  // world. Behavior.background is a no-op (forest behavior.ts ships that
-  // way; the contract extension where SubstrateCtx exposes the shared
-  // parallax is a Wave 22 item). Both paths drive the same parallax tick;
-  // the substrate loader runs ADDITIONALLY to drive inhabitants, room
-  // transitions, and arrivals.
-  manager.register((u) => parallax.update(u, motion));
+  // Wave 22 (D4) — exactly ONE parallax tick per frame, owned by whoever owns
+  // biome selection:
+  //  - substrate path: the per-room background driver (DefaultBackground or an
+  //    author override) is the sole ticker, invoked via loader.tick →
+  //    RoomHost.tick → background.update. main.ts must NOT also tick parallax
+  //    or it double-paints (the v2.2.4 stacked-decoration scar).
+  //  - legacy path / boot-failure recovery (substrateLoader === null):
+  //    main.ts owns the single tick, since no background driver exists.
   if (substrateLoader) {
     const loader = substrateLoader;
     manager.register((u) => loader.tick(u.delta, u));
+  } else {
+    manager.register((u) => parallax.update(u, motion));
   }
   manager.register((u) => {
     const dt = u.delta;

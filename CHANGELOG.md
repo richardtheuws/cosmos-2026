@@ -13,6 +13,9 @@ De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run
 - `.claude/brainstorm/wave22/` — synthesis plan (`00`) + four concern docs: cutover & legacy-migration (`01`), traversal & second-universe (`02`), delight-loop unification (`03`), test & UAT gate (`04`).
 - **D5 — first automated test suite**: Vitest on the pure-logic substrate resolvers + schema validators (`ResolveURL`, `ResolveMood`, `Manifest/Areas/Rooms` schemas). 39 tests, runs <0.2s. `npm test` now actually runs (was an `echo` stub); `predeploy` gains `test` before `build`. Test files excluded from the build's `tsc --noEmit`.
 
+### Changed
+- **D4 — substrate owns its background (the linchpin)**: `SubstrateCtx` now exposes the single shared `parallax` instance (the contract extension v2.2.4 deferred). The forest drops its no-op `background` override and inherits `DefaultBackground`, which drives the shared parallax per-room from `room.biomeKey`. `main.ts` ticks parallax **only on the legacy/recovery path**; on the substrate path the per-room background driver is the sole ticker — exactly one tick per frame, making the v2.2.4 double-paint structurally impossible. Still gated behind `?substrate=v2`. _Pixel behavior (parallax pan, per-room biome paint, no flash/stack) requires live human visual UAT._
+
 ## [2.2.6] — 2026-05-05 — Wave 21.2.4: mouth-pillar retired, the-hollow goes quiet
 
 Self-UAT of v2.2.5 the-hollow showed the mouth-pillar still flickered as 4-5 cycling rectangles — even with clean alpha. Diagnosis: Sprint 15C built `mouth-pillar-sheet.png` as 4 *separately-painted* frames composited horizontally (per `weirdo_objects_v15c.md`: "diffusion can not render sequential-states in one image"). The frames are four different illustrations, not animation-coherent poses of one character. Cycling them creates a stack of non-coherent shapes regardless of how clean the alpha is.

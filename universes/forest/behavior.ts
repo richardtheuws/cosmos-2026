@@ -128,26 +128,23 @@ interface UniverseBehavior {
 
 /* ── background ───────────────────────────────────────────────────────────────
  *
- * Wave 21.2.1 (2026-05-05): no-op background.
+ * Wave 22 (D4, 2026-05-30): the forest no longer ships a `background` override.
  *
- * `src/main.ts` already constructs a ParallaxScene at boot (it owns the WebGL
- * renderer that CosmoStage sub-renders into). When `behavior.background` ALSO
- * constructed its own ParallaxScene against the same canvas, both ran every
- * frame and painted overlapping decoration spots → live UAT 2026-05-05 showed
- * stacked rectangle artifacts. Per NORTH-STAR §4 brave-reconsideration: the
- * substrate-owns-the-background plan needs a SubstrateCtx that exposes the
- * single existing parallax instance instead of letting universes build their
- * own. That contract extension is a Wave 22 item.
+ * History: Wave 21.2.1 made it a no-op because an earlier ForestBackground
+ * constructed its OWN ParallaxScene against main.ts's canvas — two scenes, two
+ * ticks, stacked decoration artifacts (the v2.2.4 scar). The fix back then was
+ * "do nothing and let main.ts paint."
  *
- * Until then the forest's `background` is a documented no-op: main.ts's
- * ParallaxScene paints the world; this handle does nothing per-frame.
+ * D4 closes that properly. `SubstrateCtx` now exposes the single shared
+ * `parallax` instance, and the substrate's DefaultBackground drives it per-room
+ * from `room.biomeKey`. main.ts ticks parallax ONLY on the legacy path; on the
+ * substrate path the background driver is the sole ticker (exactly once/frame).
+ * So the forest simply OMITS `background` and inherits DefaultBackground — the
+ * correct biome-based world paint, with no double-tick possible by construction.
+ *
+ * A Universe that wants a custom (non-biome) world ADDS a `background(ctx)` and
+ * configures `ctx.parallax` directly. That is the override seam Ink-Ocean uses.
  */
-class ForestBackground implements BackgroundHandle {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(_ctx: SubstrateCtx) {}
-  update(_dt: number, _u: GlobalUniforms): void {}
-  dispose(): void {}
-}
 
 /** Heuristic — resolve a canvas from the substrate context. The architect's
  *  SubstrateCtx (§1.4) does not include the canvas element directly; this
@@ -532,7 +529,12 @@ function forestAudio(_ctx: SubstrateCtx): AudioHandle {
  * complete teaching example.
  */
 const forestBehavior: UniverseBehavior = {
-  background: (ctx) => new ForestBackground(ctx),
+  // background — INTENTIONALLY OMITTED. The forest is biome-based, so it falls
+  // through to the substrate's DefaultBackground, which drives the single shared
+  // ParallaxScene (ctx.parallax) from each room's `biomeKey`. A Universe that
+  // needs a custom, non-biome world paints it by ADDING a `background(ctx)` that
+  // configures `ctx.parallax` (Wave 22 D4 contract extension) — see the note
+  // above. Never construct a second ParallaxScene (the v2.2.4 double-tick scar).
   arrival: forestArrival,
   inhabitants: forestInhabitants,
   interactables: forestInteractables,

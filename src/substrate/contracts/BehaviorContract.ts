@@ -21,6 +21,7 @@ import type { GlobalUniforms } from '../../core/globalUniforms';
 import type { CosmoV2Rig } from '../../three/cosmoV2';
 import type { AudioFFTBridge } from '../../audio/audioFFTBridge';
 import type { MotionController } from '../../core/motionController';
+import type { ParallaxScene } from '../../three/parallaxScene';
 
 export type { CosmoState } from '../../phaser/entities/CosmoAgent';
 
@@ -54,6 +55,14 @@ export interface SubstrateCtx {
   /** Three.js renderer the universe shares with the parallax stack. Drivers
    *  performing custom render-target work read it from here. */
   renderer: THREE.WebGLRenderer;
+  /** The single shared ParallaxScene that paints the world. Wave 22 (D4)
+   *  contract extension: a Universe's `behavior.background(ctx)` configures
+   *  THIS instance (e.g. `ctx.parallax.loadBiome(...)`) instead of constructing
+   *  its own — the one-renderer-per-canvas invariant that the v2.2.4
+   *  double-ParallaxScene scar enforces. Omitting `behavior.background`
+   *  altogether falls through to DefaultBackground, which drives this instance
+   *  from the room's `biomeKey`. */
+  parallax: ParallaxScene;
 }
 
 export interface ResolvedMood {

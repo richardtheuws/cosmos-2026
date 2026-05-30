@@ -123,6 +123,9 @@ export class SubstrateLoader {
       audioBridge: this.bootCtx.audioBridge,
       motion: this.bootCtx.motion,
       renderer: this.bootCtx.renderer,
+      // Wave 22 (D4) — expose the single shared ParallaxScene so a Universe's
+      // background driver configures it rather than constructing a second one.
+      parallax: this.bootCtx.parallax,
     };
 
     // Wire renderer onto scene.userData so the forest-builder's resolveCanvas
