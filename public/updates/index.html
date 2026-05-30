@@ -206,6 +206,40 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.8</span>
+          <span class="update__date">2026-05-30</span>
+          <h2 class="update__title">05-30 — Wave 22: the real trampoline + bounce juice</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live UAT of v2.2.7 (Richard, 2026-05-30): the substrate path looked ~identical to legacy (correct — D4 was plumbing; the visible difference is a per-room inhabitant, proving substrate is on), but Cosmo had no smooth movement and there was no real trampoline. This ships the heart of the delight loop (NORTH-STAR §3). Shows on BOTH paths (shared Cosmo stack).</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>Trampoline3D</code></strong> (<code>src/three/trampoline3D.ts</code>) — a real trampoline built from primitives: steel frame + blue rim (torus, metallic) + four splayed legs + a <strong>white flexible mat</strong> (subdivided disc) that dips on impact and springs back via a damped spring. A deliberate ≤5% pop-object, shaded soft to sit in the watercolor world. Replaces the retired <code>organic-flesh-trampoline.png</code> billboard.</li>
+          <li><strong>Rebounce combo</strong> — arriving on the trampoline triggers 4 bounces (1 + 3 auto-rebounces), so Cosmo &quot;gaat los&quot; instead of a single hop. Mat flexes + kaleido spikes on each.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>TrampolineSpots</code></strong> rebuilt to render <code>Trampoline3D</code> (one hero trampoline by default) — same public API (attach / update / pickAtNDC / positions / positionOf), tap→walk→bounce wiring unchanged; new <code>impactNearest()</code> flexes the mat under Cosmo (wired from <code>onBounce</code> in main.ts).</li>
+          <li><strong>Bounce now has squash-stretch juice</strong> — <code>CosmoAnimDirector</code> runs its 0.8s squash→stretch→settle arc on the <code>bouncing</code> state too (it already matched <code>BOUNCE_DURATION_S</code>); previously only the bare <code>worldY</code> arc played (no squash), which read as flat.</li>
+          <li><strong>Idle-breath</strong> raised ±2% → ±3.5% (the old amplitude read as static on the billboard).</li>
+        </ul>
+<h3>NEXT (AFTER THIS UAT CONFIRMS THE BASE)</h3>
+        <ul class="update__highlights">
+          <li>Procedural <strong>tricks</strong> — spins/flips applied <em>after</em> the billboard <code>lookAt</code> (which currently clobbers <code>plane.rotation</code>), escalating per rebounce. Held back deliberately so the billboard-rotation approach is validated against the working base first. _All visual behavior here needs live human UAT — code cannot self-verify pixels._</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.7</span>
           <span class="update__date">2026-05-30</span>
           <h2 class="update__title">05-30 — Wave 22 D4+D5: substrate single-tick + first test suite</h2>

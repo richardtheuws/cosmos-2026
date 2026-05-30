@@ -4,6 +4,22 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.8] — 2026-05-30 — Wave 22: the real trampoline + bounce juice
+
+Live UAT of v2.2.7 (Richard, 2026-05-30): the substrate path looked ~identical to legacy (correct — D4 was plumbing; the visible difference is a per-room inhabitant, proving substrate is on), but Cosmo had no smooth movement and there was no real trampoline. This ships the heart of the delight loop (NORTH-STAR §3). Shows on BOTH paths (shared Cosmo stack).
+
+### Added
+- **`Trampoline3D`** (`src/three/trampoline3D.ts`) — a real trampoline built from primitives: steel frame + blue rim (torus, metallic) + four splayed legs + a **white flexible mat** (subdivided disc) that dips on impact and springs back via a damped spring. A deliberate ≤5% pop-object, shaded soft to sit in the watercolor world. Replaces the retired `organic-flesh-trampoline.png` billboard.
+- **Rebounce combo** — arriving on the trampoline triggers 4 bounces (1 + 3 auto-rebounces), so Cosmo "gaat los" instead of a single hop. Mat flexes + kaleido spikes on each.
+
+### Changed
+- **`TrampolineSpots`** rebuilt to render `Trampoline3D` (one hero trampoline by default) — same public API (attach / update / pickAtNDC / positions / positionOf), tap→walk→bounce wiring unchanged; new `impactNearest()` flexes the mat under Cosmo (wired from `onBounce` in main.ts).
+- **Bounce now has squash-stretch juice** — `CosmoAnimDirector` runs its 0.8s squash→stretch→settle arc on the `bouncing` state too (it already matched `BOUNCE_DURATION_S`); previously only the bare `worldY` arc played (no squash), which read as flat.
+- **Idle-breath** raised ±2% → ±3.5% (the old amplitude read as static on the billboard).
+
+### Next (after this UAT confirms the base)
+- Procedural **tricks** — spins/flips applied *after* the billboard `lookAt` (which currently clobbers `plane.rotation`), escalating per rebounce. Held back deliberately so the billboard-rotation approach is validated against the working base first. _All visual behavior here needs live human UAT — code cannot self-verify pixels._
+
 ## [2.2.7] — 2026-05-30 — Wave 22 D4+D5: substrate single-tick + first test suite
 
 7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but **dead in production** — `/play/` never sets `?substrate=v2` (`src/main.ts:51-53`). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe (Ink-Ocean) to prove pluggability, and stands up the first real test+UAT gate. This release ships the first two foundations (D4 + D5); both flag-gated/internal — default `/play/` is unchanged (legacy path). The hard cutover (substrate becomes default) lands later in the sequence as a minor bump, gated by live visual UAT.

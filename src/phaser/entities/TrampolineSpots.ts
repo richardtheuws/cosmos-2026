@@ -1,67 +1,25 @@
 /**
- * TrampolineSpots — Sprint 17D
+ * TrampolineSpots — Sprint 17D, rebuilt Wave 22 (2026-05-30).
  *
- * Fixed in-biome interaction-spots replacing the old runner-style spawn-pool.
- * Each spot is a billboarded plane with the Sprint 15C
- * `organic-flesh-trampoline.png` asset, parked at a hand-authored (x, y, z)
- * inside the biome's `cameraBounds`. Every spot has a subtle hover-bob driven
- * by a per-spot phase offset so the cluster never reads as in-sync clones.
+ * Wave 22: the old `organic-flesh-trampoline.png` billboard is retired. Each
+ * spot now renders a real built-from-primitives `Trampoline3D` (steel frame,
+ * blue rim, white flexible mat) — Richard's brief: "een trampoline-trampoline …
+ * waar Cosmo helemaal los op kan gaan." The mat flexes on impact via a spring.
  *
- * Tap-detection
- * ─────────────
- * Pure-Three.js raycaster from the camera through the tap NDC. The closest
- * intersected spot is the "winner"; its world-position is handed back so
- * CosmoAgent can `walkTo()` it and bounce. No-hit → no-op (tapping empty
- * sky has no penalty per the 17D brief: "Geen hit → niets").
+ * The public API is UNCHANGED so the existing wiring keeps working:
+ *   - main.ts constructs it + attaches to CosmoStage.scene + ticks update(dt)
+ *   - CosmoAI reads positions() for its 'curious' walk-to target
+ *   - InteractionManager (CosmoScene) raycasts via pickAtNDC() → walkTo + bounce
  *
- * Hover-bob formula
- *   y(t) = baseY + sin((t + phase) * BOB_FREQ) * BOB_AMPLITUDE
- *   phase ∈ [0, 2π) seeded per-spot at construction so spots desync.
+ * New: `impactNearest(x, z)` — the host pulses the mat under Cosmo when he
+ * bounces (wired from CosmoAgent.onBounce in main.ts).
  *
- * Composition-spec format (extension)
- * ───────────────────────────────────
- * Each biome's `composition-spec.json` may add an `interactionSpots` field:
- *
- *   "interactionSpots": {
- *     "trampolines": [
- *       { "x": -1.2, "y": 0, "z": -3.0 },
- *       { "x":  0.8, "y": 0, "z": -2.0 }
- *     ]
- *   }
- *
- * Positions must lie within the biome's MotionController bounds (±1.6 X,
- * depth -2 to -5). When the field is absent we fall back to a 3-spot
- * default arranged symmetrically around 0.
- *
- * Lifecycle
- * ─────────
- * - Constructed once (at boot or biome-load) with the spot list.
- * - `attach(scene)` adds all spot meshes to the THREE.Scene.
- * - `update(dt)` advances per-spot bob.
- * - `pickAtNDC(ndcX, ndcY)` runs raycaster, returns the closest spot
- *   (worldX, worldY, worldZ) or null.
- * - `dispose()` removes meshes + disposes geometry/material.
- *
- * Authoring notes
- *   - Spots stay STATIC in world-space; the camera moves around them. This
- *     means a tilted gyro reveals different spots in the framing.
- *   - We don't use AdditiveBlending (would wash out against bright biomes).
- *     Standard alpha + double-sided so the camera-pan can swing past behind
- *     them without culling artefacts.
- *   - The trampoline texture has natural subject-shadow inside its alpha,
- *     so we don't apply MeshStandardMaterial — Basic + texture is enough
- *     and cheaper on mobile.
+ * Spots stay STATIC in world-space; the camera moves around them (Sprint 17B).
+ * Group origin = the bounce surface (mat at y=0), so a spot at def.y=0 lets
+ * Cosmo bounce ON the doek from his ground level. Legs hang below.
  */
 import * as THREE from 'three';
-import { assetPath } from '../../core/assetPath';
-
-const BOB_FREQ = 1.4; // rad/s
-const BOB_AMPLITUDE = 0.05;
-const PLANE_W = 1.0;
-const PLANE_H = 0.6;
-/** How forgiving the tap-pick is — we round-up the raycaster's `params.Mesh.threshold`
- *  via a slightly larger bounding plane geometry on each spot. */
-const TAP_PADDING_FACTOR = 1.15;
+import { Trampoline3D } from '../../three/trampoline3D';
 
 /** Per-biome definition — JSON-friendly. */
 export interface TrampolineSpotDef {
@@ -72,173 +30,118 @@ export interface TrampolineSpotDef {
 
 interface SpotInstance {
   def: TrampolineSpotDef;
-  group: THREE.Group;
-  mesh: THREE.Mesh;
-  /** Phase offset in [0, 2π) — desyncs hover-bob. */
-  phase: number;
-  /** Cached base-Y (def.y) — bob offsets ride on top. */
-  baseY: number;
+  trampoline: Trampoline3D;
 }
 
-/** Default spot layout when a biome's composition-spec omits `interactionSpots`. */
+/** Default layout when a biome's composition-spec omits `interactionSpots`.
+ *  Wave 22: ONE hero trampoline (NORTH-STAR §3 — one fully-alive delight loop
+ *  beats three half-alive ones). Centred, mid-depth, on the ground (y=0). */
 export const DEFAULT_TRAMPOLINE_SPOTS: readonly TrampolineSpotDef[] = [
-  { x: -1.2, y: 0, z: -3.0 },
-  { x: 0.0, y: 0, z: -2.4 },
-  { x: 1.2, y: 0, z: -3.6 },
+  { x: 0.0, y: 0, z: -2.6 },
 ];
 
 /** Pick result returned from `pickAtNDC()`. */
 export interface SpotPick {
-  /** World-space position of the picked spot (with current bob applied). */
+  /** World-space position of the picked trampoline. */
   world: THREE.Vector3;
-  /** Index into the spots-array — useful for callers that want to flash
-   *  the picked spot's material on commit. */
   index: number;
 }
 
 export class TrampolineSpots {
   private spots: SpotInstance[] = [];
   private scene: THREE.Scene | null = null;
-  private texture: THREE.Texture | null = null;
-  private sharedMaterial: THREE.MeshBasicMaterial | null = null;
-  private sharedGeometry: THREE.PlaneGeometry | null = null;
   private raycaster = new THREE.Raycaster();
   private ndcVec = new THREE.Vector2();
-  /** Wall-clock time accumulator for hover-bob. */
-  private t = 0;
 
   constructor(defs: readonly TrampolineSpotDef[] = DEFAULT_TRAMPOLINE_SPOTS) {
     this.buildSpots(defs);
   }
 
-  /** Replace the active spot-list (e.g. on biome-change). Disposes previous
-   *  meshes if the scene was attached. */
+  /** Replace the active spot-list (e.g. on biome-change). */
   setSpots(defs: readonly TrampolineSpotDef[]): void {
     const prevScene = this.scene;
-    if (prevScene) {
-      for (const s of this.spots) {
-        if (s.group.parent) s.group.parent.remove(s.group);
-      }
-    }
+    for (const s of this.spots) s.trampoline.dispose();
     this.spots = [];
     this.buildSpots(defs);
     if (prevScene) {
-      for (const s of this.spots) prevScene.add(s.group);
+      for (const s of this.spots) prevScene.add(s.trampoline.group);
     }
   }
 
-  /** Add all spots to the THREE.Scene. */
+  /** Add all trampolines to the THREE.Scene. */
   attach(scene: THREE.Scene): void {
     this.scene = scene;
-    for (const s of this.spots) scene.add(s.group);
+    for (const s of this.spots) scene.add(s.trampoline.group);
   }
 
-  /** Remove all spots from the scene + dispose GPU resources. */
+  /** Remove + dispose all trampolines. */
   dispose(): void {
-    for (const s of this.spots) {
-      if (s.group.parent) s.group.parent.remove(s.group);
-    }
+    for (const s of this.spots) s.trampoline.dispose();
     this.spots = [];
-    this.sharedGeometry?.dispose();
-    this.sharedGeometry = null;
-    this.sharedMaterial?.dispose();
-    this.sharedMaterial = null;
-    this.texture?.dispose();
-    this.texture = null;
     this.scene = null;
   }
 
-  /** Per-frame tick — advances hover-bob. `dt` in seconds. */
+  /** Per-frame tick — advances each mat's flex spring. `dt` in seconds. */
   update(dt: number): void {
-    this.t += dt;
-    for (const s of this.spots) {
-      const offset = Math.sin((this.t + s.phase) * BOB_FREQ) * BOB_AMPLITUDE;
-      s.group.position.y = s.baseY + offset;
-    }
+    for (const s of this.spots) s.trampoline.update(dt);
   }
 
-  /** Read-only view of the spot world-positions. Used by tests + debug HUDs. */
+  /** Read-only view of the trampoline world-positions (CosmoAI walk target). */
   positions(): readonly THREE.Vector3[] {
-    return this.spots.map((s) => s.group.position.clone());
+    return this.spots.map((s) => s.trampoline.group.position.clone());
   }
 
-  /** Number of currently-active spots. */
   count(): number {
     return this.spots.length;
   }
 
   /**
-   * Cast a ray through (ndcX, ndcY) using `camera`. NDC is the standard
-   * Three.js convention: -1..+1 with +Y up. The closest hit (Vector3 in
-   * world-space) is returned, or null if no spot was hit.
-   *
-   * `ndcX = (clientX / viewportW) * 2 - 1`
-   * `ndcY = -(clientY / viewportH) * 2 + 1`  (note Y flip vs CSS pixels)
+   * Cast a ray through (ndcX, ndcY) using `camera`; return the closest
+   * trampoline hit (mat mesh) in world-space, or null. NDC convention:
+   * `ndcX = (clientX / viewportW) * 2 - 1`, `ndcY = -(clientY / viewportH) * 2 + 1`.
    */
   pickAtNDC(camera: THREE.Camera, ndcX: number, ndcY: number): SpotPick | null {
     if (!this.spots.length) return null;
     this.ndcVec.set(ndcX, ndcY);
     this.raycaster.setFromCamera(this.ndcVec, camera);
-    const meshes = this.spots.map((s) => s.mesh);
+    const meshes = this.spots.map((s) => s.trampoline.matMesh);
     const hits = this.raycaster.intersectObjects(meshes, false);
     if (!hits.length) return null;
-    // Closest hit is hits[0] (raycaster sorts by distance ascending).
     const hitMesh = hits[0].object as THREE.Mesh;
-    const idx = this.spots.findIndex((s) => s.mesh === hitMesh);
+    const idx = this.spots.findIndex((s) => s.trampoline.matMesh === hitMesh);
     if (idx < 0) return null;
-    return {
-      world: this.spots[idx].group.position.clone(),
-      index: idx,
-    };
+    return { world: this.spots[idx].trampoline.group.position.clone(), index: idx };
   }
 
-  /** Get the world-position of the spot at `index`, or null if out of range. */
+  /** World-position of the trampoline at `index`, or null. */
   positionOf(index: number): THREE.Vector3 | null {
     const s = this.spots[index];
-    if (!s) return null;
-    return s.group.position.clone();
+    return s ? s.trampoline.group.position.clone() : null;
+  }
+
+  /** Flex the mat of the trampoline nearest (x, z) in world-space — the host
+   *  calls this when Cosmo bounces so the doek visibly gives. */
+  impactNearest(x: number, z: number, strength = 1): void {
+    let best: SpotInstance | null = null;
+    let bestD = Infinity;
+    for (const s of this.spots) {
+      const p = s.trampoline.group.position;
+      const d = (p.x - x) ** 2 + (p.z - z) ** 2;
+      if (d < bestD) {
+        bestD = d;
+        best = s;
+      }
+    }
+    best?.trampoline.impact(strength);
   }
 
   // ── Internal ─────────────────────────────────────────────────────────────
 
   private buildSpots(defs: readonly TrampolineSpotDef[]): void {
-    if (!this.texture) {
-      this.texture = new THREE.TextureLoader().load(
-        assetPath('assets/objects/organic-flesh-trampoline.png'),
-      );
-      this.texture.colorSpace = THREE.SRGBColorSpace;
-    }
-    if (!this.sharedGeometry) {
-      // Slight padding on the geometry so raycaster-tap is forgiving.
-      this.sharedGeometry = new THREE.PlaneGeometry(
-        PLANE_W * TAP_PADDING_FACTOR,
-        PLANE_H * TAP_PADDING_FACTOR,
-      );
-    }
-    if (!this.sharedMaterial) {
-      this.sharedMaterial = new THREE.MeshBasicMaterial({
-        map: this.texture,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-        alphaTest: 0.05,
-      });
-    }
     for (const def of defs) {
-      const group = new THREE.Group();
-      group.position.set(def.x, def.y, def.z);
-      const mesh = new THREE.Mesh(this.sharedGeometry, this.sharedMaterial);
-      // Lift the plane so its anchor is the bottom of the trampoline.
-      mesh.position.y = PLANE_H / 2;
-      group.add(mesh);
-      const phase = Math.random() * Math.PI * 2;
-      this.spots.push({
-        def,
-        group,
-        mesh,
-        phase,
-        baseY: def.y,
-      });
+      const trampoline = new Trampoline3D();
+      trampoline.group.position.set(def.x, def.y, def.z);
+      this.spots.push({ def, trampoline });
     }
   }
 }

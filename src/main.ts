@@ -43,7 +43,7 @@ import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 
-const VERSION = '2.2.7';
+const VERSION = '2.2.8';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
@@ -157,6 +157,9 @@ async function boot(): Promise<void> {
       if (info.rollHallucination) {
         audioBridge.startHallucination(HALLUCINATION_PEAKS);
       }
+      // Wave 22 — flex the trampoline mat under Cosmo at the moment of bounce
+      // (onBounce fires at bounce-start, so the doek gives as he pushes off).
+      trampolineSpots.impactNearest(cosmoAgent.worldX, cosmoAgent.worldZ, 1);
       agentEventShim.onBounce?.(info);
     },
     onPet: () => {

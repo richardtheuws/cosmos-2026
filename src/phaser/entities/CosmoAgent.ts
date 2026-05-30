@@ -133,6 +133,9 @@ const WALK_TO_DURATION_S = 1.5;
 const BOUNCE_DURATION_S = 0.8;
 /** Bounce apex (world-units). Brief: 0 → 0.6 → 0. */
 const BOUNCE_HEIGHT = 0.6;
+/** Wave 22 — extra auto-rebounces after Cosmo arrives on a trampoline, so he
+ *  "gaat helemaal los" (Richard 2026-05-30) instead of a single hop. */
+const BOUNCE_COMBO_EXTRA = 3;
 /** Pet-affect total duration — saffron blush + heart-emote tilt + petal-spew. */
 const PET_AFFECT_DURATION_S = 0.8;
 /** Heart-emote: peak antenne yaw deviation during pet (rad ≈ ±20°). */
@@ -259,6 +262,8 @@ export class CosmoAgent {
   worldZ = 0;
   /** True while a bounce is in progress. */
   private bouncingUntil = 0;
+  /** Wave 22 — remaining auto-rebounces queued for the trampoline combo. */
+  private bounceCombo = 0;
   /** Antenne-bone reference for the heart-emote during pet-affect. */
   private antennaBone: THREE.Object3D | null = null;
   private antennaRestQuat: THREE.Quaternion | null = null;
@@ -726,6 +731,7 @@ export class CosmoAgent {
           this.worldX = this.walkTargetX;
           this.worldZ = this.walkTargetZ;
           if (this.walkArrivalAction === 'bounce') {
+            this.bounceCombo = BOUNCE_COMBO_EXTRA; // Wave 22 — go wild
             this.startBounce();
           } else {
             this.setState('walking');
@@ -741,8 +747,20 @@ export class CosmoAgent {
         const phase = remaining <= 0 ? 1 : 1 - Math.max(0, Math.min(1, remaining / dur));
         this.worldY = this.groundY + Math.sin(phase * Math.PI) * BOUNCE_HEIGHT;
         if (phase >= 1) {
-          this.worldY = this.groundY;
-          this.setState('walking');
+          if (this.bounceCombo > 0) {
+            // Wave 22 — keep going: re-arm the bounce in place. We stay in the
+            // 'bouncing' state so worldX/worldZ remain locked at the trampoline
+            // (the anchored-reset below skips 'bouncing'); onBounce flexes the
+            // mat + spikes kaleido again each rebounce.
+            this.bounceCombo--;
+            this.bouncingUntil = this.t + BOUNCE_DURATION_S;
+            this.worldY = this.groundY;
+            const rollHallucination = Math.random() < BOUNCE_HALLUCINATION_CHANCE;
+            this.events.onBounce?.({ rollHallucination });
+          } else {
+            this.worldY = this.groundY;
+            this.setState('walking');
+          }
         }
         break;
       }
@@ -1100,6 +1118,9 @@ export class CosmoAgent {
       velocity: this.animVelocity,
       focusPoint,
       isJumping: this.state === 'jumping',
+      // Wave 22 — trampoline bounce (state 'bouncing') drives the same 0.8s
+      // squash→stretch→settle arc as a jump (BOUNCE_DURATION_S === JUMP_TOTAL_S).
+      isBouncing: this.state === 'bouncing',
       isClimbing: this.animClimbing,
       camera,
     };

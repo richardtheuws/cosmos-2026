@@ -36,8 +36,9 @@ import * as THREE from 'three';
 import type { CosmoV2Rig } from './cosmoV2';
 
 // ── Tunables (calm baseline) ──────────────────────────────────────────────
-const IDLE_BREATH_HZ = 0.4;
-const IDLE_BREATH_AMPL = 0.02; // ±2%
+const IDLE_BREATH_HZ = 0.45;
+const IDLE_BREATH_AMPL = 0.035; // ±3.5% — Wave 22: the old ±2% read as static on
+// the billboard (Richard, 2026-05-30: "geen smooth movement"). Still calm.
 /** Walk-sway amplitude on plane.rotation.z. Tiny — replaces the dead disc bob
  *  with a barely-perceptible shoulder-tilt. */
 const WALK_SWAY_AMPL = 0.03; // rad (~1.7°)
@@ -64,6 +65,9 @@ export interface AnimCtx {
   focusPoint: THREE.Vector3 | null;
   /** True while CosmoAgent state-machine is in 'jumping'. */
   isJumping: boolean;
+  /** True while CosmoAgent is mid trampoline-bounce ('bouncing' state). Drives
+   *  the same squash→stretch→settle arc as a jump (Wave 22). */
+  isBouncing?: boolean;
   /** True while a wall-cling/climb mode is active. */
   isClimbing: boolean;
   /** Camera the billboard should face. The director calls rig.update(camera)
@@ -110,7 +114,10 @@ export class CosmoAnimDirector {
     this.t += dt;
 
     const isClimbing = ctx.isClimbing;
-    const isJumping = ctx.isJumping;
+    // Wave 22 — a trampoline bounce animates with the same squash-stretch arc as
+    // a jump. Both last 0.8s, so the scripted timeline lines up with the worldY
+    // sin-arc the state-machine drives.
+    const isJumping = ctx.isJumping || ctx.isBouncing === true;
 
     // ── 1. idle-breath ──────────────────────────────────────────────────
     // Suppressed during jump (squash-stretch owns root.scale.y) and climb.
