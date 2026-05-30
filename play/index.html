@@ -214,6 +214,46 @@ html, body {
   .hud-pill--controls { display: none !important; }
 }
 
+/* ===== Wave 22 — dev-invite link (lives in the hover-reveal hud) + trampoline
+   hint. The invite carries the §3b open-substrate pitch quietly; it reveals
+   with the rest of the hud on cursor-approach. ===== */
+.hud-invite {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--saffron-glow);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: auto;
+  border-bottom: 1px solid rgba(244, 162, 97, 0.32);
+  padding-bottom: 1px;
+  align-self: center;
+}
+.hud-invite:hover { color: var(--mushroom-cream); }
+@media (max-width: 600px) { .hud-invite { font-size: 11px; } }
+
+/* "Show, don't tell" trampoline hint — fades in a beat after wake (when Cosmo
+   demonstrates the trampoline), dismissed by the next tap or after 9s. */
+.trampoline-hint {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 64px);
+  z-index: 12;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--mushroom-cream);
+  text-shadow: 0 2px 14px rgba(20, 16, 26, 0.7);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 800ms var(--ease-out-expo), transform 800ms var(--ease-out-expo);
+}
+.trampoline-hint.is-visible { opacity: 0.92; transform: translateX(-50%) translateY(0); }
+@media (max-width: 600px) { .trampoline-hint { font-size: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); } }
+
 /* Mobile-only disclaimer pill, dismissible. */
 .mobile-disclaimer {
   position: fixed;
@@ -314,8 +354,12 @@ html, body {
   <div class="hud" id="hud-root">
     <div class="hud-left">
       <!-- game-info pill is injected by HudOverlay.attach() -->
+      <a class="hud-invite" href="https://github.com/RichardTheuws/cosmos-2026" target="_blank" rel="noopener">built openly — make your own world →</a>
     </div>
   </div>
+
+  <!-- "Show, don't tell" — fades in when Cosmo demonstrates the trampoline. -->
+  <div class="trampoline-hint" id="trampoline-hint">tap the trampoline — watch him go</div>
 
   <div class="boot-overlay" id="boot">
     <div class="title">Cosmo awakening&hellip;</div>
@@ -380,6 +424,22 @@ html, body {
   window.setTimeout(() => {
     document.getElementById('boot')?.classList.add('is-awaiting');
   }, 600);
+
+  // Wave 22 — trampoline hint ("show, don't tell"). The first tap wakes Cosmo;
+  // a beat later (as he walks over and demonstrates the trampoline) the hint
+  // fades in. The next tap — or 9s — dismisses it. No nagging.
+  (() => {
+    const hint = document.getElementById('trampoline-hint');
+    if (!hint) return;
+    let firstTap = true;
+    let visible = false;
+    const hide = () => { hint.classList.remove('is-visible'); visible = false; };
+    const show = () => { hint.classList.add('is-visible'); visible = true; window.setTimeout(hide, 9000); };
+    window.addEventListener('pointerdown', () => {
+      if (firstTap) { firstTap = false; window.setTimeout(show, 4500); }
+      else if (visible) { hide(); }
+    }, { passive: true });
+  })();
   import('/src/main.ts').catch((err) => {
     console.error('Boot error:', err);
     const boot = document.getElementById('boot');

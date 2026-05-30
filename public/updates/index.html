@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.2.10</span>
+          <span class="update__date">2026-05-30</span>
+          <h2 class="update__title">05-30 — Wave 22: &quot;show, don&#039;t tell&quot; onboarding</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live UAT of v2.2.9 (Richard): trampoline good, but the controls were undiscoverable on laptop (&quot;ik snap niet hoe ik iets moet doen&quot;), and we need an &quot;uitleg&quot; that also inspires contributor-devs to build their own Universe + Cosmo + interactables (§3b). Chosen direction (AskUserQuestion): &quot;show, don&#039;t tell&quot;.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>Autonomous trampoline demo</strong> — Cosmo walks to the trampoline and goes wild on his own ~3s after the visitor wakes him, then every ~16s while idle. So a new visitor immediately SEES the delight loop instead of guessing the controls. Safe by construction: <code>CosmoAgent.applyAI</code> yields position during <code>walking-to</code>/<code>bouncing</code> (<code>ownedByOtherSprint</code>), so the demo never fights companion-mode. New <code>CosmoAgent.isBusy</code> getter guards against interrupting an active state.</li>
+          <li><strong>Fading hint</strong> — an on-brand Cormorant-italic line &quot;tap the trampoline — watch him go&quot; fades in a beat after wake (as Cosmo demos), dismissed by the next tap or after 9s. No nagging.</li>
+          <li><strong>Dev-invite link</strong> — &quot;built openly — make your own world →&quot; in the hover-reveal hud (top-left), linking the public repo. Carries the §3b open-substrate pitch quietly, for the contributor-dev audience.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.9</span>
           <span class="update__date">2026-05-30</span>
           <h2 class="update__title">05-30 — Wave 22: one hero trampoline + classic colors</h2>

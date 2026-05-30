@@ -521,6 +521,19 @@ export class CosmoAgent {
     this.startBounce();
   }
 
+  /** Wave 22 — true while a special state owns Cosmo. The autonomous
+   *  trampoline demo (main.ts) checks this so it never interrupts a walk,
+   *  an active bounce-combo, a pet, or a fall. */
+  get isBusy(): boolean {
+    return (
+      this.state === 'walking-to' ||
+      this.state === 'bouncing' ||
+      this.state === 'petted' ||
+      this.state === 'falling' ||
+      this.state === 'dancing'
+    );
+  }
+
   /**
    * Sprint 17D — engage the pet-affect for PET_AFFECT_DURATION_S. Fires:
    *   - rose-petal spew (via `onPet` event so the host scene can hook

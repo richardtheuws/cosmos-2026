@@ -4,6 +4,17 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.10] — 2026-05-30 — Wave 22: "show, don't tell" onboarding
+
+Live UAT of v2.2.9 (Richard): trampoline good, but the controls were undiscoverable on laptop ("ik snap niet hoe ik iets moet doen"), and we need an "uitleg" that also inspires contributor-devs to build their own Universe + Cosmo + interactables (§3b). Chosen direction (AskUserQuestion): "show, don't tell".
+
+### Added
+- **Autonomous trampoline demo** — Cosmo walks to the trampoline and goes wild on his own ~3s after the visitor wakes him, then every ~16s while idle. So a new visitor immediately SEES the delight loop instead of guessing the controls. Safe by construction: `CosmoAgent.applyAI` yields position during `walking-to`/`bouncing` (`ownedByOtherSprint`), so the demo never fights companion-mode. New `CosmoAgent.isBusy` getter guards against interrupting an active state.
+- **Fading hint** — an on-brand Cormorant-italic line "tap the trampoline — watch him go" fades in a beat after wake (as Cosmo demos), dismissed by the next tap or after 9s. No nagging.
+- **Dev-invite link** — "built openly — make your own world →" in the hover-reveal hud (top-left), linking the public repo. Carries the §3b open-substrate pitch quietly, for the contributor-dev audience.
+
+_All visual/timing behavior needs live human UAT — code cannot self-verify._
+
 ## [2.2.9] — 2026-05-30 — Wave 22: one hero trampoline + classic colors
 
 Live UAT of v2.2.8 (Richard): trampoline looks good, but there were 4 of them and the colors were too muted. Quick fixes; the controls/onboarding ("uitleg") is the next, larger piece — it also has to inspire contributor-devs to build their own Universe + Cosmo + interactables (the trampoline is example #1).

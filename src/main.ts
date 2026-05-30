@@ -43,7 +43,7 @@ import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 
-const VERSION = '2.2.9';
+const VERSION = '2.2.10';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
@@ -381,6 +381,31 @@ async function boot(): Promise<void> {
     cosmoStage.render();
   });
   manager.register((_u) => biomeMgr?.update(1 / 60));
+
+  // Wave 22 — "show, don't tell" (Richard 2026-05-30): Cosmo demonstrates the
+  // trampoline himself so a new visitor immediately sees the delight loop,
+  // instead of having to guess the controls. applyAI yields position during
+  // 'walking-to'/'bouncing' (CosmoAgent.applyAI ownedByOtherSprint), so this
+  // never fights companion-mode. First demo ~3s after the user wakes Cosmo
+  // (so it isn't hidden behind the boot overlay); repeats every ~16s while idle.
+  let awoke = false;
+  window.addEventListener('pointerdown', () => { awoke = true; }, { once: true });
+  let nextTrampolineDemoAt = Infinity;
+  manager.register((u) => {
+    if (!awoke) return;
+    if (nextTrampolineDemoAt === Infinity) nextTrampolineDemoAt = u.time + 3;
+    if (u.time < nextTrampolineDemoAt) return;
+    if (cosmoAgent.isBusy) {
+      nextTrampolineDemoAt = u.time + 2; // wait until he's free
+      return;
+    }
+    const spot = trampolineSpots.positions()[0];
+    if (spot) {
+      cosmoAgent.walkTo(spot.x, spot.z, 'bounce');
+      nextTrampolineDemoAt = u.time + 16;
+    }
+  });
+
   manager.start();
 
   // Track viewport for the CosmoStage camera.
