@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [Unreleased] — Wave 22 planning: the deferred substrate cutover
+
+7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but **dead in production** — `/play/` never sets `?substrate=v2` (`src/main.ts:51-53`). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe to prove pluggability, and stands up the first real test+UAT gate. No game code shipped yet — this is the planning checkpoint.
+
+### Added
+- NORTH-STAR §6 Pivot Ledger entry (2026-05-30 — Wave 22): hard cutover (delete legacy after parity), second Universe in-wave, test+UAT gate parallel.
+- `.claude/brainstorm/wave22/` — synthesis plan (`00`) + four concern docs: cutover & legacy-migration (`01`), traversal & second-universe (`02`), delight-loop unification (`03`), test & UAT gate (`04`).
+
 ## [2.2.6] — 2026-05-05 — Wave 21.2.4: mouth-pillar retired, the-hollow goes quiet
 
 Self-UAT of v2.2.5 the-hollow showed the mouth-pillar still flickered as 4-5 cycling rectangles — even with clean alpha. Diagnosis: Sprint 15C built `mouth-pillar-sheet.png` as 4 *separately-painted* frames composited horizontally (per `weirdo_objects_v15c.md`: "diffusion can not render sequential-states in one image"). The frames are four different illustrations, not animation-coherent poses of one character. Cycling them creates a stack of non-coherent shapes regardless of how clean the alpha is.
