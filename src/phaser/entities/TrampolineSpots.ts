@@ -137,11 +137,16 @@ export class TrampolineSpots {
 
   // ── Internal ─────────────────────────────────────────────────────────────
 
-  private buildSpots(defs: readonly TrampolineSpotDef[]): void {
-    for (const def of defs) {
-      const trampoline = new Trampoline3D();
-      trampoline.group.position.set(def.x, def.y, def.z);
-      this.spots.push({ def, trampoline });
-    }
+  private buildSpots(_defs: readonly TrampolineSpotDef[]): void {
+    // Wave 22 (Richard, 2026-05-30): exactly ONE hero trampoline, centred —
+    // NORTH-STAR §3 ("one fully-alive delight loop beats three half-alive").
+    // We intentionally ignore the biome composition-spec's multi-spot cluster
+    // (slow-bloom declares 3) and any passed defs; a Room gets a single,
+    // clearly-placed trampoline. A later wave can re-introduce per-Room
+    // placement via the substrate Room contract if a Universe needs it.
+    const def: TrampolineSpotDef = { x: 0, y: 0, z: -2.4 };
+    const trampoline = new Trampoline3D();
+    trampoline.group.position.set(def.x, def.y, def.z);
+    this.spots.push({ def, trampoline });
   }
 }

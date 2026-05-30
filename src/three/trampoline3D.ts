@@ -39,10 +39,12 @@ const SPRING_K = 140; // stiffness
 const SPRING_DAMP = 9; // damping
 const COMP_MAX = 1.0;
 
-// Palette — steel that leans into the locked cool accents, blue rim.
-const STEEL_COLOR = 0x9fb0c4; // soft brushed steel (not chrome)
-const RIM_COLOR = 0x5a86c4; // blue rim (sky-wash adjacent)
-const MAT_COLOR = 0xf3efe6; // warm white doek (mushroom-cream adjacent)
+// Palette — the CLASSIC trampoline combo (Richard, 2026-05-30): vivid blue
+// safety-pad rim + bright white mat. A deliberate pop-object; the steel legs
+// keep it grounded in the watercolor world.
+const STEEL_COLOR = 0xb4c0cf; // brushed steel legs (a touch brighter)
+const RIM_COLOR = 0x1a6ae5; // vivid cobalt blue pad (the classic blue)
+const MAT_COLOR = 0xffffff; // bright white doek
 
 export class Trampoline3D {
   /** Add this to a THREE.Scene; position/scale it via this group. */
@@ -72,10 +74,11 @@ export class Trampoline3D {
     this.radialDist = radial;
     const matMaterial = new THREE.MeshStandardMaterial({
       color: MAT_COLOR,
-      roughness: 0.85,
+      roughness: 0.7,
       metalness: 0.0,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.12, // lift the white so it reads bright, not grey-lit
       side: THREE.DoubleSide,
-      // The doek is opaque cloth; a hair of sheen from the rim light is enough.
     });
     // Mat + rim sit at the group ORIGIN (y=0) so the group can be placed at
     // Cosmo's ground level and he bounces ON the doek. Legs hang DOWN to
@@ -90,8 +93,10 @@ export class Trampoline3D {
     const rimGeo = new THREE.TorusGeometry(RADIUS, RIM_TUBE, 10, MAT_SEGMENTS);
     const rimMat = new THREE.MeshStandardMaterial({
       color: RIM_COLOR,
-      roughness: 0.35,
-      metalness: 0.55,
+      roughness: 0.45,
+      metalness: 0.15, // low metal so the cobalt reads VIVID, not dark-chrome
+      emissive: RIM_COLOR,
+      emissiveIntensity: 0.18, // keep the blue saturated even in shade
     });
     const rim = new THREE.Mesh(rimGeo, rimMat);
     rim.rotation.x = Math.PI / 2; // lay flat

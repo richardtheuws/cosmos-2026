@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.9] — 2026-05-30 — Wave 22: one hero trampoline + classic colors
+
+Live UAT of v2.2.8 (Richard): trampoline looks good, but there were 4 of them and the colors were too muted. Quick fixes; the controls/onboarding ("uitleg") is the next, larger piece — it also has to inspire contributor-devs to build their own Universe + Cosmo + interactables (the trampoline is example #1).
+
+### Changed
+- **One hero trampoline** — `TrampolineSpots` now builds exactly one, centred at `(0,0,-2.4)`, ignoring the biome `composition-spec.json` multi-spot cluster (slow-bloom declared 3). NORTH-STAR §3: one fully-alive delight loop beats three half-alive.
+- **Classic trampoline colors** — vivid cobalt-blue safety-pad rim (low metalness + slight emissive so the blue stays saturated) + bright white mat (small emissive lift so it reads bright, not grey-lit). The classic blue-and-white combo.
+
 ## [2.2.8] — 2026-05-30 — Wave 22: the real trampoline + bounce juice
 
 Live UAT of v2.2.7 (Richard, 2026-05-30): the substrate path looked ~identical to legacy (correct — D4 was plumbing; the visible difference is a per-room inhabitant, proving substrate is on), but Cosmo had no smooth movement and there was no real trampoline. This ships the heart of the delight loop (NORTH-STAR §3). Shows on BOTH paths (shared Cosmo stack).
