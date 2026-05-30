@@ -9,8 +9,9 @@ De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run
 7-team strategic vision-fit audit (overall 5.5/10) found the single largest execution-vs-vision divergence: the entire Room→Area→Universe model (§3) and open-substrate pitch (§3b) are fully coded but **dead in production** — `/play/` never sets `?substrate=v2` (`src/main.ts:51-53`). Wave 22 executes the deferred Wave-21 hard cutover, ships a second Universe to prove pluggability, and stands up the first real test+UAT gate. No game code shipped yet — this is the planning checkpoint.
 
 ### Added
-- NORTH-STAR §6 Pivot Ledger entry (2026-05-30 — Wave 22): hard cutover (delete legacy after parity), second Universe in-wave, test+UAT gate parallel.
+- NORTH-STAR §6 Pivot Ledger entry (2026-05-30 — Wave 22): hard cutover (delete legacy after parity), second Universe in-wave (Ink-Ocean), test+UAT gate parallel.
 - `.claude/brainstorm/wave22/` — synthesis plan (`00`) + four concern docs: cutover & legacy-migration (`01`), traversal & second-universe (`02`), delight-loop unification (`03`), test & UAT gate (`04`).
+- **D5 — first automated test suite**: Vitest on the pure-logic substrate resolvers + schema validators (`ResolveURL`, `ResolveMood`, `Manifest/Areas/Rooms` schemas). 39 tests, runs <0.2s. `npm test` now actually runs (was an `echo` stub); `predeploy` gains `test` before `build`. Test files excluded from the build's `tsc --noEmit`.
 
 ## [2.2.6] — 2026-05-05 — Wave 21.2.4: mouth-pillar retired, the-hollow goes quiet
 
