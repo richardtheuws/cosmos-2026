@@ -70,7 +70,16 @@ def gen(engine: str, prompt: str, out_raw: Path, *, aspect: str | None,
     else:
         raise SystemExit(f'unknown engine: {engine}')
 
-    req_id, resp_url = submit(endpoint, body)
+    try:
+        req_id, resp_url = submit(endpoint, body)
+    except RuntimeError as e:
+        # Recraft rejects unknown style enums with HTTP 422 — self-heal to the
+        # base 'digital_illustration' style rather than failing the candidate.
+        if endpoint == RECRAFT and '422' in str(e):
+            body['style'] = 'digital_illustration'
+            req_id, resp_url = submit(endpoint, body)
+        else:
+            raise
     res = poll_until_done(resp_url, label, max_polls=120, sleep_s=2.5)
     url = extract_image_url(res)
     if not url:
@@ -107,7 +116,7 @@ def main() -> int:
     ap.add_argument('--out', required=True, help='final .png path')
     ap.add_argument('--aspect', help='ultra aspect_ratio (e.g. 16:9); else derived from --size')
     ap.add_argument('--size', help='WxH for recraft/flux-pro (and ultra aspect derivation)')
-    ap.add_argument('--style', default='digital_illustration/watercolor', help='recraft style')
+    ap.add_argument('--style', default='digital_illustration', help='recraft style (valid recraft-v3 enum; sub-styles like digital_illustration/hand_drawn allowed)')
     ap.add_argument('--alpha', action='store_true', help='matte to transparent PNG via birefnet')
     args = ap.parse_args()
 
