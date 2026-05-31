@@ -216,3 +216,47 @@ describe('resolveURLRequest — hard edges', () => {
     );
   });
 });
+
+/* ── reserved-universe exemption (Wave 24 · S1 — the "Look up." return) ───── */
+
+/** A coherent `_chart` bundle: area 'the-void' with the single room 'the-chart'. */
+function chartBundle() {
+  return {
+    manifest: manifest({ name: '_chart', displayName: 'The Spore-Chart', defaultArea: 'the-void' }),
+    areas: { version: '1.0', entryArea: 'the-void', areas: [area('the-void', ['the-chart'])] },
+    rooms: { version: '1.1', entryRoom: 'the-chart', rooms: [room('the-chart')] } as RoomsManifest,
+  };
+}
+
+/** ResolveCtx with an explicit reserved-universe allowlist. */
+function ctxReserved(
+  bundle: { manifest: Manifest; areas: AreasManifest; rooms: RoomsManifest } | null,
+  known: string[],
+  reserved: string[],
+): ResolveCtx {
+  return {
+    knownUniverses: new Set(known),
+    reservedUniverses: new Set(reserved),
+    loadUniverseManifests: async () => bundle,
+  };
+}
+
+describe('resolveURLRequest — reserved-universe exemption', () => {
+  it('resolves a reserved `_chart` request (does NOT bounce to forest) when allowlisted', async () => {
+    const r = await resolveURLRequest(
+      { universe: '_chart' },
+      ctxReserved(chartBundle(), ['forest'], ['_chart']),
+    );
+    expect(r.universe).toBe('_chart');
+    expect(r.area).toBe('the-void');
+    expect(r.room).toBe('the-chart');
+  });
+
+  it('still bounces a `_`-prefixed id to forest when the reserved allowlist is absent', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // No reservedUniverses → the chart is neither known nor reserved → fallback.
+    const r = await resolveURLRequest({ universe: '_chart' }, ctx(forestBundle(), ['forest']));
+    expect(r.universe).toBe(DEFAULT_UNIVERSE);
+    expect(r.changed).toBe(true);
+  });
+});

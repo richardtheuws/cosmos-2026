@@ -4,6 +4,19 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.6] — 2026-05-31 — Wave 24 S1: the "Look up." return path + Ink-Ocean beds
+
+Bringing the four-universe skeleton toward life. The first shared-substrate wiring lands — the free return-home affordance so no Universe can ever trap a player — and the Ink-Ocean ambient beds are replaced with real long-form loops.
+
+### Added
+- **The "Look up." way-mote** (`src/substrate/drivers/WayMoteOverlay.ts`) — a faint painted mote pinned top-center with the microcopy "Look up." (Cormorant Italic, breathing not pulsing). Tap it, swipe up, or press `M` to return to the Spore-Chart. Mounted free by the substrate in every non-reserved universe; never authored per-universe. The chart itself omits it (you are already home).
+- **Reserved-universe resolver exemption** (`src/substrate/ResolveURL.ts`) — `_`-prefixed folders like `_chart` are excluded from enumeration (the chart never lists itself as a destination) yet remain loadable when requested explicitly, so the return resolves to the chart instead of bouncing to the forest. Covered by two new resolver tests.
+
+### Changed
+- **Ink-Ocean beds regenerated** — `ink-ocean-shafts.mp3` (168s) and `ink-ocean-trench.mp3` (154s) replace the 19.8s stubs with real long-form loops (Suno, transcoded 128k). Ink-Ocean Phase 3 audio unblocked.
+
+_The portal-in-reverse ceremony and the pre-return Cosmo `look` clip (S2/S3) are not yet wired — the return is currently an honest reload into the chart, which plays its own calm arrival. Not deployed._
+
 ## [2.4.5] — 2026-05-31 — Wave 24: four-universe substrate skeleton (world-builder team)
 
 A parallel world-builder team (multi-agent workflow, each builder holding the brand contract + dweller lens, each writing only its own disjoint folder) authored the buildable substrate for the full first setup. Hard gate: **tsc PASS, build PASS, zero compile errors.** Skeletons-to-UAT — they compile and the data is contract-conformant, but the worlds don't render until their assets are generated (next step). Full integration runbook: `.claude/brainstorm/wave24/01-BUILD-STATUS.md`.

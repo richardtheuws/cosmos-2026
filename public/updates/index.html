@@ -206,6 +206,34 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.6</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24 S1: the &quot;Look up.&quot; return path + Ink-Ocean beds</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Bringing the four-universe skeleton toward life. The first shared-substrate wiring lands — the free return-home affordance so no Universe can ever trap a player — and the Ink-Ocean ambient beds are replaced with real long-form loops.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>The &quot;Look up.&quot; way-mote</strong> (<code>src/substrate/drivers/WayMoteOverlay.ts</code>) — a faint painted mote pinned top-center with the microcopy &quot;Look up.&quot; (Cormorant Italic, breathing not pulsing). Tap it, swipe up, or press <code>M</code> to return to the Spore-Chart. Mounted free by the substrate in every non-reserved universe; never authored per-universe. The chart itself omits it (you are already home).</li>
+          <li><strong>Reserved-universe resolver exemption</strong> (<code>src/substrate/ResolveURL.ts</code>) — <code>_</code>-prefixed folders like <code>_chart</code> are excluded from enumeration (the chart never lists itself as a destination) yet remain loadable when requested explicitly, so the return resolves to the chart instead of bouncing to the forest. Covered by two new resolver tests.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Ink-Ocean beds regenerated</strong> — <code>ink-ocean-shafts.mp3</code> (168s) and <code>ink-ocean-trench.mp3</code> (154s) replace the 19.8s stubs with real long-form loops (Suno, transcoded 128k). Ink-Ocean Phase 3 audio unblocked.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.5</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24: four-universe substrate skeleton (world-builder team)</h2>

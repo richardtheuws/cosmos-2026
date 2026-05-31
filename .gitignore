@@ -53,6 +53,9 @@ public/assets/audio/voices/
 public/assets/audio/music/_originals/
 .claude/scheduled_tasks.lock
 
+# Wave 24 asset-generation candidates (review staging, curated then promoted)
+.wave24-candidates/
+
 # Cosmo motion spike — generated binaries (regen via spike/gen_walk_clip.py)
 spike/assets/
 .playwright-mcp/

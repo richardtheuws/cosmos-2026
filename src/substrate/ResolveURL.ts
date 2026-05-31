@@ -40,6 +40,14 @@ export function parseURLRequest(search: string): URLRequest {
 export interface ResolveCtx {
   /** Universe ids known to the substrate (folders under `universes/`). */
   knownUniverses: ReadonlySet<string>;
+  /** RESERVED universe ids — `_`-prefixed folders (e.g. the open-map's
+   *  `_chart`) that `discoverUniverses()` deliberately excludes from
+   *  enumeration so the chart never lists itself as a destination, yet which
+   *  ARE valid loadable places when requested explicitly (the "Look up."
+   *  return target). Without this allowlist a `?universe=_chart` request would
+   *  hit the unknown-universe fallback and bounce the player to the forest.
+   *  Optional + defaults to empty so existing callers/tests are unaffected. */
+  reservedUniverses?: ReadonlySet<string>;
   /** Loader that fetches a universe's manifest+areas+rooms by id. */
   loadUniverseManifests(universeId: string): Promise<{
     manifest: Manifest;
@@ -56,9 +64,13 @@ export async function resolveURLRequest(req: URLRequest, ctx: ResolveCtx): Promi
   const requestedUniverse = req.universe ?? DEFAULT_UNIVERSE;
   let changed = req.universe === undefined;
 
-  // Step 1 — resolve universe.
+  // Step 1 — resolve universe. A reserved (`_`-prefixed) id is excluded from
+  // discovery/enumeration but still loadable when requested explicitly, so the
+  // "Look up." return to `_chart` resolves instead of bouncing to the forest.
   let universe = requestedUniverse;
-  if (!ctx.knownUniverses.has(universe)) {
+  const isLoadable =
+    ctx.knownUniverses.has(universe) || (ctx.reservedUniverses?.has(universe) ?? false);
+  if (!isLoadable) {
     // eslint-disable-next-line no-console
     console.warn(`[substrate] universe '${requestedUniverse}' not found, falling back to '${DEFAULT_UNIVERSE}'`);
     universe = DEFAULT_UNIVERSE;

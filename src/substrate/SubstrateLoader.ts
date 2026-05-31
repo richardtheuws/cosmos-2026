@@ -39,6 +39,10 @@ import { DEFAULT_UNIVERSE, parseURLRequest, resolveURLRequest, syncURL } from '.
 import { UniverseHost } from './UniverseHost';
 import { appendTraversal, loadState, saveState, type CosmosPersistedState } from './StatePersistence';
 import { PreloadManager } from './PreloadManager';
+import { WayMoteOverlay } from './drivers/WayMoteOverlay';
+
+/** The reserved open-map universe the "Look up." way-mote returns to. */
+const CHART_UNIVERSE_ID = '_chart';
 
 export interface SubstrateBootCtx {
   /** Element the parallax + cosmo renderers paint to. */
@@ -68,6 +72,7 @@ export class SubstrateLoader {
   private state: CosmosPersistedState;
   private universeRel = '';
   private booted = false;
+  private wayMote: WayMoteOverlay | null = null;
 
   constructor(private bootCtx: SubstrateBootCtx) {
     this.state = loadState();
@@ -77,10 +82,11 @@ export class SubstrateLoader {
   async boot(): Promise<void> {
     if (this.booted) return;
 
-    const knownUniverses = await this.discoverUniverses();
+    const { known, reserved } = await this.discoverUniverses();
     const req = parseURLRequest(window.location.search);
     const resolved = await resolveURLRequest(req, {
-      knownUniverses,
+      knownUniverses: known,
+      reservedUniverses: reserved,
       loadUniverseManifests: (id) => this.loadManifestsFor(id),
     });
 
@@ -154,6 +160,12 @@ export class SubstrateLoader {
       this.bootCtx.cosmoAgent.root.position.set(room.anchor.x, room.anchor.y, room.anchor.z);
     }
 
+    // Wave 24 (S1) — mount the FREE "Look up." way-mote so no universe can trap
+    // the player. Skip it on the reserved chart itself (you are already home).
+    if (!resolved.universe.startsWith('_')) {
+      this.wayMote = new WayMoteOverlay({ reservedUniverseId: CHART_UNIVERSE_ID });
+    }
+
     // Persist + append traversal.
     appendTraversal(this.state, resolved.universe, resolved.area, resolved.room);
     saveState(this.state);
@@ -168,6 +180,8 @@ export class SubstrateLoader {
   }
 
   dispose(): void {
+    this.wayMote?.dispose();
+    this.wayMote = null;
     this.host?.dispose();
     this.host = null;
     this.booted = false;
@@ -180,26 +194,35 @@ export class SubstrateLoader {
 
   /* ── private ─────────────────────────────────────────────────────────── */
 
-  private async discoverUniverses(): Promise<ReadonlySet<string>> {
+  private async discoverUniverses(): Promise<{
+    known: ReadonlySet<string>;
+    reserved: ReadonlySet<string>;
+  }> {
     // Wave 24: dynamic discovery. Every `universes/<id>/manifest.json` Vite can
     // see at build time becomes a known universe — author a conformant folder
     // and you are discovered, with no registry, opt-in flag, or gatekeeper.
     // (Same static-glob mechanism already used for behavior.ts below.) This is
     // the single source of truth shared with the open-map's universe list.
     //
-    // Folders whose id starts with `_` are RESERVED and skipped (e.g. the
-    // open-map's `_chart` pseudo-universe), so the chart never enumerates
-    // itself as a destination.
+    // Folders whose id starts with `_` are RESERVED: skipped from `known` (e.g.
+    // the open-map's `_chart` pseudo-universe), so the chart never enumerates
+    // itself as a destination — but collected into `reserved` so they remain
+    // loadable when requested explicitly (the "Look up." return target). The
+    // resolver allowlists `reserved` (ResolveCtx.reservedUniverses) so a
+    // `?universe=_chart` request resolves instead of bouncing to the forest.
     const mods = import.meta.glob('/universes/*/manifest.json');
-    const ids = new Set<string>();
+    const known = new Set<string>();
+    const reserved = new Set<string>();
     for (const key of Object.keys(mods)) {
       const m = key.match(/\/universes\/([^/]+)\/manifest\.json$/);
-      if (m && !m[1].startsWith('_')) ids.add(m[1]);
+      if (!m) continue;
+      if (m[1].startsWith('_')) reserved.add(m[1]);
+      else known.add(m[1]);
     }
     // Safety net: the default universe is always known even if the glob misses
     // it (e.g. an unexpected build layout) so boot can never end up empty.
-    ids.add(DEFAULT_UNIVERSE);
-    return ids;
+    known.add(DEFAULT_UNIVERSE);
+    return { known, reserved };
   }
 
   private async loadManifestsFor(universeId: string): Promise<{
