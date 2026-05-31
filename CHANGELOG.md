@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.1] — 2026-05-31 — hide the vibe ring (beat-mechanic retirement begins)
+
+Live phone UAT of v2.4.0 — painted Cosmo/world/trampoline confirmed "te gek". Richard flagged the on-screen "timer-circle" as distracting and questioned the (unnoticeable) music interaction. NORTH-STAR §6 pivot logged: the gamified beat/combo-score model is retired in favour of free movement + builder-authored interactables + world expansion.
+
+### Changed
+- **VibeMeter ring no longer drawn** — the saffron/rose ring around Cosmo (avatar of the combo-score loop) is hidden. Level logic is left intact for now (DeepTripMode still reads `fullEdge`); the full score-logic teardown follows in the pivot cleanup. Dead ring constants + `lerpColor` removed.
+
+_NORTH-STAR §6 (2026-05-31) records the larger direction: drop "do-something-on-a-beat", let Cosmo move freely everywhere, let builders author their own interactables + request Cosmo-clip contributions, and focus next on world expansion (transitions + traversal). Calm-baseline ambient audio cosmetics stay._
+
 ## [2.4.0] — 2026-05-31 — Wave 23: full painted-frames clip set (12)
 
 Proof slice confirmed by Richard ("ja, dit bewijst het"). Completes the painted-frames Cosmo to the full 12-clip state set on Kling v2 master.

@@ -206,6 +206,28 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.1</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — hide the vibe ring (beat-mechanic retirement begins)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Live phone UAT of v2.4.0 — painted Cosmo/world/trampoline confirmed &quot;te gek&quot;. Richard flagged the on-screen &quot;timer-circle&quot; as distracting and questioned the (unnoticeable) music interaction. NORTH-STAR §6 pivot logged: the gamified beat/combo-score model is retired in favour of free movement + builder-authored interactables + world expansion.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>VibeMeter ring no longer drawn</strong> — the saffron/rose ring around Cosmo (avatar of the combo-score loop) is hidden. Level logic is left intact for now (DeepTripMode still reads <code>fullEdge</code>); the full score-logic teardown follows in the pivot cleanup. Dead ring constants + <code>lerpColor</code> removed.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.0</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 23: full painted-frames clip set (12)</h2>
