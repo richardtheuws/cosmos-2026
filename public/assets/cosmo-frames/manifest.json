@@ -1,0 +1,40 @@
+{
+  "clips": {
+    "idle": {
+      "file": "idle.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": true
+    },
+    "walk": {
+      "file": "walk.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": true
+    },
+    "bounce": {
+      "file": "bounce.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": true
+    },
+    "jump": {
+      "file": "jump.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    }
+  }
+}

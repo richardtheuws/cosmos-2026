@@ -1,0 +1,54 @@
+{
+  "_note": "Wave 23 painted-frames clip set. Generated from the LoRA hero via fal i2v. `core: true` = the proof-slice scope (idle/walk/bounce/jump). All share the hero as init image, so style is carried by the image — prompts only steer MOTION.",
+  "negative": "camera pan, camera zoom, camera movement, fast motion, distortion, extra limbs, morphing, duplicated character, text, watermark, blurry",
+  "clips": [
+    {
+      "name": "idle", "loop": true, "core": true, "fps": 12,
+      "prompt": "The small alien character comes gently alive: soft breathing, a slow blink, a calm look around, weight settling subtly. Minimal, calm, alive. Static locked camera, character stays centered and fully in frame, plain background."
+    },
+    {
+      "name": "walk", "loop": true, "core": true, "fps": 12,
+      "prompt": "The small alien character takes gentle bouncy steps in place, shifting its weight side to side in a happy walk cycle, arms swinging slightly. Static locked camera, character stays centered and fully in frame, plain background."
+    },
+    {
+      "name": "bounce", "loop": true, "core": true, "fps": 12,
+      "prompt": "The small alien character joyfully bounces up and down with springy trampoline energy: anticipation crouch, launch upward, airborne hang, land and rebound, delighted and full of glee. Static locked camera, character stays centered, plain background."
+    },
+    {
+      "name": "jump", "loop": false, "core": true, "fps": 12,
+      "prompt": "The small alien character crouches and then leaps up once in a happy hop, then lands softly and settles. Static locked camera, character stays centered, plain background."
+    },
+    {
+      "name": "duck", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character quickly ducks down into a crouch and holds, alert. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "dance", "loop": true, "core": false, "fps": 12,
+      "prompt": "The small alien character does a happy little dance, swaying and bobbing with rhythm and joy. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "wave", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character raises a hand and waves hello warmly, then lowers it. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "wink", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character winks one big eye and gives a tiny cheeky smile. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "stretch", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character stretches upward like waking up, reaching tall then relaxing back down. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "fall", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character loses balance and tumbles softly, then settles on the ground a little dazed. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "petted", "loop": true, "core": false, "fps": 12,
+      "prompt": "The small alien character melts with happiness from being petted: eyes softening, a blissful wiggle and gentle sway. Static locked camera, centered, plain background."
+    },
+    {
+      "name": "look", "loop": false, "core": false, "fps": 12,
+      "prompt": "The small alien character curiously looks around, turning its head to follow something, big eyes tracking. Static locked camera, centered, plain background."
+    }
+  ]
+}

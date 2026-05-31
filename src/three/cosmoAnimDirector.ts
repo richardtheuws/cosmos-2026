@@ -83,6 +83,10 @@ export interface AnimCtx {
    *  at the end of each tick so the plane orientation reflects the same
    *  transforms written this frame. */
   camera: THREE.Camera;
+  /** Wave 23 — when true, painted-frame clips carry Cosmo's motion, so the
+   *  director skips all scale/sway/bob and only billboards the plane toward
+   *  the camera. (Trick-spins will later write rig.rollZ/pitchX on top.) */
+  framesOwnMotion?: boolean;
 }
 
 /**
@@ -119,6 +123,16 @@ export class CosmoAnimDirector {
   tick(dt: number, ctx: AnimCtx): void {
     if (dt <= 0 || !Number.isFinite(dt)) return;
     this.t += dt;
+
+    // Wave 23 — frames own motion: zero any residual procedural offsets and
+    // just face the camera. (rollZ/pitchX are reserved for trampoline tricks.)
+    if (ctx.framesOwnMotion) {
+      this.rig.rollZ = 0;
+      this.rig.pitchX = 0;
+      this.rig.bobY = 0;
+      this.rig.update(ctx.camera);
+      return;
+    }
 
     const isClimbing = ctx.isClimbing;
     // Wave 22 — a trampoline bounce animates with the same squash-stretch arc as

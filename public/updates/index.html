@@ -206,6 +206,64 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.3.0</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 23: painted-frames Cosmo (proof slice)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The pivot that came out of &quot;ik heb er geen gevoel bij dat we progressie maken&quot; (NORTH-STAR §6, 2026-05-31): a flat billboard that sways/bobs is still a sticker. After spiking painted-frames vs a 2.5D puppet side-by-side, Richard chose <strong>painted frames</strong> (&quot;die zijn geweldig, die wil ik&quot;). This ships the proof slice — 4 core clips wired live — before the full 12-clip batch.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>CosmoFramePlayer</code></strong> (<code>src/three/cosmoFramePlayer.ts</code>) — plays per-state frame-atlas clips on the billboard material. Loop clips ping-pong (the i2v clips aren&#039;t designed seamless loops); one-shots clamp then auto-return to <code>idle</code>. Graceful degrade: if the manifest fails to load, the static hero stays.</li>
+          <li><strong>Generation pipeline</strong> (<code>scripts/wave23/</code>): <code>gen_clips.py</code> (fal.ai Kling-v2-master image-to-video from the LoRA hero, config-driven via <code>clips.json</code>), <code>alpha_cut.py</code> (per-frame BiRefNet → clean RGBA, dark eyes preserved), <code>pack_clips.py</code> (ffmpeg extract + tile → one atlas PNG + manifest per clip).</li>
+          <li><strong>4 core clips</strong> generated + shipped (<code>public/assets/cosmo-frames/</code>): idle, walk, bounce, jump. Real expressive watercolor motion — breath, blink, weight-shift — with the 1992-DNA consistent across frames.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>playClip()</code> revived</strong> — it drove a dead <code>AnimationMixer</code> (null since the 21.2 billboard pivot); it now drives the frame-player. The state machine was already calling it at the right moments. The <code>walkTo</code> clip gate now consults the frame-player too.</li>
+          <li><strong>Anim director steps aside</strong> — when frames own motion, the director only billboards the plane toward the camera (the frames carry breath/walk/squash). The v2.2.11 rollZ/pitchX layer is reserved for trampoline trick-spins.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v2.2.11</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 22: Cosmo actually walks (billboard anim layer)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Richard&#039;s UAT of v2.2.10 confirmed. Strategic call before chasing trampoline tricks: first make Cosmo <em>read as walking</em>. Root cause found — the walk-sway was silently dead since the Wave 21.2 billboard pivot: the director wrote <code>plane.rotation.z</code>, then <code>rig.update()</code> ran <code>plane.lookAt(camera)</code> at the end of the same tick and overwrote the plane&#039;s entire orientation. Facing (<code>root.scale.x</code>) and squash (<code>root.scale.y</code>) survived only because they live on the root, which lookAt doesn&#039;t touch. Per NORTH-STAR §4 (don&#039;t patch a broken system) the fix is the foundation both walking AND tricks need.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>Post-lookAt billboard anim layer</strong> — <code>CosmoV2Rig</code> gains <code>rollZ</code> / <code>pitchX</code> / <code>bobY</code> offset fields. <code>rig.update()</code> now applies the billboard lookAt <strong>first</strong>, then re-layers <code>rotateZ(rollZ)</code> (view-axis roll — shoulder-tilt / cartwheel) and <code>rotateX(pitchX)</code> (horizontal-axis pitch — somersault) on top, so anim transforms survive the per-frame re-orientation. <code>bobY</code> rides the plane&#039;s local Y (not root) so it never fights CosmoAgent&#039;s ownership of <code>root.position</code>. This same layer is what trampoline spins/flips will write to next.</li>
+          <li><strong>Walk step-bob</strong> — <code>rig.bobY</code> hops on each half-stride (~2.5% body height): the single most legible gait cue for a flat billboard.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Walk-sway revived</strong> — director now drives <code>rig.rollZ</code> instead of the dead <code>plane.rotation.z</code>. Amplitude bumped 0.03→0.05 rad (~2.9°) now that it&#039;s actually visible. Calm per §3 (breathes, doesn&#039;t shake).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.2.10</span>
           <span class="update__date">2026-05-30</span>
           <h2 class="update__title">05-30 — Wave 22: &quot;show, don&#039;t tell&quot; onboarding</h2>

@@ -88,6 +88,9 @@ import type { MotionController } from '../../core/motionController';
 import type { CosmoAI, AIDirective } from './CosmoAI';
 // Wave 21.2 — CosmoV2 billboard rig. Single textured plane carrying the hero PNG.
 import { buildCosmoV2, type CosmoV2Rig } from '../../three/cosmoV2';
+// Wave 23 — painted-frames player. Revives playClip() to animate the billboard
+// texture (per-state frame atlases) instead of the dead AnimationMixer.
+import { CosmoFramePlayer } from '../../three/cosmoFramePlayer';
 // Wave 21.2 — anim director, billboard variant. 4 surviving anims:
 // idle-breath / walk-sway / jump-arc / climb. Calls rig.update(camera) at end.
 import { CosmoAnimDirector, type AnimCtx } from '../../three/cosmoAnimDirector';
@@ -198,6 +201,13 @@ export class CosmoAgent {
   root: THREE.Object3D;
   private mixer: THREE.AnimationMixer | null = null;
   private clips: Map<string, THREE.AnimationClip> = new Map();
+
+  /** Wave 23 — painted-frames player. When ready it owns Cosmo's motion
+   *  (the frames carry breath/walk/squash); the anim director then only
+   *  billboards the plane toward the camera. Null until the manifest loads;
+   *  CosmoAgent gracefully shows the static hero meanwhile. */
+  private framePlayer: CosmoFramePlayer | null = null;
+  private framesOwnMotion = false;
   private currentClipName: string | null = null;
   private fallback2D = false;
   /** When true, the asset is still loading; act like fallback until it lands. */
@@ -359,6 +369,19 @@ export class CosmoAgent {
     // sway / jump-arc / climb). Director calls rig.update(camera) at end of
     // each tick to billboard the plane.
     this.animDirector = new CosmoAnimDirector(this.v2Rig);
+
+    // Wave 23 — kick off the painted-frames manifest load. When it resolves,
+    // frames take over motion and we start the idle loop. Failure is silent:
+    // playClip stays a no-op and the static hero remains (graceful degrade).
+    this.framePlayer = new CosmoFramePlayer(
+      this.v2Rig.plane.material as THREE.MeshBasicMaterial,
+    );
+    void this.framePlayer.load().then((ok) => {
+      if (!ok) { this.framePlayer = null; return; }
+      this.framesOwnMotion = true;
+      this.framePlayer!.play('idle', true);
+    });
+
     this.lastWorldX = this.worldX;
     this.lastWorldY = this.worldY;
     this.lastWorldZ = this.worldZ;
@@ -413,6 +436,9 @@ export class CosmoAgent {
       this.mixer.timeScale = this.aiTimeScaleBase * fftFactor;
       this.mixer.update(dt);
     }
+
+    // Wave 23 — advance the painted-frames clip (the live motion source).
+    this.framePlayer?.tick(dt);
 
     // Apply position to root.
     this.root.position.set(this.worldX, this.worldY, this.worldZ);
@@ -501,8 +527,9 @@ export class CosmoAgent {
     this.walkToUntil = this.t + WALK_TO_DURATION_S;
     this.walkArrivalAction = action;
     this.setState('walking-to');
-    // Prefer 'walk' clip when the rig provides it; fall back to looping 'idle'.
-    if (this.clips.has('walk')) this.playClip('walk', true);
+    // Prefer 'walk' clip when available (Wave 23 frame-player or the legacy
+    // mixer); fall back to looping 'idle'.
+    if (this.framePlayer?.has('walk') || this.clips.has('walk')) this.playClip('walk', true);
     else this.playClip('idle', true);
   }
 
@@ -857,8 +884,13 @@ export class CosmoAgent {
     return 0.65;
   }
 
-  /** Cross-fade to a clip if it exists. Loaded GLB only — no-op on 2D. */
+  /** Play a named animation clip. Wave 23: drives the painted-frames player
+   *  when loaded; falls back to the (currently dead) GLB mixer otherwise. */
   private playClip(name: string, loop: boolean): void {
+    if (this.framePlayer?.isReady) {
+      this.framePlayer.play(name.toLowerCase(), loop);
+      return;
+    }
     if (!this.mixer) return;
     const clip = this.clips.get(name.toLowerCase());
     if (!clip) return;
@@ -1136,6 +1168,9 @@ export class CosmoAgent {
       isBouncing: this.state === 'bouncing',
       isClimbing: this.animClimbing,
       camera,
+      // Wave 23 — when frames drive motion, the director only billboards the
+      // plane (the painted frames carry breath/walk/squash themselves).
+      framesOwnMotion: this.framesOwnMotion,
     };
     this.animDirector.tick(dt, ctx);
   }

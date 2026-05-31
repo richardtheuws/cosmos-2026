@@ -56,3 +56,4 @@ public/assets/audio/music/_originals/
 # Cosmo motion spike — generated binaries (regen via spike/gen_walk_clip.py)
 spike/assets/
 .playwright-mcp/
+scripts/wave23/_work/

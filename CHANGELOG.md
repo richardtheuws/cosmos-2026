@@ -4,6 +4,21 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.3.0] — 2026-05-31 — Wave 23: painted-frames Cosmo (proof slice)
+
+The pivot that came out of "ik heb er geen gevoel bij dat we progressie maken" (NORTH-STAR §6, 2026-05-31): a flat billboard that sways/bobs is still a sticker. After spiking painted-frames vs a 2.5D puppet side-by-side, Richard chose **painted frames** ("die zijn geweldig, die wil ik"). This ships the proof slice — 4 core clips wired live — before the full 12-clip batch.
+
+### Added
+- **`CosmoFramePlayer`** (`src/three/cosmoFramePlayer.ts`) — plays per-state frame-atlas clips on the billboard material. Loop clips ping-pong (the i2v clips aren't designed seamless loops); one-shots clamp then auto-return to `idle`. Graceful degrade: if the manifest fails to load, the static hero stays.
+- **Generation pipeline** (`scripts/wave23/`): `gen_clips.py` (fal.ai Kling-v2-master image-to-video from the LoRA hero, config-driven via `clips.json`), `alpha_cut.py` (per-frame BiRefNet → clean RGBA, dark eyes preserved), `pack_clips.py` (ffmpeg extract + tile → one atlas PNG + manifest per clip).
+- **4 core clips** generated + shipped (`public/assets/cosmo-frames/`): idle, walk, bounce, jump. Real expressive watercolor motion — breath, blink, weight-shift — with the 1992-DNA consistent across frames.
+
+### Changed
+- **`playClip()` revived** — it drove a dead `AnimationMixer` (null since the 21.2 billboard pivot); it now drives the frame-player. The state machine was already calling it at the right moments. The `walkTo` clip gate now consults the frame-player too.
+- **Anim director steps aside** — when frames own motion, the director only billboards the plane toward the camera (the frames carry breath/walk/squash). The v2.2.11 rollZ/pitchX layer is reserved for trampoline trick-spins.
+
+_Proof slice — live UAT pending (walk/bounce may need regen; full 12-clip batch follows on Richard's go). Not yet deployed; verify at `/play/?substrate=v2`._
+
 ## [2.2.11] — 2026-05-31 — Wave 22: Cosmo actually walks (billboard anim layer)
 
 Richard's UAT of v2.2.10 confirmed. Strategic call before chasing trampoline tricks: first make Cosmo *read as walking*. Root cause found — the walk-sway was silently dead since the Wave 21.2 billboard pivot: the director wrote `plane.rotation.z`, then `rig.update()` ran `plane.lookAt(camera)` at the end of the same tick and overwrote the plane's entire orientation. Facing (`root.scale.x`) and squash (`root.scale.y`) survived only because they live on the root, which lookAt doesn't touch. Per NORTH-STAR §4 (don't patch a broken system) the fix is the foundation both walking AND tricks need.
