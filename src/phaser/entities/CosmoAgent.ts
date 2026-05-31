@@ -503,6 +503,7 @@ export class CosmoAgent {
     if (this.state === 'falling') return;
     this.setState('falling');
     this.stateUntil = this.t + FALL_FADE_DURATION_S;
+    this.playClip('fall', false);
     this.events.onFalling?.();
   }
 
@@ -582,6 +583,7 @@ export class CosmoAgent {
     }
     this.setState('petted');
     this.pettingUntil = this.t + PET_AFFECT_DURATION_S;
+    this.playClip('petted', true);
     this.events.onPet?.();
     // Apply blush tint immediately; per-frame `applyPetAffect()` keeps it
     // alive + wiggles the antenne for the duration.
@@ -691,6 +693,7 @@ export class CosmoAgent {
       // Brief look-up so the player notices.
       this.setState('looking');
       this.stateUntil = this.t + PETAL_SPEW_DURATION_S;
+      this.playClip('look', false);
     }
   }
 

@@ -206,6 +206,33 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.0</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 23: full painted-frames clip set (12)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Proof slice confirmed by Richard (&quot;ja, dit bewijst het&quot;). Completes the painted-frames Cosmo to the full 12-clip state set on Kling v2 master.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>8 more clips</strong> generated + shipped (<code>public/assets/cosmo-frames/</code>): duck, dance, wave, wink, stretch, fall, petted, look — joining idle/walk/bounce/jump. All 12 are alpha-cut watercolor atlases (8×8, 61 frames, 12fps) with consistent 1992-DNA.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>3 states wired to clips</strong> — <code>forceFall</code> → <code>fall</code>, pet → <code>petted</code> (loop), petal-spew look-up → <code>look</code>. The other clips (duck/dance/wave/wink/stretch) were already called via <code>playClip</code>. Now the whole state machine drives painted frames.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.3.0</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 23: painted-frames Cosmo (proof slice)</h2>

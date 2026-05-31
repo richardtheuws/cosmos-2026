@@ -35,6 +35,78 @@
       "cell": 256,
       "fps": 12,
       "loop": false
+    },
+    "duck": {
+      "file": "duck.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    },
+    "dance": {
+      "file": "dance.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": true
+    },
+    "wave": {
+      "file": "wave.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    },
+    "wink": {
+      "file": "wink.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    },
+    "stretch": {
+      "file": "stretch.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    },
+    "fall": {
+      "file": "fall.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
+    },
+    "petted": {
+      "file": "petted.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": true
+    },
+    "look": {
+      "file": "look.png",
+      "cols": 8,
+      "rows": 8,
+      "count": 61,
+      "cell": 256,
+      "fps": 12,
+      "loop": false
     }
   }
 }

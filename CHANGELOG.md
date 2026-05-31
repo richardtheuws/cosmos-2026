@@ -4,6 +4,18 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.0] — 2026-05-31 — Wave 23: full painted-frames clip set (12)
+
+Proof slice confirmed by Richard ("ja, dit bewijst het"). Completes the painted-frames Cosmo to the full 12-clip state set on Kling v2 master.
+
+### Added
+- **8 more clips** generated + shipped (`public/assets/cosmo-frames/`): duck, dance, wave, wink, stretch, fall, petted, look — joining idle/walk/bounce/jump. All 12 are alpha-cut watercolor atlases (8×8, 61 frames, 12fps) with consistent 1992-DNA.
+
+### Changed
+- **3 states wired to clips** — `forceFall` → `fall`, pet → `petted` (loop), petal-spew look-up → `look`. The other clips (duck/dance/wave/wink/stretch) were already called via `playClip`. Now the whole state machine drives painted frames.
+
+_Full set — live UAT pending across all states. fps tunable per clip in manifest.json (data-only). Not yet deployed._
+
 ## [2.3.0] — 2026-05-31 — Wave 23: painted-frames Cosmo (proof slice)
 
 The pivot that came out of "ik heb er geen gevoel bij dat we progressie maken" (NORTH-STAR §6, 2026-05-31): a flat billboard that sways/bobs is still a sticker. After spiking painted-frames vs a 2.5D puppet side-by-side, Richard chose **painted frames** ("die zijn geweldig, die wil ik"). This ships the proof slice — 4 core clips wired live — before the full 12-clip batch.
