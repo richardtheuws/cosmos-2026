@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cosmo motion spike — puppet vs painted frames</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: #0b0e1a;
+      color: #e7e3da; font-family: Inter, system-ui, sans-serif;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    h1 {
+      font-family: Cormorant, Georgia, serif; font-style: italic;
+      font-weight: 500; font-size: 1.9rem; margin: 1.2rem 0 0.2rem;
+      color: #f0ead8; letter-spacing: 0.01em;
+    }
+    .sub { opacity: 0.6; font-size: 0.85rem; margin-bottom: 0.8rem; }
+    .stage { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
+    .panel {
+      width: 380px; max-width: 90vw; background: #11152a;
+      border: 1px solid #232a45; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .panel h2 {
+      font-family: Cormorant, Georgia, serif; font-style: italic; font-weight: 500;
+      font-size: 1.25rem; margin: 0; padding: 0.7rem 1rem 0.2rem; color: #f3d9a0;
+    }
+    .panel .desc { font-size: 0.78rem; line-height: 1.4; opacity: 0.62; padding: 0 1rem 0.6rem; }
+    canvas { display: block; width: 100%; height: 380px; background: radial-gradient(circle at 50% 40%, #1a2140 0%, #0b0e1a 70%); }
+    .pending {
+      height: 380px; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem; font-style: italic;
+      font-family: Cormorant, Georgia, serif; font-size: 1.1rem; opacity: 0.7;
+      background: radial-gradient(circle at 50% 40%, #1a2140 0%, #0b0e1a 70%);
+    }
+    .controls { display: flex; gap: 1rem; align-items: center; margin: 1.2rem 0 2rem; flex-wrap: wrap; justify-content: center; }
+    button {
+      background: #2a3358; color: #e7e3da; border: 1px solid #3a4470;
+      border-radius: 8px; padding: 0.5rem 1.1rem; font-size: 0.9rem; cursor: pointer;
+    }
+    button:hover { background: #353f6b; }
+    label { font-size: 0.85rem; opacity: 0.8; display: flex; gap: 0.5rem; align-items: center; }
+  </style>
+</head>
+<body>
+  <h1>Twee Cosmo's die écht bewegen</h1>
+  <div class="sub">spike · 2026-05-31 · kies op gevoel — NORTH-STAR §6</div>
+  <div class="stage">
+    <div class="panel">
+      <h2>A · Painted frames</h2>
+      <div class="desc">Echte beweging gegenereerd uit de LoRA-hero (image-to-video), als frame-atlas afgespeeld. Elke frame = vol watercolor-schilderij.</div>
+      <canvas id="frames-canvas"></canvas>
+      <div class="pending" id="frames-pending">clip wordt nog gegenereerd…<br/>(ververs als de gen klaar is)</div>
+    </div>
+    <div class="panel">
+      <h2>B · 2.5D cut-out puppet</h2>
+      <div class="desc">Hero-PNG in losse delen (bovenlijf + 2 benen), gewrichten procedureel geanimeerd. Geen gen — volledig code-gestuurd. Naden zichtbaar (geen inpaint in deze spike).</div>
+      <canvas id="puppet-canvas"></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="toggle">Walk / Idle</button>
+    <label>tempo <input id="speed" type="range" min="2" max="14" value="7" step="0.5" /></label>
+  </div>
+  <script type="module" src="./cosmo-motion.ts"></script>
+</body>
+</html>

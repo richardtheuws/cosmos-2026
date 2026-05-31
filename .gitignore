@@ -52,3 +52,7 @@ public/assets/audio/voices/
 # loudnorm pre-pass backups (originals before −14 LUFS normalisation)
 public/assets/audio/music/_originals/
 .claude/scheduled_tasks.lock
+
+# Cosmo motion spike — generated binaries (regen via spike/gen_walk_clip.py)
+spike/assets/
+.playwright-mcp/
