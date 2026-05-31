@@ -4,6 +4,18 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.7] — 2026-05-31 — Wave 24: 21 painted assets land — the worlds can render
+
+The four-universe skeleton gets its skin. All 21 Wave-24 PNGs were generated best-method (fal Flux Pro v1.1-ultra + Recraft V3, never the cheap path), human-curated on an interactive contact sheet, and promoted to final paths (BiRefNet/luminance/gradient mattes for transparency, ESRGAN ×4 upscales to 4K, exact-dim crops). Ink-Ocean, Singing Dunes and the Spore-Chart now have backgrounds, parallax layers and objects — they render, pending live UAT.
+
+### Added
+- **21 painted assets** in `public/assets/{backgrounds,objects}/` — Ink-Ocean (surface/abyss + kelp-organ, updraft, jellyfish, lure, light-shaft, water-motes), Singing Dunes (dusk-dune/hollow 4K + 11 parallax layers + slide-crest, glass-bead, wind-bowl), Spore-Chart (void + nebula-wash + bloom-core/becoming), Forest (sunbeam-patch, glow-cap-cluster). Hayao×Moebius watercolour, locked palette, pop-accents ≤5%.
+- **Asset pipeline** (`scripts/wave24/`): `genbest.py` (best-tier generator), interactive `contact_sheet.py` (click-to-pick → picks.json), `promote.py` (matte + ESRGAN + exact-crop from curated picks).
+
+### Notes
+- Transparency by the right method per asset: BiRefNet for isolated subjects, **luminance-key** for glow-on-black veils (nebula-wash), **vertical gradient** for parallax landscape bands (dune walls) — BiRefNet blanks those, so it is not used there.
+- _Follow-up before public deploy: optimise the opaque 4K PNG heroes to WebP (~10× smaller). Not deployed yet — per-universe live UAT next._
+
 ## [2.4.6] — 2026-05-31 — Wave 24 S1: the "Look up." return path + Ink-Ocean beds
 
 Bringing the four-universe skeleton toward life. The first shared-substrate wiring lands — the free return-home affordance so no Universe can ever trap a player — and the Ink-Ocean ambient beds are replaced with real long-form loops.

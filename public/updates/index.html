@@ -206,6 +206,35 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.7</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24: 21 painted assets land — the worlds can render</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The four-universe skeleton gets its skin. All 21 Wave-24 PNGs were generated best-method (fal Flux Pro v1.1-ultra + Recraft V3, never the cheap path), human-curated on an interactive contact sheet, and promoted to final paths (BiRefNet/luminance/gradient mattes for transparency, ESRGAN ×4 upscales to 4K, exact-dim crops). Ink-Ocean, Singing Dunes and the Spore-Chart now have backgrounds, parallax layers and objects — they render, pending live UAT.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>21 painted assets</strong> in <code>public/assets/{backgrounds,objects}/</code> — Ink-Ocean (surface/abyss + kelp-organ, updraft, jellyfish, lure, light-shaft, water-motes), Singing Dunes (dusk-dune/hollow 4K + 11 parallax layers + slide-crest, glass-bead, wind-bowl), Spore-Chart (void + nebula-wash + bloom-core/becoming), Forest (sunbeam-patch, glow-cap-cluster). Hayao×Moebius watercolour, locked palette, pop-accents ≤5%.</li>
+          <li><strong>Asset pipeline</strong> (<code>scripts/wave24/</code>): <code>genbest.py</code> (best-tier generator), interactive <code>contact_sheet.py</code> (click-to-pick → picks.json), <code>promote.py</code> (matte + ESRGAN + exact-crop from curated picks).</li>
+        </ul>
+<h3>NOTES</h3>
+        <ul class="update__highlights">
+          <li>Transparency by the right method per asset: BiRefNet for isolated subjects, <strong>luminance-key</strong> for glow-on-black veils (nebula-wash), <strong>vertical gradient</strong> for parallax landscape bands (dune walls) — BiRefNet blanks those, so it is not used there.</li>
+          <li>_Follow-up before public deploy: optimise the opaque 4K PNG heroes to WebP (~10× smaller). Not deployed yet — per-universe live UAT next._</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.6</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24 S1: the &quot;Look up.&quot; return path + Ink-Ocean beds</h2>
