@@ -130,13 +130,13 @@ export class WayMoteOverlay {
 
     // Single upward swipe anywhere.
     this.onTouchStart = (e: TouchEvent): void => {
-      const t = e.changedTouches[0];
+      const t = e.changedTouches?.[0];
       if (!t) return;
       this.touchStartY = t.clientY;
       this.touchStartX = t.clientX;
     };
     this.onTouchEnd = (e: TouchEvent): void => {
-      const t = e.changedTouches[0];
+      const t = e.changedTouches?.[0];
       if (!t) return;
       const dy = this.touchStartY - t.clientY; // positive = swiped up
       const dx = Math.abs(t.clientX - this.touchStartX);
