@@ -32,7 +32,8 @@ When you decide a pivot is needed: **add a paragraph to the Pivot Ledger in NORT
 ## Brand contract (these never bend without a NORTH-STAR pivot entry)
 
 - **Visual language**: Hayao×Moebius watercolor + cosmic-luminous palette + saturated pop-accents (≤5%). No emojis. No Roblox-style placeholders. No standard stock graphics.
-- **Voice**: Cormorant Italic for poetic copy, Inter for UI. Dutch is fine for marketing copy; English for code/comments. Stoner-game vibe, never tacky drug-references. The 1992 origin is referenced obliquely, never explicitly.
+- **Voice**: Cormorant Italic for poetic copy, Inter for UI. Stoner-game vibe, never tacky drug-references. The 1992 origin is referenced obliquely, never explicitly.
+- **Language (locked, NORTH-STAR §1)**: **ALL in-game text and interaction is English** — every UI label, hint, onboarding line, system message, button, tooltip, any word the player reads in `/play/` — *even though Richard writes to you in Dutch*. Dutch is allowed ONLY for external marketing/site copy and internal working docs, never in-game. A Dutch string in-game is a bug. (Same discipline as English code/comments.) When you write or touch any player-facing string, it is English.
 - **Cosmo himself**: 1992 DNA — pearl-drop head, chameleon-bulging eyes (when re-rigged), saffron-crescent catchlight, single antenna with flower-bulb, suction-cup discs at hand-tips, faded-rose spots on green body, NO tail, slightly uncute proportions, slightly menacing-uncanny.
 - **The world breathes, doesn't shake.** Calm baseline + event-driven peaks. Anything that pushes constant-trippy back to the foreground is an anti-pattern.
 
