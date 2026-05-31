@@ -4,6 +4,13 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.10] — 2026-05-31 — Wave 24: the worlds render (parallax render-ownership fix)
+
+The one that brings the new universes to life. In substrate mode only `DefaultBackground.update()` rendered the shared ParallaxScene; a universe with a custom `behavior.background()` (chart, ink-ocean, dunes) added its planes to `parallax.scene` but **nothing ever painted it** — so the worlds showed only the renderer's clear colour. Centralised the per-frame parallax render in `RoomHost.tick` so it runs for EVERY background; `DefaultBackground.update()` is now a no-op (its render moved up).
+
+### Fixed
+- **Custom-background universes now render full-screen.** Live-UAT verified: **Ink-Ocean** paints its full underwater world (sunlit surface, ink-aubergine depths, god-ray light-shafts, water-motes, glowing jellyfish — black-box gone); **the Spore-Chart** paints its nebula-wash constellation with all blooms + becoming-blooms; **Dunes** renders via its `loadBiome` composition. No mushroom-bleed, no trampoline leak.
+
 ## [2.4.9] — 2026-05-31 — Wave 24: chart background → full-screen scene
 
 ### Fixed

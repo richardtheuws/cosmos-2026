@@ -28,10 +28,8 @@ import type { GlobalUniforms } from '../../core/globalUniforms';
 import type { BackgroundHandle, SubstrateCtx, RoomSpec } from '../contracts/BehaviorContract';
 
 export class DefaultBackground implements BackgroundHandle {
-  private ready = false;
-
   constructor(
-    private ctx: SubstrateCtx,
+    _ctx: SubstrateCtx,
     private room: RoomSpec,
     private parallax: ParallaxScene,
   ) {
@@ -41,7 +39,6 @@ export class DefaultBackground implements BackgroundHandle {
   private async boot(): Promise<void> {
     try {
       await this.parallax.loadBiome(this.activeBiome());
-      this.ready = true;
     } catch (err) {
       // eslint-disable-next-line no-console
       console.warn('[substrate/background] biome load failed', err);
@@ -54,15 +51,16 @@ export class DefaultBackground implements BackgroundHandle {
     return BIOMES['slow-bloom'];
   }
 
-  update(_dt: number, u: GlobalUniforms): void {
-    if (!this.ready) return;
-    this.parallax.update(u, this.ctx.motion);
+  update(_dt: number, _u: GlobalUniforms): void {
+    // Rendering the shared parallax is centralised in RoomHost.tick (so it runs
+    // for custom backgrounds too). DefaultBackground only ensures the biome is
+    // loaded (boot()); the per-frame parallax update/render is RoomHost's job.
+    // Intentionally a no-op.
   }
 
   dispose(): void {
     // Shared parallax — never destroyed by the room driver. The next room's
     // DefaultBackground will call loadBiome() to swap. SubstrateLoader.dispose()
-    // owns the actual destroy.
-    this.ready = false;
+    // owns the actual destroy. Nothing room-local to release here.
   }
 }

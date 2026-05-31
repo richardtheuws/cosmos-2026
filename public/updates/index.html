@@ -206,6 +206,28 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.10</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24: the worlds render (parallax render-ownership fix)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The one that brings the new universes to life. In substrate mode only <code>DefaultBackground.update()</code> rendered the shared ParallaxScene; a universe with a custom <code>behavior.background()</code> (chart, ink-ocean, dunes) added its planes to <code>parallax.scene</code> but <strong>nothing ever painted it</strong> — so the worlds showed only the renderer&#039;s clear colour. Centralised the per-frame parallax render in <code>RoomHost.tick</code> so it runs for EVERY background; <code>DefaultBackground.update()</code> is now a no-op (its render moved up).</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Custom-background universes now render full-screen.</strong> Live-UAT verified: <strong>Ink-Ocean</strong> paints its full underwater world (sunlit surface, ink-aubergine depths, god-ray light-shafts, water-motes, glowing jellyfish — black-box gone); <strong>the Spore-Chart</strong> paints its nebula-wash constellation with all blooms + becoming-blooms; <strong>Dunes</strong> renders via its <code>loadBiome</code> composition. No mushroom-bleed, no trampoline leak.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.9</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24: chart background → full-screen scene</h2>

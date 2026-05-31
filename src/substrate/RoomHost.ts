@@ -75,7 +75,15 @@ export class RoomHost {
   }
 
   tick(dt: number, u: GlobalUniforms): void {
+    // The background handle configures the SHARED parallax (adds planes, or
+    // swaps the biome) but does NOT render it — rendering the parallax is the
+    // RoomHost's job so it happens for EVERY universe, not just the ones that
+    // use DefaultBackground. Without this, a universe with a custom
+    // behavior.background() (chart void, ink-ocean water, dunes composition)
+    // adds its planes to parallax.scene but they never paint, leaving only the
+    // renderer's clear colour. One render per frame, here, for all of them.
     this.background?.update(dt, u);
+    this.boot.parallax.update(u, this.ctx.motion);
     for (const inh of this.inhabitants) inh.update(dt, u);
     for (const i of this.interactables) i.update(dt, u);
     this.audio?.update(dt);
