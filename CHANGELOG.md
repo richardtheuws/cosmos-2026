@@ -4,6 +4,19 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.4] — 2026-05-31 — Wave 24 Phase 1a: Forest ambient beds (Suno)
+
+The first content on the per-room audio seam. Richard generated the beds in Suno from the canvas §3 specs (`scripts/wave24/gen_forest_beds.py` holds the prompts; manual gen — Suno credits were low).
+
+### Added
+- **7 ambient beds** (Suno, transcoded 128k) in `public/assets/audio/music/`: `clearing-bloom-loop`, `deep-grove-loop` (Forest, used now); `ink-ocean-shafts`, `ink-ocean-trench`, `dune-drone-open`, `dune-drone-hollow`, `spore-chart-void` (staged for Phases 2–4).
+- **Forest per-room beds wired**: `clearing.audioBed` → clearing-bloom-loop (warm felt-mallet drone, 138s), `deep-grove.audioBed` → deep-grove-loop (cool bowed-bass underglow, 185s). DefaultAudio swaps between them on room-enter.
+
+### Known
+- 🔴 `ink-ocean-shafts` + `ink-ocean-trench` came back only **19.8s** (Suno returned short variants) — too short to loop well; flagged for regen before Ink-Ocean (Phase 3). Not used yet.
+
+_Live audio UAT pending (bed plays on wake; swaps on clearing↔deep-grove). Not yet deployed._
+
 ## [2.4.3] — 2026-05-31 — Wave 24 Phase 0b: per-room audio bed-swap
 
 Second substrate seam (resolves canvas O4). Makes per-room ambient beds work everywhere at once.

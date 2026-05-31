@@ -12,6 +12,7 @@
       "anchor": { "x": 0, "y": 0, "z": 0 },
       "cameraBounds": { "panRangeX": 1.6, "panRangeY": 0.6 },
       "biomeKey": "slow-bloom",
+      "audioBed": "../../public/assets/audio/music/clearing-bloom-loop.mp3",
       "exits": [
         { "to": "deep-grove", "via": "left-mushroom-path", "distance": 12 },
         { "to": "the-hollow", "via": "down-burrow", "distance": 8 }
@@ -26,6 +27,7 @@
       "anchor": { "x": -12, "y": 0, "z": 0 },
       "cameraBounds": { "panRangeX": 1.4, "panRangeY": 0.5 },
       "biomeKey": "slow-bloom",
+      "audioBed": "../../public/assets/audio/music/deep-grove-loop.mp3",
       "exits": [
         { "to": "clearing", "via": "right-mushroom-path", "distance": 12 }
       ]
