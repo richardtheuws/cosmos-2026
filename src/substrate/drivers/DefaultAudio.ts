@@ -1,48 +1,65 @@
 /**
- * DefaultAudio — architect §7.6. Silence by default. If `manifest.assets[]`
- * declares any audio entry with `preload: true`, that file is used as a
- * looped 0.45-volume ambient bed via the existing AudioFFTBridge.
+ * DefaultAudio — architect §7.6, Wave 24 wired.
+ *
+ * Picks an ambient music bed and swaps to it on room-enter via the existing
+ * AudioFFTBridge. Bed selection: the room's `audioBed` (a universe-relative
+ * asset path) if declared, else the manifest's first `preload:true` audio
+ * (legacy behavior). Silence if neither exists.
+ *
+ * Gesture-gating is handled inside the bridge: `setMusicTrack` creates the
+ * source even before the audio context is unlocked; the next user-gesture's
+ * `ensureRunning()` (wired in main.ts) plays it (the Sprint 11D retry path).
+ * This is a source swap, not a gain crossfade — same as the legacy
+ * BiomeManager `onTrackSwap`; the visual biome-blend covers the change, and
+ * sibling room beds are authored to share DNA so the swap is unobtrusive.
  */
 import { PreloadManager } from '../PreloadManager';
-import type { AssetEntry, AudioHandle, SubstrateCtx } from '../contracts/BehaviorContract';
+import type { AssetEntry, AudioHandle, RoomSpec, SubstrateCtx } from '../contracts/BehaviorContract';
 
 export class DefaultAudio implements AudioHandle {
   private trackUrl: string | null = null;
+  private readonly bridge: SubstrateCtx['audioBridge'];
 
-  constructor(ctx: SubstrateCtx, assets: readonly AssetEntry[], universeRel: string) {
-    const audio = assets.find((a) => a.type === 'audio' && a.preload);
-    if (!audio) {
-      this.trackUrl = null;
+  constructor(
+    ctx: SubstrateCtx,
+    assets: readonly AssetEntry[],
+    universeRel: string,
+    room?: RoomSpec,
+  ) {
+    this.bridge = ctx.audioBridge;
+
+    if (room?.audioBed) {
+      this.trackUrl = PreloadManager.resolveAssetUrl(room.audioBed, universeRel);
       return;
     }
-    this.trackUrl = PreloadManager.resolveAssetUrl(audio.path, universeRel);
-    void ctx; // ctx kept on the instance via closure if we extend later
+    const audio = assets.find((a) => a.type === 'audio' && a.preload);
+    this.trackUrl = audio ? PreloadManager.resolveAssetUrl(audio.path, universeRel) : null;
   }
 
   enter(): void {
     if (!this.trackUrl) return;
-    // AudioFFTBridge.setMusicTrack respects the autoplay policy — gesture-gated.
-    // Volume bed at 0.45 is the architect-spec; the bridge tracks its own gain.
-    // The ctx is available via the constructor; we accept the soft-coupling
-    // because DefaultAudio's only job is to nudge the bridge once on enter.
-    // In practice the BiomeManager track-swap path on the legacy `/play/` route
-    // already drives the bridge — when substrate becomes default at cutover,
-    // this path takes over.
+    this.bridge.setMusicTrack(this.trackUrl);
   }
 
   exit(_fadeMs: number): void {
-    /* fade-out handled by the bridge's existing crossfade machinery */
+    /* Leave the bed playing; the next room's enter() swaps it. A true
+     * gain-crossfade is a future bridge enhancement (canvas O4 follow-up). */
   }
 
   update(_dt: number): void {
-    /* bridge ticks itself via main.ts manager.register */
+    /* The bridge ticks itself via main.ts manager.register. */
   }
 
   dispose(): void {
-    /* nothing owned at this scope */
+    /* The bridge owns the audio graph; nothing owned at this scope. */
   }
 }
 
-export function defaultAudio(ctx: SubstrateCtx, assets: readonly AssetEntry[], universeRel: string): AudioHandle {
-  return new DefaultAudio(ctx, assets, universeRel);
+export function defaultAudio(
+  ctx: SubstrateCtx,
+  assets: readonly AssetEntry[],
+  universeRel: string,
+  room?: RoomSpec,
+): AudioHandle {
+  return new DefaultAudio(ctx, assets, universeRel, room);
 }

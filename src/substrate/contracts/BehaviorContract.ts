@@ -222,6 +222,10 @@ export interface RoomSpec {
   anchor: { x: number; y: number; z: number };
   cameraBounds?: { panRangeX: number; panRangeY: number };
   biomeKey?: string | null;
+  /** Wave 24 — per-room ambient music bed, a universe-relative asset path
+   *  (resolved like every other asset). DefaultAudio swaps to it on room-enter.
+   *  Omit to inherit the manifest's first preload:true audio (legacy behavior). */
+  audioBed?: string;
   exits?: RoomExit[];
 }
 

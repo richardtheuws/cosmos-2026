@@ -70,7 +70,7 @@ export class RoomHost {
     this.interactables = behavior?.interactables?.(ctx) ?? [];
 
     // Audio — author or default-silence-with-bed.
-    this.audio = behavior?.audio?.(ctx) ?? defaultAudio(ctx, this.boot.assets, this.boot.universeRel);
+    this.audio = behavior?.audio?.(ctx) ?? defaultAudio(ctx, this.boot.assets, this.boot.universeRel, this.boot.room);
     this.audio.enter();
   }
 

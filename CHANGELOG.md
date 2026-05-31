@@ -4,6 +4,18 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.3] — 2026-05-31 — Wave 24 Phase 0b: per-room audio bed-swap
+
+Second substrate seam (resolves canvas O4). Makes per-room ambient beds work everywhere at once.
+
+### Added
+- **`RoomSpec.audioBed`** — optional per-room ambient music bed (a universe-relative asset path), in the rooms.json schema + validator. Omit → inherits the manifest's first `preload:true` audio (legacy behavior).
+
+### Changed
+- **`DefaultAudio` wired** — was a stub (resolved a bed but never played it). `enter()` now swaps to the room's bed via `AudioFFTBridge.setMusicTrack`. Gesture-gating handled by the bridge (source created paused pre-unlock; the wake-tap's `ensureRunning()` plays it — the Sprint 11D retry path). A source-swap like the legacy `onTrackSwap`; true gain-crossfade is a future bridge enhancement. `RoomHost` now passes the room to `defaultAudio`.
+
+_Internal seam; not deployed. Phase 1 (deepen Forest: interactables + the two beds + underglow) is next._
+
 ## [2.4.2] — 2026-05-31 — Wave 24 Phase 0a: universe auto-discovery
 
 First substrate seam of the Wave-24 first-setup build (design canvas: `.claude/brainstorm/wave24/00-FIRST-SETUP.md`). Breadth-first per Richard.

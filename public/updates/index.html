@@ -206,6 +206,55 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.3</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24 Phase 0b: per-room audio bed-swap</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Second substrate seam (resolves canvas O4). Makes per-room ambient beds work everywhere at once.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>RoomSpec.audioBed</code></strong> — optional per-room ambient music bed (a universe-relative asset path), in the rooms.json schema + validator. Omit → inherits the manifest&#039;s first <code>preload:true</code> audio (legacy behavior).</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>DefaultAudio</code> wired</strong> — was a stub (resolved a bed but never played it). <code>enter()</code> now swaps to the room&#039;s bed via <code>AudioFFTBridge.setMusicTrack</code>. Gesture-gating handled by the bridge (source created paused pre-unlock; the wake-tap&#039;s <code>ensureRunning()</code> plays it — the Sprint 11D retry path). A source-swap like the legacy <code>onTrackSwap</code>; true gain-crossfade is a future bridge enhancement. <code>RoomHost</code> now passes the room to <code>defaultAudio</code>.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v2.4.2</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24 Phase 0a: universe auto-discovery</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">First substrate seam of the Wave-24 first-setup build (design canvas: <code>.claude/brainstorm/wave24/00-FIRST-SETUP.md</code>). Breadth-first per Richard.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li>**<code>SubstrateLoader.discoverUniverses()</code> now globs <code>universes/<em>/manifest.json</code></em>* (<code>import.meta.glob</code>, same mechanism as the behavior.ts loader) instead of a hard-coded list. Author a conformant universe folder → it&#039;s discovered automatically, no registry/opt-in/gatekeeper. This is the single source of truth the open-map (Spore-Chart) will share. Folders whose id starts with <code>_</code> are reserved and skipped (so the future <code>_chart</code> pseudo-universe never enumerates itself); the default universe is always included as a safety net. Resolves canvas open-items O10 (self-exclusion rule); no behavior change today (forest is still the only universe).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.1</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — hide the vibe ring (beat-mechanic retirement begins)</h2>

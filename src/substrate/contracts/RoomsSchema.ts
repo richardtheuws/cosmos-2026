@@ -81,11 +81,13 @@ function validateRoom(raw: unknown, opts: RoomsValidateOptions): RoomSpec {
         ? null
         : undefined;
 
+  const audioBed = optString(r.audioBed);
+
   const exits = Array.isArray(r.exits)
     ? r.exits.map((e, i) => validateExit(e, { ...opts, source: `${opts.source}.exits[${i}]` }))
     : [];
 
-  return { id, area, displayName, displayNameEn, description, anchor, cameraBounds, biomeKey, exits };
+  return { id, area, displayName, displayNameEn, description, anchor, cameraBounds, biomeKey, audioBed, exits };
 }
 
 function validateExit(raw: unknown, opts: RoomsValidateOptions): RoomExit {
