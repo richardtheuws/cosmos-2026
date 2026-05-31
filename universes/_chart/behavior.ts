@@ -473,10 +473,12 @@ class SporeChartBackground implements BackgroundHandle {
 }
 
 function chartBackground(ctx: SubstrateCtx): BackgroundHandle {
-  // The single shared ParallaxScene exposes its scene via ctx.parallax. We add
-  // to that scene (never construct a new ParallaxScene). ctx.scene is the same
-  // THREE.Scene the parallax paints to, so we attach there.
-  return new SporeChartBackground(ctx.scene);
+  // Paint into the SHARED ParallaxScene's scene (full-screen, its own ortho
+  // camera) — NOT ctx.scene, which is the foreground CosmoStage (perspective):
+  // planes added there render as a small floating panel. ctx.parallax.scene is
+  // the full-frame backdrop the void + nebula must fill. (Never construct a 2nd
+  // ParallaxScene — the v2.2.4 double-tick scar.)
+  return new SporeChartBackground(ctx.parallax.scene);
 }
 
 /* ── inhabitants — the blooms ─────────────────────────────────────────────────

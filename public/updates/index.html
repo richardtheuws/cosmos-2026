@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.9</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24: chart background → full-screen scene</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Chart background painted into the foreground</strong> — <code>chartBackground()</code> added the void + nebula planes to <code>ctx.scene</code> (the perspective CosmoStage → a small floating panel) on the mistaken assumption it was the parallax scene. Now targets <code>ctx.parallax.scene</code> (the full-screen ortho backdrop). Removes the misplaced panel.</li>
+        </ul>
+<h3>KNOWN (NEXT SESSION — ONE FOCUSED RENDER PASS)</h3>
+        <ul class="update__highlights">
+          <li>Behavior-added planes still don&#039;t render <em>visibly</em> in <code>ctx.parallax.scene</code> (void loads but the backdrop reads flat; ink-ocean paints procedural solid-colour planes there too and reads flat) — a render-order / material / z investigation, common to chart + ink-ocean. Also: ink-ocean ignores its painted <code>ink-water-surface</code> 4K asset (paints procedural colour instead); additive inhabitants (jellyfish) show a black box; the &quot;tap the trampoline&quot; HUD hint shows in universes with no trampoline.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.8</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24: substrate-render fixes (live UAT)</h2>

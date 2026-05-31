@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.9] — 2026-05-31 — Wave 24: chart background → full-screen scene
+
+### Fixed
+- **Chart background painted into the foreground** — `chartBackground()` added the void + nebula planes to `ctx.scene` (the perspective CosmoStage → a small floating panel) on the mistaken assumption it was the parallax scene. Now targets `ctx.parallax.scene` (the full-screen ortho backdrop). Removes the misplaced panel.
+
+### Known (next session — one focused render pass)
+- Behavior-added planes still don't render *visibly* in `ctx.parallax.scene` (void loads but the backdrop reads flat; ink-ocean paints procedural solid-colour planes there too and reads flat) — a render-order / material / z investigation, common to chart + ink-ocean. Also: ink-ocean ignores its painted `ink-water-surface` 4K asset (paints procedural colour instead); additive inhabitants (jellyfish) show a black box; the "tap the trampoline" HUD hint shows in universes with no trampoline.
+
 ## [2.4.8] — 2026-05-31 — Wave 24: substrate-render fixes (live UAT)
 
 Drove all four universes in a real browser (the first true /play/ UAT of the four-universe set) and fixed the systemic render bugs it surfaced. Assets confirmed loading + on-brand; S1 way-mote + `_chart` resolver exemption confirmed working live.
