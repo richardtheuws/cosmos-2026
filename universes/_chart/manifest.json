@@ -1,0 +1,24 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/manifest-1.1.json",
+  "version": "1.1",
+  "name": "_chart",
+  "displayName": "The Spore-Chart",
+  "displayNameEn": "The Spore-Chart — the hub all worlds are reached from",
+  "summaryEn": "A hand-inked celestial atlas drifting in a watercolor void, where every Universe hangs as a luminous spore-bloom painted in its own palette. It is the hub, not a destination — a calm room you can dwell in that happens to be the room the others are reached from.",
+  "author": "Richard Theuws",
+  "license": "MIT",
+  "behaviorModule": true,
+  "defaultArea": "the-void",
+  "brandDeviation": null,
+  "assets": [
+    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-void-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-nebula-wash.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/objects/spore-bloom-core.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/objects/spore-bloom-becoming.png", "preload": false },
+    { "type": "audio", "path": "../../public/assets/audio/music/spore-chart-void.mp3", "preload": true }
+  ],
+  "post": {
+    "preset": "calm-baseline",
+    "intensityCurve": { "bloom": 1.05, "kaleido": 0.6, "fluid": 0.85, "chroma": 0.95 }
+  }
+}

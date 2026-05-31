@@ -1,0 +1,84 @@
+{
+  "biome_id": "dusk-hollow",
+  "description": "The Windless Hollow — a sheltered lee between two dunes; faded-rose pooled light on the inner sand-walls, softer saffron-glow floor, narrow band of dusk sky and one faint early star; the quiet inside the vastness",
+  "frame_size": {
+    "width": 1536,
+    "height": 1024
+  },
+  "layer_count": 5,
+  "layers": [
+    {
+      "idx": 1,
+      "name": "narrow-dusk-sky",
+      "role": "sky",
+      "file": "layer-1_narrow-dusk-sky.png",
+      "parallax_multiplier": 0.05,
+      "scale": 1.15,
+      "x_offset": 0.0,
+      "y_offset": 0.35,
+      "blend_mode": "normal",
+      "z_position": -180.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 2,
+      "name": "far-dune-wall",
+      "role": "distant",
+      "file": "layer-2_far-dune-wall.png",
+      "parallax_multiplier": 0.18,
+      "scale": 1.05,
+      "x_offset": 0.0,
+      "y_offset": 0.05,
+      "blend_mode": "normal",
+      "z_position": -140.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 3,
+      "name": "cupping-dune-walls",
+      "role": "mid-a",
+      "file": "layer-3_cupping-dune-walls.png",
+      "parallax_multiplier": 0.4,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": -0.05,
+      "blend_mode": "normal",
+      "z_position": -100.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 4,
+      "name": "rippled-bowl-floor",
+      "role": "foreground",
+      "file": "layer-4_rippled-bowl-floor.png",
+      "parallax_multiplier": 0.72,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.3,
+      "blend_mode": "normal",
+      "z_position": -30.0,
+      "opacity": 1.0
+    },
+    {
+      "idx": 5,
+      "name": "settling-sand-shimmer",
+      "role": "particle",
+      "file": "layer-5_settling-sand-shimmer.png",
+      "parallax_multiplier": 0.9,
+      "scale": 1.0,
+      "x_offset": 0.0,
+      "y_offset": 0.0,
+      "blend_mode": "additive",
+      "z_position": -0.0,
+      "opacity": 0.4
+    }
+  ],
+  "parallax_notes": "parallax_multiplier: world-space camera-X displacement is multiplied by this factor to shift each layer. 0.05 = nearly stationary (narrow sky), 0.9 = near-full (settling shimmer). Tighter parallax spread than the open dune — the cupped hollow has less depth. The rippled-bowl-floor (layer 4) is where the Singing Bowl interactable decal sits.",
+  "blend_modes": {
+    "normal": "standard alpha-over compositing",
+    "additive": "additive blend; the faint settling sand-shimmer"
+  },
+  "decoration_spots": [
+    { "id": "wind-bowl", "x": 0.0, "y": -0.3, "z": -2.0, "scale": 1.1 }
+  ]
+}

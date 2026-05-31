@@ -1,0 +1,27 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/manifest-1.1.json",
+  "version": "1.1",
+  "name": "ink-ocean",
+  "displayName": "Ink-Ocean",
+  "displayNameEn": "Ink-Ocean — where the sea is drawn in one breath",
+  "summaryEn": "A Moebius-ink underwater realm where the sea is one continuous pen-line over washes of ink-aubergine and sky-wash. Saffron light-shafts comb the upper water; a deep trench holds a rising updraft-current and one cyan glow far below. It exists to prove the substrate is not forest-hardcoded: every room is biomeKey-null and painted by a custom background(ctx).",
+  "author": "Richard Theuws",
+  "license": "MIT",
+  "behaviorModule": true,
+  "defaultArea": "the-drowned-cathedral",
+  "brandDeviation": null,
+  "assets": [
+    { "type": "image", "path": "../../public/assets/backgrounds/ink-water-surface-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/ink-water-abyss-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/objects/kelp-organ.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/updraft-current.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/jellyfish-cyan.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/deep-glow-lure.png", "preload": false },
+    { "type": "audio", "path": "../../public/assets/audio/music/ink-ocean-shafts.mp3", "preload": true },
+    { "type": "audio", "path": "../../public/assets/audio/music/ink-ocean-trench.mp3", "preload": false }
+  ],
+  "post": {
+    "preset": "calm-baseline",
+    "intensityCurve": { "bloom": 1.1, "kaleido": 0.7, "fluid": 1.15, "chroma": 0.95 }
+  }
+}

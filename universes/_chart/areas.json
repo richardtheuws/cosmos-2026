@@ -1,0 +1,24 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/areas-1.0.json",
+  "version": "1.0",
+  "entryArea": "the-void",
+  "areas": [
+    {
+      "id": "the-void",
+      "displayName": "The Void Between Worlds",
+      "displayNameEn": "The Void Between Worlds",
+      "description": "An ink-aubergine cosmic void washed with faded-rose and sky-wash nebula, drifting almost imperceptibly. The blooms hang here; the negative dark holds the worlds not yet painted.",
+      "moodOverrides": {
+        "ambient": "#1A1226",
+        "primary": "#2A1F3D"
+      },
+      "pathExperience": {
+        "kind": "drift",
+        "duration": 1.4,
+        "ambient": "#1A1226",
+        "description": "There is no walking between worlds here — only the slow drift of the void itself, and the ceremonial portal that opens a chosen bloom."
+      },
+      "rooms": ["the-chart"]
+    }
+  ]
+}

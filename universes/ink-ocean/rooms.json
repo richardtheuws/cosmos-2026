@@ -1,0 +1,35 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/rooms-1.1.json",
+  "version": "1.1",
+  "entryRoom": "light-shafts",
+  "rooms": [
+    {
+      "id": "light-shafts",
+      "area": "the-drowned-cathedral",
+      "displayName": "The Light-Shafts",
+      "displayNameEn": "The Light-Shafts",
+      "description": "Suspended in lit upper water; three saffron shafts comb down through ink-aubergine. A kelp-organ sways at the edge.",
+      "anchor": { "x": 0, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.8, "panRangeY": 1.2 },
+      "biomeKey": null,
+      "audioBed": "../../public/assets/audio/music/ink-ocean-shafts.mp3",
+      "exits": [
+        { "to": "the-trench", "via": "sink-down", "distance": 14 }
+      ]
+    },
+    {
+      "id": "the-trench",
+      "area": "the-drowned-cathedral",
+      "displayName": "The Trench",
+      "displayNameEn": "The Trench",
+      "description": "The deep below the shafts — ink-aubergine fading to black. A rising updraft-current lifts Cosmo; a single cyan lure-orb pulses far down.",
+      "anchor": { "x": 0, "y": -4, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.6, "panRangeY": 1.4 },
+      "biomeKey": null,
+      "audioBed": "../../public/assets/audio/music/ink-ocean-trench.mp3",
+      "exits": [
+        { "to": "light-shafts", "via": "rise-up", "distance": 14 }
+      ]
+    }
+  ]
+}

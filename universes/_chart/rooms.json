@@ -1,0 +1,18 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/rooms-1.1.json",
+  "version": "1.1",
+  "entryRoom": "the-chart",
+  "rooms": [
+    {
+      "id": "the-chart",
+      "area": "the-void",
+      "displayName": "The Spore-Chart",
+      "displayNameEn": "The Spore-Chart",
+      "description": "A single wide, slow vista: a watercolor cosmic void with a constellation of luminous spore-blooms, one per Universe, and the becoming-blooms waiting in the dark. Cosmo drifts here, considering where to go.",
+      "anchor": { "x": 0, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 2.2, "panRangeY": 1.0 },
+      "biomeKey": null,
+      "audioBed": "../../public/assets/audio/music/spore-chart-void.mp3"
+    }
+  ]
+}

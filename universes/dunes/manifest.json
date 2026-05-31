@@ -1,0 +1,26 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/manifest-1.1.json",
+  "version": "1.1",
+  "name": "dunes",
+  "displayName": "The Singing Dunes",
+  "displayNameEn": "The Singing Dunes — a dusk sand-sea that hums when you move",
+  "summaryEn": "A vast meditative sand-ocean at endless dusk, rendered in Hayao×Moebius watercolor. Saffron-glow horizon bleeding into ink-aubergine; the sand sings a low slow chord when Cosmo slides a crest or circles a wind-bowl. The pocket-escape made of emptiness and one held tone.",
+  "author": "Richard Theuws",
+  "license": "MIT",
+  "behaviorModule": true,
+  "defaultArea": "the-singing-flat",
+  "brandDeviation": null,
+  "assets": [
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-dune-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-hollow-4k.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/slide-crest.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/glass-bead-bloom.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/wind-bowl.png", "preload": false },
+    { "type": "audio", "path": "../../public/assets/audio/music/dune-drone-open.mp3", "preload": true },
+    { "type": "audio", "path": "../../public/assets/audio/music/dune-drone-hollow.mp3", "preload": false }
+  ],
+  "post": {
+    "preset": "calm-baseline",
+    "intensityCurve": { "bloom": 1.1, "kaleido": 0.6, "fluid": 1.0, "chroma": 0.9 }
+  }
+}

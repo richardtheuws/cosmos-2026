@@ -206,6 +206,65 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.5</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24: four-universe substrate skeleton (world-builder team)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">A parallel world-builder team (multi-agent workflow, each builder holding the brand contract + dweller lens, each writing only its own disjoint folder) authored the buildable substrate for the full first setup. Hard gate: <strong>tsc PASS, build PASS, zero compile errors.</strong> Skeletons-to-UAT — they compile and the data is contract-conformant, but the worlds don&#039;t render until their assets are generated (next step). Full integration runbook: <code>.claude/brainstorm/wave24/01-BUILD-STATUS.md</code>.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>Ink-Ocean</strong> (<code>universes/ink-ocean/</code>) — new Universe, <code>biomeKey:null</code> + custom <code>background()</code> on the shared scene (proves the contract isn&#039;t forest-hardcoded). 2 rooms (Light-Shafts, The Trench); weightless Cosmo = procedural hover-drift over <code>idle</code>; cool portal (hue 0.55).</li>
+          <li><strong>Singing Dunes</strong> (<code>universes/dunes/</code>) — new Universe, <code>biomeKey:null</code> + per-room composition-spec. 2 rooms (Long Dune vista, Windless Hollow); dusk-mirage portal; the Hollow declares deliberate stillness in its README.</li>
+          <li><strong>The Spore-Chart</strong> (<code>universes/_chart/</code>) — the open-map hub (reserved <code>_</code>-prefix, auto-skipped by discovery). Renders one bloom per discovered universe + 3 &quot;your world here&quot; becoming-blooms; tapping a bloom drives the existing URL grammar; [Copy the prompt] = README quickstart verbatim.</li>
+          <li><strong>READMEs</strong> for the 3 new universes; per-world asset runbooks under <code>.claude/brainstorm/wave24/</code>.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Forest deepened</strong> (<code>universes/forest/behavior.ts</code>) — added 3 interactables (Sunbeam Patch; Echo-Cap glow-cluster; Breathing-Portal greeting that reads the live inhabitant&#039;s pulse, no second plane — v2.2.4 scar honored), spawn-gated per room. All existing inhabitants/trampoline/background preserved. Deep Grove underglow via content layer (no new biome).</li>
+          <li><strong>CHANGELOG emojis removed</strong> — they leaked into the player-visible <code>/updates/</code> page (the build regenerates it from this file). No emoji in any in-game string or behavior.ts (verified).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
+          <span class="update__version">v2.4.4</span>
+          <span class="update__date">2026-05-31</span>
+          <h2 class="update__title">05-31 — Wave 24 Phase 1a: Forest ambient beds (Suno)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The first content on the per-room audio seam. Richard generated the beds in Suno from the canvas §3 specs (<code>scripts/wave24/gen_forest_beds.py</code> holds the prompts; manual gen — Suno credits were low).</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>7 ambient beds</strong> (Suno, transcoded 128k) in <code>public/assets/audio/music/</code>: <code>clearing-bloom-loop</code>, <code>deep-grove-loop</code> (Forest, used now); <code>ink-ocean-shafts</code>, <code>ink-ocean-trench</code>, <code>dune-drone-open</code>, <code>dune-drone-hollow</code>, <code>spore-chart-void</code> (staged for Phases 2–4).</li>
+          <li><strong>Forest per-room beds wired</strong>: <code>clearing.audioBed</code> → clearing-bloom-loop (warm felt-mallet drone, 138s), <code>deep-grove.audioBed</code> → deep-grove-loop (cool bowed-bass underglow, 185s). DefaultAudio swaps between them on room-enter.</li>
+        </ul>
+<h3>KNOWN</h3>
+        <ul class="update__highlights">
+          <li><strong>Known issue:</strong> <code>ink-ocean-shafts</code> + <code>ink-ocean-trench</code> came back only <strong>19.8s</strong> (Suno returned short variants) — too short to loop well; flagged for regen before Ink-Ocean (Phase 3). Not used yet.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.3</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24 Phase 0b: per-room audio bed-swap</h2>
@@ -984,7 +1043,7 @@
           <li>Endpoint: <code>fal-ai/flux-lora-fast-training</code>, 2000 steps, trigger word <code>rtcosmo</code></li>
           <li>Re-usable LoRA URL bewaard in memory voor toekomstig hergebruik</li>
           <li>Hero gen via <code>fal-ai/flux-lora</code> met LoRA + ESRGAN 4× → <code>cosmo-hero-lora.png</code> 4096² RGBA</li>
-          <li>DNA-checklist <strong>10/10</strong>: pearl-drop ✓, chameleon bulging eyes ✓, geen blozende wangen ✓, single antenne+flower ✓, <strong>two clean black flat suction-cup discs</strong> ✓ (organisch, geen PIL-paint workaround), faded-rose spots ✓, no tail ✓, no vinger-handen ✓, watercolor + paper-grain ✓, slight uncute ✓</li>
+          <li>DNA-checklist <strong>10/10</strong>: pearl-drop [x], chameleon bulging eyes [x], geen blozende wangen [x], single antenne+flower [x], <strong>two clean black flat suction-cup discs</strong> [x] (organisch, geen PIL-paint workaround), faded-rose spots [x], no tail [x], no vinger-handen [x], watercolor + paper-grain [x], slight uncute [x]</li>
           <li>Halo fringe 14.3px (Sprint 14A was 24px — verbeterd)</li>
           <li>Cost ~$3-5 (training + 10 generation attempts + ESRGAN). Recoupt na ~10 toekomstige Cosmo-renders ($0.05 via LoRA vs $0.45 via PIL-painting)</li>
         </ul>

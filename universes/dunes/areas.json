@@ -1,0 +1,21 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/areas-1.0.json",
+  "version": "1.0",
+  "entryArea": "the-singing-flat",
+  "areas": [
+    {
+      "id": "the-singing-flat",
+      "displayName": "The Singing Flat",
+      "displayNameEn": "The Singing Flat",
+      "description": "The dusk sand-sea: one endless mood seen wide then close. A high open crest and a sheltered windless hollow, threaded by a single descend/climb path. Saffron-glow above, faded-rose in the lee.",
+      "moodOverrides": null,
+      "pathExperience": {
+        "kind": "drift",
+        "duration": 2.6,
+        "ambient": "#E8C4B8",
+        "description": "Sand drifts off the crest-edge as Cosmo crosses; the wind narrows to a hush as the world cups around him."
+      },
+      "rooms": ["long-dune", "the-windless-hollow"]
+    }
+  ]
+}

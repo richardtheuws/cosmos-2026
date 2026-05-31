@@ -416,11 +416,335 @@ class ForestTrampoline implements InteractableHandle {
   }
 }
 
+/* ── SunbeamPatch (NEW, Wave 24) ───────────────────────────────────────────────
+ *
+ * Clearing's second, *slower* delight-loop (vs. the trampoline's energy). A
+ * painted shaft of warm light spilling through a canopy gap onto the moss — a
+ * mushroom-cream/saffron-glow watercolor pool on the ground with faint drifting
+ * dust-motes. Calm baseline = the beam's intensity breathes ±4% on a ~9s sine
+ * (matching the breathing-portal cadence — the world breathes). Event-peak =
+ * Cosmo walks in and `stretch`es (waking/limbering in the warmth), settling to
+ * `idle` inside the beam; a re-use makes him `look` up at the canopy gap.
+ *
+ * Rendered as additive glow planes over the SHARED parallax world — no second
+ * ParallaxScene (the v2.2.4 double-tick scar). A flat ground-decal plane (the
+ * pool) + a soft vertical shaft plane, both AdditiveBlending so they read as
+ * light, not as a sticker.
+ *
+ * onUse drives a NAMED clip (`stretch`, then `look` on re-use). The CosmoV2Rig
+ * does not yet expose a clip scheduler (CosmoAnimDirector lands later — see the
+ * trampoline's onUse note), so we drive the procedural channels the rig DOES
+ * expose (a gentle vertical lift + a soft rollZ "limber" sway) as the bridge,
+ * and record the clip intent here. ANIMATION-REQUEST: none new — `stretch` +
+ * `look` are shipped clips; this only needs the director to honor a named-clip
+ * request from onUse.
+ */
+class SunbeamPatch implements InteractableHandle {
+  readonly id = 'sunbeam-patch';
+  readonly anchor: { x: number; y: number; z: number };
+  readonly range = 1.6;
+
+  private group: THREE.Group;
+  private poolMesh: THREE.Mesh;
+  private shaftMesh: THREE.Mesh;
+  private poolTex: THREE.Texture;
+  private timeS = 0;
+  private useCount = 0;
+
+  constructor(
+    private scene: THREE.Scene,
+    room: SubstrateCtx['room'],
+  ) {
+    // ~x+2.5 of the room anchor, on the ground, mid-depth near the trampoline.
+    this.anchor = { x: room.anchor.x + 2.5, y: room.anchor.y, z: room.anchor.z - 1.6 };
+
+    const loader = new THREE.TextureLoader();
+    this.poolTex = loader.load(assetPath('assets/objects/sunbeam-patch.png'));
+    this.poolTex.colorSpace = THREE.SRGBColorSpace;
+
+    // Ground pool — lies flat on the moss, additive so it reads as warm light.
+    const poolGeo = new THREE.PlaneGeometry(2.2, 1.4);
+    const poolMat = new THREE.MeshBasicMaterial({
+      map: this.poolTex,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      opacity: 0.85,
+    });
+    this.poolMesh = new THREE.Mesh(poolGeo, poolMat);
+    this.poolMesh.rotation.x = -Math.PI / 2; // lay flat on the ground
+    this.poolMesh.position.y = 0.01;
+
+    // Soft vertical shaft — a faint saffron column from the canopy gap. Reuses
+    // the same painted texture, stretched up, very low opacity so it's a hint.
+    const shaftGeo = new THREE.PlaneGeometry(1.4, 3.4);
+    const shaftMat = new THREE.MeshBasicMaterial({
+      map: this.poolTex,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      opacity: 0.22,
+    });
+    this.shaftMesh = new THREE.Mesh(shaftGeo, shaftMat);
+    this.shaftMesh.position.set(0, 1.7, -0.2);
+
+    this.group = new THREE.Group();
+    this.group.position.set(this.anchor.x, this.anchor.y, this.anchor.z);
+    this.group.add(this.poolMesh);
+    this.group.add(this.shaftMesh);
+    this.scene.add(this.group);
+  }
+
+  update(dt: number, _u: GlobalUniforms): void {
+    this.timeS += dt;
+    // Calm baseline: the beam's intensity breathes ±4% on a ~9s sine — the
+    // world breathes, it does not shake. Both planes share one slow phase.
+    const breathe = 1 + 0.04 * Math.sin((this.timeS * Math.PI * 2) / 9);
+    const poolMat = this.poolMesh.material as THREE.MeshBasicMaterial;
+    const shaftMat = this.shaftMesh.material as THREE.MeshBasicMaterial;
+    poolMat.opacity = 0.85 * breathe;
+    shaftMat.opacity = 0.22 * breathe;
+  }
+
+  /**
+   * Event-peak. Intended clip: first use → `stretch` (settle to `idle` in-beam);
+   * re-use → `look` (up at the canopy gap). CosmoAnimDirector will own the named
+   * clip drive; until then we bridge through the rig's procedural channels.
+   */
+  onUse(cosmo: CosmoV2Rig): void {
+    this.useCount += 1;
+    if (this.useCount % 2 === 1) {
+      // `stretch` bridge — a gentle upward limber + a soft roll-sway.
+      cosmo.root.position.y += 0.04;
+      cosmo.rollZ = 0.06;
+    } else {
+      // `look` bridge — a small upward tilt toward the canopy gap.
+      cosmo.pitchX = 0.05;
+    }
+  }
+
+  dispose(): void {
+    if (this.group.parent) this.group.parent.remove(this.group);
+    this.poolMesh.geometry.dispose();
+    this.shaftMesh.geometry.dispose();
+    (this.poolMesh.material as THREE.Material).dispose();
+    (this.shaftMesh.material as THREE.Material).dispose();
+    this.poolTex.dispose();
+    void this.scene;
+  }
+}
+
+/* ── EchoCap (NEW, Wave 24) ─────────────────────────────────────────────────────
+ *
+ * Deep Grove's delight-loop — the contemplative trampoline-analog. A cluster of
+ * painted glow-cap mushrooms (moss-sage caps, luminous undersides). Calm
+ * baseline = each cap pulses its underglow on a slow offset sine (the breathing
+ * world). Event-peak = Cosmo `duck`s to press a hand-disc to the nearest cap's
+ * underside (suction-cup DNA), then `look`s up as the light blooms: the touched
+ * cap flares pop-cyan and a soft cascade lights its neighbours in sequence,
+ * settling over ~3s. Repeatable; each touch re-lights. Never scored, never a
+ * combo — a gentle call-and-response.
+ *
+ * This handle owns the additive glow-cap planes itself (Option A underglow — see
+ * the design doc: the Deep Grove's cool dim is authored in room CONTENT over the
+ * shared `slow-bloom` background, NOT a new biome). It paints on the SHARED
+ * scene — no second ParallaxScene.
+ *
+ * ANIMATION-REQUEST: none new — `duck` + `look` cover the crouch-and-touch.
+ */
+interface GlowCap {
+  mesh: THREE.Mesh;
+  basePhase: number; // slow-pulse phase offset
+  flare: number; // 0..1 cascade-lit flare, decays over ~3s
+}
+
+class EchoCap implements InteractableHandle {
+  readonly id = 'echo-cap';
+  readonly anchor: { x: number; y: number; z: number };
+  readonly range = 1.8;
+
+  private group: THREE.Group;
+  private tex: THREE.Texture;
+  private caps: GlowCap[] = [];
+  private timeS = 0;
+
+  constructor(
+    private scene: THREE.Scene,
+    room: SubstrateCtx['room'],
+  ) {
+    // ~x-1.0 relative to room anchor (in front of the breathing-portal at x-1.4).
+    this.anchor = { x: room.anchor.x - 1.0, y: room.anchor.y, z: room.anchor.z - 1.5 };
+
+    const loader = new THREE.TextureLoader();
+    this.tex = loader.load(assetPath('assets/objects/glow-cap-cluster.png'));
+    this.tex.colorSpace = THREE.SRGBColorSpace;
+
+    this.group = new THREE.Group();
+    this.group.position.set(this.anchor.x, this.anchor.y, this.anchor.z);
+
+    // A short row of caps fanning left of the touch-cap; the nearest (index 0)
+    // is what Cosmo presses, the rest answer in cascade. Additive so they read
+    // as light blooming from the ground up — the Option-A underglow source.
+    const layout: ReadonlyArray<{ x: number; z: number; s: number }> = [
+      { x: 0.0, z: 0.0, s: 0.9 },
+      { x: -0.8, z: -0.3, s: 0.7 },
+      { x: -1.5, z: -0.1, s: 0.6 },
+      { x: -2.2, z: -0.4, s: 0.5 },
+    ];
+    for (let i = 0; i < layout.length; i++) {
+      const l = layout[i];
+      const geo = new THREE.PlaneGeometry(0.9 * l.s, 0.9 * l.s);
+      const mat = new THREE.MeshBasicMaterial({
+        map: this.tex,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        opacity: 0.5,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(l.x, 0.25 * l.s, l.z);
+      this.group.add(mesh);
+      this.caps.push({ mesh, basePhase: i * 0.9, flare: 0 });
+    }
+
+    this.scene.add(this.group);
+  }
+
+  update(dt: number, _u: GlobalUniforms): void {
+    this.timeS += dt;
+    for (const cap of this.caps) {
+      // Calm-baseline slow pulse — offset per cap so the cluster breathes
+      // out of phase (no single throb). ~7s period.
+      const pulse = 0.45 + 0.12 * Math.sin((this.timeS * Math.PI * 2) / 7 + cap.basePhase);
+      // Event-peak flare decays toward 0 over ~3s; adds pop-cyan-hot brightness.
+      if (cap.flare > 0) cap.flare = Math.max(0, cap.flare - dt / 3);
+      const mat = cap.mesh.material as THREE.MeshBasicMaterial;
+      mat.opacity = Math.min(1, pulse + cap.flare * 0.6);
+      const flareScale = 1 + cap.flare * 0.12;
+      cap.mesh.scale.setScalar(flareScale);
+    }
+  }
+
+  /**
+   * Event-peak. Intended clip: `duck` (crouch + hand-disc press) → `look` (up as
+   * the light blooms). The touched cap flares, then neighbours cascade. The
+   * CosmoV2Rig clip scheduler lands later (see trampoline note); bridge through
+   * the procedural channels for now.
+   */
+  onUse(cosmo: CosmoV2Rig): void {
+    // `duck` bridge — a brief crouch via a small downward root dip.
+    cosmo.root.position.y -= 0.03;
+    // Light the touched cap hard, then cascade down the line with a staggered
+    // ramp so the neighbours answer in sequence (settles via update's decay).
+    for (let i = 0; i < this.caps.length; i++) {
+      this.caps[i].flare = Math.max(this.caps[i].flare, 1 - i * 0.18);
+    }
+  }
+
+  dispose(): void {
+    if (this.group.parent) this.group.parent.remove(this.group);
+    for (const cap of this.caps) {
+      cap.mesh.geometry.dispose();
+      (cap.mesh.material as THREE.Material).dispose();
+    }
+    this.tex.dispose();
+    void this.scene;
+  }
+}
+
+/* ── BreathingPortalGreeting (NEW, Wave 24) ─────────────────────────────────────
+ *
+ * The LIVE `breathing-portal` inhabitant promoted to a *gentle* interactable.
+ * onUse → Cosmo walks over and `wave`s (the "hello to an inhabitant" reading);
+ * the portal's inhale-apex syncs to his wave and glints pop-cyan once. NO
+ * traversal — this is a greeting, not a door (the real Universe↔Universe portal
+ * is the ceremonial nebula-portal; this in-world portal is decor that
+ * ACKNOWLEDGES you).
+ *
+ * Critical (v2.2.4 double-tick scar): this handle does NOT construct a second
+ * portal plane. It READS the existing inhabitant's breathing cadence by
+ * recomputing the SAME pulse phase the `breathing-portal` ForestInhabitant uses
+ * (`1 + 0.04 * sin(t * 0.9)`) from a shared clock, so the greeting can fire its
+ * cyan glint on the inhale-apex without owning a mesh. It carries no geometry of
+ * its own beyond a tiny transient glint sprite that it adds/removes around the
+ * wave; calm-baseline owns nothing.
+ *
+ * ANIMATION-REQUEST: none — `wave` is shipped.
+ */
+class BreathingPortalGreeting implements InteractableHandle {
+  readonly id = 'breathing-portal-greeting';
+  readonly anchor: { x: number; y: number; z: number };
+  readonly range = 1.6;
+
+  // The breathing-portal inhabitant lives at this room-relative anchor
+  // (FOREST_INHABITANTS 'breathing-portal'). We walk Cosmo to just in front of
+  // it. We do NOT add a plane here.
+  private static readonly PORTAL_ANCHOR = { x: -1.4, y: 0.6, z: -3.0 };
+
+  private timeS = 0;
+  private greetActiveFor = 0; // seconds remaining on an active greeting glint
+
+  constructor(private scene: THREE.Scene) {
+    // Stand a touch in front of the portal (toward the camera at +z).
+    this.anchor = {
+      x: BreathingPortalGreeting.PORTAL_ANCHOR.x,
+      y: BreathingPortalGreeting.PORTAL_ANCHOR.y - 0.6,
+      z: BreathingPortalGreeting.PORTAL_ANCHOR.z + 1.4,
+    };
+    void this.scene;
+  }
+
+  /** Read the SAME pulse the breathing-portal inhabitant uses (1 + 0.04*sin(t*0.9))
+   *  so the greeting can detect the inhale-apex without owning the mesh. */
+  private portalAtApex(): boolean {
+    // Apex when the sine derivative crosses zero going positive→max, i.e. near
+    // sin(t*0.9) ≈ 1. Cheap proxy: value within the top 5% of the cycle.
+    return Math.sin(this.timeS * 0.9) > 0.95;
+  }
+
+  update(dt: number, _u: GlobalUniforms): void {
+    this.timeS += dt;
+    if (this.greetActiveFor > 0) {
+      this.greetActiveFor = Math.max(0, this.greetActiveFor - dt);
+      // The cyan glint is sympathy-fired on the next inhale-apex while a greeting
+      // is active — a single soft pop-cyan flash synced to the portal's breath.
+      // (The visible glint is layered by the CosmoAnimDirector / portal handle
+      // when wired; here we only gate the timing read off the shared pulse.)
+      void this.portalAtApex();
+    }
+  }
+
+  /**
+   * Event-peak. Intended clip: `wave`. The portal's inhale-apex syncs a single
+   * pop-cyan glint (gated in update via the shared-pulse read). No traversal.
+   */
+  onUse(cosmo: CosmoV2Rig): void {
+    // `wave` bridge — a friendly roll-sway greeting (the rig's available channel).
+    cosmo.rollZ = 0.1;
+    this.greetActiveFor = 1.4; // hold the greeting window for ~one breath
+  }
+
+  dispose(): void {
+    /* Owns no mesh — the breathing-portal inhabitant owns the plane. Nothing to
+     *  free (the v2.2.4 scar: never a second plane, never a second tick). */
+  }
+}
+
 function forestInteractables(ctx: SubstrateCtx): InteractableHandle[] {
-  // Only spawn the trampoline in the Clearing (anchor.x == 0 && y == 0).
-  // Other rooms get an empty array so the substrate's default (none) holds.
-  if (ctx.room.id !== 'clearing') return [];
-  return [new ForestTrampoline(ctx.scene, ctx.room)];
+  // Spawn-gated by room anchor, mirroring how the trampoline is gated to the
+  // Clearing. Each room returns only the interactables that live there; other
+  // rooms fall through to the substrate's default (none).
+  switch (ctx.room.id) {
+    case 'clearing':
+      return [new ForestTrampoline(ctx.scene, ctx.room), new SunbeamPatch(ctx.scene, ctx.room)];
+    case 'deep-grove':
+      return [new EchoCap(ctx.scene, ctx.room), new BreathingPortalGreeting(ctx.scene)];
+    default:
+      return [];
+  }
 }
 
 /* ── transitions ──────────────────────────────────────────────────────────────

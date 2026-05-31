@@ -1,0 +1,35 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/rooms-1.1.json",
+  "version": "1.1",
+  "entryRoom": "long-dune",
+  "rooms": [
+    {
+      "id": "long-dune",
+      "area": "the-singing-flat",
+      "displayName": "The Long Dune",
+      "displayNameEn": "The Long Dune",
+      "description": "A high windswept crest over an endless dusk sand-sea. The slide-crest lives here.",
+      "anchor": { "x": 0, "y": 0, "z": 0 },
+      "cameraBounds": { "panRangeX": 2.4, "panRangeY": 0.9 },
+      "biomeKey": null,
+      "audioBed": "../../public/assets/audio/music/dune-drone-open.mp3",
+      "exits": [
+        { "to": "the-windless-hollow", "via": "descend-leeward", "distance": 10 }
+      ]
+    },
+    {
+      "id": "the-windless-hollow",
+      "area": "the-singing-flat",
+      "displayName": "The Windless Hollow",
+      "displayNameEn": "The Windless Hollow",
+      "description": "A sheltered lee between two dunes where the wind dies and the sand sings. The wind-bowl lives here.",
+      "anchor": { "x": 0, "y": -2, "z": 0 },
+      "cameraBounds": { "panRangeX": 1.2, "panRangeY": 0.45 },
+      "biomeKey": null,
+      "audioBed": "../../public/assets/audio/music/dune-drone-hollow.mp3",
+      "exits": [
+        { "to": "long-dune", "via": "climb-windward", "distance": 10 }
+      ]
+    }
+  ]
+}

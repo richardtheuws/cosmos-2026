@@ -1,0 +1,25 @@
+{
+  "$schema": "https://cosmos-2026.dev/schemas/areas-1.0.json",
+  "version": "1.0",
+  "entryArea": "the-drowned-cathedral",
+  "areas": [
+    {
+      "id": "the-drowned-cathedral",
+      "displayName": "The Drowned Cathedral",
+      "displayNameEn": "The Drowned Cathedral",
+      "description": "One submerged mood, scaled as a descent. Lit upper water with saffron light-shafts above; an ink-aubergine trench below. Two rooms threaded by a single vertical drift.",
+      "moodOverrides": {
+        "ambient": "#2A1F3D",
+        "primary": "#3A2D52",
+        "post": { "bloom": 1.1, "kaleido": 0.7, "fluid": 1.15, "chroma": 0.95 }
+      },
+      "pathExperience": {
+        "kind": "drift",
+        "duration": 2.6,
+        "ambient": "#241834",
+        "description": "Sinking or rising through ink-water; the surface-skin recedes or returns overhead while the deep darkens or lightens — one continuous vertical drift."
+      },
+      "rooms": ["light-shafts", "the-trench"]
+    }
+  ]
+}
