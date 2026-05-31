@@ -73,6 +73,9 @@ export class SubstrateLoader {
   private universeRel = '';
   private booted = false;
   private wayMote: WayMoteOverlay | null = null;
+  /** The universe id that actually loaded (post-resolution). Read by main.ts to
+   *  gate legacy forest-only furniture (trampoline) to the forest universe. */
+  resolvedUniverse: string | null = null;
 
   constructor(private bootCtx: SubstrateBootCtx) {
     this.state = loadState();
@@ -91,6 +94,7 @@ export class SubstrateLoader {
     });
 
     if (resolved.changed) syncURL(resolved);
+    this.resolvedUniverse = resolved.universe;
 
     const manifests = await this.loadManifestsFor(resolved.universe);
     if (!manifests) {
@@ -147,6 +151,12 @@ export class SubstrateLoader {
       universeRel: this.universeRel,
       parallax: this.bootCtx.parallax,
     });
+    // Drop the legacy `slow-bloom` preload (main.ts) before the universe paints
+    // its own background — otherwise it bleeds through any universe whose
+    // behavior.background() paints custom content instead of calling loadBiome
+    // (the chart's mushroom-bleed bug). DefaultBackground universes reload their
+    // biome immediately after, so this is harmless for them.
+    this.bootCtx.parallax.unloadBiome();
     this.host.applyUniverseDefaults();
     this.host.enterAreaRoom(resolved.area, resolved.room);
 

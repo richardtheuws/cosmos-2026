@@ -374,6 +374,18 @@ export class ParallaxScene {
     });
   }
 
+  /** Wave 24 — drop the current biome's layers + decorations WITHOUT loading a
+   *  replacement. The substrate calls this on boot so the legacy `slow-bloom`
+   *  preload (main.ts line ~113) does not bleed through universes whose
+   *  `behavior.background()` paints custom content instead of calling
+   *  `loadBiome()` (e.g. the chart's ink-void, ink-ocean's water layers). The
+   *  ambient base plane is preserved so the room's mood clear-colour still
+   *  shows. Idempotent. */
+  unloadBiome(): void {
+    this.clearLayers();
+    this.clearDecorations();
+  }
+
   private clearLayers(): void {
     for (const layer of this.layers) {
       const m = layer.mesh.material;

@@ -43,7 +43,7 @@ import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 
-const VERSION = '2.4.7';
+const VERSION = '2.4.8';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
@@ -328,6 +328,17 @@ async function boot(): Promise<void> {
       biomeMgr.start();
       substrateLoader = null;
     }
+  }
+
+  // Wave 24 — the trampoline (+ its "show, don't tell" demo loop) is legacy
+  // forest furniture. In substrate mode it must not leak into the other
+  // universes: gate it to the forest universe. dispose() removes the trampoline
+  // group from the scene AND empties the spot list (so the demo loop's
+  // `positions()[0]` is undefined → walk-to no-op). NOTE: setSpots([]) does NOT
+  // work here — buildSpots() ignores its argument and always rebuilds one
+  // trampoline, so it would re-add the very mesh we want gone.
+  if (substrateLoader && substrateLoader.resolvedUniverse !== 'forest') {
+    trampolineSpots.dispose();
   }
 
   // Per-frame ticks. Order matters: audio first (so FFT is fresh for the

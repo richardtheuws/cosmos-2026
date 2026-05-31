@@ -524,6 +524,11 @@ abstract class BloomBase implements InhabitantHandle {
   private labelEl: HTMLDivElement | null = null;
   private hitEl: HTMLDivElement | null = null;
 
+  // Visual params (radii + materials) are passed IN by subclasses via super()
+  // rather than read from overridden methods. A base constructor must not call
+  // virtual methods that depend on subclass fields (e.g. LitBloom.this.uni) —
+  // those fields aren't assigned until after super() returns, which crashed the
+  // whole chart boot ("Cannot read properties of undefined (reading 'palette')").
   constructor(
     id: string,
     protected scene: THREE.Scene,
@@ -532,16 +537,20 @@ abstract class BloomBase implements InhabitantHandle {
     protected labelTitle: string,
     protected labelSub: string,
     protected onTap: () => void,
+    coreRadius: number,
+    haloRadius: number,
+    coreMaterial: THREE.Material,
+    haloMaterial: THREE.Material,
   ) {
     this.id = id;
     this.anchor = { x: pos.x, y: pos.y, z: pos.z };
 
-    const haloGeo = new THREE.CircleGeometry(this.haloRadius(), 48);
-    this.halo = new THREE.Mesh(haloGeo, this.haloMaterial());
+    const haloGeo = new THREE.CircleGeometry(haloRadius, 48);
+    this.halo = new THREE.Mesh(haloGeo, haloMaterial);
     this.halo.position.copy(pos);
 
-    const coreGeo = new THREE.CircleGeometry(this.coreRadius(), 48);
-    this.core = new THREE.Mesh(coreGeo, this.coreMaterial());
+    const coreGeo = new THREE.CircleGeometry(coreRadius, 48);
+    this.core = new THREE.Mesh(coreGeo, coreMaterial);
     this.core.position.copy(pos);
     this.core.position.z = pos.z + 0.01;
 
@@ -551,11 +560,6 @@ abstract class BloomBase implements InhabitantHandle {
 
     this.buildDom();
   }
-
-  protected abstract coreRadius(): number;
-  protected abstract haloRadius(): number;
-  protected abstract coreMaterial(): THREE.Material;
-  protected abstract haloMaterial(): THREE.Material;
 
   /** Project the bloom's world anchor to screen pixels for DOM placement. */
   private projectToScreen(): { x: number; y: number } | null {
@@ -675,64 +679,32 @@ class LitBloom extends BloomBase {
     scene: THREE.Scene,
     camera: THREE.Camera,
     pos: THREE.Vector3,
-    private uni: DiscoveredUniverse,
+    uni: DiscoveredUniverse,
     onTap: () => void,
   ) {
     const sub = uni.brandDeviation
       ? `${uni.summaryFirstSentence}  · a deviation, documented`
       : uni.summaryFirstSentence;
-    super(`bloom-${uni.slug}`, scene, camera, pos, uni.displayNameEn, sub, onTap);
-  }
-  protected coreRadius(): number {
-    return 0.28;
-  }
-  protected haloRadius(): number {
-    return 0.46;
-  }
-  protected coreMaterial(): THREE.Material {
-    return new THREE.MeshBasicMaterial({
-      color: this.uni.palette.core,
-      transparent: true,
-      opacity: 0.92,
-      depthWrite: false,
-    });
-  }
-  protected haloMaterial(): THREE.Material {
-    return new THREE.MeshBasicMaterial({
-      color: this.uni.palette.halo,
-      transparent: true,
-      opacity: 0.4,
-      depthWrite: false,
-    });
+    super(
+      `bloom-${uni.slug}`, scene, camera, pos, uni.displayNameEn, sub, onTap,
+      0.28,
+      0.46,
+      new THREE.MeshBasicMaterial({ color: uni.palette.core, transparent: true, opacity: 0.92, depthWrite: false }),
+      new THREE.MeshBasicMaterial({ color: uni.palette.halo, transparent: true, opacity: 0.4, depthWrite: false }),
+    );
   }
 }
 
 class BecomingBloom extends BloomBase {
   constructor(scene: THREE.Scene, camera: THREE.Camera, pos: THREE.Vector3, index: number, onTap: () => void) {
-    super(`becoming-${index}`, scene, camera, pos, 'your world here', '', onTap);
-  }
-  protected coreRadius(): number {
-    return 0.22;
-  }
-  protected haloRadius(): number {
-    return 0.34;
-  }
-  // Uncolored — a watercolor wash withheld; a faint dotted ink-circle (faded-rose ring).
-  protected coreMaterial(): THREE.Material {
-    return new THREE.MeshBasicMaterial({
-      color: 0x1a1226,
-      transparent: true,
-      opacity: 0.18,
-      depthWrite: false,
-    });
-  }
-  protected haloMaterial(): THREE.Material {
-    return new THREE.MeshBasicMaterial({
-      color: 0xe8c4b8,
-      transparent: true,
-      opacity: 0.22,
-      depthWrite: false,
-    });
+    // Uncolored — a watercolor wash withheld; a faint dotted ink-circle (faded-rose ring).
+    super(
+      `becoming-${index}`, scene, camera, pos, 'your world here', '', onTap,
+      0.22,
+      0.34,
+      new THREE.MeshBasicMaterial({ color: 0x1a1226, transparent: true, opacity: 0.18, depthWrite: false }),
+      new THREE.MeshBasicMaterial({ color: 0xe8c4b8, transparent: true, opacity: 0.22, depthWrite: false }),
+    );
   }
 }
 

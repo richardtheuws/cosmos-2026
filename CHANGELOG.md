@@ -4,6 +4,19 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.8] — 2026-05-31 — Wave 24: substrate-render fixes (live UAT)
+
+Drove all four universes in a real browser (the first true /play/ UAT of the four-universe set) and fixed the systemic render bugs it surfaced. Assets confirmed loading + on-brand; S1 way-mote + `_chart` resolver exemption confirmed working live.
+
+### Fixed
+- **Chart boot crash** (`universes/_chart/behavior.ts`) — `BloomBase`'s constructor called the overridden `coreMaterial()`/`haloMaterial()` during `super()`, before `LitBloom.this.uni` was assigned (`Cannot read properties of undefined (reading 'palette')`), crashing the whole chart into the legacy fallback. Refactored the radii + materials to pass IN via `super()` (computed from `uni` where it is in scope) instead of virtual calls during base construction. The chart now boots and renders its per-universe blooms + 3 becoming-blooms.
+- **`slow-bloom` bleed-through** — `main.ts` preloads the forest `slow-bloom` biome before substrate boot; universes whose `behavior.background()` paints custom content (not `loadBiome`) let it show through (the mushroom on every world). Added `ParallaxScene.unloadBiome()` and call it on substrate boot so each universe starts from a clean parallax.
+- **Trampoline leak** — the forest trampoline + its "show, don't tell" demo loop attached globally regardless of universe. Now `dispose()`d in substrate mode for any non-forest universe (`setSpots([])` didn't work — `buildSpots()` ignores its argument and always rebuilds one). `SubstrateLoader` exposes `resolvedUniverse` for the gate.
+- **WayMoteOverlay** — optional-chain the touch `changedTouches` guard.
+
+### Known (next increment)
+- Custom backgrounds (chart void/nebula, ink-ocean water) still paint into the foreground `ctx.scene` (render as a small panel) instead of the full-screen `ctx.parallax.scene` — worlds show ambient + a small panel, not a full painted backdrop. Additive inhabitants (jellyfish) render with a black box (additive blend not applied). The "tap the trampoline" HUD hint shows even where there is no trampoline.
+
 ## [2.4.7] — 2026-05-31 — Wave 24: 21 painted assets land — the worlds can render
 
 The four-universe skeleton gets its skin. All 21 Wave-24 PNGs were generated best-method (fal Flux Pro v1.1-ultra + Recraft V3, never the cheap path), human-curated on an interactive contact sheet, and promoted to final paths (BiRefNet/luminance/gradient mattes for transparency, ESRGAN ×4 upscales to 4K, exact-dim crops). Ink-Ocean, Singing Dunes and the Spore-Chart now have backgrounds, parallax layers and objects — they render, pending live UAT.
