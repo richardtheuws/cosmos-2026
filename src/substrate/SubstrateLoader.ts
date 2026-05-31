@@ -181,10 +181,25 @@ export class SubstrateLoader {
   /* ── private ─────────────────────────────────────────────────────────── */
 
   private async discoverUniverses(): Promise<ReadonlySet<string>> {
-    // Wave 21: hard-coded list of known universes. Wave 22+ will use
-    // import.meta.glob for hot-reload + dynamic discovery; for now the
-    // forest is the only universe and the substrate's defaults handle missing.
-    return new Set([DEFAULT_UNIVERSE]);
+    // Wave 24: dynamic discovery. Every `universes/<id>/manifest.json` Vite can
+    // see at build time becomes a known universe — author a conformant folder
+    // and you are discovered, with no registry, opt-in flag, or gatekeeper.
+    // (Same static-glob mechanism already used for behavior.ts below.) This is
+    // the single source of truth shared with the open-map's universe list.
+    //
+    // Folders whose id starts with `_` are RESERVED and skipped (e.g. the
+    // open-map's `_chart` pseudo-universe), so the chart never enumerates
+    // itself as a destination.
+    const mods = import.meta.glob('/universes/*/manifest.json');
+    const ids = new Set<string>();
+    for (const key of Object.keys(mods)) {
+      const m = key.match(/\/universes\/([^/]+)\/manifest\.json$/);
+      if (m && !m[1].startsWith('_')) ids.add(m[1]);
+    }
+    // Safety net: the default universe is always known even if the glob misses
+    // it (e.g. an unexpected build layout) so boot can never end up empty.
+    ids.add(DEFAULT_UNIVERSE);
+    return ids;
   }
 
   private async loadManifestsFor(universeId: string): Promise<{

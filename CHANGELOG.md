@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.2] — 2026-05-31 — Wave 24 Phase 0a: universe auto-discovery
+
+First substrate seam of the Wave-24 first-setup build (design canvas: `.claude/brainstorm/wave24/00-FIRST-SETUP.md`). Breadth-first per Richard.
+
+### Changed
+- **`SubstrateLoader.discoverUniverses()` now globs `universes/*/manifest.json`** (`import.meta.glob`, same mechanism as the behavior.ts loader) instead of a hard-coded list. Author a conformant universe folder → it's discovered automatically, no registry/opt-in/gatekeeper. This is the single source of truth the open-map (Spore-Chart) will share. Folders whose id starts with `_` are reserved and skipped (so the future `_chart` pseudo-universe never enumerates itself); the default universe is always included as a safety net. Resolves canvas open-items O10 (self-exclusion rule); no behavior change today (forest is still the only universe).
+
+_Internal substrate seam; not deployed. Way-mote (O11) re-sequenced to Phase 2 (it needs the chart as a destination); per-room audio bed-swap (O4) is the next foundational seam._
+
 ## [2.4.1] — 2026-05-31 — hide the vibe ring (beat-mechanic retirement begins)
 
 Live phone UAT of v2.4.0 — painted Cosmo/world/trampoline confirmed "te gek". Richard flagged the on-screen "timer-circle" as distracting and questioned the (unnoticeable) music interaction. NORTH-STAR §6 pivot logged: the gamified beat/combo-score model is retired in favour of free movement + builder-authored interactables + world expansion.

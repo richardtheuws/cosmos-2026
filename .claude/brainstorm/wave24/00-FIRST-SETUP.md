@@ -300,6 +300,9 @@ Each phase ships something fully alive before the next starts ("one biome fully 
 
 ## 9. OPEN QUESTIONS FOR RICHARD (the genuine forks)
 
+> **RESOLVED 2026-05-31 (Richard):** Fork 1 = (a) mirror forest asset-paths verbatim. Fork 2 = (b) ship Ink-Ocean on procedural hover-drift, `drift-swim` clip as fast-follow. Fork 3 = (a) Dunes `biomeKey:null` + composition-spec. **Fork 4 = (a) breadth-first** (Phases 0→1→2→3→4). Fork 5 = "offer all freedom with a simple quickstart" → Claude's call: **3 becoming-blooms**, and **[Copy the prompt] = the README quickstart block verbatim** (single source, never out of sync). Building from Phase 0.
+
+
 1. **Asset-path convention (O1) — needs your call once, applies to all future universes.**
    (a) Mirror forest verbatim: every asset under `../../public/assets/...` (loader behaves identically today).
    (b) Move to universe-local `universes/<u>/assets/...` for *all* asset types (cleaner per-universe encapsulation, but a substrate change).
