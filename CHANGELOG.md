@@ -4,6 +4,19 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.2.11] — 2026-05-31 — Wave 22: Cosmo actually walks (billboard anim layer)
+
+Richard's UAT of v2.2.10 confirmed. Strategic call before chasing trampoline tricks: first make Cosmo *read as walking*. Root cause found — the walk-sway was silently dead since the Wave 21.2 billboard pivot: the director wrote `plane.rotation.z`, then `rig.update()` ran `plane.lookAt(camera)` at the end of the same tick and overwrote the plane's entire orientation. Facing (`root.scale.x`) and squash (`root.scale.y`) survived only because they live on the root, which lookAt doesn't touch. Per NORTH-STAR §4 (don't patch a broken system) the fix is the foundation both walking AND tricks need.
+
+### Added
+- **Post-lookAt billboard anim layer** — `CosmoV2Rig` gains `rollZ` / `pitchX` / `bobY` offset fields. `rig.update()` now applies the billboard lookAt **first**, then re-layers `rotateZ(rollZ)` (view-axis roll — shoulder-tilt / cartwheel) and `rotateX(pitchX)` (horizontal-axis pitch — somersault) on top, so anim transforms survive the per-frame re-orientation. `bobY` rides the plane's local Y (not root) so it never fights CosmoAgent's ownership of `root.position`. This same layer is what trampoline spins/flips will write to next.
+- **Walk step-bob** — `rig.bobY` hops on each half-stride (~2.5% body height): the single most legible gait cue for a flat billboard.
+
+### Changed
+- **Walk-sway revived** — director now drives `rig.rollZ` instead of the dead `plane.rotation.z`. Amplitude bumped 0.03→0.05 rad (~2.9°) now that it's actually visible. Calm per §3 (breathes, doesn't shake).
+
+_Walk legibility needs live human UAT — does Cosmo read as walking with weight, not sliding?_
+
 ## [2.2.10] — 2026-05-30 — Wave 22: "show, don't tell" onboarding
 
 Live UAT of v2.2.9 (Richard): trampoline good, but the controls were undiscoverable on laptop ("ik snap niet hoe ik iets moet doen"), and we need an "uitleg" that also inspires contributor-devs to build their own Universe + Cosmo + interactables (§3b). Chosen direction (AskUserQuestion): "show, don't tell".

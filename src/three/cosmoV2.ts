@@ -57,12 +57,26 @@ export interface CosmoV2Rig {
   /** World-space driver. CosmoAgent writes position + scale (jump-arc + trip-
    *  scale) here. Same identity as the pre-21.2 root. */
   readonly root: THREE.Group;
-  /** The single textured plane. Mutated by anim director (rotation.z sway,
-   *  scale.y squash-stretch is on root not plane). */
+  /** The single textured plane. The billboard `update()` re-orients this to
+   *  face the camera every frame, so anim transforms can NOT live on
+   *  `plane.rotation` directly — lookAt clobbers them. Layer them through the
+   *  offset fields below, which `update()` re-applies AFTER the lookAt. */
   readonly plane: THREE.Mesh;
-  /** Per-frame: Y-locked lookAt toward camera. Call AFTER position has been
-   *  written for the frame so the billboard faces the camera with the new
-   *  world-space anchor. */
+  /** Walk-sway / trick-spin roll (rad) around the view axis, composed on top of
+   *  the billboard lookAt via `plane.rotateZ()` so it survives the per-frame
+   *  re-orientation. The anim director owns this; rest is 0. */
+  rollZ: number;
+  /** Trick-flip pitch (rad) around the plane's horizontal screen axis, applied
+   *  AFTER lookAt via `plane.rotateX()`. Trampoline somersaults write here. */
+  pitchX: number;
+  /** Vertical bob offset (world units) added to the plane's local Y — the
+   *  step-lift that makes a flat billboard read as actually walking. Lives on
+   *  the plane (not root) so it never fights CosmoAgent's ownership of
+   *  root.position. Rest is 0. */
+  bobY: number;
+  /** Per-frame: apply bobY, Y-locked lookAt toward camera, then re-layer
+   *  rollZ/pitchX on top. Call AFTER position has been written for the frame so
+   *  the billboard faces the camera with the new world-space anchor. */
   update(camera: THREE.Camera): void;
   /** Dispose geometry + material + texture. */
   dispose(): void;
@@ -114,6 +128,9 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
   const scratchTarget = new THREE.Vector3();
 
   function update(camera: THREE.Camera): void {
+    // Step-bob on the plane's local Y. CosmoAgent owns root.position, so the
+    // walk-lift rides the child plane instead — it never fights the agent.
+    plane.position.y = PLANE_Y + rig.bobY;
     // Build a target on the camera's XZ but at the plane's world Y. That keeps
     // the plane's up-axis aligned with world-up — no roll, no pitch.
     const camPos = camera.position;
@@ -125,7 +142,13 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
       root.position.y + PLANE_Y * root.scale.y,
       camPos.z,
     );
+    // Face the camera FIRST — lookAt overwrites the plane's entire orientation.
     plane.lookAt(scratchTarget);
+    // ...THEN layer walk-sway / trick-spins on top, so they survive the lookAt.
+    // rotateZ rolls around the view axis (shoulder-tilt / cartwheel); rotateX
+    // pitches around the horizontal screen axis (forward somersault).
+    if (rig.rollZ !== 0) plane.rotateZ(rig.rollZ);
+    if (rig.pitchX !== 0) plane.rotateX(rig.pitchX);
   }
 
   function dispose(): void {
@@ -134,5 +157,14 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
     heroTex.dispose();
   }
 
-  return { root, plane, update, dispose };
+  const rig: CosmoV2Rig = {
+    root,
+    plane,
+    rollZ: 0,
+    pitchX: 0,
+    bobY: 0,
+    update,
+    dispose,
+  };
+  return rig;
 }

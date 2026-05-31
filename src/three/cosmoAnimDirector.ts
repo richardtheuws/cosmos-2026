@@ -7,7 +7,11 @@
  * Group's transforms:
  *
  *  - idle-breath   →  root.scale.y pulse (calm breath)
- *  - walk-sway     →  plane.rotation.z ±0.03 rad (replaces the dead disc-Y bob)
+ *  - walk          →  rig.rollZ shoulder-tilt + rig.bobY step-lift, both layered
+ *                     ON TOP of the billboard lookAt. Wave 22 fix: the old
+ *                     `plane.rotation.z` sway was silently dead — `rig.update()`
+ *                     ran lookAt() at the end of every tick and overwrote it.
+ *                     rollZ/bobY are offset fields the rig re-applies post-lookAt.
  *  - jump-arc      →  root.scale.y squash → stretch → settle
  *  - climb         →  root.rotation.z = π/2  (Wave 22+ climb-state)
  *
@@ -39,9 +43,14 @@ import type { CosmoV2Rig } from './cosmoV2';
 const IDLE_BREATH_HZ = 0.45;
 const IDLE_BREATH_AMPL = 0.035; // ±3.5% — Wave 22: the old ±2% read as static on
 // the billboard (Richard, 2026-05-30: "geen smooth movement"). Still calm.
-/** Walk-sway amplitude on plane.rotation.z. Tiny — replaces the dead disc bob
- *  with a barely-perceptible shoulder-tilt. */
-const WALK_SWAY_AMPL = 0.03; // rad (~1.7°)
+/** Walk-sway amplitude on rig.rollZ — a shoulder-tilt roll around the view
+ *  axis, composed on top of the billboard lookAt. Wave 22: bumped 0.03→0.05
+ *  (~2.9°) now that it's actually visible; the dead version was never seen. */
+const WALK_SWAY_AMPL = 0.05; // rad (~2.9°)
+/** Walk step-lift amplitude on rig.bobY (world units). A small vertical hop on
+ *  each half-stride — the single most legible "walking" cue for a flat
+ *  billboard. Calm per §3 (breathes, doesn't shake): ~2.5% of body height. */
+const WALK_BOB_AMPL = 0.05;
 const WALK_FREQ_PER_VEL = 6.0; // rad/s per m/s velocity
 const WALK_FREQ_MIN = 4.0;
 const WALK_FREQ_MAX = 12.0;
@@ -87,7 +96,6 @@ export class CosmoAnimDirector {
   // Captured rest-pose at construct time. Additive composition keeps host-
   // written transforms (e.g. CosmoAgent's facing scale.x) from being clobbered.
   private rootRestScaleY: number;
-  private planeRestRotZ: number;
 
   // ── Walk phase ────────────────────────────────────────────────────────
   private walkPhase = 0;
@@ -102,7 +110,6 @@ export class CosmoAnimDirector {
   constructor(rig: CosmoV2Rig) {
     this.rig = rig;
     this.rootRestScaleY = rig.root.scale.y;
-    this.planeRestRotZ = rig.plane.rotation.z;
   }
 
   /** Per-frame tick. Called from CosmoAgent.tickAnimDirector AFTER state-
@@ -178,14 +185,16 @@ export class CosmoAnimDirector {
     const speed = Math.sqrt(v2);
     const freq = clamp(speed * WALK_FREQ_PER_VEL, WALK_FREQ_MIN, WALK_FREQ_MAX);
     this.walkPhase += freq * dt;
-    const sway = Math.sin(this.walkPhase) * WALK_SWAY_AMPL;
-    this.rig.plane.rotation.z = this.planeRestRotZ + sway;
+    // Shoulder-tilt roll (one cycle per stride) + a step-lift that hops on each
+    // half-stride (abs → always a lift, never a dip below ground).
+    this.rig.rollZ = Math.sin(this.walkPhase) * WALK_SWAY_AMPL;
+    this.rig.bobY = Math.abs(Math.sin(this.walkPhase)) * WALK_BOB_AMPL;
   }
 
   private relaxSway(dt: number): void {
     const k = Math.min(1, dt * 8);
-    this.rig.plane.rotation.z +=
-      (this.planeRestRotZ - this.rig.plane.rotation.z) * k;
+    this.rig.rollZ += (0 - this.rig.rollZ) * k;
+    this.rig.bobY += (0 - this.rig.bobY) * k;
   }
 
   // ── jump-arc ─────────────────────────────────────────────────────────
