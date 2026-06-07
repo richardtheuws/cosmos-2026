@@ -589,24 +589,11 @@ function inkOceanInteractables(ctx: SubstrateCtx): InteractableHandle[] {
  *   the-trench   → ink-ocean-trench.mp3 (deep-abyss drone, lower register)
  * ════════════════════════════════════════════════════════════════════════ */
 
-class InkOceanAudio implements AudioHandle {
-  enter(): void {
-    /* runtime-wirer: AudioFFTBridge.setMusicTrack(room.audioBed) at 0.45 vol. */
-  }
-  exit(_fadeMs: number): void {
-    /* runtime-wirer: cross-fade the active bed out over fadeMs. */
-  }
-  update(_dt: number): void {
-    /* no-op — the bridge ticks itself. */
-  }
-  dispose(): void {
-    /* nothing owned at this level. */
-  }
-}
-
-function inkOceanAudio(_ctx: SubstrateCtx): AudioHandle {
-  return new InkOceanAudio();
-}
+/* No `audio` driver is exported: the substrate's DefaultAudio swaps to the
+ * room's `audioBed` (ink-ocean-shafts / -trench). A custom audio driver would
+ * REPLACE DefaultAudio rather than run alongside it — the earlier no-op stub
+ * silently bypassed the bed swap (live UAT 2026-06-07). Event SFX belong on the
+ * SFX-emit hook, not on a music driver that shadows the bed. */
 
 /* ════════════════════════════════════════════════════════════════════════
  * TRANSITIONS — Room↔Room only (single Area, so areaToArea omitted;
@@ -668,7 +655,7 @@ const inkOceanBehavior: UniverseBehavior = {
   arrival: inkOceanArrival,
   inhabitants: inkOceanInhabitants,
   interactables: inkOceanInteractables,
-  audio: inkOceanAudio,
+  // audio omitted — DefaultAudio swaps the room's `audioBed` (see note above).
   transitions: {
     roomToRoom: inkOceanRoomToRoom,
     // areaToArea omitted — single area.

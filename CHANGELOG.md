@@ -4,6 +4,22 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.11] — 2026-06-07 — Wave 24: the worlds find their voice (room beds actually play)
+
+The one where every universe finally plays its own music. Live UAT (real browser, all four universes) caught what header-grep never would: **every substrate universe was playing `title-theme.mp3`** instead of its authored per-room bed. Root cause was a no-op `audio` driver — born in the forest reference and copied into dunes + ink-ocean — built on the false belief that registering an `AudioHandle` *delegates* to `DefaultAudio`. It doesn't: per the §1.4 detection rule, exporting `audio` **replaces** `DefaultAudio`, so the no-op silently killed every room bed swap. Plus an `AudioFFTBridge` gap: a bed requested before the first user-gesture (the substrate selects its room bed at boot) was dropped, then `init()` fell back to the hardcoded title theme.
+
+### Fixed
+- **Per-room ambient beds now play in every universe** (live-UAT verified): forest → `clearing-bloom-loop`, dunes → `dune-drone-open`, ink-ocean → `ink-ocean-shafts`, chart → `spore-chart-void`. Removed the no-op `audio` drivers from forest, dunes, and ink-ocean so they inherit `DefaultAudio`'s room-keyed bed swap (chart already did).
+- **`AudioFFTBridge` remembers a pre-gesture track request.** `setMusicTrack()` now stores a `pendingTrackUrl` even before the audio graph exists, and `init()` honors it over the default `MUSIC_TRACK`. Without it the substrate's boot-time bed selection was lost to the title theme.
+- **"swipe up" hint no longer leaks onto Cosmo's face** in dweller-universes. The forest-runner swipe glyph is now gated on trampoline presence (`trampolineSpots.count() > 0`), so it never renders in dunes/ink-ocean/chart.
+
+### Docs
+- `UNIVERSE-AUTHORING.md`: added a warning that a driver **replaces** the default (never augments) — omit the key to inherit; don't ship no-op drivers "to show the registration shape". Corrected the forest reference's audio comment to teach the same.
+
+### Known (next — polish loop)
+- Forest-onboarding still partly leaks into dweller-universes: NebulaPortal concentric rings + the obstacle/swipe cadence. Correct fix is to gate the whole `OnboardingDirector` gameplay layer to forest while keeping the universal "Cosmo awakening" wake.
+- Dunes interactables render with bad materials (translucent box + pale blob); additive jellyfish black-box; nebula/dune synthetic-alpha — all pending the polish pass.
+
 ## [2.4.10] — 2026-05-31 — Wave 24: the worlds render (parallax render-ownership fix)
 
 The one that brings the new universes to life. In substrate mode only `DefaultBackground.update()` rendered the shared ParallaxScene; a universe with a custom `behavior.background()` (chart, ink-ocean, dunes) added its planes to `parallax.scene` but **nothing ever painted it** — so the worlds showed only the renderer's clear colour. Centralised the per-frame parallax render in `RoomHost.tick` so it runs for EVERY background; `DefaultBackground.update()` is now a no-op (its render moved up).

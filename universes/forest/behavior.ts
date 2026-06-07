@@ -812,38 +812,22 @@ function forestRoomToRoom(
   return new MushroomPathTransition(ctx, fromRoomId, toRoomId);
 }
 
-/* ── audio ────────────────────────────────────────────────────────────────────
+/* ── audio — INTENTIONALLY OMITTED (mirrors `background`) ──────────────────────
  *
- * Slow-bloom-loop ambient bed. The actual audio file ships in
- * `public/assets/audio/music/slow-bloom-loop.mp3` and is wired through the
- * existing AudioFFTBridge in main.ts. For the reference implementation we
- * provide a no-op handle — the runtime-wirer will route the universe's
- * default audio through the bridge when wiring substrate phase 3.
+ * The per-room ambient bed (clearing → clearing-bloom-loop, deep-grove →
+ * deep-grove-loop) is declared in rooms.json (`audioBed`) and swapped on
+ * room-enter by the substrate's DefaultAudio driver (architect §7.6, at 0.45
+ * volume through the AudioFFTBridge). We do NOT export an `audio` handle: per
+ * the §1.4 detection rule, providing `audio` REPLACES DefaultAudio rather than
+ * delegating to it, so a no-op handle silently kills the bed swap — exactly the
+ * regression found in live UAT (2026-06-07): every substrate universe fell back
+ * to the title theme because forest's no-op stub was copied everywhere.
  *
- * Why not omit `audio` entirely? Because the teaching example shows
- * contributors how to *register* an audio handle. The actual playback is
- * delegated to the substrate's DefaultAudio driver (per architect §7.6 the
- * default audio driver loads the first audio asset declared with preload:true
- * as a looped ambient bed at 0.45 volume).
+ * The correct teaching shape is the SAME as `background` above: omit the key to
+ * inherit the default driver; only export `audio` when you genuinely replace
+ * the bed logic (and then YOU must call ctx.audioBridge.setMusicTrack). Event
+ * SFX belong on the SFX-emit hook, not on a music driver that shadows the bed.
  */
-class ForestAudio implements AudioHandle {
-  enter(): void {
-    /* runtime-wirer: forward to AudioFFTBridge.setMusicTrack(slow-bloom-loop) */
-  }
-  exit(_fadeMs: number): void {
-    /* runtime-wirer: fade-out the active track over fadeMs */
-  }
-  update(_dt: number): void {
-    /* no-op — bridge ticks itself */
-  }
-  dispose(): void {
-    /* nothing owned at this level */
-  }
-}
-
-function forestAudio(_ctx: SubstrateCtx): AudioHandle {
-  return new ForestAudio();
-}
 
 /* ── default export ──────────────────────────────────────────────────────────
  *
@@ -862,7 +846,8 @@ const forestBehavior: UniverseBehavior = {
   arrival: forestArrival,
   inhabitants: forestInhabitants,
   interactables: forestInteractables,
-  audio: forestAudio,
+  // audio — INTENTIONALLY OMITTED (see note above): DefaultAudio swaps each
+  // room's `audioBed`. A custom audio driver replaces it, not augments it.
   transitions: {
     roomToRoom: forestRoomToRoom,
     // areaToArea + universeToUniverse omitted — substrate uses defaults

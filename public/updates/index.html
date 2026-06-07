@@ -206,6 +206,40 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.11</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 24: the worlds find their voice (room beds actually play)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The one where every universe finally plays its own music. Live UAT (real browser, all four universes) caught what header-grep never would: <strong>every substrate universe was playing <code>title-theme.mp3</code></strong> instead of its authored per-room bed. Root cause was a no-op <code>audio</code> driver — born in the forest reference and copied into dunes + ink-ocean — built on the false belief that registering an <code>AudioHandle</code> <em>delegates</em> to <code>DefaultAudio</code>. It doesn&#039;t: per the §1.4 detection rule, exporting <code>audio</code> <strong>replaces</strong> <code>DefaultAudio</code>, so the no-op silently killed every room bed swap. Plus an <code>AudioFFTBridge</code> gap: a bed requested before the first user-gesture (the substrate selects its room bed at boot) was dropped, then <code>init()</code> fell back to the hardcoded title theme.</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Per-room ambient beds now play in every universe</strong> (live-UAT verified): forest → <code>clearing-bloom-loop</code>, dunes → <code>dune-drone-open</code>, ink-ocean → <code>ink-ocean-shafts</code>, chart → <code>spore-chart-void</code>. Removed the no-op <code>audio</code> drivers from forest, dunes, and ink-ocean so they inherit <code>DefaultAudio</code>&#039;s room-keyed bed swap (chart already did).</li>
+          <li><strong><code>AudioFFTBridge</code> remembers a pre-gesture track request.</strong> <code>setMusicTrack()</code> now stores a <code>pendingTrackUrl</code> even before the audio graph exists, and <code>init()</code> honors it over the default <code>MUSIC_TRACK</code>. Without it the substrate&#039;s boot-time bed selection was lost to the title theme.</li>
+          <li><strong>&quot;swipe up&quot; hint no longer leaks onto Cosmo&#039;s face</strong> in dweller-universes. The forest-runner swipe glyph is now gated on trampoline presence (<code>trampolineSpots.count() &gt; 0</code>), so it never renders in dunes/ink-ocean/chart.</li>
+        </ul>
+<h3>DOCS</h3>
+        <ul class="update__highlights">
+          <li><code>UNIVERSE-AUTHORING.md</code>: added a warning that a driver <strong>replaces</strong> the default (never augments) — omit the key to inherit; don&#039;t ship no-op drivers &quot;to show the registration shape&quot;. Corrected the forest reference&#039;s audio comment to teach the same.</li>
+        </ul>
+<h3>KNOWN (NEXT — POLISH LOOP)</h3>
+        <ul class="update__highlights">
+          <li>Forest-onboarding still partly leaks into dweller-universes: NebulaPortal concentric rings + the obstacle/swipe cadence. Correct fix is to gate the whole <code>OnboardingDirector</code> gameplay layer to forest while keeping the universal &quot;Cosmo awakening&quot; wake.</li>
+          <li>Dunes interactables render with bad materials (translucent box + pale blob); additive jellyfish black-box; nebula/dune synthetic-alpha — all pending the polish pass.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.10</span>
           <span class="update__date">2026-05-31</span>
           <h2 class="update__title">05-31 — Wave 24: the worlds render (parallax render-ownership fix)</h2>

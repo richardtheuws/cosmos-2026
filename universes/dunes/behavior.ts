@@ -461,33 +461,13 @@ function dunesInhabitants(_ctx: SubstrateCtx): InhabitantHandle[] {
 
 /* ── audio ────────────────────────────────────────────────────────────────────
  *
- * Per-room drone bed, declared via `rooms.json audioBed` (the Wave-24 RoomSpec
- * field): long-dune → dune-drone-open.mp3, the-windless-hollow →
- * dune-drone-hollow.mp3. The substrate's DefaultAudio swaps to the room's
- * audioBed on enter (the room-keyed bed-swap is the Phase-0 substrate seam,
- * canvas §8 / O4). We register a handle so the teaching shape is present; the
- * three event SFX (sand-slide boom, glass-bead glint, crest-wind / bowl-ring,
- * ripple-settle, hollow-hush) are fired by the interactables/transitions when
- * the SFX scheduler lands — see runbook for the ElevenLabs prompts.
+ * Per-room drone bed, declared via `rooms.json audioBed`: long-dune →
+ * dune-drone-open.mp3, the-windless-hollow → dune-drone-hollow.mp3. We do NOT
+ * export an `audio` driver — that would REPLACE the substrate's DefaultAudio,
+ * which is exactly what does the room-keyed bed swap. Future event SFX (sand-
+ * slide boom, glass-bead glint, crest-wind / bowl-ring, ripple-settle, hollow-
+ * hush) belong on the SFX-emit hook, not on a music driver that shadows the bed.
  */
-class DuneAudio implements AudioHandle {
-  enter(): void {
-    /* substrate DefaultAudio loads the room's `audioBed` and loops it at 0.45. */
-  }
-  exit(_fadeMs: number): void {
-    /* substrate fades the active bed over fadeMs on room-exit. */
-  }
-  update(_dt: number): void {
-    /* no-op — the AudioFFTBridge ticks itself. */
-  }
-  dispose(): void {
-    /* nothing owned at this level. */
-  }
-}
-
-function dunesAudio(_ctx: SubstrateCtx): AudioHandle {
-  return new DuneAudio();
-}
 
 /* ── transitions.roomToRoom — the one descend/climb hush-blend ────────────────
  *
@@ -616,7 +596,11 @@ const dunesBehavior: UniverseBehavior = {
   arrival: dunesArrival,
   inhabitants: dunesInhabitants,
   interactables: dunesInteractables,
-  audio: dunesAudio,
+  // audio omitted — fall back to the substrate's DefaultAudio, which actually
+  // swaps to the room's `audioBed` (dune-drone-open / -hollow). A custom audio
+  // driver here would REPLACE DefaultAudio, not run alongside it — the earlier
+  // no-op stub silently bypassed the bed swap (every universe fell back to the
+  // title theme; live UAT 2026-06-07).
   transitions: {
     roomToRoom: dunesRoomToRoom,
     // areaToArea omitted — single Area; substrate default gradient-cut never fires.

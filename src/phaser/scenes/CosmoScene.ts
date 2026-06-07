@@ -343,6 +343,12 @@ export class CosmoScene extends Phaser.Scene {
         if (this.cosmoAgent.ai) this.cosmoAgent.ai.paused = false;
       },
       showFirstHint: () => {
+        // The "swipe up" glyph teaches forest-runner gameplay (swipe to clear
+        // obstacles). Substrate dweller-universes have no obstacles or
+        // trampoline (main.ts disposes the spots for non-forest universes), so
+        // the hint must not render — it leaked onto Cosmo's face in
+        // dunes/ink-ocean/chart (live UAT 2026-06-07).
+        if (this.trampolineSpots.count() === 0) return;
         if (!this.firstHint) {
           this.firstHint = new HintGlyph(this, () => this.firstHintTarget(), 'swipe up');
         }

@@ -136,6 +136,8 @@ Confidently more than a wallpaper. Defaults are documented in full in [`.claude/
 
 **The escape hatch**: ship a `behavior.ts` that exports any subset of `{ background, arrival, inhabitants, interactables, audio, transitions }`. Each export is independently optional. Want a custom background but the default arrival, default inhabitants, and default transitions? Write a 30-line `behavior.ts` exporting only `background`.
 
+> ⚠️ **A driver REPLACES the default — it does not augment it.** If you export `audio`, the substrate runs *your* `AudioHandle` instead of `DefaultAudio`, so the per-room `audioBed` swap stops happening unless your handle calls `ctx.audioBridge.setMusicTrack()` itself. Do **not** ship a no-op driver "to show the registration shape" — omit the key to inherit the default. (Live UAT 2026-06-07: a no-op `audio` stub copied across all universes silently killed every room bed, falling back to the title theme.)
+
 ```ts
 import type * as THREE from 'three';
 import type { GlobalUniforms } from '../../src/core/globalUniforms';

@@ -144,6 +144,12 @@ export class AudioFFTBridge {
   private muted = false;
   private initialised = false;
   private musicVolume = 0.55;
+  /** Last track requested via setMusicTrack(), remembered even when the graph
+   *  is not yet built. The substrate selects a room bed at boot — before the
+   *  first user-gesture — so the AudioContext isn't alive yet; init() then
+   *  honors this over the default MUSIC_TRACK. Without it every substrate
+   *  universe fell back to the title theme (live UAT 2026-06-07). */
+  private pendingTrackUrl: string | null = null;
   private hallucinationActive: { audio: HTMLAudioElement; node: MediaElementAudioSourceNode; gain: GainNode; timer: number } | null = null;
 
   constructor(uniforms: GlobalUniforms) {
@@ -191,8 +197,11 @@ export class AudioFFTBridge {
 
     this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
 
-    this.source = MUSIC_TRACK
-      ? createStreamedTrack(this.ctx, MUSIC_TRACK)
+    // A room bed requested before this graph existed wins over the default
+    // title theme; '' (explicit silence) still yields the silent fallback.
+    const bootTrack = this.pendingTrackUrl ?? MUSIC_TRACK;
+    this.source = bootTrack
+      ? createStreamedTrack(this.ctx, bootTrack)
       : createSilentSource(this.ctx);
     this.source.output.connect(this.musicGain);
 
@@ -389,6 +398,9 @@ export class AudioFFTBridge {
    * itself is on biomeIntensity uniforms; here we just swap the audio).
    */
   setMusicTrack(url: string): void {
+    // Remember the request even pre-init so init() can honor it (substrate
+    // boots its room bed before the first gesture; see pendingTrackUrl).
+    this.pendingTrackUrl = url;
     if (!this.ctx || !this.musicGain) return;
     this.source?.dispose();
     this.source = createStreamedTrack(this.ctx, url);
