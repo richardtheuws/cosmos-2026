@@ -41,6 +41,7 @@ import { UniverseHost } from './UniverseHost';
 import { appendTraversal, loadState, saveState, type CosmosPersistedState } from './StatePersistence';
 import { PreloadManager } from './PreloadManager';
 import { WayMoteOverlay } from './drivers/WayMoteOverlay';
+import { RoomOnwardOverlay } from './drivers/RoomOnwardOverlay';
 
 /** The reserved open-map universe the "Look up." way-mote returns to. */
 const CHART_UNIVERSE_ID = '_chart';
@@ -74,6 +75,9 @@ export class SubstrateLoader {
   private universeRel = '';
   private booted = false;
   private wayMote: WayMoteOverlay | null = null;
+  /** Wave 25.5 — the "follow Cosmo onward" room-to-room affordance. Mounted per
+   *  room when it declares an exit; torn down on every switch. */
+  private roomOnward: RoomOnwardOverlay | null = null;
   /** The universe id that actually loaded (post-resolution). Read by main.ts to
    *  gate legacy forest-only furniture (trampoline) to the forest universe. */
   resolvedUniverse: string | null = null;
@@ -134,6 +138,8 @@ export class SubstrateLoader {
     // Tear down the outgoing world (each driver's exit/dispose fires here).
     this.wayMote?.dispose();
     this.wayMote = null;
+    this.roomOnward?.dispose();
+    this.roomOnward = null;
     this.host?.dispose();
     this.host = null;
 
@@ -242,6 +248,27 @@ export class SubstrateLoader {
       this.wayMote = new WayMoteOverlay({ reservedUniverseId: CHART_UNIVERSE_ID });
     }
 
+    // Wave 25.5 — the room-to-room layer ("Cosmo neemt je mee"). If this room
+    // declares an exit, surface the "follow Cosmo onward" affordance to the
+    // first exit's destination; tapping it travels there (same ceremony). Not on
+    // the chart (its blooms ARE the navigation).
+    if (!resolved.universe.startsWith('_') && room && room.exits && room.exits.length > 0) {
+      const destId = room.exits[0].to;
+      const dest = manifests.rooms.rooms.find((r) => r.id === destId);
+      if (dest && dest.id !== room.id) {
+        const destArea =
+          dest.area ??
+          manifests.areas.areas.find((ar) => ar.rooms.includes(dest.id))?.id ??
+          resolved.area;
+        this.roomOnward = new RoomOnwardOverlay({
+          universe: resolved.universe,
+          area: destArea,
+          room: dest.id,
+          label: dest.displayNameEn ?? dest.displayName,
+        });
+      }
+    }
+
     // Persist + append traversal.
     appendTraversal(this.state, resolved.universe, resolved.area, resolved.room);
     saveState(this.state);
@@ -255,6 +282,8 @@ export class SubstrateLoader {
   dispose(): void {
     this.wayMote?.dispose();
     this.wayMote = null;
+    this.roomOnward?.dispose();
+    this.roomOnward = null;
     this.host?.dispose();
     this.host = null;
     this.booted = false;

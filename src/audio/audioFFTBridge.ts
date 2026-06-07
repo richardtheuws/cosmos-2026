@@ -150,6 +150,10 @@ export class AudioFFTBridge {
    *  honors this over the default MUSIC_TRACK. Without it every substrate
    *  universe fell back to the title theme (live UAT 2026-06-07). */
   private pendingTrackUrl: string | null = null;
+  /** The logical URL currently loaded into the persistent music element. Lets
+   *  setMusicTrack skip a redundant reload (which would restart the bed) and
+   *  drives the blessed-element reuse (see setMusicTrack). */
+  private currentTrackUrl: string | null = null;
   private hallucinationActive: { audio: HTMLAudioElement; node: MediaElementAudioSourceNode; gain: GainNode; timer: number } | null = null;
 
   constructor(uniforms: GlobalUniforms) {
@@ -203,6 +207,7 @@ export class AudioFFTBridge {
     this.source = bootTrack
       ? createStreamedTrack(this.ctx, bootTrack)
       : createSilentSource(this.ctx);
+    this.currentTrackUrl = bootTrack || null;
     this.source.output.connect(this.musicGain);
 
     this.initialised = true;
@@ -402,8 +407,34 @@ export class AudioFFTBridge {
     // boots its room bed before the first gesture; see pendingTrackUrl).
     this.pendingTrackUrl = url;
     if (!this.ctx || !this.musicGain) return;
+    if (url === this.currentTrackUrl && this.source?.audioEl) {
+      // Same bed already loaded — just make sure it's playing (e.g. re-enter).
+      void this.source.audioEl.play().catch(() => {});
+      return;
+    }
+
+    // iOS FIX (Wave 25.5): REUSE the existing, already-gesture-"blessed" audio
+    // element — only swap its `.src`. Creating a NEW element per track means a
+    // fresh, un-blessed element; when the swap fires async (after the travel
+    // veil, OUTSIDE the wake gesture), iOS autoplay-policy blocks its play() and
+    // every world reached by travelling goes silent. A blessed element re-plays
+    // programmatically. We only build a fresh element if none exists yet (the
+    // boot source was the silent fallback).
+    const existing = this.source?.audioEl;
+    if (existing) {
+      existing.src = url;
+      existing.loop = true;
+      existing.load();
+      this.currentTrackUrl = url;
+      void existing.play().catch(() => {
+        /* gesture still pending; ensureRunning() retries play() on next gesture */
+      });
+      return;
+    }
+
     this.source?.dispose();
     this.source = createStreamedTrack(this.ctx, url);
+    this.currentTrackUrl = url;
     this.source.output.connect(this.musicGain);
   }
 

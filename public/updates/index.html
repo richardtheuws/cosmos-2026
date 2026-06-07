@@ -206,6 +206,33 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.18</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25.5: worlds keep their music + you can wander deeper</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--feat">Feature</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">Two things from the phone-UAT: the music going silent in travelled-to worlds, and the missing depth layer.</p>
+        </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>Worlds reached by travelling now keep their music (iOS).</strong> <code>AudioFFTBridge.setMusicTrack</code> now REUSES one persistent, gesture-&quot;blessed&quot; <code>&lt;audio&gt;</code> element (swapping only its <code>.src</code>) instead of creating a fresh element per swap. A fresh element&#039;s <code>play()</code> fires async (after the travel veil), outside the wake gesture, so iOS autoplay-policy silenced it — every travelled-to world went quiet. The blessed element re-plays programmatically, so the bed sounds the moment you arrive. (Verified: chart→dune and room→room both swap beds on the same reused element.)</li>
+        </ul>
+<h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong>The room-to-room layer — &quot;Cosmo neemt je mee&quot; (depth within a world).</strong> <code>RoomOnwardOverlay</code>: when a room declares an exit, a soft breathing Cormorant pill near Cosmo reads &quot;follow Cosmo · &lt;the next room&gt; ↪&quot;; tapping it travels you deeper (same calm dissolve as the chart). The engine already had universe → area → room + the in-app switch + room exits in <code>rooms.json</code> — this surfaces the affordance. Each room keeps its own backdrop + bed = its own beleving (e.g. dunes: the open <em>Long Dune</em> ⇄ the rippled sand-bowl of <em>The Windless Hollow</em>, each with its own drone). The &quot;Look up.&quot; mote still leads up to the chart; this leads onward within the world.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.17</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25.5: the way-mote stops yanking you out</h2>

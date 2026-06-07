@@ -4,6 +4,16 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.18] — 2026-06-07 — Wave 25.5: worlds keep their music + you can wander deeper
+
+Two things from the phone-UAT: the music going silent in travelled-to worlds, and the missing depth layer.
+
+### Fixed
+- **Worlds reached by travelling now keep their music (iOS).** `AudioFFTBridge.setMusicTrack` now REUSES one persistent, gesture-"blessed" `<audio>` element (swapping only its `.src`) instead of creating a fresh element per swap. A fresh element's `play()` fires async (after the travel veil), outside the wake gesture, so iOS autoplay-policy silenced it — every travelled-to world went quiet. The blessed element re-plays programmatically, so the bed sounds the moment you arrive. (Verified: chart→dune and room→room both swap beds on the same reused element.)
+
+### Added
+- **The room-to-room layer — "Cosmo neemt je mee" (depth within a world).** `RoomOnwardOverlay`: when a room declares an exit, a soft breathing Cormorant pill near Cosmo reads "follow Cosmo · <the next room> ↪"; tapping it travels you deeper (same calm dissolve as the chart). The engine already had universe → area → room + the in-app switch + room exits in `rooms.json` — this surfaces the affordance. Each room keeps its own backdrop + bed = its own beleving (e.g. dunes: the open *Long Dune* ⇄ the rippled sand-bowl of *The Windless Hollow*, each with its own drone). The "Look up." mote still leads up to the chart; this leads onward within the world.
+
 ## [2.4.17] — 2026-06-07 — Wave 25.5: the way-mote stops yanking you out
 
 ### Fixed
