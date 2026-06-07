@@ -33,6 +33,7 @@
 import * as THREE from 'three';
 import { assetPath } from '../../src/core/assetPath';
 import { requestNavigate } from '../../src/substrate/drivers/TravelVeil';
+import { AmbientField } from '../../src/substrate/drivers/AmbientField';
 import type { GlobalUniforms } from '../../src/core/globalUniforms';
 import type {
   UniverseBehavior,
@@ -731,6 +732,23 @@ function chartInhabitants(ctx: SubstrateCtx): InhabitantHandle[] {
   layout.becoming.forEach((pos, i) => {
     handles.push(new BecomingBloom(ctx.scene, ctx.camera, pos, i, () => openInvitationCard()));
   });
+
+  // Wave 25.5 — a faint drift of star-motes through the void so the chart itself
+  // breathes (depth + slow life) behind the constellation of blooms.
+  handles.push(
+    new AmbientField(ctx.scene, {
+      id: 'chart-star-drift',
+      count: 120,
+      color: 0xf5edd8,
+      size: 0.04,
+      opacity: 0.4,
+      area: { x: 8, y: 5, z: 5 },
+      center: { x: 0, y: 0.5, z: -2 },
+      drift: { x: 0.03, y: 0.02, z: 0 },
+      sway: 0.05,
+      additive: true,
+    }),
+  );
 
   return handles;
 }

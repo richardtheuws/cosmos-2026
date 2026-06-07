@@ -39,6 +39,7 @@ import type {
   TransitionCtx,
   TransitionDriver,
 } from '../../src/substrate/contracts/BehaviorContract';
+import { AmbientField } from '../../src/substrate/drivers/AmbientField';
 import type { GlobalUniforms } from '../../src/core/globalUniforms';
 import type { CosmoV2Rig } from '../../src/three/cosmoV2';
 
@@ -421,9 +422,27 @@ class InkInhabitant implements InhabitantHandle {
 
 function inkOceanInhabitants(ctx: SubstrateCtx): InhabitantHandle[] {
   const activeRoom = ctx.room.id;
-  return INK_INHABITANTS.filter((s) => s.room === activeRoom).map(
+  const dwellers: InhabitantHandle[] = INK_INHABITANTS.filter((s) => s.room === activeRoom).map(
     (s) => new InkInhabitant(ctx.scene, s),
   );
+  // Wave 25.5 — suspended plankton: cool cyan motes rising slowly through the
+  // shafts (the underwater "rijkere ambiance"). Wandering the drift is the joy.
+  const a = ctx.room.anchor;
+  dwellers.push(
+    new AmbientField(ctx.scene, {
+      id: 'ink-plankton',
+      count: 170,
+      color: 0x8fd9d2,
+      size: 0.045,
+      opacity: 0.55,
+      area: { x: 6, y: 5, z: 4 },
+      center: { x: a.x, y: a.y + 1.0, z: a.z - 1.5 },
+      drift: { x: 0.02, y: 0.18, z: 0 },
+      sway: 0.06,
+      additive: true,
+    }),
+  );
+  return dwellers;
 }
 
 /* ════════════════════════════════════════════════════════════════════════

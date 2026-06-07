@@ -43,7 +43,7 @@ import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 import { TravelVeil, type CosmosNavigateDetail } from './substrate/drivers/TravelVeil';
 
-const VERSION = '2.4.15';
+const VERSION = '2.4.16';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-

@@ -4,6 +4,22 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.16] — 2026-06-07 — Wave 25.5 soul pass (2/2): the rooms breathe
+
+The second half of the kader: rooms shouldn't demand interaction — they should **breathe** (Richard's "rijkere ambiance"). And the dune's "rare misser" is gone.
+
+### Added
+- **`AmbientField`** (`src/substrate/drivers/AmbientField.ts`) — a reusable drifting-mote field (THREE.Points) with slow drift + per-particle sway + a slow opacity breath (calm baseline, never a flicker). Tuned per world:
+  - **Dunes** → warm-gold sand-glints on a slow lateral wind.
+  - **Ink-Ocean** → cool-cyan plankton rising through the shafts.
+  - **Spore-Chart** → faint star-drift through the void (depth behind the blooms).
+
+### Removed
+- **The dune "rare misser" + "useless item" are gone.** The decal-plane interactables (`SlideCrest` — whose `slide-crest.png` is a full landscape image that rendered as a floating rectangle; `BeadBloom` — the stray pop-magenta blob; `SingingBowl`) are deleted. Per the kader, dweller-rooms breathe via ambient life, not clumsy thing-interaction; a properly-arted interaction layer (e.g. a touchable jellyfish) is a later wave. `dunes` no longer exports `interactables` (substrate default applies).
+
+### Known (deferred)
+- The chart nebula still reads a touch pale (synthetic-alpha wash); WebP/downscale of the 4K heroes for a lighter phone payload — both next.
+
 ## [2.4.15] — 2026-06-07 — Wave 25.5 soul pass (1/2): dignity + a guided hub
 
 After the phone-UAT ("a lot of improvement needed — messy hub, no leiding, a Dutch start-message, stray trampoline text"), Richard set the kaders and this is the first half: kill the jarring bugs and give the hub a tidy, guided feel. Thesis: **"You've slipped into someone's daydream."**

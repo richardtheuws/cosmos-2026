@@ -32,14 +32,13 @@ import type {
   ArrivalAnimation,
   BackgroundHandle,
   InhabitantHandle,
-  InteractableHandle,
   AudioHandle,
   TransitionCtx,
   TransitionDriver,
 } from '../../src/substrate/contracts/BehaviorContract';
+import { AmbientField } from '../../src/substrate/drivers/AmbientField';
 import type { Biome, BiomeId } from '../../src/data/biomePresets';
 import type { GlobalUniforms } from '../../src/core/globalUniforms';
-import type { CosmoV2Rig } from '../../src/three/cosmoV2';
 
 /* ── Locked palette (hex) — the only colors that may appear ──────────────────
  * mushroom-cream / moss-sage / sky-wash / faded-rose / ink-aubergine /
@@ -49,7 +48,6 @@ import type { CosmoV2Rig } from '../../src/three/cosmoV2';
 const SAFFRON_GLOW = 0xe8a23c;
 const INK_AUBERGINE = 0x2a1733;
 const FADED_ROSE = 0xe8c4b8;
-const POP_MAGENTA = 0xe83ca0;
 
 /* ── background ───────────────────────────────────────────────────────────────
  *
@@ -144,118 +142,18 @@ function dunesBackground(ctx: SubstrateCtx): BackgroundHandle {
   return new DuneBackground(ctx.parallax, ctx.room.id);
 }
 
-/* ── A painted decal plane (the on-brand interactable object art) ─────────────
+/* ── interactables — REMOVED (Wave 25.5 soul pass, Richard's kader) ───────────
  *
- * Mirrors the forest inhabitant pattern (a billboarded textured plane with
- * alpha-cut + a calm-baseline animator), but used for INTERACTABLE objects:
- * the slide-crest sheen, the glass-bead bloom, the wind-bowl. The decal owns
- * ONLY its own plane + calm-baseline update; the InteractableHandle wrapping it
- * owns anchor/range/onUse. (We render our own plane rather than relying on the
- * shared DECORATION_SPECS registry, which does not yet know these ids — see the
- * runbook's shared-substrate note for the optional registry addition.)
- */
-interface DecalSpec {
-  id: string;
-  textureRel: string;
-  width: number;
-  height: number;
-  /** additive sheen (slide-crest) vs normal alpha-over (beads, bowl). */
-  additive: boolean;
-  /** calm-baseline animator — opacity shimmer-breathe / glint-cycle. */
-  baseline: 'sheen-breathe' | 'glint-cycle' | 'ripple-shimmer';
-}
-
-class DuneDecal {
-  readonly group: THREE.Group;
-  private mesh: THREE.Mesh;
-  private texture: THREE.Texture;
-  private mat: THREE.MeshBasicMaterial;
-  private timeS = 0;
-  /** Peak envelope 0..1 — onUse pushes it to 1, it decays back to baseline. */
-  private peak = 0;
-
-  constructor(
-    private scene: THREE.Scene,
-    private spec: DecalSpec,
-    anchor: { x: number; y: number; z: number },
-  ) {
-    const loader = new THREE.TextureLoader();
-    this.texture = loader.load(assetPath(spec.textureRel));
-    this.texture.colorSpace = THREE.SRGBColorSpace;
-    this.texture.anisotropy = 4;
-
-    const geo = new THREE.PlaneGeometry(spec.width, spec.height);
-    this.mat = new THREE.MeshBasicMaterial({
-      map: this.texture,
-      transparent: true,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-      blending: spec.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
-      // alphaTest 0.5 matches the forest inhabitant fix (cull dark alpha-edge
-      // rectangles); additive sheen uses 0 so its soft wash isn't clipped.
-      alphaTest: spec.additive ? 0 : 0.5,
-      opacity: 1,
-    });
-
-    this.mesh = new THREE.Mesh(geo, this.mat);
-    this.group = new THREE.Group();
-    this.group.position.set(anchor.x, anchor.y, anchor.z);
-    this.group.add(this.mesh);
-    this.scene.add(this.group);
-  }
-
-  /** Called by onUse — lights the decal for one event-peak, then it decays. */
-  trigger(): void {
-    this.peak = 1;
-  }
-
-  update(dt: number): void {
-    this.timeS += dt;
-    // Peak decays back to calm baseline over ~3s — the world settles after an
-    // event; the peak is never the steady state (NORTH-STAR §3 / dweller lens).
-    if (this.peak > 0) this.peak = Math.max(0, this.peak - dt / 3);
-
-    switch (this.spec.baseline) {
-      case 'sheen-breathe': {
-        // Slide-crest: a very slow shimmer-breathe (opacity) + a 1px-feel heat
-        // wobble (sub-pixel x drift). On peak the sheen brightens then re-forms.
-        const breathe = 0.55 + 0.12 * Math.sin(this.timeS * 0.5);
-        this.mat.opacity = breathe + this.peak * 0.4;
-        this.mesh.position.x = 0.01 * Math.sin(this.timeS * 1.7);
-        break;
-      }
-      case 'glint-cycle': {
-        // Bead-bloom: dormant warm-grey nodules MOST of the time; a tiny glint
-        // only on the slow light-angle cycle (and a brighter answer on peak).
-        const angle = 0.5 + 0.5 * Math.sin(this.timeS * 0.18);
-        const glint = Math.pow(angle, 8); // sharp — glints only near the apex
-        this.mat.opacity = 0.85 + glint * 0.15 + this.peak * 0.0;
-        // Magenta tint pulses ONLY at the glint apex / on peak — the ≤5%
-        // pop-accent, peak-only (never the steady state).
-        const popMix = Math.min(1, glint + this.peak);
-        this.mat.color.setHex(popMix > 0.6 ? POP_MAGENTA : 0xffffff);
-        break;
-      }
-      case 'ripple-shimmer': {
-        // Wind-bowl: ripples shimmer very slowly (faint cream highlight crawling
-        // the crests), silent. On peak a thin pop-magenta rim-light races the
-        // ripples (zero pop-accent at baseline — the peak feels earned).
-        this.mat.opacity = 0.9 + 0.06 * Math.sin(this.timeS * 0.35);
-        this.mat.color.setHex(this.peak > 0.5 ? POP_MAGENTA : 0xffffff);
-        break;
-      }
-    }
-  }
-
-  dispose(): void {
-    if (this.group.parent) this.group.parent.remove(this.group);
-    this.mesh.geometry.dispose();
-    this.mat.dispose();
-    this.texture.dispose();
-  }
-}
-
-/* ── interactables ────────────────────────────────────────────────────────────
+ * The painted decal-plane interactables (slide-crest, glass-bead-bloom, wind-
+ * bowl) were the dune's "rare misser": slide-crest.png is a full landscape image
+ * that rendered as a floating additive rectangle, and the bead-bloom flashed a
+ * stray pop-magenta "useless item". Per the kader, dweller-rooms breathe through
+ * AMBIENT life, not clumsy thing-interaction (that is a later, properly-arted
+ * layer). So the decals are gone; the dune's life is now its AmbientField
+ * (drifting sand-glints) + the parallax composition. The `interactables` export
+ * is omitted so the substrate default (none) applies.
+ *
+ * OLD interactables doc (kept for the future arted-interaction layer):
  *
  * Room-filtered (the forest pattern). Each names: the object + painted asset,
  * the clip(s) onUse drives, the calm-baseline update, the event-peak.
@@ -267,182 +165,7 @@ class DuneDecal {
  * director should play, and any animation-request the design raised.
  */
 
-class SlideCrest implements InteractableHandle {
-  readonly id = 'slide-crest';
-  readonly anchor: { x: number; y: number; z: number };
-  readonly range = 2.2; // fits the slope lip
-  private decal: DuneDecal;
-
-  constructor(scene: THREE.Scene, room: SubstrateCtx['room']) {
-    // The crest lip, slightly ahead of and below Cosmo's arrival anchor.
-    this.anchor = { x: room.anchor.x + 0.2, y: room.anchor.y, z: room.anchor.z - 2.6 };
-    this.decal = new DuneDecal(
-      scene,
-      {
-        id: 'slide-crest',
-        textureRel: 'assets/objects/slide-crest.png',
-        width: 2.4,
-        height: 1.2,
-        additive: true,
-        baseline: 'sheen-breathe',
-      },
-      this.anchor,
-    );
-  }
-
-  update(dt: number, _u: GlobalUniforms): void {
-    this.decal.update(dt);
-  }
-
-  /**
-   * Slide-Crest delight-loop (Room A headline joy):
-   *   walk → look (down the slope) → fall (slips over) + procedural lateral-glide
-   *   (gentle rollZ sway + downhill translation, NOT a tumble) → stretch (soft
-   *   landing at the dune-foot as the sand-boom decays) → idle.
-   *
-   * ANIMATION REQUEST: clip `slide` (~1.6s one-shot, Cosmo sledding on his
-   *   backside, arms out, antenna streaming back, calm not frantic). Until it
-   *   ships, the composite below (fall + procedural lateral-glide + stretch) is
-   *   the doc-rated "acceptable" fallback. Tracked as a REAL dependency (this is
-   *   Room A's headline joy) — see runbook + canvas §5.
-   */
-  onUse(cosmo: CosmoV2Rig): void {
-    this.decal.trigger();
-    // Bridge until CosmoAnimDirector: a gentle downhill lateral-glide impulse +
-    // a slight roll-sway (reads as sliding, not tumbling). The director will
-    // replace this with walk→look→[slide|fall+glide]→stretch and the sand-boom
-    // SFX swell (dune-slide event sound).
-    cosmo.root.position.x -= 0.06; // downhill drift along the lit face
-    cosmo.root.position.y -= 0.03;
-    cosmo.rollZ = -0.08; // balance-lean into the slide (survives the billboard lookAt)
-  }
-
-  dispose(): void {
-    this.decal.dispose();
-  }
-}
-
-class BeadBloom implements InteractableHandle {
-  readonly id = 'bead-bloom';
-  readonly anchor: { x: number; y: number; z: number };
-  readonly range = 1.5;
-  private decal: DuneDecal;
-
-  constructor(scene: THREE.Scene, room: SubstrateCtx['room']) {
-    this.anchor = { x: room.anchor.x + 1.7, y: room.anchor.y - 0.15, z: room.anchor.z - 1.6 };
-    this.decal = new DuneDecal(
-      scene,
-      {
-        id: 'glass-bead-bloom',
-        textureRel: 'assets/objects/glass-bead-bloom.png',
-        width: 0.7,
-        height: 0.5,
-        additive: false,
-        baseline: 'glint-cycle',
-      },
-      this.anchor,
-    );
-  }
-
-  update(dt: number, _u: GlobalUniforms): void {
-    this.decal.update(dt);
-  }
-
-  /**
-   * Bead-Bloom (Room A small/quiet loop):
-   *   walk → duck (crouch to peer at the half-buried desert-glass) → wink (a
-   *   tiny pop-magenta glint answers; glass-bead glint SFX fires) → idle.
-   * All clips shipped — no animation-request. The private delight of noticing
-   * something almost-hidden; the desert's one secret jewel (the ≤5% pop-magenta
-   * accent, peak-only).
-   */
-  onUse(cosmo: CosmoV2Rig): void {
-    this.decal.trigger();
-    // Bridge until CosmoAnimDirector (which plays walk→duck→wink). A tiny
-    // settle-dip stands in for the crouch-peek beat.
-    cosmo.root.position.y -= 0.02;
-  }
-
-  dispose(): void {
-    this.decal.dispose();
-  }
-}
-
-class SingingBowl implements InteractableHandle {
-  readonly id = 'singing-bowl';
-  readonly anchor: { x: number; y: number; z: number };
-  readonly range = 1.8;
-  private decal: DuneDecal;
-  private orbit = 0;
-  private orbiting = false;
-
-  constructor(scene: THREE.Scene, room: SubstrateCtx['room']) {
-    // The scoured rippled sand-depression in the cupped floor.
-    this.anchor = { x: room.anchor.x, y: room.anchor.y - 0.3, z: room.anchor.z - 2.0 };
-    this.decal = new DuneDecal(
-      scene,
-      {
-        id: 'wind-bowl',
-        textureRel: 'assets/objects/wind-bowl.png',
-        width: 2.2,
-        height: 1.1,
-        additive: false,
-        baseline: 'ripple-shimmer',
-      },
-      this.anchor,
-    );
-  }
-
-  update(dt: number, _u: GlobalUniforms): void {
-    this.decal.update(dt);
-    // Procedural slow-orbit fallback for the `circle-sway` request — while the
-    // bowl rings, Cosmo orbits the rim. Decays after one slow loop. (Cosmo's
-    // root.position is owned by CosmoAgent; this only advances the phase used by
-    // onUse's re-trigger — the actual orbit translation is applied in onUse via
-    // a slow lerp the director will own.)
-    if (this.orbiting) {
-      this.orbit += dt * 0.5; // ~2s per loop
-      if (this.orbit >= Math.PI * 2) {
-        this.orbit = 0;
-        this.orbiting = false;
-      }
-    }
-  }
-
-  /**
-   * Singing Bowl (Room B delight-loop — the slowest, most enveloping peak):
-   *   walk → dance (a slow circling sway around the rim, NOT frantic) as the
-   *   bowl rings (bowl-ring SFX + drone octave-lift + pop-magenta rim-light
-   *   tracing the ripples) → petted-posture (contentment) → idle.
-   *
-   * ANIMATION REQUEST: clip `circle-sway` (optional, 2s loop — slow trance-like
-   *   circular sway, eyes half-lidded). The `dance` clip + the procedural
-   *   slow-orbit here is the stated fallback that "reads well" — nice-to-have,
-   *   not a hard dependency. See runbook + canvas §5.
-   */
-  onUse(cosmo: CosmoV2Rig): void {
-    this.decal.trigger();
-    this.orbiting = true;
-    this.orbit = 0;
-    // Bridge until CosmoAnimDirector (which plays walk→dance→petted→idle). A
-    // gentle roll-sway stands in for leaning into the slow circle.
-    cosmo.rollZ = 0.05;
-  }
-
-  dispose(): void {
-    this.decal.dispose();
-  }
-}
-
-function dunesInteractables(ctx: SubstrateCtx): InteractableHandle[] {
-  if (ctx.room.id === 'long-dune') {
-    return [new SlideCrest(ctx.scene, ctx.room), new BeadBloom(ctx.scene, ctx.room)];
-  }
-  if (ctx.room.id === 'the-windless-hollow') {
-    return [new SingingBowl(ctx.scene, ctx.room)];
-  }
-  return [];
-}
+/* (decal-plane interactable classes removed — see note above) */
 
 /* ── inhabitants ──────────────────────────────────────────────────────────────
  *
@@ -455,8 +178,25 @@ function dunesInteractables(ctx: SubstrateCtx): InteractableHandle[] {
  * background + interactable layers. (Explicitly declared per the dweller-lens
  * "deliberate stillness must be declared" rule.)
  */
-function dunesInhabitants(_ctx: SubstrateCtx): InhabitantHandle[] {
-  return [];
+function dunesInhabitants(ctx: SubstrateCtx): InhabitantHandle[] {
+  // Wave 25.5 — the dune breathes through drifting sand-glints: warm-gold motes
+  // carried on a slow lateral wind (the dweller-lens "rijkere ambiance"). No
+  // interaction; wandering through the shimmer IS the reward.
+  const a = ctx.room.anchor;
+  return [
+    new AmbientField(ctx.scene, {
+      id: 'dune-sand-glints',
+      count: 150,
+      color: 0xf2c879,
+      size: 0.05,
+      opacity: 0.5,
+      area: { x: 7, y: 4, z: 4 },
+      center: { x: a.x, y: a.y + 1.2, z: a.z - 1.5 },
+      drift: { x: 0.35, y: 0.05, z: 0 },
+      sway: 0.12,
+      additive: true,
+    }),
+  ];
 }
 
 /* ── audio ────────────────────────────────────────────────────────────────────
@@ -595,7 +335,9 @@ const dunesBehavior: UniverseBehavior = {
   background: dunesBackground, // REQUIRED — biomeKey:null everywhere (Fork 3(a))
   arrival: dunesArrival,
   inhabitants: dunesInhabitants,
-  interactables: dunesInteractables,
+  // interactables — OMITTED (Wave 25.5): the decal-plane interactables were
+  // removed (the landscape-rectangle "rare misser" + magenta "useless item").
+  // The dune breathes via its AmbientField + parallax; arted interaction later.
   // audio omitted — fall back to the substrate's DefaultAudio, which actually
   // swaps to the room's `audioBed` (dune-drone-open / -hollow). A custom audio
   // driver here would REPLACE DefaultAudio, not run alongside it — the earlier

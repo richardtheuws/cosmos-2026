@@ -206,6 +206,38 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.16</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25.5 soul pass (2/2): the rooms breathe</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The second half of the kader: rooms shouldn&#039;t demand interaction — they should <strong>breathe</strong> (Richard&#039;s &quot;rijkere ambiance&quot;). And the dune&#039;s &quot;rare misser&quot; is gone.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>AmbientField</code></strong> (<code>src/substrate/drivers/AmbientField.ts</code>) — a reusable drifting-mote field (THREE.Points) with slow drift + per-particle sway + a slow opacity breath (calm baseline, never a flicker). Tuned per world: - <strong>Dunes</strong> → warm-gold sand-glints on a slow lateral wind. - <strong>Ink-Ocean</strong> → cool-cyan plankton rising through the shafts. - <strong>Spore-Chart</strong> → faint star-drift through the void (depth behind the blooms).</li>
+        </ul>
+<h3>REMOVED</h3>
+        <ul class="update__highlights">
+          <li><strong>The dune &quot;rare misser&quot; + &quot;useless item&quot; are gone.</strong> The decal-plane interactables (<code>SlideCrest</code> — whose <code>slide-crest.png</code> is a full landscape image that rendered as a floating rectangle; <code>BeadBloom</code> — the stray pop-magenta blob; <code>SingingBowl</code>) are deleted. Per the kader, dweller-rooms breathe via ambient life, not clumsy thing-interaction; a properly-arted interaction layer (e.g. a touchable jellyfish) is a later wave. <code>dunes</code> no longer exports <code>interactables</code> (substrate default applies).</li>
+        </ul>
+<h3>KNOWN (DEFERRED)</h3>
+        <ul class="update__highlights">
+          <li>The chart nebula still reads a touch pale (synthetic-alpha wash); WebP/downscale of the 4K heroes for a lighter phone payload — both next.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.15</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25.5 soul pass (1/2): dignity + a guided hub</h2>
