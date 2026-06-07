@@ -206,6 +206,43 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.13</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25: fluid travel, Phase 2 (the journey loop + travel ceremony)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The journey is whole now: wander the Spore-Chart, tap a world-bloom, and <strong>dissolve into that world</strong> — then &quot;Look up.&quot; to dissolve back — all without a single page reload. The 3-beat travel (depart → the between-breath → arrive) is real.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>TravelVeil</code></strong> (<code>src/substrate/drivers/TravelVeil.ts</code>) — the &quot;between&quot; beat. A full-screen DOM veil (saffron-glow core over an ink-aubergine void) that fades in to hide the swap, holds a breath, then fades out onto the destination. DOM (not Phaser/Three) so it composites above both renderers on mobile and blocks input mid-flight. A soft dissolve, never a cut.</li>
+          <li><strong><code>cosmos-navigate</code> event</strong> — the single in-app navigation channel. The way-mote return and the chart&#039;s world-blooms both dispatch it; <code>main.ts</code> runs the ceremony (<code>veil.fadeIn → loader.switchTo → veil.hold → veil.fadeOut</code>) with a re-entrancy latch so taps can&#039;t stack the veil.</li>
+        </ul>
+<h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Chart world-blooms travel in-app</strong> — <code>navigateToUniverse()</code> dispatches <code>cosmos-navigate</code> instead of <code>location.search=</code> (no reload). Tapping a bloom is still its entry-triple share-link, now reached as a dissolve.</li>
+          <li><strong>Way-mote return goes through the same ceremony</strong> (replaces the Phase-1 direct callback). Legacy reload path retired.</li>
+        </ul>
+<h3>VERIFIED (LIVE UAT — THE FULL LOOP)</h3>
+        <ul class="update__highlights">
+          <li>Spore-Chart → tap &quot;The Singing Dunes&quot; bloom → veil dissolve → land in dunes (bed <code>dune-drone-open</code> playing, way-mote back); → &quot;Look up.&quot; (M) → veil dissolve → back on the chart (bed <code>spore-chart-void</code>). A window marker survived the <strong>entire</strong> chart→dunes→chart round-trip — zero reloads. tsc + 41 tests green.</li>
+        </ul>
+<h3>NEXT</h3>
+        <ul class="update__highlights">
+          <li>Phase 3 (Cosmo travel-clip), Phase 4 (audio crossfade so beds morph not snap), gate the forest-onboarding out of dweller-universes (the leaked portal-rings), WebP the 4K heroes for mobile payload, then deploy for the phone.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.12</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25: fluid travel, Phase 1 (the navigator — no more reload)</h2>

@@ -237,13 +237,9 @@ export class SubstrateLoader {
     // Wave 24 (S1) — mount the FREE "Look up." way-mote so no universe can trap
     // the player. Skip it on the reserved chart itself (you are already home).
     if (!resolved.universe.startsWith('_')) {
-      this.wayMote = new WayMoteOverlay({
-        reservedUniverseId: CHART_UNIVERSE_ID,
-        // Wave 25 — in-app return (no page reload). The loader owns navigation.
-        onReturn: (universeId) => {
-          void this.switchTo(universeId);
-        },
-      });
+      // The way-mote dispatches a `cosmos-navigate` event; main.ts runs the
+      // travel ceremony around switchTo (Wave 25). No page reload.
+      this.wayMote = new WayMoteOverlay({ reservedUniverseId: CHART_UNIVERSE_ID });
     }
 
     // Persist + append traversal.

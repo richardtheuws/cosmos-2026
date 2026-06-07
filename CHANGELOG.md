@@ -4,6 +4,24 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.13] — 2026-06-07 — Wave 25: fluid travel, Phase 2 (the journey loop + travel ceremony)
+
+The journey is whole now: wander the Spore-Chart, tap a world-bloom, and **dissolve into that world** — then "Look up." to dissolve back — all without a single page reload. The 3-beat travel (depart → the between-breath → arrive) is real.
+
+### Added
+- **`TravelVeil`** (`src/substrate/drivers/TravelVeil.ts`) — the "between" beat. A full-screen DOM veil (saffron-glow core over an ink-aubergine void) that fades in to hide the swap, holds a breath, then fades out onto the destination. DOM (not Phaser/Three) so it composites above both renderers on mobile and blocks input mid-flight. A soft dissolve, never a cut.
+- **`cosmos-navigate` event** — the single in-app navigation channel. The way-mote return and the chart's world-blooms both dispatch it; `main.ts` runs the ceremony (`veil.fadeIn → loader.switchTo → veil.hold → veil.fadeOut`) with a re-entrancy latch so taps can't stack the veil.
+
+### Changed
+- **Chart world-blooms travel in-app** — `navigateToUniverse()` dispatches `cosmos-navigate` instead of `location.search=` (no reload). Tapping a bloom is still its entry-triple share-link, now reached as a dissolve.
+- **Way-mote return goes through the same ceremony** (replaces the Phase-1 direct callback). Legacy reload path retired.
+
+### Verified (live UAT — the full loop)
+- Spore-Chart → tap "The Singing Dunes" bloom → veil dissolve → land in dunes (bed `dune-drone-open` playing, way-mote back); → "Look up." (M) → veil dissolve → back on the chart (bed `spore-chart-void`). A window marker survived the **entire** chart→dunes→chart round-trip — zero reloads. tsc + 41 tests green.
+
+### Next
+- Phase 3 (Cosmo travel-clip), Phase 4 (audio crossfade so beds morph not snap), gate the forest-onboarding out of dweller-universes (the leaked portal-rings), WebP the 4K heroes for mobile payload, then deploy for the phone.
+
 ## [2.4.12] — 2026-06-07 — Wave 25: fluid travel, Phase 1 (the navigator — no more reload)
 
 The first step toward making the dweller's journey BETWEEN worlds feel like travel instead of a page reload. Four parallel code explorations found the substrate is ~90% built for in-app travel — Cosmo, the renderer, the parallax scene and the audio bridge all survive a switch — but the orchestration layer that drives it was missing, and universe switches reloaded the whole page. Decided direction (with Richard): a 3-beat *depart → between → arrive* travel, Cosmo the constant companion threaded through, universal frame first and per-world signatures layered in incrementally. See `.claude/brainstorm/wave25/01-fluid-travel-architecture.md`.

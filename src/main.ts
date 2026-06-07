@@ -42,8 +42,9 @@ import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
+import { TravelVeil, type CosmosNavigateDetail } from './substrate/drivers/TravelVeil';
 
-const VERSION = '2.4.12';
+const VERSION = '2.4.13';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
@@ -339,6 +340,37 @@ async function boot(): Promise<void> {
   // trampoline, so it would re-add the very mesh we want gone.
   if (substrateLoader && substrateLoader.resolvedUniverse !== 'forest') {
     trampolineSpots.dispose();
+  }
+
+  // Wave 25 — fluid travel. A `cosmos-navigate` event (dispatched by the
+  // way-mote return + chart-bloom taps) runs the 3-beat travel ceremony around
+  // the loader's in-app switch: fade the veil in (depart), swap the world hidden
+  // behind it, a held breath (between), fade the veil out (arrive). No page
+  // reload; Cosmo, the renderer, the parallax + audio survive the swap. A
+  // `traveling` latch drops re-entrant taps so the veil can't stack.
+  if (substrateLoader) {
+    const loader = substrateLoader;
+    const veil = new TravelVeil();
+    let traveling = false;
+    window.addEventListener('cosmos-navigate', (ev) => {
+      const detail = (ev as CustomEvent<CosmosNavigateDetail>).detail;
+      if (!detail || traveling) return;
+      traveling = true;
+      void (async () => {
+        try {
+          await veil.fadeIn();
+          await loader.switchTo(detail.universe, detail.area, detail.room);
+          await veil.hold();
+          await veil.fadeOut();
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error('[substrate] travel failed', err);
+          await veil.fadeOut();
+        } finally {
+          traveling = false;
+        }
+      })();
+    });
   }
 
   // Per-frame ticks. Order matters: audio first (so FFT is fresh for the

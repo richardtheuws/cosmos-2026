@@ -32,6 +32,7 @@
 
 import * as THREE from 'three';
 import { assetPath } from '../../src/core/assetPath';
+import { requestNavigate } from '../../src/substrate/drivers/TravelVeil';
 import type { GlobalUniforms } from '../../src/core/globalUniforms';
 import type {
   UniverseBehavior,
@@ -183,12 +184,15 @@ function discoverUniverses(): DiscoveredUniverse[] {
  */
 function navigateToUniverse(u: DiscoveredUniverse): void {
   if (typeof window === 'undefined') return;
-  const sp = new URLSearchParams(window.location.search);
-  sp.set('substrate', 'v2');
-  sp.set('universe', u.slug);
-  if (u.defaultArea) sp.set('area', u.defaultArea);
-  if (u.entryRoom) sp.set('room', u.entryRoom);
-  window.location.search = sp.toString();
+  // Wave 25 — in-app travel (no reload): dispatch the navigation request and let
+  // main.ts run the travel ceremony around SubstrateLoader.switchTo. The bloom
+  // is still sugar over the universe's entry triple (a share-link to a bloom IS
+  // a share-link to that triple), but reached as a fluid dissolve, not a reload.
+  requestNavigate({
+    universe: u.slug,
+    area: u.defaultArea || undefined,
+    room: u.entryRoom || undefined,
+  });
 }
 
 /* ── The build-invitation card (becoming-bloom tap). VERBATIM English copy
