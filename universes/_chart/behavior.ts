@@ -688,11 +688,15 @@ class LitBloom extends BloomBase {
     uni: DiscoveredUniverse,
     onTap: () => void,
   ) {
-    const sub = uni.brandDeviation
-      ? `${uni.summaryFirstSentence}  · a deviation, documented`
-      : uni.summaryFirstSentence;
+    // Wave 25.5 — title-only on the hub (Richard's kader): just the world's
+    // NAME, not the long "— Cosmo's entry Universe" descriptor or the poetic
+    // summary. The long subtitles overlapped near centre on a 16:9 viewport and
+    // made the constellation read as clutter. The poetry lives INSIDE each
+    // world, not stacked on the map. The full names + summaries still drive the
+    // aria-labels (accessibility) via the title arg below.
+    const shortName = uni.displayNameEn.split(' — ')[0].trim();
     super(
-      `bloom-${uni.slug}`, scene, camera, pos, uni.displayNameEn, sub, onTap,
+      `bloom-${uni.slug}`, scene, camera, pos, shortName, '', onTap,
       0.28,
       0.46,
       new THREE.MeshBasicMaterial({ color: uni.palette.core, transparent: true, opacity: 0.92, depthWrite: false }),
@@ -785,10 +789,91 @@ class CosmoChartDrift implements InhabitantHandle {
   }
 }
 
+/* ── The soft wenk — the dweller's first read (Wave 25.5, Richard's kader) ─────
+ *
+ * "Cosmo neemt je mee": one gentle Cormorant line on first arrival at the chart,
+ * then silence. Replaces the retired Dutch beat-disclaimer. Once per browser
+ * session (it is the FIRST read, never a nag) — Cosmo's gestures carry the rest.
+ */
+const CHART_WENK = "You've slipped into someone's daydream.  Touch a world — stay as long as you like.";
+
+function mountChartWenk(): void {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
+  try {
+    if (window.sessionStorage.getItem('cosmos-wenk-seen')) return;
+  } catch {
+    /* private-mode / storage-blocked — fall through and show it once now. */
+  }
+
+  const show = (): void => {
+    try {
+      window.sessionStorage.setItem('cosmos-wenk-seen', '1');
+    } catch {
+      /* ignore */
+    }
+    if (document.getElementById('chart-wenk')) return;
+
+    const el = document.createElement('div');
+    el.id = 'chart-wenk';
+    el.textContent = CHART_WENK;
+    Object.assign(el.style, {
+      position: 'fixed',
+      top: '20%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      maxWidth: 'min(82vw, 32rem)',
+      textAlign: 'center',
+      fontFamily: "'Cormorant', Georgia, serif",
+      fontStyle: 'italic',
+      fontSize: 'clamp(1.15rem, 4.6vw, 1.7rem)',
+      lineHeight: '1.45',
+      color: 'rgba(245, 237, 216, 0.96)',
+      // A soft ink-aubergine backing so the line reads on ANY world (the pale
+      // nebula swallowed bare cream text). Calm, within the locked palette.
+      background: 'rgba(61, 46, 74, 0.52)',
+      backdropFilter: 'blur(7px)',
+      padding: '0.7rem 1.2rem',
+      borderRadius: '16px',
+      textShadow: '0 1px 12px rgba(0,0,0,0.65)',
+      letterSpacing: '0.01em',
+      pointerEvents: 'none',
+      zIndex: '34',
+      opacity: '0',
+      transition: 'opacity 1200ms ease-in-out',
+    } as Partial<CSSStyleDeclaration>);
+    document.body.appendChild(el);
+
+    // Fade in once the world has settled, hold, then dissolve into silence.
+    window.setTimeout(() => { el.style.opacity = '1'; }, 200);
+    window.setTimeout(() => { el.style.opacity = '0'; }, 5200);
+    window.setTimeout(() => { el.remove(); }, 6600);
+  };
+
+  // CRITICAL: defer until the player WAKES. The chart's inhabitants are built at
+  // boot — pre-wake — so showing immediately plays the whole wenk behind the
+  // "tap to wake" boot overlay and the dweller never sees it. We watch the boot
+  // overlay for the `.hidden` class CosmoScene adds on wake (a MutationObserver,
+  // so we fire exactly on the wake transition — no polling race), then a beat.
+  const boot = document.getElementById('boot');
+  if (!boot || boot.classList.contains('hidden')) {
+    // Re-entry (already awake) — show after a beat.
+    window.setTimeout(show, 900);
+    return;
+  }
+  const obs = new MutationObserver(() => {
+    if (boot.classList.contains('hidden')) {
+      obs.disconnect();
+      window.setTimeout(show, 900);
+    }
+  });
+  obs.observe(boot, { attributes: true, attributeFilter: ['class'] });
+}
+
 /* The chart's Cosmo-drift driver is appended to the inhabitant list ONLY if the
  * runtime parks a rig reference on scene.userData (defensive — if absent, the
  * driver is simply omitted and Cosmo keeps the substrate default idle). */
 function chartInhabitantsWithCosmo(ctx: SubstrateCtx): InhabitantHandle[] {
+  mountChartWenk();
   const base = chartInhabitants(ctx);
   const rigRef = (ctx.scene.userData as { cosmoRig?: { current: CosmoV2Rig | null } }).cosmoRig;
   if (rigRef) base.push(new CosmoChartDrift(rigRef));

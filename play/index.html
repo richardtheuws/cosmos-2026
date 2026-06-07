@@ -429,6 +429,11 @@ html, body {
   // a beat later (as he walks over and demonstrates the trampoline) the hint
   // fades in. The next tap — or 9s — dismisses it. No nagging.
   (() => {
+    // Wave 25.5 — LEGACY only. The trampoline lives in the forest-runner; in
+    // substrate/dweller mode there is no trampoline in most worlds, so this
+    // "tap the trampoline" hint leaked into the dunes/ink-ocean/chart. The
+    // dweller's guidance is the chart's soft wenk instead.
+    if (new URLSearchParams(location.search).get('substrate') === 'v2') return;
     const hint = document.getElementById('trampoline-hint');
     if (!hint) return;
     let firstTap = true;

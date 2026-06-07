@@ -206,6 +206,40 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.15</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25.5 soul pass (1/2): dignity + a guided hub</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">After the phone-UAT (&quot;a lot of improvement needed — messy hub, no leiding, a Dutch start-message, stray trampoline text&quot;), Richard set the kaders and this is the first half: kill the jarring bugs and give the hub a tidy, guided feel. Thesis: <strong>&quot;You&#039;ve slipped into someone&#039;s daydream.&quot;</strong></p>
+        </div>
+        <h3>REMOVED / FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>The Dutch beat-message is gone for good.</strong> The legacy <code>touchOverlay</code> (&quot;Tik Cosmo aan op het beat / Hou ingedrukt voor de schokgolf&quot;) is retired entirely — it described beat-game mechanics the dweller doesn&#039;t have and was the stray start-message on the chart.</li>
+          <li><strong>No more &quot;tap the trampoline&quot; in dweller-worlds.</strong> That hint (<code>play/index.html</code>) is gated to the legacy forest-runner; it leaked into dunes/ink-ocean/chart where there is no trampoline.</li>
+          <li><em>(The dark shapes flanking Cosmo are his painted suction-cup hand-discs — 1992 DNA, not a bug.)</em></li>
+        </ul>
+<h3>HUB — &quot;COSMO NEEMT JE MEE&quot;</h3>
+        <ul class="update__highlights">
+          <li><strong>Tidy constellation.</strong> Bloom labels are now the world&#039;s NAME only (e.g. &quot;The Mushroom Forest&quot;, &quot;The Singing Dunes&quot;, &quot;Ink-Ocean&quot;) — the long &quot;— Cosmo&#039;s entry Universe&quot; descriptors and poetic summaries that overlapped near centre are gone (full names/summaries still drive the aria-labels). The poetry lives inside each world, not stacked on the map.</li>
+          <li><strong>A soft first read.</strong> On first wake at the chart, one Cormorant line fades in then dissolves into silence: <em>&quot;You&#039;ve slipped into someone&#039;s daydream. Touch a world — stay as long as you like.&quot;</em> (once per session, on the wake transition, with an ink-aubergine backing so it reads on any sky).</li>
+        </ul>
+<h3>NEXT (SOUL PASS 2/2)</h3>
+        <ul class="update__highlights">
+          <li>Rooms breathe (drifting ambient life per world), replace the dune&#039;s clumsy decals (the landscape-rectangle + magenta &quot;useless item&quot;), deepen the pale nebula, WebP the 4K heroes, then one redeploy.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.14</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25: dweller-universes lose the forest-runner rings</h2>

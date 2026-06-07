@@ -38,13 +38,12 @@ import {
 } from './phaser/entities/TrampolineSpots';
 import { Progression } from './core/progression';
 import { isTouchDevice } from './core/deviceDetect';
-import { TouchOverlay } from './ui/touchOverlay';
 import { BiomeManager } from './three/biomeManager';
 import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 import { TravelVeil, type CosmosNavigateDetail } from './substrate/drivers/TravelVeil';
 
-const VERSION = '2.4.14';
+const VERSION = '2.4.15';
 
 /** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
  *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
@@ -466,9 +465,11 @@ async function boot(): Promise<void> {
   // Sprint 13E — daily-streak pill on visit (auto-show 4s, dismissible).
   announceVisit();
 
-  // Sprint 13A — disclaimer-only touch overlay (no d-pad).
-  const touchOverlay = new TouchOverlay(input);
-  touchOverlay.attachIfTouchDevice();
+  // Wave 25.5 — the legacy "Tap Cosmo on the beat / Hold for the shockwave"
+  // disclaimer pill is RETIRED entirely (Richard: "helemaal weg"). It described
+  // beat-game mechanics the dweller experience doesn't have, and was the stray
+  // start-message on the chart. No replacement here — the dweller's first read
+  // is the chart's soft wenk (the hub guidance).
 
   // Expose for console-debug.
   if (import.meta.env.DEV) {

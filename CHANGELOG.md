@@ -4,6 +4,22 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.15] — 2026-06-07 — Wave 25.5 soul pass (1/2): dignity + a guided hub
+
+After the phone-UAT ("a lot of improvement needed — messy hub, no leiding, a Dutch start-message, stray trampoline text"), Richard set the kaders and this is the first half: kill the jarring bugs and give the hub a tidy, guided feel. Thesis: **"You've slipped into someone's daydream."**
+
+### Removed / Fixed
+- **The Dutch beat-message is gone for good.** The legacy `touchOverlay` ("Tik Cosmo aan op het beat / Hou ingedrukt voor de schokgolf") is retired entirely — it described beat-game mechanics the dweller doesn't have and was the stray start-message on the chart.
+- **No more "tap the trampoline" in dweller-worlds.** That hint (`play/index.html`) is gated to the legacy forest-runner; it leaked into dunes/ink-ocean/chart where there is no trampoline.
+- *(The dark shapes flanking Cosmo are his painted suction-cup hand-discs — 1992 DNA, not a bug.)*
+
+### Hub — "Cosmo neemt je mee"
+- **Tidy constellation.** Bloom labels are now the world's NAME only (e.g. "The Mushroom Forest", "The Singing Dunes", "Ink-Ocean") — the long "— Cosmo's entry Universe" descriptors and poetic summaries that overlapped near centre are gone (full names/summaries still drive the aria-labels). The poetry lives inside each world, not stacked on the map.
+- **A soft first read.** On first wake at the chart, one Cormorant line fades in then dissolves into silence: *"You've slipped into someone's daydream. Touch a world — stay as long as you like."* (once per session, on the wake transition, with an ink-aubergine backing so it reads on any sky).
+
+### Next (soul pass 2/2)
+- Rooms breathe (drifting ambient life per world), replace the dune's clumsy decals (the landscape-rectangle + magenta "useless item"), deepen the pale nebula, WebP the 4K heroes, then one redeploy.
+
 ## [2.4.14] — 2026-06-07 — Wave 25: dweller-universes lose the forest-runner rings
 
 ### Fixed

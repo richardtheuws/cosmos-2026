@@ -20,9 +20,12 @@
 import type { InputController } from '../core/inputController';
 import { isTouchDevice } from '../core/deviceDetect';
 
+// English only (NORTH-STAR §1 — all in-game text is English). This is the
+// LEGACY beat-game disclaimer; in substrate/dweller mode it is not mounted at
+// all (main.ts gates it), the dweller's first read is the chart's soft wenk.
 const DISCLAIMER_LINES = [
-  'Tik Cosmo aan op het beat.',
-  'Hou ingedrukt voor de schokgolf.',
+  'Tap Cosmo on the beat.',
+  'Hold for the shockwave.',
 ] as const;
 
 const AUTO_DISMISS_MS = 6000;
