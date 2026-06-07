@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.14] — 2026-06-07 — Wave 25: dweller-universes lose the forest-runner rings
+
+### Fixed
+- **No more leaked NebulaPortal rings in dweller-universes.** The onboarding's `openPortal` is the forest-runner wake flourish; in a non-forest boot the state-machine never runs the walk/obstacle flow that closes it, so the rings opened and lingered — and leaked across travels via the long-lived `CosmoScene`. Now gated on forest gameplay (`trampolineSpots.count() > 0`), like the swipe-hint. Arrival into dweller-universes is the `TravelVeil`'s job. Live-UAT: chart boot shows 1 Phaser Graphics (the VibeMeter), zero portal rings.
+
+### Known (hub polish — next)
+- Chart world-bloom labels track their blooms correctly but the long poetic subtitles overlap near centre on a 16:9 viewport — a legibility tune (shorten / hover-reveal / wider bloom spread), to judge in the "go feel it" pass. The chart nebula reads pale (synthetic-alpha wash). Audio still hard-swaps behind the veil (crossfade = Phase 4).
+
 ## [2.4.13] — 2026-06-07 — Wave 25: fluid travel, Phase 2 (the journey loop + travel ceremony)
 
 The journey is whole now: wander the Spore-Chart, tap a world-bloom, and **dissolve into that world** — then "Look up." to dissolve back — all without a single page reload. The 3-beat travel (depart → the between-breath → arrive) is real.

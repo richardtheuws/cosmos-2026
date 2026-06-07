@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.14</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25: dweller-universes lose the forest-runner rings</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>No more leaked NebulaPortal rings in dweller-universes.</strong> The onboarding&#039;s <code>openPortal</code> is the forest-runner wake flourish; in a non-forest boot the state-machine never runs the walk/obstacle flow that closes it, so the rings opened and lingered — and leaked across travels via the long-lived <code>CosmoScene</code>. Now gated on forest gameplay (<code>trampolineSpots.count() &gt; 0</code>), like the swipe-hint. Arrival into dweller-universes is the <code>TravelVeil</code>&#039;s job. Live-UAT: chart boot shows 1 Phaser Graphics (the VibeMeter), zero portal rings.</li>
+        </ul>
+<h3>KNOWN (HUB POLISH — NEXT)</h3>
+        <ul class="update__highlights">
+          <li>Chart world-bloom labels track their blooms correctly but the long poetic subtitles overlap near centre on a 16:9 viewport — a legibility tune (shorten / hover-reveal / wider bloom spread), to judge in the &quot;go feel it&quot; pass. The chart nebula reads pale (synthetic-alpha wash). Audio still hard-swaps behind the veil (crossfade = Phase 4).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.13</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25: fluid travel, Phase 2 (the journey loop + travel ceremony)</h2>

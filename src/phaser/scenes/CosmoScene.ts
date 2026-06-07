@@ -273,6 +273,13 @@ export class CosmoScene extends Phaser.Scene {
         document.getElementById('boot')?.classList.add('hidden');
       },
       openPortal: (durationMs) => {
+        // The NebulaPortal is the forest-runner's wake-arrival flourish. In
+        // substrate dweller-universes there is no forest gameplay (trampoline
+        // disposed) and the onboarding state-machine doesn't run the walk/obstacle
+        // flow that would close it again — so the rings would open and linger
+        // (they leaked across travels via the long-lived CosmoScene, live UAT
+        // 2026-06-07). Arrival into dweller-universes is the TravelVeil's job.
+        if (this.trampolineSpots.count() === 0) return;
         if (!this.nebulaPortal) {
           this.nebulaPortal = new NebulaPortal(this);
         }
