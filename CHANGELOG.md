@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.17] — 2026-06-07 — Wave 25.5: the way-mote stops yanking you out
+
+### Fixed
+- **The "swipe up" return is no longer hair-trigger.** It fired on any casual upward drag (`dy > 90`), so a dweller wandering kept getting pulled out of rooms back to the chart. Now it needs a DELIBERATE upward flick — ~40% of the screen height, near-vertical, in under ~450ms. Tapping the "Look up." mote (always there) remains the easy intentional way home.
+
+### Next (a focused pass)
+- **Audio on travel**: worlds reached by travelling go silent on iOS — `setMusicTrack` makes a fresh `<audio>` element each swap, and its `play()` fires async (after the travel veil), outside the wake gesture, so iOS autoplay-policy blocks it. Fix: reuse one "blessed" audio element (change its `.src`) so the bed plays immediately on arrival. (Doing this carefully, not rushed.)
+- **The room layer**: surface room-to-room traversal *within* a universe (the engine already has universe → area → room with the in-app switch wired — it just needs an affordance), so each world is a small place to wander, each room its own beleving.
+
 ## [2.4.16] — 2026-06-07 — Wave 25.5 soul pass (2/2): the rooms breathe
 
 The second half of the kader: rooms shouldn't demand interaction — they should **breathe** (Richard's "rijkere ambiance"). And the dune's "rare misser" is gone.

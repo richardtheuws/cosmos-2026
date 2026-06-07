@@ -46,6 +46,7 @@ export class WayMoteOverlay {
   private onTouchEnd: ((e: TouchEvent) => void) | null = null;
   private touchStartY = 0;
   private touchStartX = 0;
+  private touchStartT = 0;
   private activating = false;
 
   constructor(private opts: WayMoteOptions) {
@@ -130,20 +131,26 @@ export class WayMoteOverlay {
     };
     window.addEventListener('keydown', this.onKey);
 
-    // Single upward swipe anywhere.
+    // A DELIBERATE upward flick (Wave 25.5 — raised hard from dy>90). A dweller
+    // wandering kept getting yanked out of rooms: the old threshold fired on any
+    // casual upward drag. Now it needs a long, fast, near-vertical flick — about
+    // 40% of the screen height, in under ~450ms, barely sideways. Tapping the
+    // "Look up." mote (always available) remains the easy, intentional way home.
     this.onTouchStart = (e: TouchEvent): void => {
       const t = e.changedTouches?.[0];
       if (!t) return;
       this.touchStartY = t.clientY;
       this.touchStartX = t.clientX;
+      this.touchStartT = performance.now();
     };
     this.onTouchEnd = (e: TouchEvent): void => {
       const t = e.changedTouches?.[0];
       if (!t) return;
       const dy = this.touchStartY - t.clientY; // positive = swiped up
       const dx = Math.abs(t.clientX - this.touchStartX);
-      // Mostly-vertical upward swipe of a meaningful distance.
-      if (dy > 90 && dy > dx * 1.5) this.activate();
+      const dt = performance.now() - this.touchStartT;
+      const minDy = Math.min(window.innerHeight * 0.4, 320);
+      if (dy > minDy && dx < dy * 0.4 && dt < 450) this.activate();
     };
     window.addEventListener('touchstart', this.onTouchStart, { passive: true });
     window.addEventListener('touchend', this.onTouchEnd, { passive: true });

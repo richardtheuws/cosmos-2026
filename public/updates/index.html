@@ -206,6 +206,31 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.17</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25.5: the way-mote stops yanking you out</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>The &quot;swipe up&quot; return is no longer hair-trigger.</strong> It fired on any casual upward drag (<code>dy &gt; 90</code>), so a dweller wandering kept getting pulled out of rooms back to the chart. Now it needs a DELIBERATE upward flick — ~40% of the screen height, near-vertical, in under ~450ms. Tapping the &quot;Look up.&quot; mote (always there) remains the easy intentional way home.</li>
+        </ul>
+<h3>NEXT (A FOCUSED PASS)</h3>
+        <ul class="update__highlights">
+          <li><strong>Audio on travel</strong>: worlds reached by travelling go silent on iOS — <code>setMusicTrack</code> makes a fresh <code>&lt;audio&gt;</code> element each swap, and its <code>play()</code> fires async (after the travel veil), outside the wake gesture, so iOS autoplay-policy blocks it. Fix: reuse one &quot;blessed&quot; audio element (change its <code>.src</code>) so the bed plays immediately on arrival. (Doing this carefully, not rushed.)</li>
+          <li><strong>The room layer</strong>: surface room-to-room traversal <em>within</em> a universe (the engine already has universe → area → room with the in-app switch wired — it just needs an affordance), so each world is a small place to wander, each room its own beleving.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.16</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25.5 soul pass (2/2): the rooms breathe</h2>
