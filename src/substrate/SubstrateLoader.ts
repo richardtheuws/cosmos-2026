@@ -36,6 +36,7 @@ import type {
   UniverseBehavior,
 } from './contracts/BehaviorContract';
 import { DEFAULT_UNIVERSE, parseURLRequest, resolveURLRequest, syncURL } from './ResolveURL';
+import type { ResolvedURL } from './ResolveURL';
 import { UniverseHost } from './UniverseHost';
 import { appendTraversal, loadState, saveState, type CosmosPersistedState } from './StatePersistence';
 import { PreloadManager } from './PreloadManager';
@@ -94,6 +95,68 @@ export class SubstrateLoader {
     });
 
     if (resolved.changed) syncURL(resolved);
+    await this.enterUniverse(resolved);
+
+    // One-time: flush persisted state when the tab is hidden/closed.
+    window.addEventListener('pagehide', () => saveState(this.state), { once: false });
+    this.booted = true;
+  }
+
+  /**
+   * In-app navigation (Wave 25) — dispose the current host hierarchy and
+   * reconstruct it for a new universe/area/room WITHOUT a page reload. Cosmo,
+   * the renderer, the shared ParallaxScene and the AudioFFTBridge are long-lived
+   * (injected via bootCtx) and survive the swap untouched. The URL is updated
+   * via pushState so the browser Back button returns to the prior world.
+   *
+   * `area`/`room` are optional: omit them to let the resolver pick the target
+   * universe's defaults (e.g. the "Look up." return to the chart).
+   *
+   * NOTE: this is the spine of fluid travel. The transition/arrival ceremony
+   * (the 3-beat depart→between→arrive) layers ON TOP of this in Phase 2 — for
+   * now the swap is instantaneous (still no reload).
+   */
+  async switchTo(universeId: string, areaId?: string, roomId?: string): Promise<void> {
+    if (!this.booted) {
+      await this.boot();
+      return;
+    }
+    const { known, reserved } = await this.discoverUniverses();
+    const resolved = await resolveURLRequest(
+      { universe: universeId, area: areaId, room: roomId },
+      {
+        knownUniverses: known,
+        reservedUniverses: reserved,
+        loadUniverseManifests: (id) => this.loadManifestsFor(id),
+      },
+    );
+
+    // Tear down the outgoing world (each driver's exit/dispose fires here).
+    this.wayMote?.dispose();
+    this.wayMote = null;
+    this.host?.dispose();
+    this.host = null;
+
+    await this.enterUniverse(resolved);
+
+    // Reflect the new location without reloading; Back returns to the prior world.
+    const sp = new URLSearchParams(window.location.search);
+    sp.set('universe', resolved.universe);
+    sp.set('area', resolved.area);
+    sp.set('room', resolved.room);
+    window.history.pushState(
+      {},
+      '',
+      `${window.location.pathname}?${sp.toString()}${window.location.hash}`,
+    );
+  }
+
+  /**
+   * Construct (or reconstruct) the host hierarchy for a resolved triple. Shared
+   * by boot() and switchTo(). Assumes any previous host has already been
+   * disposed by the caller. Does NOT touch the URL or the `booted` flag.
+   */
+  private async enterUniverse(resolved: ResolvedURL): Promise<void> {
     this.resolvedUniverse = resolved.universe;
 
     const manifests = await this.loadManifestsFor(resolved.universe);
@@ -155,7 +218,8 @@ export class SubstrateLoader {
     // its own background — otherwise it bleeds through any universe whose
     // behavior.background() paints custom content instead of calling loadBiome
     // (the chart's mushroom-bleed bug). DefaultBackground universes reload their
-    // biome immediately after, so this is harmless for them.
+    // biome immediately after, so this is harmless for them. On an in-app switch
+    // this also clears the outgoing universe's biome from the shared parallax.
     this.bootCtx.parallax.unloadBiome();
     this.host.applyUniverseDefaults();
     this.host.enterAreaRoom(resolved.area, resolved.room);
@@ -173,15 +237,18 @@ export class SubstrateLoader {
     // Wave 24 (S1) — mount the FREE "Look up." way-mote so no universe can trap
     // the player. Skip it on the reserved chart itself (you are already home).
     if (!resolved.universe.startsWith('_')) {
-      this.wayMote = new WayMoteOverlay({ reservedUniverseId: CHART_UNIVERSE_ID });
+      this.wayMote = new WayMoteOverlay({
+        reservedUniverseId: CHART_UNIVERSE_ID,
+        // Wave 25 — in-app return (no page reload). The loader owns navigation.
+        onReturn: (universeId) => {
+          void this.switchTo(universeId);
+        },
+      });
     }
 
     // Persist + append traversal.
     appendTraversal(this.state, resolved.universe, resolved.area, resolved.room);
     saveState(this.state);
-    window.addEventListener('pagehide', () => saveState(this.state), { once: false });
-
-    this.booted = true;
   }
 
   /** Per-frame tick — fans into UniverseHost. Called from main.ts CanvasManager.register. */

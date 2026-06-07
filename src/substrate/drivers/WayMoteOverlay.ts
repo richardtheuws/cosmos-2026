@@ -35,6 +35,11 @@ export interface WayMoteOptions {
    *  If provided, it is responsible for eventually calling `proceed`. If
    *  absent, the return fires immediately. */
   onActivate?: (proceed: () => void) => void;
+  /** Wave 25 — in-app navigation. If provided, the return is performed by the
+   *  loader WITHOUT a page reload (called with the reserved universe id, area +
+   *  room left undefined so the resolver fills the chart's defaults). If absent,
+   *  falls back to the legacy `window.location.search=` reload. */
+  onReturn?: (universeId: string) => void;
 }
 
 export class WayMoteOverlay {
@@ -160,6 +165,14 @@ export class WayMoteOverlay {
 
   private returnToChart(): void {
     if (typeof window === 'undefined') return;
+    // Wave 25 — prefer the in-app return (no reload). The loader disposes the
+    // current world and reconstructs the chart in place; Cosmo survives.
+    if (this.opts.onReturn) {
+      this.opts.onReturn(this.opts.reservedUniverseId);
+      this.activating = false;
+      return;
+    }
+    // Legacy fallback — full reload into the chart triple.
     const sp = new URLSearchParams(window.location.search);
     sp.set('substrate', 'v2');
     sp.set('universe', this.opts.reservedUniverseId);

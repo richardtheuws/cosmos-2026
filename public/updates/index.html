@@ -206,6 +206,38 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.12</span>
+          <span class="update__date">2026-06-07</span>
+          <h2 class="update__title">06-07 — Wave 25: fluid travel, Phase 1 (the navigator — no more reload)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--feat">Feature</span>
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The first step toward making the dweller&#039;s journey BETWEEN worlds feel like travel instead of a page reload. Four parallel code explorations found the substrate is ~90% built for in-app travel — Cosmo, the renderer, the parallax scene and the audio bridge all survive a switch — but the orchestration layer that drives it was missing, and universe switches reloaded the whole page. Decided direction (with Richard): a 3-beat <em>depart → between → arrive</em> travel, Cosmo the constant companion threaded through, universal frame first and per-world signatures layered in incrementally. See <code>.claude/brainstorm/wave25/01-fluid-travel-architecture.md</code>.</p>
+        </div>
+        <h3>ADDED</h3>
+        <ul class="update__highlights">
+          <li><strong><code>SubstrateLoader.switchTo(universe, area?, room?)</code></strong> — disposes the current host hierarchy and reconstructs it for a new universe/area/room <strong>in place, with no page reload</strong>. Boot and switch now share one <code>enterUniverse()</code> path. URL updates via <code>history.pushState</code> so the browser Back button returns to the prior world.</li>
+          <li><strong>In-app &quot;Look up.&quot; return.</strong> <code>WayMoteOverlay</code> gained an <code>onReturn</code> callback; the loader wires it to <code>switchTo</code>, so returning to the Spore-Chart is now a live transition. Legacy <code>location.search=</code> reload kept as a fallback.</li>
+        </ul>
+<h3>VERIFIED (LIVE UAT)</h3>
+        <ul class="update__highlights">
+          <li>dunes → &quot;Look up.&quot; → chart with <strong>no page reload</strong> (a window marker survived the switch), Cosmo alive across the swap, the chart&#039;s <code>spore-chart-void</code> bed swapped in and playing, the way-mote correctly absent on the chart, and the chart rendering cleanly (nebula-wash + orbit rings + bloom-planets) with no dune residue.</li>
+        </ul>
+<h3>NEXT (WAVE 25 PHASES 2–5)</h3>
+        <ul class="update__highlights">
+          <li>Phase 2: run the (currently never-invoked) transition + <code>arrival</code> drivers inside <code>switchTo</code> — the 3-beat ceremony. Phase 3: Cosmo travel-clip continuity (<code>scheduleTransitionClip</code> + <code>slide</code>). Phase 4: audio crossfade + SFX-emit hook. Phase 5: per-world travel signatures.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.11</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 24: the worlds find their voice (room beds actually play)</h2>

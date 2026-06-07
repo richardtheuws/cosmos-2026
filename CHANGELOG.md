@@ -4,6 +4,20 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.12] — 2026-06-07 — Wave 25: fluid travel, Phase 1 (the navigator — no more reload)
+
+The first step toward making the dweller's journey BETWEEN worlds feel like travel instead of a page reload. Four parallel code explorations found the substrate is ~90% built for in-app travel — Cosmo, the renderer, the parallax scene and the audio bridge all survive a switch — but the orchestration layer that drives it was missing, and universe switches reloaded the whole page. Decided direction (with Richard): a 3-beat *depart → between → arrive* travel, Cosmo the constant companion threaded through, universal frame first and per-world signatures layered in incrementally. See `.claude/brainstorm/wave25/01-fluid-travel-architecture.md`.
+
+### Added
+- **`SubstrateLoader.switchTo(universe, area?, room?)`** — disposes the current host hierarchy and reconstructs it for a new universe/area/room **in place, with no page reload**. Boot and switch now share one `enterUniverse()` path. URL updates via `history.pushState` so the browser Back button returns to the prior world.
+- **In-app "Look up." return.** `WayMoteOverlay` gained an `onReturn` callback; the loader wires it to `switchTo`, so returning to the Spore-Chart is now a live transition. Legacy `location.search=` reload kept as a fallback.
+
+### Verified (live UAT)
+- dunes → "Look up." → chart with **no page reload** (a window marker survived the switch), Cosmo alive across the swap, the chart's `spore-chart-void` bed swapped in and playing, the way-mote correctly absent on the chart, and the chart rendering cleanly (nebula-wash + orbit rings + bloom-planets) with no dune residue.
+
+### Next (Wave 25 phases 2–5)
+- Phase 2: run the (currently never-invoked) transition + `arrival` drivers inside `switchTo` — the 3-beat ceremony. Phase 3: Cosmo travel-clip continuity (`scheduleTransitionClip` + `slide`). Phase 4: audio crossfade + SFX-emit hook. Phase 5: per-world travel signatures.
+
 ## [2.4.11] — 2026-06-07 — Wave 24: the worlds find their voice (room beds actually play)
 
 The one where every universe finally plays its own music. Live UAT (real browser, all four universes) caught what header-grep never would: **every substrate universe was playing `title-theme.mp3`** instead of its authored per-room bed. Root cause was a no-op `audio` driver — born in the forest reference and copied into dunes + ink-ocean — built on the false belief that registering an `AudioHandle` *delegates* to `DefaultAudio`. It doesn't: per the §1.4 detection rule, exporting `audio` **replaces** `DefaultAudio`, so the no-op silently killed every room bed swap. Plus an `AudioFFTBridge` gap: a bed requested before the first user-gesture (the substrate selects its room bed at boot) was dropped, then `init()` fell back to the hardcoded title theme.
