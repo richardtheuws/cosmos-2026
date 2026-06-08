@@ -95,3 +95,28 @@ Build order — frame first, signatures incremental:
   DuskMirage / MushroomPath depart+arrive textures, one world at a time.
 
 Each phase ships + commits independently. Frame (1+2) is the keystone.
+
+## Wave 25.5 — "the soul pass" (Richard's kaders, 2026-06-07, after phone-UAT)
+
+Phone-UAT verdict: plumbing works, **soul is thin** — hub is messy + has "no leiding", rooms have "too little" visually/interactively, plus jarring bugs. Richard set three kaders (the feeling is his call; I stopped guessing):
+
+1. **Hub = "Cosmo neemt je mee"** — a guided first arrival: Cosmo gestures *"touch a world to visit"* (one wenk), then fully free. Underlying layout must be TIDY (short Cormorant name per bloom, no long subtitles, no overlap, blooms spread, less-pale nebula).
+2. **Rooms = "rijkere ambiance"** — rooms don't demand interaction; they **breathe**: drifting motes/spores, swaying flora, light-shimmer, depth-parallax. Wandering itself is the reward. Direct thing-interaction (jellyfish tap) is a LATER layer, not now.
+3. **Tone = "één zachte Engelse wenk"** — first read: *"You've slipped into someone's daydream. Touch a world — stay as long as you like."* Dissolves after ~4s, then silence.
+
+Unifying thesis: **"You've slipped into someone's daydream."**
+
+### Execution plan (one focused pass → one redeploy)
+
+BUGS (roots located):
+- **Dutch start-message**: `src/ui/touchOverlay.ts` (legacy beat-game "Tik Cosmo aan op het beat / Hou ingedrukt voor de schokgolf"), mounted `main.ts:470`. → gate OFF in substrate; translate legacy strings to EN for the non-substrate path.
+- **Dark tops flanking Cosmo + "tap the trampoline — watch him go"** in every dweller world: trampoline mats/HUD not fully gated. (Literal hint string not in current `src/` — confirm via live inspect which component draws it; the tops = `Trampoline3D` mats or a Cosmo-attached artifact — confirm live.) → remove trampoline objects + HUD from all non-forest universes.
+- **Dune "rare misser"**: `DuneDecal` (universes/dunes/behavior.ts:168) — a `PlaneGeometry` whose `textureRel` is a full landscape image → renders as a floating rectangle of another desert; its `glint-cycle` flashes `POP_MAGENTA` (the "useless" item). → fix the decal asset/spec OR replace with real ambient life.
+- **Hub label clutter + pale nebula**: chart `SporeBloom.buildDom` long subtitles overlap; nebula synthetic-alpha reads washed.
+
+SOUL (per kaders):
+- Hub: tidy bloom labels (title-only, spread, no overlap) + the guided "Cosmo neemt je mee" wenk + Cosmo gesture-toward-a-bloom; deepen nebula.
+- Rooms: add breathing ambient life per world (motes/flora/light/parallax) — forest, dunes, ink-ocean each.
+- First-read: the soft EN wenk on the hub, dissolve-then-silence.
+
+Then: tsc + tests + live-UAT the whole journey on mobile viewport + ONE redeploy (lftp). WebP/downscale the 4K heroes belongs in this redeploy (dist was 428MB; backgrounds 206MB) so the phone payload is finally light.
