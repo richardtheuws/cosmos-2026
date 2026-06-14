@@ -11,8 +11,8 @@
   "defaultArea": "the-singing-flat",
   "brandDeviation": null,
   "assets": [
-    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-dune-4k.png", "preload": true },
-    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-hollow-4k.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-dune-4k.webp", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-dusk-hollow-4k.webp", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/slide-crest.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/glass-bead-bloom.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/wind-bowl.png", "preload": false },

@@ -115,7 +115,7 @@ const SLOW_BLOOM: Biome = {
   bpm: 86,
   trackUrl: assetPath('assets/audio/music/slow-bloom-loop.mp3'),
   compositionSpecUrl: assetPath('assets/backgrounds/biome-slow-bloom/composition-spec.json'),
-  bgUrl: assetPath('assets/backgrounds/biome-slow-bloom-4k.png'),
+  bgUrl: assetPath('assets/backgrounds/biome-slow-bloom-4k.webp'),
   parallax: PARALLAX_DRIFT,
   scaleY: PLANE_SCALE_Y,
   postFXCurve: { bloom: 0.6, kaleido: 0.2, fluid: 0.3, chroma: 0.5 },

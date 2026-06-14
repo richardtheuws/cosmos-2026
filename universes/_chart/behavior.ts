@@ -416,7 +416,7 @@ class SporeChartBackground implements BackgroundHandle {
     const loader = new THREE.TextureLoader();
 
     // Backstop void plane (large, behind everything).
-    this.texVoid = loader.load(assetPath('assets/backgrounds/spore-chart-void-4k.png'));
+    this.texVoid = loader.load(assetPath('assets/backgrounds/spore-chart-void-4k.webp'));
     this.texVoid.colorSpace = THREE.SRGBColorSpace;
     const voidGeo = new THREE.PlaneGeometry(8, 5);
     const voidMat = new THREE.MeshBasicMaterial({ map: this.texVoid, depthWrite: false });
@@ -425,7 +425,7 @@ class SporeChartBackground implements BackgroundHandle {
     this.group.add(voidPlane);
 
     // Two nebula-wash planes (faded-rose + sky-wash), slow offset drift.
-    this.texNebula = loader.load(assetPath('assets/backgrounds/spore-chart-nebula-wash.png'));
+    this.texNebula = loader.load(assetPath('assets/backgrounds/spore-chart-nebula-wash.webp'));
     this.texNebula.colorSpace = THREE.SRGBColorSpace;
     const nebGeo = new THREE.PlaneGeometry(7, 4.4);
     const matA = new THREE.MeshBasicMaterial({

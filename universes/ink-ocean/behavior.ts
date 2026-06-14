@@ -187,7 +187,7 @@ class InkOceanBackground implements BackgroundHandle {
     this.addColorPlane(SKY_WASH, -19.5, 12); // upper-third surface-skin, smaller plane high in frame
 
     // 1) surface-skin with rippling caustic ink-lines, very pale, drifts slowly.
-    this.addTexLayer('../../public/assets/backgrounds/ink-water-surface-4k.png', -10, {
+    this.addTexLayer('../../public/assets/backgrounds/ink-water-surface-4k.webp', -10, {
       width: 5.0,
       height: 3.4,
       opacity: 0.95,
@@ -236,7 +236,7 @@ class InkOceanBackground implements BackgroundHandle {
     this.addColorPlane(SKY_WASH, -19.2, 6); // faint distant surface memory, high + small
 
     // 1) abyss gradient wash (aubergine to black) — re-uses the abyss bg PNG.
-    this.addTexLayer('../../public/assets/backgrounds/ink-water-abyss-4k.png', -10, {
+    this.addTexLayer('../../public/assets/backgrounds/ink-water-abyss-4k.webp', -10, {
       width: 5.0,
       height: 3.6,
       opacity: 1,

@@ -11,8 +11,8 @@
   "defaultArea": "the-void",
   "brandDeviation": null,
   "assets": [
-    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-void-4k.png", "preload": true },
-    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-nebula-wash.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-void-4k.webp", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/spore-chart-nebula-wash.webp", "preload": true },
     { "type": "image", "path": "../../public/assets/objects/spore-bloom-core.png", "preload": true },
     { "type": "image", "path": "../../public/assets/objects/spore-bloom-becoming.png", "preload": false },
     { "type": "audio", "path": "../../public/assets/audio/music/spore-chart-void.mp3", "preload": true }

@@ -206,6 +206,29 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.19</span>
+          <span class="update__date">2026-06-14</span>
+          <h2 class="update__title">06-14 — Wave 26: the heavy heroes go WebP (first-arrival weight)</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">A daydream you slip into on a phone in a waiting room can&#039;t open with a 17MB sky. The seven 4K painterly backgrounds the substrate worlds load on arrival are now WebP — visually identical, a fraction of the weight.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Substrate background heroes converted PNG → WebP.</strong> The seven 4K backgrounds the dweller worlds preload on arrival (forest&#039;s slow-bloom, both dune backdrops, both ink-ocean depths, the chart void + nebula-wash) are now WebP. Together <strong>74MB → 9MB (8× smaller)</strong> with no visible loss — opaque art at q86, the soft nebula veil at q92 with full alpha so its watercolour gradient doesn&#039;t band (browser-UAT&#039;d: chart + dunes render identical). The flat masters stay recoverable in git history and are regenerable via the fal pipeline. New reusable tool: <code>scripts/wave26/webp_optimize.py</code> (alpha-aware, per-type quality).</li>
+          <li>Legacy mini-game backgrounds (<code>biome-inkpool/cathedral/boss</code>, the layered biome dirs) are untouched — still PNG, still on the default <code>/play/</code> until the substrate cutover. WebP&#039;ing those + the sprite/<code>case-study</code> galleries is the next pass.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.18</span>
           <span class="update__date">2026-06-07</span>
           <h2 class="update__title">06-07 — Wave 25.5: worlds keep their music + you can wander deeper</h2>

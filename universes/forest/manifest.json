@@ -11,7 +11,7 @@
   "defaultArea": "the-mushroom-stand",
   "brandDeviation": null,
   "assets": [
-    { "type": "image", "path": "../../public/assets/backgrounds/biome-slow-bloom-4k.png", "preload": true },
+    { "type": "image", "path": "../../public/assets/backgrounds/biome-slow-bloom-4k.webp", "preload": true },
     { "type": "image", "path": "../../public/assets/objects/eyeball-sentry.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/mouth-pillar-sheet.png", "preload": false },
     { "type": "image", "path": "../../public/assets/objects/breathing-portal.png", "preload": false },

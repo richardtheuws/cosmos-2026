@@ -4,6 +4,14 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.19] — 2026-06-14 — Wave 26: the heavy heroes go WebP (first-arrival weight)
+
+A daydream you slip into on a phone in a waiting room can't open with a 17MB sky. The seven 4K painterly backgrounds the substrate worlds load on arrival are now WebP — visually identical, a fraction of the weight.
+
+### Changed
+- **Substrate background heroes converted PNG → WebP.** The seven 4K backgrounds the dweller worlds preload on arrival (forest's slow-bloom, both dune backdrops, both ink-ocean depths, the chart void + nebula-wash) are now WebP. Together **74MB → 9MB (8× smaller)** with no visible loss — opaque art at q86, the soft nebula veil at q92 with full alpha so its watercolour gradient doesn't band (browser-UAT'd: chart + dunes render identical). The flat masters stay recoverable in git history and are regenerable via the fal pipeline. New reusable tool: `scripts/wave26/webp_optimize.py` (alpha-aware, per-type quality).
+- Legacy mini-game backgrounds (`biome-inkpool/cathedral/boss`, the layered biome dirs) are untouched — still PNG, still on the default `/play/` until the substrate cutover. WebP'ing those + the sprite/`case-study` galleries is the next pass.
+
 ## [2.4.18] — 2026-06-07 — Wave 25.5: worlds keep their music + you can wander deeper
 
 Two things from the phone-UAT: the music going silent in travelled-to worlds, and the missing depth layer.
