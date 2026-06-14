@@ -4,6 +4,17 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.22] — 2026-06-14 — Wave 26 (cont.): the case-study gallery goes WebP
+
+The last big dir. The `/updates/` case-study — the open record of how Cosmo was built with Claude — was 279MB, most of it never even shown.
+
+### Changed
+- **All 230 case-study PNGs → WebP** (191MB → 24MB, ~8×). The full making-of archive is preserved (nothing deleted), just light. The 21 images actually surfaced in the `/updates/` grids had their `CHANGELOG.md` refs rewritten to `.webp`; verified one renders crisp at native 1024² (the Moebius redesign — halftone dots and linework intact). The other ~209 are shipped-but-unshown archive — kept, now ~8× smaller.
+- **`dist` 473MB** — down from ~734MB at the start of Wave 26 (~260MB shed across the whole sweep). The remaining bulk is 57MB of case-study `.glb` 3D models (not compressible to WebP) plus the substrate worlds themselves.
+
+### Note
+- ~209 case-study images are shipped but referenced nowhere — candidates to exclude from the deploy entirely (a further ~20MB + the 57MB of GLBs) if the full archive doesn't need to be public. Left in for now; that's an archive-policy call, not a code one.
+
 ## [2.4.21] — 2026-06-14 — Wave 26 (cont.): the parallax layer-stacks go WebP
 
 The last substrate-path heavy assets: the multi-layer parallax stacks that give the forest and dunes their depth.
@@ -1073,7 +1084,7 @@ Vier agents tegelijk: multi-frame Cosmo anim (7A), mobile/touch-controls (7B), b
 - **Sprint 5B/6A failure-modes definitief opgelost**: image-to-image als pose-anchor (nee), text-only suction-cups (nee), inpaint-refinement (nee). ControlNet/canny met skeletons geeft hard pose-constraint.
 - Cosmo state-machine: `playStateAnim()` vervangen door `updateAnim(dt)` texture-swap. Walk-cycle alterneert walk-1/walk-2 elke 133ms via `walkPhase` accumulator. Cling: `setFlipX(clingSide < 0)` voor left-wall mirror. Damage + death gebruiken cosmo-hurt.
 
-[grid: /assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.png /assets/sprites/v3/cosmo-walk-1.png /assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.png /assets/sprites/v3/cosmo-jump-fall.png "Skeleton walk-1 control-input · Walk-1 result · Skeleton jump-fall · Jump-fall result"]
+[grid: /assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.webp /assets/sprites/v3/cosmo-walk-1.png /assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.webp /assets/sprites/v3/cosmo-jump-fall.png "Skeleton walk-1 control-input · Walk-1 result · Skeleton jump-fall · Jump-fall result"]
 
 [grid: /assets/sprites/v3/cosmo-walk-1.png /assets/sprites/v3/cosmo-walk-2.png /assets/sprites/v3/cosmo-jump-up.png /assets/sprites/v3/cosmo-jump-fall.png /assets/sprites/v3/cosmo-cling-right.png /assets/sprites/v3/cosmo-hurt.png "walk-1 · walk-2 · jump-up · jump-fall · cling-right · hurt"]
 
@@ -1148,7 +1159,7 @@ Vier agents tegelijk: Cosmo canonical inpaint-fix (6A), enemies + damage-systeem
 - **Pipeline-doorbraak**: Flux Fill (`fal-ai/flux-lora-fill`) bleek wél te werken voor *ADD-geometry* in lege bg-space (anders dan image-to-image die alleen noise-init was). Combineren met **PIL alpha-erase** voor *REMOVE-geometry* (tail) — deterministisch, $0.
 - 15-image case-study series in `public/assets/case-study/cosmo-inpaint-process/` met manifest
 
-[grid: /assets/case-study/cosmo-inpaint-process/01-source.png /assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.png /assets/case-study/cosmo-inpaint-process/09-result-extended-arms.png /assets/case-study/cosmo-inpaint-process/15-final-v4.png "Bron canonical (v053) · Mask voor extended arms · Flux Fill output · Final v4 in-engine"]
+[grid: /assets/case-study/cosmo-inpaint-process/01-source.webp /assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.webp /assets/case-study/cosmo-inpaint-process/09-result-extended-arms.webp /assets/case-study/cosmo-inpaint-process/15-final-v4.webp "Bron canonical (v053) · Mask voor extended arms · Flux Fill output · Final v4 in-engine"]
 
 > Wat NIET werkte: tail-inpaint met "no tail no lizard" prompt (Flux regenereerde identieke lizard-tail — sample-bias is anti-prompt-resistent), hand-inpaint op torso-edge (renderde als over-ear headphones door face-level Y-coord), refinement-pass op v3 (Flux voegde mini-extra-head toe aan disc).
 
@@ -1270,7 +1281,7 @@ Cosmo's huidige verschijning was technisch bruikbaar maar miste karakter. De geb
 
 We genereerden 6 expliciete bridge-interpretaties van het 1992-DNA naar 2026 cosmic-Moebius. Elk met identieke standing-pose voor 1-op-1-vergelijking.
 
-[grid: /assets/case-study/cosmo-redesigns/cosmo-v1-acid-tenniel.png /assets/case-study/cosmo-redesigns/cosmo-v2-cosmic-hayao.png /assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.png /assets/case-study/cosmo-redesigns/cosmo-v4-pulse-trip.png /assets/case-study/cosmo-redesigns/cosmo-v5-bart-mushroom.png /assets/case-study/cosmo-redesigns/cosmo-v6-wide-eye-astronaut.png "V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut"]
+[grid: /assets/case-study/cosmo-redesigns/cosmo-v1-acid-tenniel.webp /assets/case-study/cosmo-redesigns/cosmo-v2-cosmic-hayao.webp /assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.webp /assets/case-study/cosmo-redesigns/cosmo-v4-pulse-trip.webp /assets/case-study/cosmo-redesigns/cosmo-v5-bart-mushroom.webp /assets/case-study/cosmo-redesigns/cosmo-v6-wide-eye-astronaut.webp "V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut"]
 
 **Kritieke vondst**: Flux Dev kan **NIET text-only zuignap-handen renderen** — 8 van 8 generaties leverden ofwel mensen-vingers ofwel hagedis-klauwen ondanks aggressieve emphasis. Sample-bias > prompt. Workaround: image-to-image of inpainting na text-pass.
 
@@ -1280,7 +1291,7 @@ We genereerden 6 expliciete bridge-interpretaties van het 1992-DNA naar 2026 cos
 
 We genereerden 4 hybrid-iteraties met chameleon-style bulging eyes. Eerste 2 misten doel (te tame), H3 raakte de roos.
 
-[grid: /assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.png /assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.png /assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.png /assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.png "H1 + H2 Hayao×Moebius (te tame) · H3 chameleon (te gek!) · H4 alt-iteration"]
+[grid: /assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.webp /assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.webp /assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.webp /assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.webp "H1 + H2 Hayao×Moebius (te tame) · H3 chameleon (te gek!) · H4 alt-iteration"]
 
 > H3 is te gek! — Richard
 
@@ -1288,7 +1299,7 @@ We genereerden 4 hybrid-iteraties met chameleon-style bulging eyes. Eerste 2 mis
 
 H3 werd canonical: pear-drop Hayao-head + single antenna met faded-rose flower-bulb tip + BIG bulging chameleon-eyes + soft Hayao watercolor body + faded-rose spots + pink-peach moon halo backdrop. BiRefNet'd voor in-game gebruik.
 
-![Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)](/assets/case-study/_LOCKED-REFERENCE.png)
+![Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)](/assets/case-study/_LOCKED-REFERENCE.webp)
 
 ### Added
 - `research/visual-references/_COSMO-CANONICAL.png` — Cosmo H3 locked
@@ -1312,7 +1323,7 @@ H3 werd canonical: pear-drop Hayao-head + single antenna met faded-rose flower-b
 
 We zochten een visuele waarheid voor de hele game door 4 keyframe-iteraties van een complete L1-scene te renderen. Elke iteratie probeerde een andere art-direction en we lockten v4 (hybrid v1-cosmic-palette × v3-Moebius-linework) als canonical style-stem.
 
-[grid: /assets/case-study/keyframes/L1-keyframe-v1.png /assets/case-study/keyframes/L1-keyframe-v2.png /assets/case-study/keyframes/L1-keyframe-v3.png /assets/case-study/keyframes/L1-keyframe-v4.png "v1 Pixar-children-book (kawaii drift) · v2 Moebius woodcut (te abstract) · v3 Tenniel woodcut (te dark) · v4 cosmic+Moebius hybrid (LOCKED)"]
+[grid: /assets/case-study/keyframes/L1-keyframe-v1.webp /assets/case-study/keyframes/L1-keyframe-v2.webp /assets/case-study/keyframes/L1-keyframe-v3.webp /assets/case-study/keyframes/L1-keyframe-v4.webp "v1 Pixar-children-book (kawaii drift) · v2 Moebius woodcut (te abstract) · v3 Tenniel woodcut (te dark) · v4 cosmic+Moebius hybrid (LOCKED)"]
 
 > Kies B-hybride (Cosmic Watercolor + kaleidoscope/fluo-pop/datamosh hallucinatie-pieken) — visie-document, locked
 

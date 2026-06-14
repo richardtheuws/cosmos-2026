@@ -206,6 +206,33 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.22</span>
+          <span class="update__date">2026-06-14</span>
+          <h2 class="update__title">06-14 — Wave 26 (cont.): the case-study gallery goes WebP</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The last big dir. The <code>/updates/</code> case-study — the open record of how Cosmo was built with Claude — was 279MB, most of it never even shown.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>All 230 case-study PNGs → WebP</strong> (191MB → 24MB, ~8×). The full making-of archive is preserved (nothing deleted), just light. The 21 images actually surfaced in the <code>/updates/</code> grids had their <code>CHANGELOG.md</code> refs rewritten to <code>.webp</code>; verified one renders crisp at native 1024² (the Moebius redesign — halftone dots and linework intact). The other ~209 are shipped-but-unshown archive — kept, now ~8× smaller.</li>
+          <li><strong><code>dist</code> 473MB</strong> — down from ~734MB at the start of Wave 26 (~260MB shed across the whole sweep). The remaining bulk is 57MB of case-study <code>.glb</code> 3D models (not compressible to WebP) plus the substrate worlds themselves.</li>
+        </ul>
+<h3>NOTE</h3>
+        <ul class="update__highlights">
+          <li>~209 case-study images are shipped but referenced nowhere — candidates to exclude from the deploy entirely (a further ~20MB + the 57MB of GLBs) if the full archive doesn&#039;t need to be public. Left in for now; that&#039;s an archive-policy call, not a code one.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.21</span>
           <span class="update__date">2026-06-14</span>
           <h2 class="update__title">06-14 — Wave 26 (cont.): the parallax layer-stacks go WebP</h2>
@@ -1931,9 +1958,9 @@
         </ul>
         <figure class="update__figure update__figure--grid update__figure--cols-4">
             <div class="update__grid">
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-walk-1.webp" alt="" loading="lazy"></div>
             <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-walk-1.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-multi-frame/skeletons/skeleton-jump-fall.webp" alt="" loading="lazy"></div>
             <div class="update__grid-item"><img src="/assets/sprites/v3/cosmo-jump-fall.png" alt="" loading="lazy"></div>
             </div>
             <figcaption>Skeleton walk-1 control-input · Walk-1 result · Skeleton jump-fall · Jump-fall result</figcaption>
@@ -2038,10 +2065,10 @@
         </ul>
         <figure class="update__figure update__figure--grid update__figure--cols-4">
             <div class="update__grid">
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/01-source.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/09-result-extended-arms.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/15-final-v4.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/01-source.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/08-mask-extended-arms.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/09-result-extended-arms.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-inpaint-process/15-final-v4.webp" alt="" loading="lazy"></div>
             </div>
             <figcaption>Bron canonical (v053) · Mask voor extended arms · Flux Fill output · Final v4 in-engine</figcaption>
           </figure>
@@ -2182,12 +2209,12 @@
         <h3>STAP 1 — 6 REDESIGN VARIANTEN</h3>
         <figure class="update__figure update__figure--grid update__figure--cols-6">
             <div class="update__grid">
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v1-acid-tenniel.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v2-cosmic-hayao.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v4-pulse-trip.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v5-bart-mushroom.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v6-wide-eye-astronaut.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v1-acid-tenniel.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v2-cosmic-hayao.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v3-moebius-mainline.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v4-pulse-trip.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v5-bart-mushroom.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-v6-wide-eye-astronaut.webp" alt="" loading="lazy"></div>
             </div>
             <figcaption>V1 Acid Tenniel · V2 Cosmic Hayao · V3 Moebius Mainline · V4 Pulse-Trip · V5 Bart Mushroom · V6 Wide-eye Astronaut</figcaption>
           </figure>
@@ -2195,17 +2222,17 @@
         <blockquote class="update__quote">Hayao met chameleon-eyes, eventueel iets bollere ogen — Richard</blockquote>
         <figure class="update__figure update__figure--grid update__figure--cols-4">
             <div class="update__grid">
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h1-hayao-moebius-suction.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h2-hayao-moebius-suction.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h3-hayao-chameleon.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/cosmo-redesigns/cosmo-h4-hayao-chameleon-bigger.webp" alt="" loading="lazy"></div>
             </div>
             <figcaption>H1 + H2 Hayao×Moebius (te tame) · H3 chameleon (te gek!) · H4 alt-iteration</figcaption>
           </figure>
         <blockquote class="update__quote">H3 is te gek! — Richard</blockquote>
 <h3>STAP 3 — LOCKED CANONICAL</h3>
         <figure class="update__figure">
-            <img src="/assets/case-study/_LOCKED-REFERENCE.png" alt="Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)" loading="lazy">
+            <img src="/assets/case-study/_LOCKED-REFERENCE.webp" alt="Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)" loading="lazy">
             <figcaption>Locked canonical Cosmo — Hayao×Moebius+chameleon hybride (H3)</figcaption>
           </figure>
 <h3>ADDED</h3>
@@ -2246,10 +2273,10 @@
           <p class="update__lead-line">We zochten een visuele waarheid voor de hele game door 4 keyframe-iteraties van een complete L1-scene te renderen. Elke iteratie probeerde een andere art-direction en we lockten v4 (hybrid v1-cosmic-palette × v3-Moebius-linework) als canonical style-stem.</p>
           <figure class="update__figure update__figure--grid update__figure--cols-4">
             <div class="update__grid">
-            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v1.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v2.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v3.png" alt="" loading="lazy"></div>
-            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v4.png" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v1.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v2.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v3.webp" alt="" loading="lazy"></div>
+            <div class="update__grid-item"><img src="/assets/case-study/keyframes/L1-keyframe-v4.webp" alt="" loading="lazy"></div>
             </div>
             <figcaption>v1 Pixar-children-book (kawaii drift) · v2 Moebius woodcut (te abstract) · v3 Tenniel woodcut (te dark) · v4 cosmic+Moebius hybrid (LOCKED)</figcaption>
           </figure>
