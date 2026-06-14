@@ -1,7 +1,7 @@
 {
   "clips": {
     "idle": {
-      "file": "idle.png",
+      "file": "idle.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -10,7 +10,7 @@
       "loop": true
     },
     "walk": {
-      "file": "walk.png",
+      "file": "walk.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -19,7 +19,7 @@
       "loop": true
     },
     "bounce": {
-      "file": "bounce.png",
+      "file": "bounce.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -28,7 +28,7 @@
       "loop": true
     },
     "jump": {
-      "file": "jump.png",
+      "file": "jump.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -37,7 +37,7 @@
       "loop": false
     },
     "duck": {
-      "file": "duck.png",
+      "file": "duck.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -46,7 +46,7 @@
       "loop": false
     },
     "dance": {
-      "file": "dance.png",
+      "file": "dance.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -55,7 +55,7 @@
       "loop": true
     },
     "wave": {
-      "file": "wave.png",
+      "file": "wave.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -64,7 +64,7 @@
       "loop": false
     },
     "wink": {
-      "file": "wink.png",
+      "file": "wink.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -73,7 +73,7 @@
       "loop": false
     },
     "stretch": {
-      "file": "stretch.png",
+      "file": "stretch.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -82,7 +82,7 @@
       "loop": false
     },
     "fall": {
-      "file": "fall.png",
+      "file": "fall.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -91,7 +91,7 @@
       "loop": false
     },
     "petted": {
-      "file": "petted.png",
+      "file": "petted.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,
@@ -100,7 +100,7 @@
       "loop": true
     },
     "look": {
-      "file": "look.png",
+      "file": "look.webp",
       "cols": 8,
       "rows": 8,
       "count": 61,

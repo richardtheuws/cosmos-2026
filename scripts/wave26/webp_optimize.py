@@ -40,11 +40,19 @@ def png_has_alpha(path: Path) -> bool:
     return False
 
 
-def convert(png: Path) -> tuple[int, int]:
+def convert(png: Path, lossless: bool = False) -> tuple[int, int]:
     webp = png.with_suffix(".webp")
-    if png_has_alpha(png):
+    alpha = png_has_alpha(png)
+    if lossless:
+        # Sprite-sheet atlases: sub-cell sampling means lossy macroblocks bleed
+        # across frame cells. Lossless removes that risk entirely. `-exact`
+        # keeps RGB in fully-transparent pixels so cell edges don't halo.
+        args = ["cwebp", "-lossless", "-exact", "-m", "6",
+                str(png), "-o", str(webp)]
+    elif alpha:
+        # `-exact` preserves transparent-area RGB -> no edge halos on cut-outs.
         args = ["cwebp", "-q", "92", "-alpha_q", "100", "-m", "6",
-                "-sharp_yuv", str(png), "-o", str(webp)]
+                "-exact", "-sharp_yuv", str(png), "-o", str(webp)]
     else:
         args = ["cwebp", "-q", "86", "-m", "6", "-sharp_yuv",
                 str(png), "-o", str(webp)]
@@ -75,6 +83,10 @@ def human(n: int) -> str:
 
 def main() -> int:
     args = sys.argv[1:]
+    lossless = False
+    if "--lossless" in args:
+        lossless = True
+        args = [a for a in args if a != "--lossless"]
     if args and args[0] == "--dir":
         args = args[1:]
     if not args:
@@ -86,8 +98,9 @@ def main() -> int:
         return 1
     total_in = total_out = 0
     for png in files:
-        a = "RGBA" if png_has_alpha(png) else "RGB "
-        before, after = convert(png)
+        a = ("LL  " if lossless else
+             "RGBA" if png_has_alpha(png) else "RGB ")
+        before, after = convert(png, lossless=lossless)
         total_in += before
         total_out += after
         ratio = before / after if after else 0

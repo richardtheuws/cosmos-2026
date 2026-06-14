@@ -205,7 +205,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   {
     id: 'eyeball-sentry',
     room: 'clearing',
-    textureRel: 'assets/objects/eyeball-sentry.png',
+    textureRel: 'assets/objects/eyeball-sentry.webp',
     width: 0.7,
     height: 0.7,
     anchor: { x: 1.6, y: 0.6, z: -3.2 },
@@ -216,7 +216,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   {
     id: 'floating-star',
     room: 'clearing',
-    textureRel: 'assets/objects/floating-star.png',
+    textureRel: 'assets/objects/floating-star.webp',
     width: 0.5,
     height: 0.5,
     anchor: { x: 0.2, y: 0.9, z: -1.4 },
@@ -228,7 +228,7 @@ const FOREST_INHABITANTS: readonly InhabitantSpec[] = [
   {
     id: 'breathing-portal',
     room: 'deep-grove',
-    textureRel: 'assets/objects/breathing-portal.png',
+    textureRel: 'assets/objects/breathing-portal.webp',
     width: 1.0,
     height: 1.0,
     anchor: { x: -1.4, y: 0.6, z: -3.0 },
@@ -459,7 +459,7 @@ class SunbeamPatch implements InteractableHandle {
     this.anchor = { x: room.anchor.x + 2.5, y: room.anchor.y, z: room.anchor.z - 1.6 };
 
     const loader = new THREE.TextureLoader();
-    this.poolTex = loader.load(assetPath('assets/objects/sunbeam-patch.png'));
+    this.poolTex = loader.load(assetPath('assets/objects/sunbeam-patch.webp'));
     this.poolTex.colorSpace = THREE.SRGBColorSpace;
 
     // Ground pool — lies flat on the moss, additive so it reads as warm light.
@@ -578,7 +578,7 @@ class EchoCap implements InteractableHandle {
     this.anchor = { x: room.anchor.x - 1.0, y: room.anchor.y, z: room.anchor.z - 1.5 };
 
     const loader = new THREE.TextureLoader();
-    this.tex = loader.load(assetPath('assets/objects/glow-cap-cluster.png'));
+    this.tex = loader.load(assetPath('assets/objects/glow-cap-cluster.webp'));
     this.tex.colorSpace = THREE.SRGBColorSpace;
 
     this.group = new THREE.Group();

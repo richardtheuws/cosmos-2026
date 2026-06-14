@@ -74,20 +74,20 @@ interface DecorationAssetSpec {
 }
 
 const DECORATION_SPECS: Record<DecorationSpot['id'], DecorationAssetSpec> = {
-  'organic-flesh-trampoline': { url: 'assets/objects/organic-flesh-trampoline.png', width: 1.0, height: 0.6, yOffset: 0.3 },
-  'floating-star': { url: 'assets/objects/floating-star.png', width: 0.5, height: 0.5, yOffset: 0.6 },
-  'eyeball-sentry': { url: 'assets/objects/eyeball-sentry.png', width: 0.7, height: 0.7, yOffset: 1.1 },
-  'upside-down-tree': { url: 'assets/objects/upside-down-tree.png', width: 1.0, height: 1.6, yOffset: 0.8 },
+  'organic-flesh-trampoline': { url: 'assets/objects/organic-flesh-trampoline.webp', width: 1.0, height: 0.6, yOffset: 0.3 },
+  'floating-star': { url: 'assets/objects/floating-star.webp', width: 0.5, height: 0.5, yOffset: 0.6 },
+  'eyeball-sentry': { url: 'assets/objects/eyeball-sentry.webp', width: 0.7, height: 0.7, yOffset: 1.1 },
+  'upside-down-tree': { url: 'assets/objects/upside-down-tree.webp', width: 1.0, height: 1.6, yOffset: 0.8 },
   'mouth-pillar': {
-    url: 'assets/objects/mouth-pillar-sheet.png',
+    url: 'assets/objects/mouth-pillar-sheet.webp',
     width: 0.7,
     height: 1.5,
     yOffset: 0.75,
     sheet: { frames: 4 },
   },
-  'breathing-portal': { url: 'assets/objects/breathing-portal.png', width: 1.0, height: 1.0, yOffset: 0.7 },
-  'secret-crystal': { url: 'assets/objects/secret-crystal.png', width: 0.6, height: 0.6, yOffset: 0.6 },
-  'melting-clock-bubble': { url: 'assets/objects/melting-clock-bubble.png', width: 0.8, height: 0.8, yOffset: 0.9 },
+  'breathing-portal': { url: 'assets/objects/breathing-portal.webp', width: 1.0, height: 1.0, yOffset: 0.7 },
+  'secret-crystal': { url: 'assets/objects/secret-crystal.webp', width: 0.6, height: 0.6, yOffset: 0.6 },
+  'melting-clock-bubble': { url: 'assets/objects/melting-clock-bubble.webp', width: 0.8, height: 0.8, yOffset: 0.9 },
 };
 
 /** Sprint 16E threshold — secret-crystal stays invisible until kaleidoTrigger

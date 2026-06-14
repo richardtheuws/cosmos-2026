@@ -50,7 +50,7 @@ import type { CosmoV2Rig } from '../../src/three/cosmoV2';
  * strips the `../../public/` prefix at runtime). At runtime inside behavior.ts
  * we resolve textures through the project `assetPath()` helper, so we strip the
  * prefix ourselves to match the resolved URL shape (e.g.
- * `../../public/assets/objects/kelp-organ.png` → `assets/objects/kelp-organ.png`).
+ * `../../public/assets/objects/kelp-organ.webp` → `assets/objects/kelp-organ.webp`).
  */
 function inkAsset(rel: string): string {
   return assetPath(rel.replace(/^(\.\.\/)+public\//, ''));
@@ -197,7 +197,7 @@ class InkOceanBackground implements BackgroundHandle {
     });
     // 2-4) three saffron light-shafts (additive), phase-offset slow sway.
     for (let i = 0; i < 3; i++) {
-      this.addTexLayer('../../public/assets/objects/light-shaft.png', -8 + i * 0.1, {
+      this.addTexLayer('../../public/assets/objects/light-shaft.webp', -8 + i * 0.1, {
         width: 0.9,
         height: 3.2,
         x: -1.2 + i * 1.2,
@@ -208,7 +208,7 @@ class InkOceanBackground implements BackgroundHandle {
       });
     }
     // 5) drifting mote-field (additive, gentle upward drift like suspended dust).
-    this.addTexLayer('../../public/assets/objects/water-motes.png', -6, {
+    this.addTexLayer('../../public/assets/objects/water-motes.webp', -6, {
       width: 4.6,
       height: 3.2,
       opacity: 0.4,
@@ -217,7 +217,7 @@ class InkOceanBackground implements BackgroundHandle {
     });
     // 6) kelp-organ silhouette foreground (the interactable's painted layer also
     //    lives here as scenery; the InteractableHandle re-uses the same asset).
-    this.addTexLayer('../../public/assets/objects/kelp-organ.png', -3, {
+    this.addTexLayer('../../public/assets/objects/kelp-organ.webp', -3, {
       width: 1.8,
       height: 2.6,
       x: 1.9,
@@ -244,7 +244,7 @@ class InkOceanBackground implements BackgroundHandle {
     });
     // 2) the updraft-current column (the interactable's painted layer) — tall,
     //    semi-transparent, slow upward scroll (always "running" as water).
-    this.addTexLayer('../../public/assets/objects/updraft-current.png', -5, {
+    this.addTexLayer('../../public/assets/objects/updraft-current.webp', -5, {
       width: 1.1,
       height: 3.4,
       x: 0,
@@ -255,7 +255,7 @@ class InkOceanBackground implements BackgroundHandle {
       swayFreq: 0.2,
     });
     // 3) sparse deep-particle motes, slow.
-    this.addTexLayer('../../public/assets/objects/water-motes.png', -6, {
+    this.addTexLayer('../../public/assets/objects/water-motes.webp', -6, {
       width: 4.6,
       height: 3.4,
       opacity: 0.22,
@@ -334,7 +334,7 @@ const INK_INHABITANTS: readonly InkInhabitantSpec[] = [
   {
     id: 'cyan-jellyfish',
     room: 'light-shafts',
-    textureRel: '../../public/assets/objects/jellyfish-cyan.png',
+    textureRel: '../../public/assets/objects/jellyfish-cyan.webp',
     width: 0.55,
     height: 0.7,
     anchor: { x: -1.6, y: 0.8, z: -2.0 },
@@ -343,7 +343,7 @@ const INK_INHABITANTS: readonly InkInhabitantSpec[] = [
   {
     id: 'deep-glow-lure',
     room: 'the-trench',
-    textureRel: '../../public/assets/objects/deep-glow-lure.png',
+    textureRel: '../../public/assets/objects/deep-glow-lure.webp',
     width: 0.4,
     height: 0.4,
     anchor: { x: 0.6, y: -1.4, z: -2.4 },

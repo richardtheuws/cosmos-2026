@@ -13,10 +13,10 @@
   "assets": [
     { "type": "image", "path": "../../public/assets/backgrounds/ink-water-surface-4k.webp", "preload": true },
     { "type": "image", "path": "../../public/assets/backgrounds/ink-water-abyss-4k.webp", "preload": true },
-    { "type": "image", "path": "../../public/assets/objects/kelp-organ.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/updraft-current.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/jellyfish-cyan.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/deep-glow-lure.png", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/kelp-organ.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/updraft-current.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/jellyfish-cyan.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/deep-glow-lure.webp", "preload": false },
     { "type": "audio", "path": "../../public/assets/audio/music/ink-ocean-shafts.mp3", "preload": true },
     { "type": "audio", "path": "../../public/assets/audio/music/ink-ocean-trench.mp3", "preload": false }
   ],

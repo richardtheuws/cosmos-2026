@@ -206,6 +206,31 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.20</span>
+          <span class="update__date">2026-06-14</span>
+          <h2 class="update__title">06-14 — Wave 26 (cont.): Cosmo himself + the inhabitants go WebP</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The sweep continues onto the substrate&#039;s living things — Cosmo&#039;s frames, the world-dwellers, and the canonical hero painting.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Cosmo&#039;s 12 frame atlases → lossless WebP</strong> (28MB → 19MB). Lossless, not lossy: the player samples sub-cells with mipmaps off, so lossy macroblocks would bleed across frame cells on the hero himself — not acceptable on Cosmo. Browser-UAT&#039;d in the forest: every pose crisp, no cell-bleed, no edge halos.</li>
+          <li><strong>The 21 world-inhabitants → WebP</strong> (9MB → 2MB, ~6×): eyeball-sentry, mouth-pillar, kelp-organ, jellyfish, wind-bowl, spore-blooms, sunbeam, the trampoline, and the rest. Cut-outs converted with <code>-exact</code> so transparent-edge RGB is preserved — no halos around the alpha.</li>
+          <li><strong>The canonical hero <code>cosmo-hero-lora.png</code> → WebP</strong> (5MB → 340KB, 14×). It backs Cosmo&#039;s plane <em>and</em> every page&#039;s favicon/splash — all entry HTMLs (root, <code>/play/</code>, <code>/lore/</code>) updated, favicon <code>type</code> corrected to <code>image/webp</code>.</li>
+          <li>Only substrate-path assets touched. Legacy-only art (the <code>biome-boss</code>/<code>cathedral</code> layer stacks, the old pose sprites, the <code>cosmoV2</code> decal/3D set) is left as PNG — it&#039;s slated for demolition at the substrate cutover, so WebP&#039;ing it would be wasted work.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.19</span>
           <span class="update__date">2026-06-14</span>
           <h2 class="update__title">06-14 — Wave 26: the heavy heroes go WebP (first-arrival weight)</h2>

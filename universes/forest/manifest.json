@@ -12,13 +12,13 @@
   "brandDeviation": null,
   "assets": [
     { "type": "image", "path": "../../public/assets/backgrounds/biome-slow-bloom-4k.webp", "preload": true },
-    { "type": "image", "path": "../../public/assets/objects/eyeball-sentry.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/mouth-pillar-sheet.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/breathing-portal.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/floating-star.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/organic-flesh-trampoline.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/sunbeam-patch.png", "preload": false },
-    { "type": "image", "path": "../../public/assets/objects/glow-cap-cluster.png", "preload": false }
+    { "type": "image", "path": "../../public/assets/objects/eyeball-sentry.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/mouth-pillar-sheet.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/breathing-portal.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/floating-star.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/organic-flesh-trampoline.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/sunbeam-patch.webp", "preload": false },
+    { "type": "image", "path": "../../public/assets/objects/glow-cap-cluster.webp", "preload": false }
   ],
   "post": {
     "preset": "calm-baseline",

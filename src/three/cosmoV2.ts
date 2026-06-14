@@ -95,7 +95,7 @@ export function buildCosmoV2(options: BuildOptions = {}): CosmoV2Rig {
   root.scale.setScalar(baseScale);
 
   const loader = new THREE.TextureLoader();
-  const heroTex = loader.load(assetPath('assets/sprites/cosmo-hero-lora.png'));
+  const heroTex = loader.load(assetPath('assets/sprites/cosmo-hero-lora.webp'));
   heroTex.colorSpace = THREE.SRGBColorSpace;
   heroTex.minFilter = THREE.LinearFilter;
   heroTex.magFilter = THREE.LinearFilter;

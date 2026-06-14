@@ -4,6 +4,16 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.20] — 2026-06-14 — Wave 26 (cont.): Cosmo himself + the inhabitants go WebP
+
+The sweep continues onto the substrate's living things — Cosmo's frames, the world-dwellers, and the canonical hero painting.
+
+### Changed
+- **Cosmo's 12 frame atlases → lossless WebP** (28MB → 19MB). Lossless, not lossy: the player samples sub-cells with mipmaps off, so lossy macroblocks would bleed across frame cells on the hero himself — not acceptable on Cosmo. Browser-UAT'd in the forest: every pose crisp, no cell-bleed, no edge halos.
+- **The 21 world-inhabitants → WebP** (9MB → 2MB, ~6×): eyeball-sentry, mouth-pillar, kelp-organ, jellyfish, wind-bowl, spore-blooms, sunbeam, the trampoline, and the rest. Cut-outs converted with `-exact` so transparent-edge RGB is preserved — no halos around the alpha.
+- **The canonical hero `cosmo-hero-lora.png` → WebP** (5MB → 340KB, 14×). It backs Cosmo's plane *and* every page's favicon/splash — all entry HTMLs (root, `/play/`, `/lore/`) updated, favicon `type` corrected to `image/webp`.
+- Only substrate-path assets touched. Legacy-only art (the `biome-boss`/`cathedral` layer stacks, the old pose sprites, the `cosmoV2` decal/3D set) is left as PNG — it's slated for demolition at the substrate cutover, so WebP'ing it would be wasted work.
+
 ## [2.4.19] — 2026-06-14 — Wave 26: the heavy heroes go WebP (first-arrival weight)
 
 A daydream you slip into on a phone in a waiting room can't open with a 17MB sky. The seven 4K painterly backgrounds the substrate worlds load on arrival are now WebP — visually identical, a fraction of the weight.
