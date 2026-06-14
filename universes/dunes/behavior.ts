@@ -89,7 +89,7 @@ function biomeForRoom(roomId: string): Biome {
         : 'assets/audio/music/dune-drone-open.mp3',
     ),
     compositionSpecUrl: assetPath(`assets/backgrounds/${folder}/composition-spec.json`),
-    bgUrl: assetPath(`assets/backgrounds/${isHollow ? 'biome-dusk-hollow-4k' : 'biome-dusk-dune-4k'}.png`),
+    bgUrl: assetPath(`assets/backgrounds/${isHollow ? 'biome-dusk-hollow-4k' : 'biome-dusk-dune-4k'}.webp`),
     parallax: 0.3,
     scaleY: 1.2,
     postFXCurve: isHollow

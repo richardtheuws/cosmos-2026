@@ -206,6 +206,30 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.4.21</span>
+          <span class="update__date">2026-06-14</span>
+          <h2 class="update__title">06-14 — Wave 26 (cont.): the parallax layer-stacks go WebP</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">The last substrate-path heavy assets: the multi-layer parallax stacks that give the forest and dunes their depth.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Forest + dunes parallax layer-stacks → WebP</strong> (46MB → 7MB, ~7×): <code>biome-slow-bloom/</code> (7 layers — the towering mushroom), <code>biome-dusk-dune/</code> (6) and <code>biome-dusk-hollow/</code> (5 — the two dune rooms). Each layer&#039;s <code>composition-spec.json</code> <code>file:</code> entry rewritten to <code>.webp</code>. Browser-UAT&#039;d against the built bundle: forest mushroom and the golden dusk dunes both paint identically, every layer present, no banding.</li>
+          <li><strong>Fixed a latent fallback bug</strong>: the dunes <code>bgUrl</code> fallback built its filename as <code>…&#039;biome-dusk-dune-4k&#039;}.png</code> — the <code>.png</code> sat outside the template expression, so v2.4.19&#039;s rename missed it and it pointed at a since-deleted PNG (harmless while <code>loadBiome</code> wins, but a landmine). Now <code>.webp</code>.</li>
+          <li>Legacy-only layer dirs (<code>biome-boss</code>, <code>biome-cathedral</code>, <code>biome-inkpool</code>, the <code>slow-bloom*</code> variants) left as PNG — demolished at the cutover. The full WebP sweep of the substrate-path is now complete; <code>dist</code> is down from ~734MB to ~660MB (the remaining bulk is the <code>case-study</code> gallery, a separate optimization).</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.20</span>
           <span class="update__date">2026-06-14</span>
           <h2 class="update__title">06-14 — Wave 26 (cont.): Cosmo himself + the inhabitants go WebP</h2>

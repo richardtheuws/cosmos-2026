@@ -4,6 +4,15 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.4.21] — 2026-06-14 — Wave 26 (cont.): the parallax layer-stacks go WebP
+
+The last substrate-path heavy assets: the multi-layer parallax stacks that give the forest and dunes their depth.
+
+### Changed
+- **Forest + dunes parallax layer-stacks → WebP** (46MB → 7MB, ~7×): `biome-slow-bloom/` (7 layers — the towering mushroom), `biome-dusk-dune/` (6) and `biome-dusk-hollow/` (5 — the two dune rooms). Each layer's `composition-spec.json` `file:` entry rewritten to `.webp`. Browser-UAT'd against the built bundle: forest mushroom and the golden dusk dunes both paint identically, every layer present, no banding.
+- **Fixed a latent fallback bug**: the dunes `bgUrl` fallback built its filename as `…'biome-dusk-dune-4k'}.png` — the `.png` sat outside the template expression, so v2.4.19's rename missed it and it pointed at a since-deleted PNG (harmless while `loadBiome` wins, but a landmine). Now `.webp`.
+- Legacy-only layer dirs (`biome-boss`, `biome-cathedral`, `biome-inkpool`, the `slow-bloom*` variants) left as PNG — demolished at the cutover. The full WebP sweep of the substrate-path is now complete; `dist` is down from ~734MB to ~660MB (the remaining bulk is the `case-study` gallery, a separate optimization).
+
 ## [2.4.20] — 2026-06-14 — Wave 26 (cont.): Cosmo himself + the inhabitants go WebP
 
 The sweep continues onto the substrate's living things — Cosmo's frames, the world-dwellers, and the canonical hero painting.
