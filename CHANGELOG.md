@@ -4,6 +4,20 @@ Alle wijzigingen volgen [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 De `/updates/` pagina wordt automatisch uit dit bestand gegenereerd via `npm run updates:build`.
 
+## [2.5.0] — 2026-06-15 — The cutover: the daydream is the default now
+
+For the first time, `/play/` *is* the substrate. No flag, no hidden path — you arrive in the world.
+
+### Changed
+- **Substrate is now the default `/play/` experience (the Wave 22 cutover).** `useSubstrate` flips: the Universe→Area→Room contract boots unless `?legacy=1` is explicitly present. A bare `/play/` now lands in the forest daydream — Cosmo, the breathing world, the "follow Cosmo" travel layer, the "Look up." way home to the chart. Browser-UAT'd: bare `/play/` boots substrate (forest) and writes a clean `?universe=…&area=…&room=…` URL; `?legacy=1` still reaches the old beat-game as a transitional rollback hatch. The substrate-boot-failure → legacy recovery path stays as a safety net.
+- **URLs are clean.** `syncURL` no longer writes `?substrate=v2` — in-app navigation and shared links read `/play/?universe=dunes&area=…&room=…`.
+
+### Removed
+- **57MB of unreferenced case-study `.glb` models** (the abandoned 3D-puppet exploration — `cosmo-meshy`, `cosmo-3d-v16b/attempts`, the rigged backup). No page or code serves them; the direction was pivoted away from (painted-frames won). They remain in git history if ever needed. `dist` ~454MB. The legacy `assets/3d/cosmo.glb` is kept (the `?legacy=1` path may load it).
+
+### Note
+- "No hidden updates" by design (Richard): there's no participation in the Cosmo universe yet, so there's no reason to gate the new experience — it's simply the default. Full legacy demolition ("slopen") — removing the `?legacy=1` branch and the old Phaser beat-game entirely — is the next focused wave.
+
 ## [2.4.22] — 2026-06-14 — Wave 26 (cont.): the case-study gallery goes WebP
 
 The last big dir. The `/updates/` case-study — the open record of how Cosmo was built with Claude — was 279MB, most of it never even shown.

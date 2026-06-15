@@ -43,14 +43,16 @@ import { announceVisit } from './share/dailyStreak';
 import { SubstrateLoader } from './substrate/SubstrateLoader';
 import { TravelVeil, type CosmosNavigateDetail } from './substrate/drivers/TravelVeil';
 
-const VERSION = '2.4.22';
+const VERSION = '2.5.0';
 
-/** Wave 21 — feature-flag for the substrate runtime. `?substrate=v2` boots
- *  the new Universe→Area→Room contract; absence keeps the legacy ParallaxScene-
- *  direct path verbatim. Both ship in the same bundle until cutover (phase 4). */
+/** Wave 26 — substrate is now the DEFAULT `/play/` experience (the cutover).
+ *  The Universe→Area→Room contract boots unless `?legacy=1` is present, which
+ *  keeps the old ParallaxScene-direct beat-game reachable as a transitional
+ *  rollback hatch. `?substrate=v2` still works (it's just the default now).
+ *  Legacy demolition ("slopen") is a separate follow-up wave. */
 const useSubstrate =
   typeof window !== 'undefined' &&
-  new URLSearchParams(window.location.search).get('substrate') === 'v2';
+  new URLSearchParams(window.location.search).get('legacy') !== '1';
 
 async function boot(): Promise<void> {
   const sceneCanvas = document.getElementById('scene-canvas') as HTMLCanvasElement | null;

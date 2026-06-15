@@ -148,11 +148,11 @@ function roomEntryFor(area: AreasManifest['areas'][number], rooms: RoomsManifest
 }
 
 /** Push an URL update with the resolved triple via `history.replaceState`.
- *  The substrate flag stays put — only universe/area/room are rewritten. */
+ *  Post-cutover (Wave 26) substrate is the default, so URLs stay clean —
+ *  only universe/area/room are written, no flag. */
 export function syncURL(resolved: ResolvedURL): void {
   if (typeof window === 'undefined' || typeof history === 'undefined') return;
   const sp = new URLSearchParams(window.location.search);
-  sp.set('substrate', 'v2');
   sp.set('universe', resolved.universe);
   sp.set('area', resolved.area);
   sp.set('room', resolved.room);

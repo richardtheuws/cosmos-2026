@@ -206,6 +206,38 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.5.0</span>
+          <span class="update__date">2026-06-15</span>
+          <h2 class="update__title">06-15 — The cutover: the daydream is the default now</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--change">Wijziging</span>
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <div class="update__lead">
+          <p class="update__lead-line">For the first time, <code>/play/</code> <em>is</em> the substrate. No flag, no hidden path — you arrive in the world.</p>
+        </div>
+        <h3>CHANGED</h3>
+        <ul class="update__highlights">
+          <li><strong>Substrate is now the default <code>/play/</code> experience (the Wave 22 cutover).</strong> <code>useSubstrate</code> flips: the Universe→Area→Room contract boots unless <code>?legacy=1</code> is explicitly present. A bare <code>/play/</code> now lands in the forest daydream — Cosmo, the breathing world, the &quot;follow Cosmo&quot; travel layer, the &quot;Look up.&quot; way home to the chart. Browser-UAT&#039;d: bare <code>/play/</code> boots substrate (forest) and writes a clean <code>?universe=…&amp;area=…&amp;room=…</code> URL; <code>?legacy=1</code> still reaches the old beat-game as a transitional rollback hatch. The substrate-boot-failure → legacy recovery path stays as a safety net.</li>
+          <li><strong>URLs are clean.</strong> <code>syncURL</code> no longer writes <code>?substrate=v2</code> — in-app navigation and shared links read <code>/play/?universe=dunes&amp;area=…&amp;room=…</code>.</li>
+        </ul>
+<h3>REMOVED</h3>
+        <ul class="update__highlights">
+          <li><strong>57MB of unreferenced case-study <code>.glb</code> models</strong> (the abandoned 3D-puppet exploration — <code>cosmo-meshy</code>, <code>cosmo-3d-v16b/attempts</code>, the rigged backup). No page or code serves them; the direction was pivoted away from (painted-frames won). They remain in git history if ever needed. <code>dist</code> ~454MB. The legacy <code>assets/3d/cosmo.glb</code> is kept (the <code>?legacy=1</code> path may load it).</li>
+        </ul>
+<h3>NOTE</h3>
+        <ul class="update__highlights">
+          <li>&quot;No hidden updates&quot; by design (Richard): there&#039;s no participation in the Cosmo universe yet, so there&#039;s no reason to gate the new experience — it&#039;s simply the default. Full legacy demolition (&quot;slopen&quot;) — removing the <code>?legacy=1</code> branch and the old Phaser beat-game entirely — is the next focused wave.</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.4.22</span>
           <span class="update__date">2026-06-14</span>
           <h2 class="update__title">06-14 — Wave 26 (cont.): the case-study gallery goes WebP</h2>
