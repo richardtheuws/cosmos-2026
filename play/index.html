@@ -431,9 +431,10 @@ html, body {
   (() => {
     // Wave 25.5 — LEGACY only. The trampoline lives in the forest-runner; in
     // substrate/dweller mode there is no trampoline in most worlds, so this
-    // "tap the trampoline" hint leaked into the dunes/ink-ocean/chart. The
-    // dweller's guidance is the chart's soft wenk instead.
-    if (new URLSearchParams(location.search).get('substrate') === 'v2') return;
+    // "tap the trampoline" hint must not show. Post-cutover (Wave 26) substrate
+    // is the default, so the hint runs ONLY in the legacy path (`?legacy=1`).
+    // The dweller's guidance is the chart's soft wenk instead.
+    if (new URLSearchParams(location.search).get('legacy') !== '1') return;
     const hint = document.getElementById('trampoline-hint');
     if (!hint) return;
     let firstTap = true;

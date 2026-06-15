@@ -206,6 +206,25 @@
     <article class="update" data-reveal>
       <div class="update__card">
         <div class="update__header">
+          <span class="update__version">v2.5.1</span>
+          <span class="update__date">2026-06-15</span>
+          <h2 class="update__title">06-15 — Cutover follow-up: the trampoline hint stops leaking</h2>
+        </div>
+        <div class="update__body">
+          <div class="update__tags">
+          <span class="tag tag--fix">Fix</span>
+          </div>
+        <h3>FIXED</h3>
+        <ul class="update__highlights">
+          <li><strong>The &quot;tap the trampoline&quot; hint no longer shows in the default dweller experience.</strong> An inline guard in <code>play/index.html</code> early-returned only when <code>?substrate=v2</code> was present — but post-cutover substrate is the default (no param), so the legacy forest-runner&#039;s trampoline hint leaked into every bare <code>/play/</code> visit (dunes, ink-ocean, chart — worlds with no trampoline). The guard now keys off <code>?legacy=1</code>, so the hint runs only in the legacy path. (Live-verified the cutover itself works: the app chunk gates on <code>?legacy=1</code>, bare <code>/play/</code> boots substrate.)</li>
+        </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="update" data-reveal>
+      <div class="update__card">
+        <div class="update__header">
           <span class="update__version">v2.5.0</span>
           <span class="update__date">2026-06-15</span>
           <h2 class="update__title">06-15 — The cutover: the daydream is the default now</h2>
